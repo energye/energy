@@ -20,6 +20,7 @@ package window
 import "C"
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/lcl"
@@ -62,6 +63,18 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 
 func (m *TWindow) _BeforeFormCreate() {
 	cocoa.CreateWindowDelegate(m.NSInstance())
+	cocoa.RegisterEvent("__doWindowEnterFullScreen", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("EnterFullScreen", m.BrowserId())
+		return nil
+	}))
+	cocoa.RegisterEvent("__doWindowExitFullScreen", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("ExitFullScreen", m.BrowserId())
+		return nil
+	}))
+	cocoa.RegisterEvent("__doWindowWillUseFullScreenPresentationOptions", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId())
+		return nil
+	}))
 }
 func (m *TWindow) _BeforeFormShow() {
 }
