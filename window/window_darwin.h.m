@@ -17,14 +17,14 @@ NSString* NewNSString(const char* string) {
 }
 
 // 设置无边框窗口
-void SetWindowRadius(void* nsWindow) {
+void SetWindowRadius(void* nsWindow, float radius) {
     NSWindow* window = (NSWindow*)nsWindow;
 	NSView* contentView = window.contentView;
 	[contentView setWantsLayer:YES]; // view.setWantsLayer(true);
 	CALayer* layer = contentView.layer; // contentView.layer
 	window.backgroundColor = [NSColor clearColor]; // window.setBackgroundColor(NSColor.clearColor);
 	layer.backgroundColor = [NSColor whiteColor].CGColor; // layer.setBackgroundColor(NSColor.whiteColor.CGColor);
-	layer.cornerRadius = 8.0; // layer.setCornerRadius(8.0);
+	layer.cornerRadius = radius; // layer.setCornerRadius(8.0);
 	layer.masksToBounds = YES;
 }
 

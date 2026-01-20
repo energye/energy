@@ -49,39 +49,48 @@ func (m *TWindow) SwitchFrostedMaterial(appearanceName application.AppearanceNam
 	C.SwitchFrostedMaterial(m.frostedView, m.NSWindowInstance(), C.CString(string(appearanceName)))
 }
 
-func (m *TWindow) Toolbar() {
+func (m *TWindow) SetWindowRadius() {
+	options := application.GApplication.Options
+	if options.Frameless {
+		if options.MacOS.WindowRadius > 0.0 {
+			C.SetWindowRadius(m.NSInstance(), C.float(options.MacOS.WindowRadius))
+		}
+	}
+}
+
+func (m *TWindow) TitleBar() {
+	options := application.GApplication.Options
 	nsWindow := m.NSWindow()
-	_ = nsWindow
 	mask := nsWindow.StyleMask()
-	mask |= C.NSWindowStyleMaskFullSizeContentView
-	//mask ^= C.NSWindowStyleMaskTitled
-	//nsWindow.SetStyleMask(C.NSWindowStyleMaskTitled | C.NSWindowStyleMaskFullSizeContentView | C.NSWindowStyleMaskResizable)
+	if options.DisableSystemMenu {
+		mask ^= C.NSWindowStyleMaskClosable
+	}
+	if options.DisableMinimize {
+		mask ^= C.NSWindowStyleMaskMiniaturizable
+	}
+	if options.DisableResize || options.DisableMaximize {
+		mask ^= C.NSWindowStyleMaskResizable
+	}
+	if options.MacOS.FullSizeContent {
+		mask |= C.NSWindowStyleMaskFullSizeContentView
+	}
 	nsWindow.SetStyleMask(mask)
-	nsWindow.SetTitleBarAppearsTransparent(true)
-	nsWindow.SetTitleVisibility(1)
-	cocoa.NewToolBar(m.NSInstance(), cocoa.ToolbarConfiguration{ShowSeparator: false})
-	//m.Frameless()
-	//[self.window setMovableByWindowBackground:YES];
-	//C.SetWindowRadius(m.NSInstance())
+	nsWindow.SetTitleBarAppearsTransparent(options.MacOS.TitleTransparent)
+	if options.MacOS.TitleHideText {
+		nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
+	}
+	toolBar := options.MacOS.ToolBar
+	if toolBar != nil {
+		cocoa.NewToolBar(m.NSInstance(), cocoa.ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
+	}
 }
 
 func (m *TWindow) Frameless() {
-	nsWindow := m.NSWindow()
-	_ = nsWindow
-	mask := nsWindow.StyleMask()
-	mask |= C.NSWindowStyleMaskFullSizeContentView
-	nsWindow.SetTitleBarAppearsTransparent(true)
-	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
 	options := application.GApplication.Options
-	if options.DisableResize {
-		mask ^= C.NSWindowStyleMaskResizable
+	if options.Frameless {
+		nsWindow := m.NSWindow()
+		mask := nsWindow.StyleMask()
+		mask ^= C.NSWindowStyleMaskTitled
+		nsWindow.SetStyleMask(mask)
 	}
-	//if options.MacOS.HideTitleBar {
-	//	mask ^= C.NSWindowStyleMaskTitled
-	//}
-	//mask = C.NSWindowStyleMaskClosable
-	//mask = C.NSWindowStyleMaskMiniaturizable
-	//mask = C.NSWindowStyleMaskResizable
-	nsWindow.SetStyleMask(mask)
-	//C.SetWindowRadius(m.NSInstance())
 }

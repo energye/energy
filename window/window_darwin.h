@@ -12,7 +12,7 @@ extern "C" {
 
 extern void GoLog(char* message);
 
-void SetWindowRadius(void* nsWindow);
+void SetWindowRadius(void* nsWindow, float radius);
 void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha);
 void DragWindow(void* nsWindow);
 NSVisualEffectView* SetWindowTransparent(void* nsWindow);

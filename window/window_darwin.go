@@ -82,9 +82,6 @@ func (m *TWindow) SetOptions() {
 	}
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
-	if options.Frameless {
-		m.Frameless()
-	}
 	if options.WindowIsTransparent {
 		m.SetWindowTransparent()
 		if options.MacOS.AppearanceNamed != "" {
@@ -95,6 +92,9 @@ func (m *TWindow) SetOptions() {
 		r, g, b, a := uint8(options.BackgroundColor.R), uint8(options.BackgroundColor.G), uint8(options.BackgroundColor.B), uint8(options.BackgroundColor.A)
 		m.SetBackgroundColor(r, g, b, a)
 	}
+	m.SetWindowRadius()
+	m.Frameless()
+	m.TitleBar()
 }
 
 func (m *TWindow) SetWindowState(value types.TWindowState) {
