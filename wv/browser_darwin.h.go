@@ -89,13 +89,13 @@ func (m *TWebview) UpdateBounds() {
 				h += float32(windowBoundsRect.Height() - m.oldBounds.Height())
 			}
 		}
-		m.SetBounds(int32(x), int32(y), int32(w), int32(h))
 		m.UpdateWebviewBounds(x, y, w, h)
 		m.oldBounds = windowBoundsRect
 	}
 }
 
 func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
+	m.SetBounds(int32(x), int32(y), int32(width), int32(height))
 	nsWindow := unsafe.Pointer(m.nsWindow)
 	nsWebview := unsafe.Pointer(m.browser.Data())
 	C.UpdateWebviewBounds(nsWindow, nsWebview, C.float(x), C.float(y), C.float(width), C.float(height))
