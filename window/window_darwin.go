@@ -40,6 +40,7 @@ type IDarwinWindow interface {
 	NSInstance() unsafe.Pointer
 	NSWindow() lcl.NSWindow
 	DragWindow()
+	AddSubview(nsView unsafe.Pointer)
 }
 
 type TWindow struct {
