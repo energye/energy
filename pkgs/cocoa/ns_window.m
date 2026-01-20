@@ -154,3 +154,21 @@ void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAp
         [window setAppearance:nsAppearanceName];
     }
 }
+
+void WindowAddSubview(void* nsWindow, void* nsView) {
+	NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"WindowAddSubview window nil");
+        return;
+    }
+	NSView* view = (NSView*)nsView;
+    if (!view) {
+        NSLog(@"WindowAddSubview view nil");
+        return;
+    }
+	NSView* contentView = window.contentView;
+	[contentView addSubview:view];
+	[view setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
+	CGRect contentViewBounds = [contentView bounds];
+	[view setFrame:contentViewBounds];
+}
