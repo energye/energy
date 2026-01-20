@@ -19,18 +19,6 @@ package cocoa
 */
 import "C"
 
-// TccType 事件类型, 用于区分普通通知事件, 还是特殊事件
-type TccType = C.TccType
-
-const (
-	TCCNotify             = TccType(C.TCCNotify)
-	TCCClicked            = TccType(C.TCCClicked)
-	TCCTextDidChange      = TccType(C.TCCTextDidChange)
-	TCCTextDidEndEditing  = TccType(C.TCCTextDidEndEditing)
-	TCCSelectionChanged   = TccType(C.TCCSelectionChanged)
-	TCCSelectionDidChange = TccType(C.TCCSelectionDidChange)
-)
-
 type ToolbarDisplayMode = int
 
 const (

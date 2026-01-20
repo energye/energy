@@ -6,9 +6,10 @@
 
 @implementation TWindowDelegate
 
-- (void)attachToWindow:(NSWindow *)window {
+- (void)attachToWindow:(NSWindow *)window withCallback:(TEventCallback ) callback {
     NSLog(@"TWindowDelegate attachToWindow");
-    self.observedWindow = window;
+    self.window = window;
+    self._callback = callback;
     self.originalDelegate = window.delegate; // 保存原始 delegate
     window.delegate = self;                  // 自己接管
 }
@@ -24,6 +25,18 @@
     if ([self.originalDelegate respondsToSelector:_cmd]) {
         [self.originalDelegate windowWillEnterFullScreen:notification];
     }
+    if (self._callback) {
+        TCallbackContext *context = CreateCallbackContext(@"__doWindowEnterFullScreen", @"", -1, nil, self.window);
+        GoArguments *result;
+        @try{
+            result = self._callback(context);
+        } @finally {
+            if (result) {
+                FreeGoArguments(result);
+            }
+            FreeCallbackContext(context);
+        }
+    }
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification {
@@ -31,6 +44,18 @@
      if ([self.originalDelegate respondsToSelector:_cmd]) {
          [self.originalDelegate windowDidExitFullScreen:notification];
      }
+    if (self._callback) {
+        TCallbackContext *context = CreateCallbackContext(@"__doWindowExitFullScreen", @"", -1, nil, self.window);
+        GoArguments *result;
+        @try{
+            result = self._callback(context);
+        } @finally {
+            if (result) {
+                FreeGoArguments(result);
+            }
+            FreeCallbackContext(context);
+        }
+    }
  }
 
 - (NSApplicationPresentationOptions)window:(NSWindow *)window willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions {
@@ -40,19 +65,31 @@
 //        NSApplicationPresentationOptions originalOptions = [self.originalDelegate window:window willUseFullScreenPresentationOptions:proposedOptions];
 //        return myOptions | originalOptions;
 //    }
+    if (self._callback) {
+        TCallbackContext *context = CreateCallbackContext(@"__doWindowWillUseFullScreenPresentationOptions", @"", -1, nil, self.window);
+        GoArguments *result;
+        @try{
+            result = self._callback(context);
+        } @finally {
+            if (result) {
+                FreeGoArguments(result);
+            }
+            FreeCallbackContext(context);
+        }
+    }
     return myOptions;
 }
 
 @end
 
-TWindowDelegate* CreateWindowDelegate(void* nsWindow) {
+TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
         NSLog(@"CreateWindowDelegate window is nil");
         return nil;
     }
     TWindowDelegate *windowDelegate = [[TWindowDelegate alloc] init];
-    [windowDelegate attachToWindow:window];
+    [windowDelegate attachToWindow:window withCallback:callback];
     return windowDelegate;
 }
 

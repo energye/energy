@@ -25,42 +25,41 @@ import (
 
 type Pointer = unsafe.Pointer
 
-// NotifyEvent 通用事件通知
-type NotifyEvent func(identifier string, owner Pointer, sender Pointer) *GoArguments
-type TextEvent func(identifier string, value string, owner Pointer, sender Pointer) *GoArguments
-type DelegateToolbarEvent func(arguments *OCGoArguments, owner Pointer, sender Pointer) *GoArguments
+type TNotifyEvent func(identifier string, owner Pointer, sender Pointer) *GoArguments
+type TTextEvent func(identifier string, value string, owner Pointer, sender Pointer) *GoArguments
+type TDelegateEvent func(arguments *OCGoArguments, owner Pointer, sender Pointer) *GoArguments
 
-type Color struct {
+type TColor struct {
 	Red   float32
 	Green float32
 	Blue  float32
 	Alpha float32
 }
 
-func (m *Color) ToOC() C.Color {
+func (m *TColor) ToOC() C.Color {
 	return C.Color{Red: C.CGFloat(m.Red / 255.0), Green: C.CGFloat(m.Green / 255.0), Blue: C.CGFloat(m.Blue / 255.0), Alpha: C.CGFloat(m.Alpha / 255.0)}
 }
 
-type ItemBase struct {
+type TItemBase struct {
 	Identifier   string
 	Priority     ItemVisibilityPriority
 	Navigational bool
 }
 
-type ItemUI struct {
-	ItemBase
+type TItemUI struct {
+	TItemBase
 	IconName string
 	Title    string
 	Tips     string
 	Bordered bool
 }
 
-type ButtonItem struct {
-	ItemUI
+type TButtonItem struct {
+	TItemUI
 }
 
-type ControlTextField struct {
-	ItemUI
+type TControlTextField struct {
+	TItemUI
 	SendWhole         bool
 	SendImmediately   bool
 	ResignsWithCancel bool
@@ -68,10 +67,19 @@ type ControlTextField struct {
 	Placeholder       string
 }
 
-type ControlComboBox struct {
-	ItemUI
+type TControlComboBox struct {
+	TItemUI
 	Editable bool
 	Items    []string
+}
+
+type TCallbackContext struct {
+	Identifier string         // 控件唯一标识
+	Value      string         // 控件值
+	Index      int            // 值索引
+	Owner      Pointer        // 所属对象
+	Sender     Pointer        // 控件对象
+	Arguments  *OCGoArguments // 参数
 }
 
 func ToolbarConfigurationToOC(config ToolbarConfiguration) C.ToolbarConfiguration {

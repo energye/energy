@@ -18,6 +18,8 @@ package cocoa
 
 #include "ns_window.h"
 
+extern GoArguments* doOnWindowDelegateEvent(TCallbackContext *CContext);
+
 */
 import "C"
 import (
@@ -25,11 +27,41 @@ import (
 	"unsafe"
 )
 
+//export doOnWindowDelegateEvent
+func doOnWindowDelegateEvent(CContext *C.TCallbackContext) *C.GoArguments {
+	ctx := TCallbackContext{
+		Identifier: C.GoString(CContext.identifier),
+		Value:      C.GoString(CContext.value),
+		Index:      int(CContext.index),
+		Owner:      CContext.owner,
+		Sender:     CContext.sender,
+	}
+	cArguments := CContext.arguments
+	if cArguments != nil {
+		ctx.Arguments = &OCGoArguments{arguments: Pointer(cArguments), count: int(cArguments.Count)}
+	}
+	eventId := ctx.Identifier
+	cb := eventList[eventId]
+	if cb == nil {
+		return nil
+	}
+	if result := cb.cb(&ctx); result != nil {
+		return result.ToOC()
+	} else {
+		return nil
+	}
+}
+
+func _CreateEventCallback() C.TEventCallback {
+	return (C.TEventCallback)(C.doOnWindowDelegateEvent)
+}
+
 func CreateWindowDelegate(window unsafe.Pointer) unsafe.Pointer {
 	if window == nil {
 		return nil
 	}
-	windowDelegate := C.CreateWindowDelegate(window)
+	windowEventCallback := _CreateEventCallback()
+	windowDelegate := C.CreateWindowDelegate(window, windowEventCallback)
 	return unsafe.Pointer(windowDelegate)
 }
 

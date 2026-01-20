@@ -2,6 +2,8 @@
 #import <objc/runtime.h>
 #import <WebKit/WebKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <go_arguments.h>
+#import <cocoa.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -25,11 +27,12 @@ NSVisualEffectView* SetWindowTransparent(void* nsWindow);
 void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAppearance);
 
 @interface TWindowDelegate : NSObject <NSWindowDelegate>
-    @property (assign) NSWindow *observedWindow;
+    @property (assign) NSWindow *window;
     @property (assign) id<NSWindowDelegate> originalDelegate;
+    @property (assign) TEventCallback _callback;
 @end
 
-TWindowDelegate* CreateWindowDelegate(void* nsWindow);
+TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback);
 
 #ifdef __cplusplus
 }

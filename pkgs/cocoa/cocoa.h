@@ -5,16 +5,6 @@
 extern "C" {
 #endif
 
-// 事件类型, 用于区分普通通知事件, 还是特殊事件
-typedef enum {
-    TCCNotify = 0,
-    TCCClicked = 1,
-    TCCTextDidChange = 2,
-    TCCTextDidEndEditing = 3,
-    TCCSelectionChanged = 4,
-    TCCSelectionDidChange = 5
-} TccType;
-
 // 颜色
 typedef struct {
     CGFloat Red;
@@ -22,6 +12,20 @@ typedef struct {
     CGFloat Blue;
     CGFloat Alpha;
 }  Color;
+
+typedef struct {
+    long    type_;              // 事件类型, 用于区分普通通知事件, 还是特殊事件 1: 点击事件 2: 文本改变事件 3:文本提交事件 4:下拉框回车/离开焦点事件 5:下拉框选择事件
+    const   char *identifier;   // 控件标识
+    const   char *value;        // 控件值
+    long    index;              // 值索引
+    void    *owner;             // 控件所属对象
+    void    *sender;            // 控件
+    GoArguments *arguments;
+} TCallbackContext;
+
+typedef GoArguments* (*TEventCallback)(TCallbackContext *context);
+TCallbackContext* CreateCallbackContext(const NSString* identifier, const NSString* value, long index, void* owner, void* sender);
+void FreeCallbackContext(TCallbackContext* context);
 
 // 工具栏配置选项
 typedef struct {

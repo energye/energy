@@ -15,10 +15,10 @@ type IView interface {
 
 type View struct {
 	instance Pointer
-	config   ItemBase
+	config   TItemBase
 }
 
-func NewNSView(config ItemBase) *View {
+func NewNSView(config TItemBase) *View {
 	if config.Identifier == "" {
 		config.Identifier = nextSerialNumber("NSView")
 	}
