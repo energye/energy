@@ -21,6 +21,7 @@ package window
 import "C"
 import (
 	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/types"
 	"unsafe"
 )
@@ -48,15 +49,39 @@ func (m *TWindow) SwitchFrostedMaterial(appearanceName application.AppearanceNam
 	C.SwitchFrostedMaterial(m.frostedView, m.NSWindowInstance(), C.CString(string(appearanceName)))
 }
 
+func (m *TWindow) Toolbar() {
+	nsWindow := m.NSWindow()
+	_ = nsWindow
+	mask := nsWindow.StyleMask()
+	mask |= C.NSWindowStyleMaskFullSizeContentView
+	//mask ^= C.NSWindowStyleMaskTitled
+	//nsWindow.SetStyleMask(C.NSWindowStyleMaskTitled | C.NSWindowStyleMaskFullSizeContentView | C.NSWindowStyleMaskResizable)
+	nsWindow.SetStyleMask(mask)
+	nsWindow.SetTitleBarAppearsTransparent(true)
+	nsWindow.SetTitleVisibility(1)
+	cocoa.NewToolBar(m.NSInstance(), cocoa.ToolbarConfiguration{ShowSeparator: false})
+	//m.Frameless()
+	//[self.window setMovableByWindowBackground:YES];
+	//C.SetWindowRadius(m.NSInstance())
+}
+
 func (m *TWindow) Frameless() {
 	nsWindow := m.NSWindow()
+	_ = nsWindow
+	mask := nsWindow.StyleMask()
+	mask |= C.NSWindowStyleMaskFullSizeContentView
 	nsWindow.SetTitleBarAppearsTransparent(true)
 	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
-	mask := uint(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
 	options := application.GApplication.Options
 	if options.DisableResize {
-		mask ^= NSWindowStyleMaskResizable
+		mask ^= C.NSWindowStyleMaskResizable
 	}
+	//if options.MacOS.HideTitleBar {
+	//	mask ^= C.NSWindowStyleMaskTitled
+	//}
+	//mask = C.NSWindowStyleMaskClosable
+	//mask = C.NSWindowStyleMaskMiniaturizable
+	//mask = C.NSWindowStyleMaskResizable
 	nsWindow.SetStyleMask(mask)
-	C.SetFrameless(m.NSInstance())
+	//C.SetWindowRadius(m.NSInstance())
 }

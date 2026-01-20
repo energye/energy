@@ -13,23 +13,27 @@ package application
 type AppearanceNamed string
 
 const (
-	// NSAppearanceNameAqua - The standard light system appearance.
+	// NSAppearanceNameAqua - 标准浅色系统外观
 	NSAppearanceNameAqua AppearanceNamed = "NSAppearanceNameAqua"
-	// NSAppearanceNameDarkAqua - The standard dark system appearance.
+	// NSAppearanceNameDarkAqua - 标准深色系统外观
 	NSAppearanceNameDarkAqua AppearanceNamed = "NSAppearanceNameDarkAqua"
-	// NSAppearanceNameVibrantLight - The light vibrant appearance
+	// NSAppearanceNameVibrantLight - 浅色生动外观
 	NSAppearanceNameVibrantLight AppearanceNamed = "NSAppearanceNameVibrantLight"
-	// NSAppearanceNameAccessibilityHighContrastAqua - A high-contrast version of the standard light system appearance.
+	// NSAppearanceNameAccessibilityHighContrastAqua - 标准浅色系统外观的高对比度版本
 	NSAppearanceNameAccessibilityHighContrastAqua AppearanceNamed = "NSAppearanceNameAccessibilityHighContrastAqua"
-	// NSAppearanceNameAccessibilityHighContrastDarkAqua - A high-contrast version of the standard dark system appearance.
+	// NSAppearanceNameAccessibilityHighContrastDarkAqua - 标准深色系统外观的高对比度版本
 	NSAppearanceNameAccessibilityHighContrastDarkAqua AppearanceNamed = "NSAppearanceNameAccessibilityHighContrastDarkAqua"
-	// NSAppearanceNameAccessibilityHighContrastVibrantLight - A high-contrast version of the light vibrant appearance.
+	// NSAppearanceNameAccessibilityHighContrastVibrantLight - 浅色生动外观的高对比度版本
 	NSAppearanceNameAccessibilityHighContrastVibrantLight AppearanceNamed = "NSAppearanceNameAccessibilityHighContrastVibrantLight"
-	// NSAppearanceNameAccessibilityHighContrastVibrantDark - A high-contrast version of the dark vibrant appearance.
+	// NSAppearanceNameAccessibilityHighContrastVibrantDark - 深色生动外观的高对比度版本
 	NSAppearanceNameAccessibilityHighContrastVibrantDark AppearanceNamed = "NSAppearanceNameAccessibilityHighContrastVibrantDark"
 )
 
+type TitleBar struct {
+	HideTitleBar bool
+}
+
 type MacOS struct {
 	AppearanceNamed AppearanceNamed
-	// TODO add titlebar
+	TitleBar        TitleBar
 }

@@ -17,7 +17,7 @@ NSString* NewNSString(const char* string) {
 }
 
 // 设置无边框窗口
-void SetFrameless(void* nsWindow) {
+void SetWindowRadius(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
 	NSView* contentView = window.contentView;
 	[contentView setWantsLayer:YES]; // view.setWantsLayer(true);
@@ -30,9 +30,8 @@ void SetFrameless(void* nsWindow) {
 
 // 设置窗口背景色
 void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
-	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
+	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithCalibratedRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
 }
-
 
 // 拖拽窗口
 void DragWindow(void* nsWindow) {
@@ -71,7 +70,6 @@ NSVisualEffectView* SetWindowTransparent(void* nsWindow) {
 	[frostedView setState:NSVisualEffectStateActive];
 
 	[contentView addSubview:frostedView positioned:NSWindowBelow relativeTo:nil];
-
     return frostedView;
 }
 

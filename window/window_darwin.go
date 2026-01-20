@@ -23,7 +23,7 @@ import "C"
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/pkgs/cocoa/window"
+	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"unsafe"
@@ -85,9 +85,15 @@ func (m *TWindow) SetOptions() {
 	if options.Frameless {
 		m.Frameless()
 	}
-	if options.WindowIsTransparent || options.WebviewIsTransparent {
+	if options.WindowIsTransparent {
 		m.SetWindowTransparent()
-		m.SwitchFrostedMaterial(options.MacOS.AppearanceNamed)
+		if options.MacOS.AppearanceNamed != "" {
+			m.SwitchFrostedMaterial(options.MacOS.AppearanceNamed)
+		}
+	}
+	if options.BackgroundColor != nil {
+		r, g, b, a := uint8(options.BackgroundColor.R), uint8(options.BackgroundColor.G), uint8(options.BackgroundColor.B), uint8(options.BackgroundColor.A)
+		m.SetBackgroundColor(r, g, b, a)
 	}
 }
 
@@ -95,12 +101,12 @@ func (m *TWindow) SetWindowState(value types.TWindowState) {
 	m.windowsState = value
 	switch value {
 	case types.WsMaximized:
-		window.ExitMinimized(m.NSInstance())
-		window.Maximize(m.NSInstance())
+		cocoa.WindowExitMinimized(m.NSInstance())
+		cocoa.WindowMaximize(m.NSInstance())
 	case types.WsNormal:
-		window.Restore(m.NSInstance())
+		cocoa.WindowRestore(m.NSInstance())
 	case types.WsMinimized:
-		window.Minimized(m.NSInstance())
+		cocoa.WindowMinimized(m.NSInstance())
 	}
 }
 
@@ -114,7 +120,7 @@ func (m *TWindow) FullScreen() {
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
 		m.SetWindowState(types.WsFullScreen)
-		window.EnterFullScreen(m.NSInstance())
+		cocoa.WindowEnterFullScreen(m.NSInstance())
 	})
 }
 
@@ -122,7 +128,7 @@ func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			m.SetWindowState(types.WsNormal)
-			window.ExitFullScreen(m.NSInstance())
+			cocoa.WindowExitFullScreen(m.NSInstance())
 		})
 	}
 }
