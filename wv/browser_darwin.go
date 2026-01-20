@@ -42,6 +42,7 @@ type TWebview struct {
 	menu                    lcl.IPopupMenu
 	window                  window.IWindow
 	nsWindow                lcl.NSWindow
+	oldBounds               types.TRect
 	isAddNSWindowSubview    bool
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview

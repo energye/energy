@@ -20,7 +20,6 @@ package wv
 */
 import "C"
 import (
-	"fmt"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
@@ -65,31 +64,34 @@ func (m *TWebview) UpdateBounds() {
 			x, y, w, h = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 		case types.AlClient:
 			x, y, w, h = 0, 0, float32(windowBoundsRect.Width()), float32(windowBoundsRect.Height())
-		case types.AlTop, types.AlBottom, types.AlLeft, types.AlRight:
+		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
 			switch webviewAlign {
-			case types.AlTop:
-				x, y, w, h = 0, 0, float32(windowBoundsRect.Width()), float32(webviewBounds.Height())
-			case types.AlBottom:
-				x, y, w, h = 0, float32(windowBoundsRect.Height()-(windowBoundsRect.Height()-webviewBounds.Height())), float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
 			case types.AlLeft:
 				x, y, w, h = 0, 0, float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
+			case types.AlTop:
+				x, y, w, h = 0, 0, float32(windowBoundsRect.Width()), float32(webviewBounds.Height())
 			case types.AlRight:
-				x, y, w, h = float32(windowBoundsRect.Width()-(windowBoundsRect.Width()-webviewBounds.Width())), 0, float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
+				x, y, w, h = float32(windowBoundsRect.Width()-webviewBounds.Width()), 0, float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
+			case types.AlBottom:
+				x, y, w, h = 0, float32(windowBoundsRect.Height()-webviewBounds.Height()), float32(windowBoundsRect.Width()), float32(webviewBounds.Height())
 			}
 		}
-		println("windowBoundsRect", x, y, w, h)
-		fmt.Println("BaseBounds", m.window.BaseBounds(), m.window.BaseParentClientSize())
 		switch webviewAlign {
 		case types.AlNone, types.AlCustom:
-			akLeft := webviewAnchors.In(types.AkLeft)
-			akTop := webviewAnchors.In(types.AkTop)
+			//akLeft := webviewAnchors.In(types.AkLeft)
+			//akTop := webviewAnchors.In(types.AkTop)
 			akRight := webviewAnchors.In(types.AkRight)
 			akBottom := webviewAnchors.In(types.AkBottom)
-			if akLeft && akTop && akRight && akBottom {
-
+			if akRight {
+				w += float32(windowBoundsRect.Width() - m.oldBounds.Width())
+			}
+			if akBottom {
+				h += float32(windowBoundsRect.Height() - m.oldBounds.Height())
 			}
 		}
+		m.SetBounds(int32(x), int32(y), int32(w), int32(h))
 		m.UpdateWebviewBounds(x, y, w, h)
+		m.oldBounds = windowBoundsRect
 	}
 }
 
