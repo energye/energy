@@ -4,12 +4,64 @@
 #import "cocoa.h"
 #import "ns_window.h"
 
+@implementation TWindowDelegate
+
+- (void)attachToWindow:(NSWindow *)window {
+    NSLog(@"TWindowDelegate attachToWindow");
+    self.observedWindow = window;
+    self.originalDelegate = window.delegate; // 保存原始 delegate
+    window.delegate = self;                  // 自己接管
+}
+
+- (void)dealloc {
+    NSLog(@"TWindowDelegate dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
+- (void)windowWillEnterFullScreen:(NSNotification *)notification {
+    NSLog(@"TWindowDelegate: will enter full screen");
+    if ([self.originalDelegate respondsToSelector:_cmd]) {
+        [self.originalDelegate windowWillEnterFullScreen:notification];
+    }
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification {
+     NSLog(@"TWindowDelegate: did exit full screen");
+     if ([self.originalDelegate respondsToSelector:_cmd]) {
+         [self.originalDelegate windowDidExitFullScreen:notification];
+     }
+ }
+
+- (NSApplicationPresentationOptions)window:(NSWindow *)window willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions {
+     NSLog(@"TWindowDelegate: willUseFullScreenPresentationOptions");
+    NSApplicationPresentationOptions myOptions = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen;
+//    if ([self.originalDelegate respondsToSelector:_cmd]) {
+//        NSApplicationPresentationOptions originalOptions = [self.originalDelegate window:window willUseFullScreenPresentationOptions:proposedOptions];
+//        return myOptions | originalOptions;
+//    }
+    return myOptions;
+}
+
+@end
+
+TWindowDelegate* CreateWindowDelegate(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"CreateWindowDelegate window is nil");
+        return nil;
+    }
+    TWindowDelegate *windowDelegate = [[TWindowDelegate alloc] init];
+    [windowDelegate attachToWindow:window];
+    return windowDelegate;
+}
+
 // 最大化
 
 void WindowMaximize(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口不可用或不可调整大小，无法执行最大化");
+        NSLog(@"WindowMaximize window is nil");
         return;
     }
     //if (!window.isZoomed) {
@@ -20,7 +72,7 @@ void WindowMaximize(void* nsWindow) {
 void WindowRestore(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口为 nil");
+        NSLog(@"WindowRestore window is nil");
         return;
     }
     //if (window.isZoomed) {
@@ -33,7 +85,7 @@ void WindowRestore(void* nsWindow) {
 void WindowMinimized(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口为 nil");
+        NSLog(@"WindowMinimized window is nil");
         return;
     }
     if (![window isMiniaturized]) {
@@ -44,7 +96,7 @@ void WindowMinimized(void* nsWindow) {
 void WindowExitMinimized(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口为 nil");
+        NSLog(@"WindowExitMinimized window is nil");
         return;
     }
     if ([window isMiniaturized]) {
@@ -57,7 +109,7 @@ void WindowExitMinimized(void* nsWindow) {
 void WindowEnterFullScreen(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口为 nil");
+        NSLog(@"WindowEnterFullScreen window is nil");
         return;
     }
     [window toggleFullScreen:nil];
@@ -66,7 +118,7 @@ void WindowEnterFullScreen(void* nsWindow) {
 void WindowExitFullScreen(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        NSLog(@"窗口为 nil");
+        NSLog(@"WindowExitFullScreen window is nil");
         return;
     }
     [window toggleFullScreen:nil];
@@ -101,18 +153,18 @@ void DragWindow(void* nsWindow) {
     NSEvent *currentMouseEvent = [NSApp currentEvent];
 
     if (!currentMouseEvent) {
-        NSLog(@"DragWindow 获取当前事件失败：事件为 nil");
+        NSLog(@"DragWindow currentMouseEvent is nil");
         return;
     }
     if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        NSLog(@"DragWindow 获取当前事件失败：非左键按下事件");
+        NSLog(@"DragWindow currentMouseEvent not left down");
         return;
     }
     //NSWindow* window = (NSWindow*)nsWindow;
 	NSWindow* window = [currentMouseEvent window];
  	//NSWindow *window = [NSApp keyWindow];
     if (!window) {
-        NSLog(@"DragWindow 获取当前事件窗口失败");
+        NSLog(@"DragWindow window is nil");
         return;
     }
     [window performWindowDragWithEvent:currentMouseEvent];

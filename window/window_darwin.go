@@ -61,7 +61,7 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-
+	cocoa.CreateWindowDelegate(m.NSInstance())
 }
 func (m *TWindow) _BeforeFormShow() {
 }

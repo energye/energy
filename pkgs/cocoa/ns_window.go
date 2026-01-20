@@ -25,6 +25,14 @@ import (
 	"unsafe"
 )
 
+func CreateWindowDelegate(window unsafe.Pointer) unsafe.Pointer {
+	if window == nil {
+		return nil
+	}
+	windowDelegate := C.CreateWindowDelegate(window)
+	return unsafe.Pointer(windowDelegate)
+}
+
 func WindowRestore(window unsafe.Pointer) {
 	if window == nil {
 		return

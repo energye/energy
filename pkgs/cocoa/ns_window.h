@@ -24,6 +24,13 @@ void DragWindow(void* nsWindow);
 NSVisualEffectView* SetWindowTransparent(void* nsWindow);
 void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAppearance);
 
+@interface TWindowDelegate : NSObject <NSWindowDelegate>
+    @property (assign) NSWindow *observedWindow;
+    @property (assign) id<NSWindowDelegate> originalDelegate;
+@end
+
+TWindowDelegate* CreateWindowDelegate(void* nsWindow);
+
 #ifdef __cplusplus
 }
 #endif
