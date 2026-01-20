@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 void SetWebviewTransparent(void* nsWebview, int isTransparent);
+void AddSubviewWebview(void* nsWindow, void* nsWebview);
 
 #ifdef __cplusplus
 }

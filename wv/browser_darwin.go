@@ -138,11 +138,7 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 	m.window.SetOnWindowShow(m.onWindowShow)
 	m.window.SetOnWindowClose(m.onWindowClose)
 	m.window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
-
-	if macWindow, ok := m.window.(window.IDarwinWindow); ok {
-		webview := unsafe.Pointer(m.browser.Data())
-		macWindow.AddSubview(webview)
-	}
+	m.AddSubviewWebview()
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -157,7 +153,7 @@ func (m *TWebview) SetBrowserOptions() {
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	//m.ICustomPanel.SetParent(owner)
-	m.windowParent.SetParent(owner)
+	//m.windowParent.SetParent(owner)
 }
 
 // 在窗口显示时调用

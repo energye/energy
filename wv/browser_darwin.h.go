@@ -20,6 +20,8 @@ package wv
 */
 import "C"
 import (
+	"fmt"
+	"github.com/energye/lcl/lcl"
 	"unsafe"
 )
 
@@ -28,6 +30,20 @@ func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 	isTransparent = !isTransparent
 	v := _BoolToCInt(isTransparent)
 	C.SetWebviewTransparent(handle, v)
+}
+
+func (m *TWebview) AddSubviewWebview() {
+	fmt.Println("AddSubview")
+	//CGRect init = { 0,0,0,0 };
+	//[self.webview initWithFrame:init configuration:config];
+	//[contentView addSubview:self.webview];
+	//[self.webview setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
+	//CGRect contentViewBounds = [contentView bounds];
+	//[self.webview setFrame:contentViewBounds];
+
+	nsWindow := unsafe.Pointer(lcl.PlatformWindow(m.window.Instance()))
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.AddSubviewWebview(nsWindow, nsWebview)
 }
 
 func _BoolToCInt(value bool) C.int {
