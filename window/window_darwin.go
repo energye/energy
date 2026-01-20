@@ -81,6 +81,7 @@ func (m *TWindow) _BeforeFormCreate() {
 		return nil
 	}))
 }
+
 func (m *TWindow) _BeforeFormShow() {
 }
 

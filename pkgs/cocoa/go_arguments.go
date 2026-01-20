@@ -99,7 +99,7 @@ func (m *GoArguments) ToOC() *C.GoArguments {
 			itemPtr.Type = GoArgsType_Object
 			itemPtr.Value = v // 对应 类对象
 		default:
-			println("[警告] 不支持的类型")
+			println("[Warn] GoArguments.ToOC 不支持的类型")
 		}
 	}
 	return goArgs
