@@ -127,7 +127,14 @@ func NewWebview(owner lcl.IComponent) IWebview {
 }
 
 func (m *TWebview) SetWindow(iWindow window.IWindow) {
+	if iWindow == nil {
+		return
+	}
 	m.window = iWindow
+	m.window.SetOnWindowResize(m.doOnWindowResize)
+	m.window.SetOnWindowShow(m.doOnWindowShow)
+	m.window.SetOnWindowClose(m.doOnWindowClose)
+	m.window.SetOnWindowCloseQuery(m.doOnWindowCloseQuery)
 	if m.window != nil {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
@@ -135,9 +142,6 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 		m.window.SetOptions()
 	}
 	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
-	m.window.SetOnWindowShow(m.onWindowShow)
-	m.window.SetOnWindowClose(m.onWindowClose)
-	m.window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
 	m.AddSubviewWebview()
 }
 
@@ -153,7 +157,7 @@ func (m *TWebview) SetBrowserOptions() {
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	//m.ICustomPanel.SetParent(owner)
-	//m.windowParent.SetParent(owner)
+	m.windowParent.SetParent(m)
 }
 
 // 在窗口显示时调用
@@ -214,18 +218,18 @@ func (m *TWebview) Browser() wv.IWkWebview {
 
 // onWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
-func (m *TWebview) onWindowShow(sender lcl.IObject) {
+func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	m.CreateBrowser()
 }
 
 // onWindowClose 处理窗口关闭事件的回调函数
 // 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
-func (m *TWebview) onWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 }
 
 // onWindowCloseQuery 处理窗口关闭查询事件
 // 当用户尝试关闭窗口时触发此回调函数
-func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	//*canClose = m.window.IsClose()
 	if !m.window.IsClose() {
 		m.window.SetClose(true)
@@ -237,6 +241,11 @@ func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	//if *canClose && m.isMainWindow {
 	//	os.Exit(0)
 	//}
+}
+
+func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
+	fmt.Println("onWindowResize", m.BoundsRect(), m.window.BoundsRect())
+
 }
 
 // SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数

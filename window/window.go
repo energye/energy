@@ -32,6 +32,7 @@ type IWindow interface {
 	IsFullScreen() bool
 	SetClose(v bool)
 	IsClose() bool
+	SetOnWindowResize(fn lcl.TNotifyEvent)
 	SetOnWindowCreate(fn lcl.TNotifyEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowClose(fn lcl.TCloseEvent)
@@ -46,6 +47,8 @@ type TEnergyWindow struct {
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
 	previousWindowPlacement types.TRect
+	onResize                lcl.TNotifyEvent
+	onWindowResize          []lcl.TNotifyEvent
 	onWindowCreate          []lcl.TNotifyEvent
 	onWindowShow            []lcl.TNotifyEvent
 	onWindowClose           []lcl.TCloseEvent
@@ -58,6 +61,10 @@ func (m *TEnergyWindow) SetClose(v bool) {
 
 func (m *TEnergyWindow) IsClose() bool {
 	return m.isClose
+}
+
+func (m *TEnergyWindow) SetOnWindowResize(fn lcl.TNotifyEvent) {
+	m.onWindowResize = append(m.onWindowResize, fn)
 }
 
 func (m *TEnergyWindow) SetOnWindowCreate(fn lcl.TNotifyEvent) {
@@ -74,6 +81,10 @@ func (m *TEnergyWindow) SetOnWindowClose(fn lcl.TCloseEvent) {
 
 func (m *TEnergyWindow) SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
 	m.onWindowCloseQuery = append(m.onWindowCloseQuery, fn)
+}
+
+func (m *TEnergyWindow) SetOnResize(fn lcl.TNotifyEvent) {
+	m.onResize = fn
 }
 
 func (m *TWindow) SetBrowserId(windowId uint32) {
@@ -129,6 +140,7 @@ func (m *TWindow) IsMaximize() bool {
 }
 
 func (m *TWindow) FormCreate(sender lcl.IObject) {
+	m.TEngForm.SetOnResize(m.doOnResize)
 	m._BeforeFormCreate()
 	for _, fn := range m.onWindowCreate {
 		fn(sender)
@@ -161,6 +173,15 @@ func (m *TWindow) OnCloseQuery(sender lcl.IObject, canClose *bool) {
 func (m *TWindow) OnClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 	for _, fn := range m.onWindowClose {
 		fn(sender, closeAction)
+	}
+}
+
+func (m *TWindow) doOnResize(sender lcl.IObject) {
+	for _, fn := range m.onWindowResize {
+		fn(sender)
+	}
+	if m.TEnergyWindow.onResize != nil {
+		m.TEnergyWindow.onResize(sender)
 	}
 }
 

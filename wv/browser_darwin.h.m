@@ -30,6 +30,4 @@ void AddSubviewWebview(void* nsWindow, void* nsWebview) {
 	[webview setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	CGRect contentViewBounds = [contentView bounds];
 	[webview setFrame:contentViewBounds];
-
-	// [frostedView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 }

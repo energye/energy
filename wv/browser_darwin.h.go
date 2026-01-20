@@ -43,7 +43,10 @@ func (m *TWebview) AddSubviewWebview() {
 
 	nsWindow := unsafe.Pointer(lcl.PlatformWindow(m.window.Instance()))
 	nsWebview := unsafe.Pointer(m.browser.Data())
+	nsWebview = unsafe.Pointer(m.Handle())
 	C.AddSubviewWebview(nsWindow, nsWebview)
+
+	//m.SetBounds()
 }
 
 func _BoolToCInt(value bool) C.int {
