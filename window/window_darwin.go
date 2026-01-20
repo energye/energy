@@ -63,16 +63,18 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 
 func (m *TWindow) _BeforeFormCreate() {
 	cocoa.CreateWindowDelegate(m.NSInstance())
-	cocoa.RegisterEvent("__doWindowEnterFullScreen", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("EnterFullScreen", m.BrowserId())
+	eventID := fmt.Sprintf("%v", m.NSInstance())
+	fmt.Println("_BeforeFormCreate", eventID)
+	cocoa.RegisterEvent("__doWindowEnterFullScreen_"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("EnterFullScreen", m.BrowserId(), uintptr(sender))
 		return nil
 	}))
-	cocoa.RegisterEvent("__doWindowExitFullScreen", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("ExitFullScreen", m.BrowserId())
+	cocoa.RegisterEvent("__doWindowExitFullScreen"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("ExitFullScreen", m.BrowserId(), uintptr(sender))
 		return nil
 	}))
-	cocoa.RegisterEvent("__doWindowWillUseFullScreenPresentationOptions", cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId())
+	cocoa.RegisterEvent("__doWindowUseFullScreenPresentationOptions_"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), uintptr(sender))
 		return nil
 	}))
 }

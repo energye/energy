@@ -7,7 +7,7 @@
 @implementation TWindowDelegate
 
 - (void)attachToWindow:(NSWindow *)window withCallback:(TEventCallback ) callback {
-    NSLog(@"TWindowDelegate attachToWindow");
+//    NSLog(@"TWindowDelegate attachToWindow");
     self.window = window;
     self._callback = callback;
     self.originalDelegate = window.delegate; // 保存原始 delegate
@@ -15,18 +15,19 @@
 }
 
 - (void)dealloc {
-    NSLog(@"TWindowDelegate dealloc");
+//    NSLog(@"TWindowDelegate dealloc");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {
-    NSLog(@"TWindowDelegate: will enter full screen");
+//    NSLog(@"TWindowDelegate: will enter full screen");
     if ([self.originalDelegate respondsToSelector:_cmd]) {
         [self.originalDelegate windowWillEnterFullScreen:notification];
     }
     if (self._callback) {
-        TCallbackContext *context = CreateCallbackContext(@"__doWindowEnterFullScreen", @"", -1, nil, self.window);
+        NSString *eventId = [NSString stringWithFormat:@"__doWindowEnterFullScreen_%p", self.window];
+        TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
             result = self._callback(context);
@@ -40,12 +41,13 @@
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification {
-     NSLog(@"TWindowDelegate: did exit full screen");
+//     NSLog(@"TWindowDelegate: did exit full screen");
      if ([self.originalDelegate respondsToSelector:_cmd]) {
          [self.originalDelegate windowDidExitFullScreen:notification];
      }
     if (self._callback) {
-        TCallbackContext *context = CreateCallbackContext(@"__doWindowExitFullScreen", @"", -1, nil, self.window);
+        NSString *eventId = [NSString stringWithFormat:@"__doWindowExitFullScreen_%p", self.window];
+        TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
             result = self._callback(context);
@@ -59,14 +61,15 @@
  }
 
 - (NSApplicationPresentationOptions)window:(NSWindow *)window willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions {
-     NSLog(@"TWindowDelegate: willUseFullScreenPresentationOptions");
+//    NSLog(@"TWindowDelegate: willUseFullScreenPresentationOptions");
     NSApplicationPresentationOptions myOptions = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen;
 //    if ([self.originalDelegate respondsToSelector:_cmd]) {
 //        NSApplicationPresentationOptions originalOptions = [self.originalDelegate window:window willUseFullScreenPresentationOptions:proposedOptions];
 //        return myOptions | originalOptions;
 //    }
     if (self._callback) {
-        TCallbackContext *context = CreateCallbackContext(@"__doWindowWillUseFullScreenPresentationOptions", @"", -1, nil, self.window);
+        NSString *eventId = [NSString stringWithFormat:@"__doWindowUseFullScreenPresentationOptions_%p", self.window];
+        TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
             result = self._callback(context);
