@@ -94,6 +94,9 @@ func VerifyWidget(handle uintptr) bool {
 
 // 获取对象的完整继承链（包括自身）
 func GetObjectInheritanceChain(handle unsafe.Pointer) (classNames []string) {
+	if handle == nil {
+		return nil
+	}
 	chain := C.getObjectInheritanceChain(handle)
 	defer C.freeInheritanceChain(&chain)
 	if chain.count == 0 {
@@ -109,6 +112,9 @@ func GetObjectInheritanceChain(handle unsafe.Pointer) (classNames []string) {
 
 // 获取对象的类名
 func GetObjectClassName(handle unsafe.Pointer) string {
+	if handle == nil {
+		return ""
+	}
 	className := C.getObjectClassName(handle)
 	return C.GoString(className)
 }

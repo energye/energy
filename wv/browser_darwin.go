@@ -41,6 +41,7 @@ type TWebview struct {
 	resizeHT                string
 	menu                    lcl.IPopupMenu
 	window                  window.IWindow
+	nsWindow                lcl.NSWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
@@ -58,7 +59,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 	m.menu = lcl.NewPopupMenu(owner)
 
-	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel = lcl.NewCustomPanel(owner)
 	m.ICustomPanel.SetParentDoubleBuffered(true)
 	m.ICustomPanel.SetBevelInner(types.BvNone)
 	m.ICustomPanel.SetBevelOuter(types.BvNone)
@@ -135,14 +136,11 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 	m.window.SetOnWindowShow(m.doOnWindowShow)
 	m.window.SetOnWindowClose(m.doOnWindowClose)
 	m.window.SetOnWindowCloseQuery(m.doOnWindowCloseQuery)
-	if m.window != nil {
-		if m.window.BrowserId() == 0 {
-			m.window.SetBrowserId(m.browserId)
-		}
-		m.window.SetOptions()
+	if m.window.BrowserId() == 0 {
+		m.window.SetBrowserId(m.browserId)
 	}
+	m.window.SetOptions()
 	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
-	m.AddSubviewWebview()
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -156,8 +154,12 @@ func (m *TWebview) SetBrowserOptions() {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
-	//m.ICustomPanel.SetParent(owner)
-	m.windowParent.SetParent(m)
+	if form, okForm := owner.(lcl.IEngForm); okForm {
+		m.AddFormSubviewWebview(form)
+	} else {
+		m.windowParent.SetParent(m)
+		m.ICustomPanel.SetParent(owner)
+	}
 }
 
 // 在窗口显示时调用
@@ -244,8 +246,7 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-	fmt.Println("onWindowResize", m.BoundsRect(), m.window.BoundsRect())
-
+	m.updateBounds()
 }
 
 // SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
@@ -456,18 +457,18 @@ func (m *TWebview) contextMenu(x, y int32) {
 		}
 		return item, commandId
 	}
-	newReloadItem, _ := createMenuItem("重新载入", func(commandId int32) {
-		m.browser.Reload()
-	})
-	items.Add(newReloadItem)
-	if !gApplication.Options.DisableDevTools {
-		newDevtoolItem, _ := createMenuItem("开发者工具", func(commandId int32) {
-			lcl.RunOnMainThreadAsync(func(id uint32) {
-				m.ExecuteScript("webkit.inspectElement(100, 100);")
-			})
-		})
-		items.Add(newDevtoolItem)
-	}
+	//newReloadItem, _ := createMenuItem("重新载入", func(commandId int32) {
+	//	m.browser.Reload()
+	//})
+	//items.Add(newReloadItem)
+	//if !gApplication.Options.DisableDevTools {
+	//	newDevtoolItem, _ := createMenuItem("开发者工具", func(commandId int32) {
+	//		lcl.RunOnMainThreadAsync(func(id uint32) {
+	//			m.ExecuteScript("webkit.inspectElement(100, 100);")
+	//		})
+	//	})
+	//	items.Add(newDevtoolItem)
+	//}
 	menuItemClear := func(menuItems lcl.IMenuItem) {
 		if menuItems == nil {
 			return

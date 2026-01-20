@@ -20,7 +20,7 @@ package wv
 */
 import "C"
 import (
-	"fmt"
+	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/lcl"
 	"unsafe"
 )
@@ -32,21 +32,25 @@ func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 	C.SetWebviewTransparent(handle, v)
 }
 
-func (m *TWebview) AddSubviewWebview() {
-	fmt.Println("AddSubview")
-	//CGRect init = { 0,0,0,0 };
-	//[self.webview initWithFrame:init configuration:config];
-	//[contentView addSubview:self.webview];
-	//[self.webview setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-	//CGRect contentViewBounds = [contentView bounds];
-	//[self.webview setFrame:contentViewBounds];
+func (m *TWebview) AddFormSubviewWebview(form lcl.IEngForm) {
+	var (
+		nsWindow  unsafe.Pointer
+		nsWebview unsafe.Pointer
+	)
+	//webviewBounds := m.BoundsRect()
+	//webviewAlign := m.Align()
+	//webviewAnchors := m.Anchors()
 
-	nsWindow := unsafe.Pointer(lcl.PlatformWindow(m.window.Instance()))
+	m.nsWindow = lcl.PlatformWindow(form.Instance())
+	nsWindow = unsafe.Pointer(m.nsWindow)
+	nsWebview = unsafe.Pointer(m.browser.Data())
+	cocoa.WindowAddSubview(nsWindow, nsWebview)
+}
+
+func (m *TWebview) updateBounds() {
+	nsWindow := unsafe.Pointer(m.nsWindow)
 	nsWebview := unsafe.Pointer(m.browser.Data())
-	nsWebview = unsafe.Pointer(m.Handle())
-	C.AddSubviewWebview(nsWindow, nsWebview)
-
-	//m.SetBounds()
+	C.UpdateWebviewBounds(nsWindow, nsWebview)
 }
 
 func _BoolToCInt(value bool) C.int {
