@@ -88,6 +88,6 @@ func SetWindowRadius(window unsafe.Pointer, value float32) {
 	C.SetWindowRadius(window, C.float(value))
 }
 
-func WindowAddSubview(window, view unsafe.Pointer) {
-	C.WindowAddSubview(window, view)
+func WindowAddSubview(window, view unsafe.Pointer, x, y, width, height float32) {
+	C.WindowAddSubview(window, view, C.float(x), C.float(y), C.float(width), C.float(height))
 }

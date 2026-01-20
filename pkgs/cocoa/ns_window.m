@@ -155,7 +155,7 @@ void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAp
     }
 }
 
-void WindowAddSubview(void* nsWindow, void* nsView) {
+void WindowAddSubview(void* nsWindow, void* nsView, float x, float y, float width, float height) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
         NSLog(@"WindowAddSubview window nil");
@@ -168,7 +168,7 @@ void WindowAddSubview(void* nsWindow, void* nsView) {
     }
 	NSView* contentView = window.contentView;
 	[contentView addSubview:view];
-	[view setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-	CGRect contentViewBounds = [contentView bounds];
-	[view setFrame:contentViewBounds];
+	[view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    CGRect viewFrame = CGRectMake(x, y, width, height);
+	[view setFrame:viewFrame];
 }
