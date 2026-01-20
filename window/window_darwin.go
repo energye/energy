@@ -40,7 +40,6 @@ type IDarwinWindow interface {
 	NSInstance() unsafe.Pointer
 	NSWindow() lcl.NSWindow
 	DragWindow()
-	AddSubview(nsWebview unsafe.Pointer)
 }
 
 type TWindow struct {

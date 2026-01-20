@@ -21,11 +21,9 @@ package window
 */
 import "C"
 import (
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/types"
-	"unsafe"
 )
 
 func (m *TWindow) DragWindow() {
@@ -97,19 +95,4 @@ func (m *TWindow) Frameless() {
 		mask ^= C.NSWindowStyleMaskTitled
 		nsWindow.SetStyleMask(mask)
 	}
-}
-
-func (m *TWindow) AddSubview(nsWebview unsafe.Pointer) {
-	fmt.Println("AddSubview", nsWebview)
-	//CGRect init = { 0,0,0,0 };
-	//[self.webview initWithFrame:init configuration:config];
-	//[contentView addSubview:self.webview];
-	//[self.webview setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-	//CGRect contentViewBounds = [contentView bounds];
-	////contentViewBounds.origin.x = -10.0;
-	////contentViewBounds.origin.y = -20.0;
-	////contentViewBounds.size.width = 300.0;
-	////contentViewBounds.size.height = 400.0;
-	//[self.webview setFrame:contentViewBounds];
-
 }
