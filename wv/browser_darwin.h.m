@@ -14,24 +14,6 @@ void SetWebviewTransparent(void* nsWebview, int isTransparent) {
    [webview setValue:[NSNumber numberWithBool:isTransparent] forKey:@"drawsBackground"];
 }
 
-void AddSubviewWebview(void* nsWindow, void* nsWebview) {
-	NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"WindowAddSubview window nil");
-        return;
-    }
-	WKWebView* webview = (WKWebView*)nsWebview;
-    if (!webview) {
-        NSLog(@"WindowAddSubview webview nil");
-        return;
-    }
-	NSView* contentView = window.contentView;
-	[contentView addSubview:webview];
-	[webview setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	CGRect contentViewBounds = [contentView bounds];
-	[webview setFrame:contentViewBounds];
-}
-
 void UpdateWebviewBounds(void* nsWindow, void* nsWebview) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
