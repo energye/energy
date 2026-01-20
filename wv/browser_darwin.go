@@ -126,19 +126,22 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
-func (m *TWebview) SetWindow(window window.IWindow) {
-	m.window = window
+func (m *TWebview) SetWindow(iWindow window.IWindow) {
+	m.window = iWindow
 	if m.window != nil {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
 		m.window.SetOptions()
 	}
-	window.SetOnWindowShow(m.onWindowShow)
-	window.SetOnWindowClose(m.onWindowClose)
-	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
-	if gApplication.Options.WebviewIsTransparent {
-		m.SetWebviewTransparent(true)
+	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
+	m.window.SetOnWindowShow(m.onWindowShow)
+	m.window.SetOnWindowClose(m.onWindowClose)
+	m.window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
+
+	if macWindow, ok := m.window.(window.IDarwinWindow); ok {
+		webview := unsafe.Pointer(m.browser.Data())
+		macWindow.AddSubview(webview)
 	}
 }
 
@@ -152,9 +155,9 @@ func (m *TWebview) SetBrowserOptions() {
 
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
-func (m *TWebview) SetParent(window lcl.IWinControl) {
-	//m.ICustomPanel.SetParent(window)
-	//m.windowParent.SetParent(m)
+func (m *TWebview) SetParent(owner lcl.IWinControl) {
+	//m.ICustomPanel.SetParent(owner)
+	m.windowParent.SetParent(owner)
 }
 
 // 在窗口显示时调用
