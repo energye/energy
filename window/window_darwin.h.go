@@ -13,8 +13,8 @@
 package window
 
 /*
-#cgo darwin CFLAGS: -DDARWIN -x objective-c
-#cgo darwin LDFLAGS: -framework Cocoa
+#cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
+#cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
 
 #import "Cocoa/Cocoa.h"
 #import <WebKit/WebKit.h>
