@@ -31,3 +31,20 @@ void AddSubviewWebview(void* nsWindow, void* nsWebview) {
 	CGRect contentViewBounds = [contentView bounds];
 	[webview setFrame:contentViewBounds];
 }
+
+void UpdateWebviewBounds(void* nsWindow, void* nsWebview) {
+	NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"UpdateWebviewBounds window nil");
+        return;
+    }
+	WKWebView* webview = (WKWebView*)nsWebview;
+    if (!webview) {
+        NSLog(@"WindowAddSubview webview nil");
+        return;
+    }
+	NSView* contentView = window.contentView;
+	CGRect contentViewBounds = [contentView bounds];
+	NSLog(@"UpdateWebviewBounds contentView bounds: %@", NSStringFromRect(contentViewBounds));
+	[webview setFrame:[contentView bounds]];
+}
