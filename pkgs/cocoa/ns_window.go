@@ -89,5 +89,5 @@ func SetWindowRadius(window unsafe.Pointer, value float32) {
 }
 
 func WindowAddSubview(window, view unsafe.Pointer) {
-
+	C.WindowAddSubview(window, view)
 }
