@@ -14,7 +14,7 @@ void SetWebviewTransparent(void* nsWebview, int isTransparent) {
    [webview setValue:[NSNumber numberWithBool:isTransparent] forKey:@"drawsBackground"];
 }
 
-void UpdateWebviewBounds(void* nsWindow, void* nsWebview) {
+void UpdateWebviewBounds(void* nsWindow, void* nsWebview, float x, float y, float width, float height) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
         NSLog(@"UpdateWebviewBounds window nil");
@@ -26,7 +26,8 @@ void UpdateWebviewBounds(void* nsWindow, void* nsWebview) {
         return;
     }
 	NSView* contentView = window.contentView;
-	CGRect contentViewBounds = [contentView bounds];
-	NSLog(@"UpdateWebviewBounds contentView bounds: %@", NSStringFromRect(contentViewBounds));
-	[webview setFrame:[contentView bounds]];
+//	CGRect viewFrame = [contentView bounds];
+    CGRect viewFrame = CGRectMake(x, y, width, height);
+//	NSLog(@"UpdateWebviewBounds contentView bounds: %@", NSStringFromRect(viewFrame));
+	[webview setFrame:viewFrame];
 }

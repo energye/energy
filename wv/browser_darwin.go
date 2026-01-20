@@ -42,6 +42,7 @@ type TWebview struct {
 	menu                    lcl.IPopupMenu
 	window                  window.IWindow
 	nsWindow                lcl.NSWindow
+	isAddNSWindowSubview    bool
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
@@ -154,8 +155,8 @@ func (m *TWebview) SetBrowserOptions() {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
-	if form, okForm := owner.(lcl.IEngForm); okForm {
-		m.AddFormSubviewWebview(form)
+	if form, okForm := owner.(window.IWindow); okForm {
+		m.AddWindowSubviewWebview(form)
 	} else {
 		m.windowParent.SetParent(m)
 		m.ICustomPanel.SetParent(owner)
@@ -221,7 +222,11 @@ func (m *TWebview) Browser() wv.IWkWebview {
 // onWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
 func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
+	if m.isCreated {
+		return
+	}
 	m.CreateBrowser()
+	m.UpdateBounds()
 }
 
 // onWindowClose 处理窗口关闭事件的回调函数
@@ -246,7 +251,7 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-	m.updateBounds()
+	m.UpdateBounds()
 }
 
 // SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数

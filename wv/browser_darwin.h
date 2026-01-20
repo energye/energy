@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 void SetWebviewTransparent(void* nsWebview, int isTransparent);
-void UpdateWebviewBounds(void* nsWindow, void* nsWebview);
+void UpdateWebviewBounds(void* nsWindow, void* nsWebview, float x, float y, float width, float height);
 
 #ifdef __cplusplus
 }
