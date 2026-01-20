@@ -241,7 +241,6 @@
                 let data = {t: MT_CONTEXTMENU, d: {x: x, y: y},}
                 that.processMessage(JSON.stringify(data));
             }
-            console.log('disableContextMenu', disableContextMenu)
             if(disableContextMenu){
                 window.addEventListener('contextmenu', contextMenuHandler);
             }
