@@ -481,10 +481,10 @@ func (m *TWebview) contextMenu(x, y int32) {
 		}
 		menuItems.Clear()
 	}
-	if gApplication.Options.DisableContextMenu {
-		menuItemClear(items)
-		return
-	}
+	//if gApplication.Options.DisableContextMenu {
+	//	menuItemClear(items)
+	//	return
+	//}
 	var (
 		add func(text string, kind TContextMenuKind, menuItems lcl.IMenuItem) (*TContextMenuItem, int32)
 	)

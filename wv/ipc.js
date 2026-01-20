@@ -233,7 +233,7 @@
 
         __listenDarwinContextMenu() {
             let that = this;
-            let disableDevTools = that.getEnv("disableDevTools");
+            let disableContextMenu = that.getEnv("disableContextMenu");
             function contextMenuHandler(event) {
                 event.preventDefault();
                 let x = event.screenX;
@@ -241,10 +241,10 @@
                 let data = {t: MT_CONTEXTMENU, d: {x: x, y: y},}
                 that.processMessage(JSON.stringify(data));
             }
-            // 禁用开发者工具时使用自定义右键菜单
-            // if(disableDevTools){
+            console.log('disableContextMenu', disableContextMenu)
+            if(disableContextMenu){
                 window.addEventListener('contextmenu', contextMenuHandler);
-            // }
+            }
         }
     }
 
