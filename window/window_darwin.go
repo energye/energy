@@ -16,8 +16,6 @@ package window
 #cgo darwin CFLAGS: -DDARWIN -x objective-c
 #cgo darwin LDFLAGS: -framework Cocoa
 
-#include "window_darwin.h"
-
 */
 import "C"
 

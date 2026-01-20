@@ -115,7 +115,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	frame.SetWidth(m.Width())
 	frame.SetHeight(m.Height())
 	m.browser.InitWithFrameConfiguration(frame, configuration.Data())
-
 	m.browser.SetNavigationDelegate(navigationDelegate.Data())
 	m.browser.SetUIDelegate(uiDelegate.Data())
 
@@ -154,8 +153,8 @@ func (m *TWebview) SetBrowserOptions() {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(window lcl.IWinControl) {
-	m.ICustomPanel.SetParent(window)
-	m.windowParent.SetParent(m)
+	//m.ICustomPanel.SetParent(window)
+	//m.windowParent.SetParent(m)
 }
 
 // 在窗口显示时调用

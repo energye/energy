@@ -10,8 +10,13 @@
 extern "C" {
 #endif
 
-extern void GoLog(char* message);
-
+void WindowMaximize(void* nsWindow);
+void WindowRestore(void* nsWindow);
+void WindowMinimized(void* nsWindow);
+void WindowExitMinimized(void* nsWindow);
+void WindowEnterFullScreen(void* nsWindow);
+void WindowExitFullScreen(void* nsWindow);
+NSString* NewNSString(const char* string);
 void SetWindowRadius(void* nsWindow, float radius);
 void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha);
 void DragWindow(void* nsWindow);

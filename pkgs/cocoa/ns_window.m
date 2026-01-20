@@ -1,12 +1,75 @@
 #import "Cocoa/Cocoa.h"
 #import <WebKit/WebKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "window_darwin.h"
+#import "cocoa.h"
+#import "ns_window.h"
 
-// 日志输出
-void LogInfo(NSString* message) {
-    const char* msg = [message cStringUsingEncoding:NSUTF8StringEncoding];
-	GoLog((char *)msg);
+// 最大化
+
+void WindowMaximize(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口不可用或不可调整大小，无法执行最大化");
+        return;
+    }
+    //if (!window.isZoomed) {
+        [window zoom:nil];
+    //}
+}
+
+void WindowRestore(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口为 nil");
+        return;
+    }
+    //if (window.isZoomed) {
+        [window zoom:nil];
+    //}
+}
+
+// 最小化
+
+void WindowMinimized(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口为 nil");
+        return;
+    }
+    if (![window isMiniaturized]) {
+        [window miniaturize:nil];
+    }
+}
+
+void WindowExitMinimized(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口为 nil");
+        return;
+    }
+    if ([window isMiniaturized]) {
+        [window deminiaturize:nil];
+    }
+}
+
+// 全屏
+
+void WindowEnterFullScreen(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口为 nil");
+        return;
+    }
+    [window toggleFullScreen:nil];
+}
+
+void WindowExitFullScreen(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"窗口为 nil");
+        return;
+    }
+    [window toggleFullScreen:nil];
 }
 
 NSString* NewNSString(const char* string) {
@@ -38,18 +101,18 @@ void DragWindow(void* nsWindow) {
     NSEvent *currentMouseEvent = [NSApp currentEvent];
 
     if (!currentMouseEvent) {
-        LogInfo(@"DragWindow 获取当前事件失败：事件为 nil");
+        NSLog(@"DragWindow 获取当前事件失败：事件为 nil");
         return;
     }
     if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        LogInfo(@"DragWindow 获取当前事件失败：非左键按下事件");
+        NSLog(@"DragWindow 获取当前事件失败：非左键按下事件");
         return;
     }
     //NSWindow* window = (NSWindow*)nsWindow;
 	NSWindow* window = [currentMouseEvent window];
  	//NSWindow *window = [NSApp keyWindow];
     if (!window) {
-        LogInfo(@"DragWindow 获取当前事件窗口失败");
+        NSLog(@"DragWindow 获取当前事件窗口失败");
         return;
     }
     [window performWindowDragWithEvent:currentMouseEvent];
@@ -59,7 +122,7 @@ void DragWindow(void* nsWindow) {
 NSVisualEffectView* SetWindowTransparent(void* nsWindow) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        LogInfo(@"SetWindowTransparent window nil");
+        NSLog(@"SetWindowTransparent window nil");
         return nil;
     }
 	NSView *contentView = [window contentView];
@@ -77,12 +140,12 @@ NSVisualEffectView* SetWindowTransparent(void* nsWindow) {
 void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAppearance) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        LogInfo(@"SwitchFrostedMaterial window nil");
+        NSLog(@"SwitchFrostedMaterial window nil");
         return;
     }
 	NSVisualEffectView* frostedView = (NSVisualEffectView*)nsFrostedView;
     if (!frostedView) {
-        LogInfo(@"SwitchFrostedMaterial frostedView nil");
+        NSLog(@"SwitchFrostedMaterial frostedView nil");
         return;
     }
     NSString* appearance = NewNSString(nsAppearance);

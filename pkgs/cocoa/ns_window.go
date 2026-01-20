@@ -16,79 +16,14 @@ package cocoa
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
 #cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
 
-#include "Cocoa/Cocoa.h"
-
-// 最大化
-
-void WindowMaximize(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口不可用或不可调整大小，无法执行最大化");
-        return;
-    }
-    //if (!window.isZoomed) {
-        [window zoom:nil];
-    //}
-}
-
-void WindowRestore(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return;
-    }
-    //if (window.isZoomed) {
-        [window zoom:nil];
-    //}
-}
-
-// 最小化
-
-void WindowMinimized(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return;
-    }
-    if (![window isMiniaturized]) {
-        [window miniaturize:nil];
-    }
-}
-
-void WindowExitMinimized(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return;
-    }
-    if ([window isMiniaturized]) {
-        [window deminiaturize:nil];
-    }
-}
-
-// 全屏
-
-void WindowEnterFullScreen(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return;
-    }
-    [window toggleFullScreen:nil];
-}
-
-void WindowExitFullScreen(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return;
-    }
-    [window toggleFullScreen:nil];
-}
+#include "ns_window.h"
 
 */
 import "C"
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/application"
+	"unsafe"
+)
 
 func WindowRestore(window unsafe.Pointer) {
 	if window == nil {
@@ -130,4 +65,25 @@ func WindowExitFullScreen(window unsafe.Pointer) {
 		return
 	}
 	C.WindowExitFullScreen(window)
+}
+
+func DragWindow(window unsafe.Pointer) {
+	C.DragWindow(window)
+}
+
+func SetWindowBackgroundColor(window unsafe.Pointer, red, green, blue, alpha uint8) {
+	C.SetWindowBackgroundColor(window, C.int(red), C.int(green), C.int(blue), C.int(alpha))
+}
+
+func SetWindowTransparent(windowInstance unsafe.Pointer) unsafe.Pointer {
+	frostedView := C.SetWindowTransparent(windowInstance)
+	return unsafe.Pointer(frostedView)
+}
+
+func WindowSwitchFrostedMaterial(frostedView, windowInstance unsafe.Pointer, appearanceName application.AppearanceNamed) {
+	C.SwitchFrostedMaterial(frostedView, windowInstance, C.CString(string(appearanceName)))
+}
+
+func SetWindowRadius(window unsafe.Pointer, value float32) {
+	C.SetWindowRadius(window, C.float(value))
 }
