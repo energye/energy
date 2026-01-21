@@ -25,7 +25,6 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/types"
-	"unsafe"
 )
 
 func (m *TWindow) DragWindow() {
@@ -38,14 +37,13 @@ func (m *TWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
 
 // SetWindowTransparent 设置窗口为透明效果
 func (m *TWindow) SetWindowTransparent() {
-	frostedView := cocoa.SetWindowTransparent(m.NSWindowInstance())
-	m.frostedView = frostedView
+	m.nsFrostedView = cocoa.SetWindowTransparent(m.NSWindowInstance())
 }
 
 // SwitchFrostedMaterial 切换窗口的磨砂材质外观
 // 该方法会根据指定的外观名称来更改窗口的磨砂视图材质效果
 func (m *TWindow) SwitchFrostedMaterial(appearanceName application.AppearanceNamed) {
-	cocoa.WindowSwitchFrostedMaterial(m.frostedView, m.NSWindowInstance(), appearanceName)
+	cocoa.WindowSwitchFrostedMaterial(m.nsFrostedView, m.NSWindowInstance(), appearanceName)
 }
 
 // SetWindowRadius 设置窗口圆角半径
@@ -99,17 +97,22 @@ func (m *TWindow) Frameless() {
 	}
 }
 
-func (m *TWindow) AddSubview(nsView unsafe.Pointer) {
-	fmt.Println("AddSubview", nsView)
-	//CGRect init = { 0,0,0,0 };
-	//[self.webview initWithFrame:init configuration:config];
-	//[contentView addSubview:self.webview];
-	//[self.webview setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-	//CGRect contentViewBounds = [contentView bounds];
-	////contentViewBounds.origin.x = -10.0;
-	////contentViewBounds.origin.y = -20.0;
-	////contentViewBounds.size.width = 300.0;
-	////contentViewBounds.size.height = 400.0;
-	//[self.webview setFrame:contentViewBounds];
-
+func (m *TWindow) _InitEvent() {
+	nsWindow := m.NSInstance()
+	baseEventID := fmt.Sprintf("%v", nsWindow)
+	EnterFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventEnterFullScreen, baseEventID)
+	cocoa.RegisterEvent(EnterFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("EnterFullScreen", m.BrowserId(), sender)
+		return nil
+	}))
+	ExitFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventExitFullScreen, baseEventID)
+	cocoa.RegisterEvent(ExitFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("ExitFullScreen", m.BrowserId(), sender)
+		return nil
+	}))
+	UseFullScreenPresentationOptions := fmt.Sprintf("%d_%v", cocoa.TWindowEventWillUseFullScreenPresentationOptions, baseEventID)
+	cocoa.RegisterEvent(UseFullScreenPresentationOptions, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), sender)
+		return nil
+	}))
 }

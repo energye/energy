@@ -20,7 +20,6 @@ package window
 import "C"
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/lcl"
@@ -41,12 +40,15 @@ type IDarwinWindow interface {
 	NSInstance() unsafe.Pointer
 	NSWindow() lcl.NSWindow
 	DragWindow()
-	AddSubview(nsView unsafe.Pointer)
 }
 
 type TWindow struct {
 	TEnergyWindow
-	frostedView unsafe.Pointer
+	nsFrostedView                           unsafe.Pointer
+	nsDelegate                              unsafe.Pointer
+	onFullScreenEvent                       TWindowFullScreenEvent
+	onExitFullScreenEvent                   TWindowFullScreenEvent
+	onUseFullScreenPresentationOptionsEvent TWindowFullScreenEvent
 }
 
 func (m *TWindow) NSWindowInstance() unsafe.Pointer {
@@ -63,23 +65,8 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 
 func (m *TWindow) _BeforeFormCreate() {
 	nsWindow := m.NSInstance()
-	cocoa.CreateWindowDelegate(nsWindow)
-	baseEventID := fmt.Sprintf("%v", nsWindow)
-	EnterFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventEnterFullScreen, baseEventID)
-	cocoa.RegisterEvent(EnterFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("EnterFullScreen", m.BrowserId(), sender)
-		return nil
-	}))
-	ExitFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventExitFullScreen, baseEventID)
-	cocoa.RegisterEvent(ExitFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("ExitFullScreen", m.BrowserId(), sender)
-		return nil
-	}))
-	UseFullScreenPresentationOptions := fmt.Sprintf("%d_%v", cocoa.TWindowEventWillUseFullScreenPresentationOptions, baseEventID)
-	cocoa.RegisterEvent(UseFullScreenPresentationOptions, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), (sender))
-		return nil
-	}))
+	m.nsDelegate = cocoa.CreateWindowDelegate(nsWindow)
+	m._InitEvent()
 }
 
 func (m *TWindow) _BeforeFormShow() {

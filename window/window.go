@@ -189,3 +189,5 @@ func PtInRegion(x, y int32, rectX, rectY, rectWidth, rectHeight int32) bool {
 	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
 	return x >= rectX && x <= rectX+rectWidth && y >= rectY && y <= rectY+rectHeight
 }
+
+type TWindowFullScreenEvent func()
