@@ -34,10 +34,11 @@ type ToolBar struct {
 }
 
 type MacOS struct {
-	AppearanceNamed  AppearanceNamed // 外观
-	ToolBar          *ToolBar        // 自定义工具栏
-	WindowRadius     float32         // 设置窗口四角圆角, Frameless = true 时有效
-	FullSizeContent  bool            // 窗口内容填充整个窗口
-	TitleTransparent bool            // 标题栏透明
-	TitleHideText    bool            // 隐藏标题栏标题文本
+	AppearanceNamed   AppearanceNamed // 外观
+	ToolBar           *ToolBar        // 自定义工具栏
+	WindowRadius      float32         // 设置窗口四角圆角, Frameless = true 时有效
+	FullSizeContent   bool            // 窗口内容填充整个窗口
+	TitleTransparent  bool            // 标题栏透明
+	TitleHideText     bool            // 隐藏标题栏标题文本
+	UseWindowDelegate bool            // 使用自定义 window 代理
 }

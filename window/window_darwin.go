@@ -61,7 +61,6 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	//m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
 	//m._InitEvent()
 }
 
@@ -83,6 +82,9 @@ func (m *TWindow) SetOptions() {
 	}
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
+	if options.MacOS.UseWindowDelegate {
+		m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
+	}
 	if options.WindowIsTransparent {
 		m.SetWindowTransparent()
 		if options.MacOS.AppearanceNamed != "" {
