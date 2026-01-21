@@ -16,8 +16,16 @@ package cocoa
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
 #cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
 
-#import "Cocoa/Cocoa.h"
+#import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
+
+void AppDockHide() {
+  [[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyProhibited];
+}
+
+void AppDockShow() {
+  [[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyRegular];
+}
 
 void AppSetPresentationOptions(NSApplicationPresentationOptions opts) {
 	[[NSApplication sharedApplication] setPresentationOptions:opts];
@@ -41,4 +49,12 @@ const (
 
 func AppSetPresentationOptions(options uint) {
 	C.AppSetPresentationOptions(C.NSApplicationPresentationOptions(C.uint(options)))
+}
+
+func AppDockHide() {
+	C.AppDockHide()
+}
+
+func AppDockShow() {
+	C.AppDockShow()
 }
