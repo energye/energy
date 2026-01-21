@@ -20,6 +20,8 @@
     window.delegate = self;
 }
 
+#pragma mark - Window Delegate Impl
+
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client {
 //    NSLog(@"windowWillReturnFieldEditor");
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowWillReturnFieldEditor:toObject:)]) {
@@ -121,7 +123,7 @@
 }
 
 
-#pragma mark - Toolbar Delegate
+#pragma mark - Toolbar Delegate Impl
 
 - (NSArray<NSString *> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     NSLog(@"toolbarDefaultItemIdentifiers");
@@ -147,6 +149,9 @@
 }
 
 @end
+
+
+// 公共函数
 
 TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback) {
     NSWindow* window = (NSWindow*)nsWindow;
