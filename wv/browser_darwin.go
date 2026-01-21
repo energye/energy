@@ -253,7 +253,11 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 }
 
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
-	fmt.Println("doOnWindowStateChange", m.window.WindowState())
+	switch m.window.WindowState() {
+	case types.WsNormal, types.WsMinimized, types.WsMaximized:
+	case types.WsFullScreen:
+		//cocoa.AppSetPresentationOptions(cocoa.NSApplicationPresentationAutoHideToolbar | cocoa.NSApplicationPresentationAutoHideMenuBar | cocoa.NSApplicationPresentationFullScreen)
+	}
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
