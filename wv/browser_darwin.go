@@ -134,10 +134,11 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 		return
 	}
 	m.window = iWindow
-	m.window.SetOnWindowResize(m.doOnWindowResize)
-	m.window.SetOnWindowShow(m.doOnWindowShow)
-	m.window.SetOnWindowClose(m.doOnWindowClose)
-	m.window.SetOnWindowCloseQuery(m.doOnWindowCloseQuery)
+	m.window.AddOnWindowStateChange(m.doOnWindowStateChange)
+	m.window.AddOnWindowResize(m.doOnWindowResize)
+	m.window.AddOnWindowShow(m.doOnWindowShow)
+	m.window.AddOnWindowClose(m.doOnWindowClose)
+	m.window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 	if m.window.BrowserId() == 0 {
 		m.window.SetBrowserId(m.browserId)
 	}
@@ -249,6 +250,10 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	//if *canClose && m.isMainWindow {
 	//	os.Exit(0)
 	//}
+}
+
+func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
+	fmt.Println("doOnWindowStateChange", m.window.WindowState())
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {

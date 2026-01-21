@@ -44,11 +44,8 @@ type IDarwinWindow interface {
 
 type TWindow struct {
 	TEnergyWindow
-	nsFrostedView                           unsafe.Pointer
-	nsDelegate                              unsafe.Pointer
-	onFullScreenEvent                       TWindowFullScreenEvent
-	onExitFullScreenEvent                   TWindowFullScreenEvent
-	onUseFullScreenPresentationOptionsEvent TWindowFullScreenEvent
+	nsFrostedView unsafe.Pointer
+	nsDelegate    unsafe.Pointer
 }
 
 func (m *TWindow) NSWindowInstance() unsafe.Pointer {
@@ -64,9 +61,8 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	nsWindow := m.NSInstance()
-	m.nsDelegate = cocoa.CreateWindowDelegate(nsWindow)
-	m._InitEvent()
+	//m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
+	//m._InitEvent()
 }
 
 func (m *TWindow) _BeforeFormShow() {

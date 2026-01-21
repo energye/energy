@@ -6,18 +6,18 @@
 
 @implementation TWindowDelegate
 
-- (void)attachToWindow:(NSWindow *)window withCallback:(TEventCallback ) callback {
-//    NSLog(@"TWindowDelegate attachToWindow");
-    self.window = window;
-    self._callback = callback;
-    self.originalDelegate = window.delegate; // 保存原始 delegate
-    window.delegate = self;                  // 自己接管
-}
-
 - (void)dealloc {
 //    NSLog(@"TWindowDelegate dealloc");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
+}
+
+- (void)attachToWindow:(NSWindow *)window withCallback:(TEventCallback ) callback {
+//    NSLog(@"TWindowDelegate attachToWindow");
+    self.window = window;
+    self._callback = callback;
+    self.originalDelegate = window.delegate;
+    window.delegate = self;
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {

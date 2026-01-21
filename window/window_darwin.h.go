@@ -21,7 +21,6 @@ package window
 */
 import "C"
 import (
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/types"
@@ -95,26 +94,4 @@ func (m *TWindow) Frameless() {
 		mask ^= C.NSWindowStyleMaskTitled
 		nsWindow.SetStyleMask(mask)
 	}
-}
-
-func (m *TWindow) _InitEvent() {
-	nsWindow := m.NSInstance()
-	baseEventID := fmt.Sprintf("%v", nsWindow)
-	EnterFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventEnterFullScreen, baseEventID)
-	cocoa.RegisterEvent(EnterFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("EnterFullScreen", m.BrowserId(), sender)
-		return nil
-	}))
-	ExitFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventExitFullScreen, baseEventID)
-	cocoa.RegisterEvent(ExitFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("ExitFullScreen", m.BrowserId(), sender)
-		return nil
-	}))
-	UseFullScreenPresentationOptions := fmt.Sprintf("%d_%v", cocoa.TWindowEventWillUseFullScreenPresentationOptions, baseEventID)
-	cocoa.RegisterEvent(UseFullScreenPresentationOptions, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), sender)
-		//result := &cocoa.GoArguments{}
-		//result.Add(1009)
-		return nil
-	}))
 }

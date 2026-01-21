@@ -32,11 +32,12 @@ type IWindow interface {
 	IsFullScreen() bool
 	SetClose(v bool)
 	IsClose() bool
-	SetOnWindowResize(fn lcl.TNotifyEvent)
-	SetOnWindowCreate(fn lcl.TNotifyEvent)
-	SetOnWindowShow(fn lcl.TNotifyEvent)
-	SetOnWindowClose(fn lcl.TCloseEvent)
-	SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
+	AddOnWindowStateChange(fn lcl.TNotifyEvent)
+	AddOnWindowResize(fn lcl.TNotifyEvent)
+	AddOnWindowCreate(fn lcl.TNotifyEvent)
+	AddOnWindowShow(fn lcl.TNotifyEvent)
+	AddOnWindowClose(fn lcl.TCloseEvent)
+	AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
 }
 
 type TEnergyWindow struct {
@@ -48,11 +49,13 @@ type TEnergyWindow struct {
 	windowsState            types.TWindowState
 	previousWindowPlacement types.TRect
 	onResize                lcl.TNotifyEvent
-	onWindowResize          []lcl.TNotifyEvent
-	onWindowCreate          []lcl.TNotifyEvent
-	onWindowShow            []lcl.TNotifyEvent
-	onWindowClose           []lcl.TCloseEvent
-	onWindowCloseQuery      []lcl.TCloseQueryEvent
+	onWindowStateChange     lcl.TNotifyEvent
+	onWindowStateChangeList []lcl.TNotifyEvent
+	onWindowResizeList      []lcl.TNotifyEvent
+	onWindowCreateList      []lcl.TNotifyEvent
+	onWindowShowList        []lcl.TNotifyEvent
+	onWindowCloseList       []lcl.TCloseEvent
+	onWindowCloseQueryList  []lcl.TCloseQueryEvent
 }
 
 func (m *TEnergyWindow) SetClose(v bool) {
@@ -63,28 +66,36 @@ func (m *TEnergyWindow) IsClose() bool {
 	return m.isClose
 }
 
-func (m *TEnergyWindow) SetOnWindowResize(fn lcl.TNotifyEvent) {
-	m.onWindowResize = append(m.onWindowResize, fn)
+func (m *TEnergyWindow) AddOnWindowStateChange(fn lcl.TNotifyEvent) {
+	m.onWindowStateChangeList = append(m.onWindowStateChangeList, fn)
 }
 
-func (m *TEnergyWindow) SetOnWindowCreate(fn lcl.TNotifyEvent) {
-	m.onWindowCreate = append(m.onWindowCreate, fn)
+func (m *TEnergyWindow) AddOnWindowResize(fn lcl.TNotifyEvent) {
+	m.onWindowResizeList = append(m.onWindowResizeList, fn)
 }
 
-func (m *TEnergyWindow) SetOnWindowShow(fn lcl.TNotifyEvent) {
-	m.onWindowShow = append(m.onWindowShow, fn)
+func (m *TEnergyWindow) AddOnWindowCreate(fn lcl.TNotifyEvent) {
+	m.onWindowCreateList = append(m.onWindowCreateList, fn)
 }
 
-func (m *TEnergyWindow) SetOnWindowClose(fn lcl.TCloseEvent) {
-	m.onWindowClose = append(m.onWindowClose, fn)
+func (m *TEnergyWindow) AddOnWindowShow(fn lcl.TNotifyEvent) {
+	m.onWindowShowList = append(m.onWindowShowList, fn)
 }
 
-func (m *TEnergyWindow) SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
-	m.onWindowCloseQuery = append(m.onWindowCloseQuery, fn)
+func (m *TEnergyWindow) AddOnWindowClose(fn lcl.TCloseEvent) {
+	m.onWindowCloseList = append(m.onWindowCloseList, fn)
+}
+
+func (m *TEnergyWindow) AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
+	m.onWindowCloseQueryList = append(m.onWindowCloseQueryList, fn)
 }
 
 func (m *TEnergyWindow) SetOnResize(fn lcl.TNotifyEvent) {
 	m.onResize = fn
+}
+
+func (m *TEnergyWindow) SetOnWindowStateChange(fn lcl.TNotifyEvent) {
+	m.onWindowStateChange = fn
 }
 
 func (m *TWindow) SetBrowserId(windowId uint32) {
@@ -141,8 +152,9 @@ func (m *TWindow) IsMaximize() bool {
 
 func (m *TWindow) FormCreate(sender lcl.IObject) {
 	m.TEngForm.SetOnResize(m.doOnResize)
+	m.TEngForm.SetOnWindowStateChange(m.doOnWindowStateChange)
 	m._BeforeFormCreate()
-	for _, fn := range m.onWindowCreate {
+	for _, fn := range m.onWindowCreateList {
 		fn(sender)
 	}
 }
@@ -159,25 +171,25 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 
 func (m *TWindow) OnShow(sender lcl.IObject) {
 	m._BeforeFormShow()
-	for _, fn := range m.onWindowShow {
+	for _, fn := range m.onWindowShowList {
 		fn(sender)
 	}
 }
 
 func (m *TWindow) OnCloseQuery(sender lcl.IObject, canClose *bool) {
-	for _, fn := range m.onWindowCloseQuery {
+	for _, fn := range m.onWindowCloseQueryList {
 		fn(sender, canClose)
 	}
 }
 
 func (m *TWindow) OnClose(sender lcl.IObject, closeAction *types.TCloseAction) {
-	for _, fn := range m.onWindowClose {
+	for _, fn := range m.onWindowCloseList {
 		fn(sender, closeAction)
 	}
 }
 
 func (m *TWindow) doOnResize(sender lcl.IObject) {
-	for _, fn := range m.onWindowResize {
+	for _, fn := range m.onWindowResizeList {
 		fn(sender)
 	}
 	if m.TEnergyWindow.onResize != nil {
@@ -185,9 +197,17 @@ func (m *TWindow) doOnResize(sender lcl.IObject) {
 	}
 }
 
+func (m *TWindow) doOnWindowStateChange(sender lcl.IObject) {
+	m.windowsState = m.TEngForm.WindowState()
+	for _, fn := range m.onWindowStateChangeList {
+		fn(sender)
+	}
+	if m.TEnergyWindow.onWindowStateChange != nil {
+		m.TEnergyWindow.onWindowStateChange(sender)
+	}
+}
+
 func PtInRegion(x, y int32, rectX, rectY, rectWidth, rectHeight int32) bool {
 	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
 	return x >= rectX && x <= rectX+rectWidth && y >= rectY && y <= rectY+rectHeight
 }
-
-type TWindowFullScreenEvent func()

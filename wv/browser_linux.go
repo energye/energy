@@ -147,9 +147,11 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		}
 		m.window.SetOptions()
 	}
-	window.SetOnWindowShow(m.onWindowShow)
-	window.SetOnWindowClose(m.onWindowClose)
-	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
+	window.AddOnWindowStateChange(m.doOnWindowStateChange)
+	window.AddOnWindowResize(m.doOnWindowResize)
+	window.AddOnWindowShow(m.doOnWindowShow)
+	window.AddOnWindowClose(m.doOnWindowClose)
+	window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -224,20 +226,26 @@ func (m *TWebview) Browser() wv.IWkWebview {
 	return m.browser
 }
 
-// onWindowShow 是窗口显示事件的回调函数
+func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
+}
+
+func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
+}
+
+// doOnWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
-func (m *TWebview) onWindowShow(sender lcl.IObject) {
+func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	m.CreateBrowser()
 }
 
-// onWindowClose 处理窗口关闭事件的回调函数
+// doOnWindowClose 处理窗口关闭事件的回调函数
 // 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
-func (m *TWebview) onWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 }
 
-// onWindowCloseQuery 处理窗口关闭查询事件
+// doOnWindowCloseQuery 处理窗口关闭查询事件
 // 当用户尝试关闭窗口时触发此回调函数
-func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	*canClose = m.window.IsClose()
 	if !m.window.IsClose() {
 		m.window.SetClose(true)
