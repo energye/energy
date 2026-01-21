@@ -11,9 +11,12 @@ void CreateToolbar(void* nsWindow, void* nsDelegate, ToolbarConfiguration config
         return;
     }
 	TWindowDelegate* delegate = (TWindowDelegate*)nsDelegate;
+
     NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"ENERGY.ToolBar"];
     [toolbar autorelease];
     toolbar.showsBaselineSeparator = config.ShowSeparator;
-    toolbar.delegate = delegate;
+    if (delegate) {
+        toolbar.delegate = delegate;
+    }
     window.toolbar = toolbar;
 }
