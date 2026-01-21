@@ -88,6 +88,37 @@
     return myOptions;
 }
 
+// 窗口大小监听
+- (void)windowDidResize:(NSNotification *)notification {
+//    NSWindow *window = notification.object;
+//    NSLog(@"windowDidResize");
+}
+
+#pragma mark - Toolbar Delegate
+
+- (NSArray<NSString *> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
+    NSLog(@"toolbarDefaultItemIdentifiers");
+    NSMutableArray *identifiers = [NSMutableArray array];
+    return identifiers;
+}
+
+- (NSArray<NSString *> *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
+    NSLog(@"toolbarAllowedItemIdentifiers");
+    NSMutableArray *identifiers = [NSMutableArray array];
+    return identifiers;
+}
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSToolbarItemIdentifier)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag {
+    NSLog(@"toolbarItemIdentifier: %@", itemIdentifier);
+    if ([itemIdentifier isEqualToString:NSToolbarFlexibleSpaceItemIdentifier]) {
+        return [[NSToolbarItem alloc] initWithItemIdentifier:NSToolbarFlexibleSpaceItemIdentifier];
+    }
+    if ([itemIdentifier isEqualToString:NSToolbarSpaceItemIdentifier]) {
+        return [[NSToolbarItem alloc] initWithItemIdentifier:NSToolbarSpaceItemIdentifier];
+    }
+    return nil;
+}
+
 @end
 
 TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback) {

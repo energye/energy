@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-void CreateToolbar(void* nsWindow, ToolbarConfiguration config);
+void CreateToolbar(void* nsWindow, void* nsDelegate, ToolbarConfiguration config);
 
 #ifdef __cplusplus
 }

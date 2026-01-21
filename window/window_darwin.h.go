@@ -82,7 +82,7 @@ func (m *TWindow) TitleBar() {
 	}
 	toolBar := options.MacOS.ToolBar
 	if toolBar != nil {
-		cocoa.NewToolBar(m.NSInstance(), cocoa.ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
+		cocoa.NewToolBar(m.NSInstance(), m.nsDelegate, cocoa.ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
 	}
 }
 

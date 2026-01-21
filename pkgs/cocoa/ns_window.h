@@ -26,7 +26,7 @@ void DragWindow(void* nsWindow);
 NSVisualEffectView* SetWindowTransparent(void* nsWindow);
 void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAppearance);
 
-@interface TWindowDelegate : NSObject <NSWindowDelegate>
+@interface TWindowDelegate : NSObject <NSWindowDelegate, NSToolbarDelegate>
     @property (assign) NSWindow *window;
     @property (assign) id<NSWindowDelegate> originalDelegate;
     @property (assign) TEventCallback _callback;

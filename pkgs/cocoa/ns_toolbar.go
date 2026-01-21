@@ -25,10 +25,10 @@ import (
 	"unsafe"
 )
 
-func NewToolBar(window unsafe.Pointer, config ToolbarConfiguration) {
+func NewToolBar(window, delegate unsafe.Pointer, config ToolbarConfiguration) {
 	if window == nil {
 		return
 	}
 	cConfig := ToolbarConfigurationToOC(config)
-	C.CreateToolbar(window, cConfig)
+	C.CreateToolbar(window, delegate, cConfig)
 }
