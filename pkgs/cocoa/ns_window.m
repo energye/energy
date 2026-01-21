@@ -62,10 +62,10 @@
 
 - (NSApplicationPresentationOptions)window:(NSWindow *)window willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions {
 //    NSLog(@"TWindowDelegate: willUseFullScreenPresentationOptions");
-    NSApplicationPresentationOptions myOptions = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen;
+    NSApplicationPresentationOptions options = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen;
 //    if ([self.originalDelegate respondsToSelector:_cmd]) {
 //        NSApplicationPresentationOptions originalOptions = [self.originalDelegate window:window willUseFullScreenPresentationOptions:proposedOptions];
-//        return myOptions | originalOptions;
+//        return options | originalOptions;
 //    }
     if (self._callback) {
         NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventWillUseFullScreenPresentationOptions, self.window];
@@ -74,6 +74,8 @@
         @try{
             result = self._callback(context);
             if(result){
+                int resultOptions = GetIntFromGoArguments(result, 0);
+                NSLog(@"willUseFullScreenPresentationOptions %d %d",  result->Count, resultOptions);
                 for (int i = 0; i < result->Count; i++) {
                     //
                 }
@@ -85,7 +87,7 @@
             FreeCallbackContext(context);
         }
     }
-    return myOptions;
+    return options;
 }
 
 // 窗口大小监听

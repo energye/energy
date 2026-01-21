@@ -76,12 +76,12 @@ func (m *GoArguments) ToOC() *C.GoArguments {
 		case int, int8, uint8, int16, uint16, int32, uint32, int64, uint64:
 			itemPtr.Type = GoArgsType_Int
 			val := (*C.int)(C.malloc(C.sizeof_int))
-			*val = C.int(tool.ToInt(v)) // 假设tool.ToInt能统一转换为int
+			*val = C.int(tool.ToInt(v))
 			itemPtr.Value = Pointer(val)
 		case float32, float64:
 			itemPtr.Type = GoArgsType_Float
 			val := (*C.double)(C.malloc(C.sizeof_double))
-			*val = C.double(tool.ToDouble(v)) // 统一转换为double
+			*val = C.double(tool.ToDouble(v)) // 统一转换为 double
 			itemPtr.Value = Pointer(val)
 		case bool:
 			itemPtr.Type = GoArgsType_Bool
@@ -91,10 +91,10 @@ func (m *GoArguments) ToOC() *C.GoArguments {
 		case string:
 			itemPtr.Type = GoArgsType_String
 			cVal := C.CString(v)
-			itemPtr.Value = Pointer(cVal) // C.CString内部使用malloc，与OC的strdup行为一致（需外部释放）
+			itemPtr.Value = Pointer(cVal) // C.CString 内部使用 malloc，与 OC 的 strdup 行为一致（需外部释放）
 		case uintptr:
 			itemPtr.Type = GoArgsType_Pointer
-			itemPtr.Value = Pointer(v) // 对应OC中NSValue包装的指针或其他对象（需确保生命周期正确）
+			itemPtr.Value = Pointer(v) // 对应 OC 中 NSValue 包装的指针或其他对象（需确保生命周期正确）
 		case Pointer:
 			itemPtr.Type = GoArgsType_Object
 			itemPtr.Value = v // 对应 类对象

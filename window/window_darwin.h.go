@@ -113,6 +113,8 @@ func (m *TWindow) _InitEvent() {
 	UseFullScreenPresentationOptions := fmt.Sprintf("%d_%v", cocoa.TWindowEventWillUseFullScreenPresentationOptions, baseEventID)
 	cocoa.RegisterEvent(UseFullScreenPresentationOptions, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
 		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), sender)
+		//result := &cocoa.GoArguments{}
+		//result.Add(1009)
 		return nil
 	}))
 }

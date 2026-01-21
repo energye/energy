@@ -45,15 +45,23 @@ GoArguments* CreateGoArguments(int count, ...);
 // 从 GoArguments 获取数据的函数
 void* GetFromGoArguments(GoArguments* data, int index, GoArgumentsType expectedType);
 
-// 类型特定的便捷函数
+// 获取参数项
 GoArgsItem* GetItemFromGoArguments(GoArguments* data, int index);
+// 获取参数的 int 值
 int GetIntFromGoArguments(GoArguments* data, int index);
+// 获取参数的 double 值
 double GetFloatFromGoArguments(GoArguments* data, int index);
+// 获取参数的 bool 值
 bool GetBoolFromGoArguments(GoArguments* data, int index);
+// 获取参数的 string 值
 const char* GetStringFromGoArguments(GoArguments* data, int index);
+// 获取参数的 NSString 值
 NSString* GetNSStringFromGoArguments(GoArguments* data, int index);
+// 获取参数的 struct 值
 void* GetStructFromGoArguments(GoArguments* data, int index);
+// 获取参数的 object 值
 void* GetObjectFromGoArguments(GoArguments* data, int index);
+// 获取参数的 pointer 值
 void* GetPointerFromGoArguments(GoArguments* data, int index);
 
 #ifdef __cplusplus
