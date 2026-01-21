@@ -23,29 +23,43 @@
 #pragma mark - Window Delegate Impl
 
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client {
-//    NSLog(@"windowWillReturnFieldEditor");
+//    NSLog(@"TWindowDelegate windowWillReturnFieldEditor");
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowWillReturnFieldEditor:toObject:)]) {
         return [self.originalDelegate windowWillReturnFieldEditor:sender toObject:client];
     }
     return nil;
 }
 
+- (void)windowDidBecomeKey:(NSNotification *)notification {
+//    NSLog(@"TWindowDelegate windowDidBecomeKey");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidBecomeKey:)]) {
+        [self.originalDelegate windowDidBecomeKey:notification];
+    }
+}
+
+- (void)windowDidResignKey:(NSNotification *)notification {
+//    NSLog(@"TWindowDelegate windowDidResignKey");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidResignKey:)]) {
+        [self.originalDelegate windowDidResignKey:notification];
+    }
+}
+
 - (void)windowDidMiniaturize:(NSNotification *)notification {
-//    NSLog(@"windowDidMiniaturize");
+//    NSLog(@"TWindowDelegate windowDidMiniaturize");
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidMiniaturize:)]) {
         [self.originalDelegate windowDidMiniaturize:notification];
     }
 }
 
 - (void)windowDidDeminiaturize:(NSNotification *)notification {
-//    NSLog(@"windowDidMiniaturize");
+//    NSLog(@"TWindowDelegate windowDidMiniaturize");
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidDeminiaturize:)]) {
         [self.originalDelegate windowDidDeminiaturize:notification];
     }
 }
 
 - (void)windowDidResize:(NSNotification *)notification {
-//    NSLog(@"windowDidResize");
+//    NSLog(@"TWindowDelegate windowDidResize");
     NSWindow *window = notification.object;
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidResize:)]) {
         [self.originalDelegate windowDidResize:notification];
@@ -53,8 +67,8 @@
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {
-//    NSLog(@"TWindowDelegate: will enter full screen");
-    if ([self.originalDelegate respondsToSelector:_cmd]) {
+//    NSLog(@"TWindowDelegate windowWillEnterFullScreen");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowWillEnterFullScreen:)]) {
         [self.originalDelegate windowWillEnterFullScreen:notification];
     }
     if (self._callback) {
@@ -73,8 +87,8 @@
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification {
-//     NSLog(@"TWindowDelegate: did exit full screen");
-     if ([self.originalDelegate respondsToSelector:_cmd]) {
+//     NSLog(@"TWindowDelegate windowDidExitFullScreen");
+     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidExitFullScreen:)]) {
          [self.originalDelegate windowDidExitFullScreen:notification];
      }
     if (self._callback) {
@@ -93,12 +107,8 @@
  }
 
 - (NSApplicationPresentationOptions)window:(NSWindow *)window willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions {
-//    NSLog(@"TWindowDelegate: willUseFullScreenPresentationOptions");
+//    NSLog(@"TWindowDelegate: windowWillUseFullScreenPresentationOptions");
     NSApplicationPresentationOptions options = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen;
-//    if ([self.originalDelegate respondsToSelector:_cmd]) {
-//        NSApplicationPresentationOptions originalOptions = [self.originalDelegate window:window willUseFullScreenPresentationOptions:proposedOptions];
-//        return options | originalOptions;
-//    }
     if (self._callback) {
         NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventWillUseFullScreenPresentationOptions, self.window];
         TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
@@ -121,7 +131,6 @@
     }
     return options;
 }
-
 
 #pragma mark - Toolbar Delegate Impl
 
