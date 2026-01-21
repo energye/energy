@@ -20,6 +20,36 @@
     window.delegate = self;
 }
 
+- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client {
+//    NSLog(@"windowWillReturnFieldEditor");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowWillReturnFieldEditor:toObject:)]) {
+        return [self.originalDelegate windowWillReturnFieldEditor:sender toObject:client];
+    }
+    return nil;
+}
+
+- (void)windowDidMiniaturize:(NSNotification *)notification {
+//    NSLog(@"windowDidMiniaturize");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidMiniaturize:)]) {
+        [self.originalDelegate windowDidMiniaturize:notification];
+    }
+}
+
+- (void)windowDidDeminiaturize:(NSNotification *)notification {
+//    NSLog(@"windowDidMiniaturize");
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidDeminiaturize:)]) {
+        [self.originalDelegate windowDidDeminiaturize:notification];
+    }
+}
+
+- (void)windowDidResize:(NSNotification *)notification {
+//    NSLog(@"windowDidResize");
+    NSWindow *window = notification.object;
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidResize:)]) {
+        [self.originalDelegate windowDidResize:notification];
+    }
+}
+
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {
 //    NSLog(@"TWindowDelegate: will enter full screen");
     if ([self.originalDelegate respondsToSelector:_cmd]) {
@@ -90,11 +120,6 @@
     return options;
 }
 
-// 窗口大小监听
-- (void)windowDidResize:(NSNotification *)notification {
-//    NSWindow *window = notification.object;
-//    NSLog(@"windowDidResize");
-}
 
 #pragma mark - Toolbar Delegate
 
