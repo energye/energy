@@ -87,8 +87,8 @@ func (m *TWindow) SetOptions() {
 	}
 	if options.WindowIsTransparent {
 		m.SetWindowTransparent()
-		if options.MacOS.AppearanceNamed != "" {
-			m.SwitchFrostedMaterial(options.MacOS.AppearanceNamed)
+		if options.MacOS.AppearanceName != "" {
+			m.SwitchFrostedMaterial(options.MacOS.AppearanceName)
 		}
 	}
 	if options.BackgroundColor != nil {

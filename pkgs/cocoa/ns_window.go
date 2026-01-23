@@ -23,7 +23,6 @@ extern GoArguments* doOnWindowDelegateEvent(TCallbackContext *CContext);
 */
 import "C"
 import (
-	"github.com/energye/energy/v3/application"
 	"unsafe"
 )
 
@@ -120,8 +119,8 @@ func SetWindowTransparent(windowInstance unsafe.Pointer) unsafe.Pointer {
 	return unsafe.Pointer(frostedView)
 }
 
-func WindowSwitchFrostedMaterial(frostedView, windowInstance unsafe.Pointer, appearanceName application.AppearanceNamed) {
-	C.SwitchFrostedMaterial(frostedView, windowInstance, C.CString(string(appearanceName)))
+func WindowSwitchFrostedMaterial(frostedView, windowInstance unsafe.Pointer, appearanceName string) {
+	C.SwitchFrostedMaterial(frostedView, windowInstance, C.CString(appearanceName))
 }
 
 func SetWindowRadius(window unsafe.Pointer, value float32) {
