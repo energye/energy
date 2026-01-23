@@ -21,7 +21,7 @@ void WebViewCopy(void* nsWebview);
 void WebViewPaste(void* nsWebview);
 void WebViewSelectAll(void* nsWebview);
 
-void WebViewRegisterPerformKeyMethod(void* nsWebview);
+void WebViewRegisterPerformKeyEquivalentMethod(void* nsWebview);
 
 #ifdef __cplusplus
 }

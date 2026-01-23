@@ -143,9 +143,9 @@ func (m *TWebview) SelectAll() {
 
 // _WebViewRegisterPerformKeyMethod 注册WebView执行键盘方法的功能
 // 该方法将当前浏览器实例与底层C库的键盘方法执行功能进行绑定
-func (m *TWebview) _WebViewRegisterPerformKeyMethod() {
+func (m *TWebview) _WebViewRegisterPerformKeyEquivalentMethod() {
 	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewRegisterPerformKeyMethod(nsWebview)
+	C.WebViewRegisterPerformKeyEquivalentMethod(nsWebview)
 }
 
 func _BoolToCInt(value bool) C.int {

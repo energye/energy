@@ -33,6 +33,10 @@ var (
 	frameCorner = frameWidth + frameHeight
 )
 
+type _TNSWebview struct {
+	nsWebview wvTypes.WKWebView
+}
+
 type TWebview struct {
 	lcl.ICustomPanel
 	browserId               uint32
@@ -145,7 +149,7 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 	m.window.SetOptions()
 	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
 	m.BecomeFirstResponder()
-	m._WebViewRegisterPerformKeyMethod()
+	m._WebViewRegisterPerformKeyEquivalentMethod()
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置

@@ -119,7 +119,7 @@ static BOOL Webview_performKeyEquivalent(id self, SEL _cmd, NSEvent *event) {
     NSUInteger cmd = [event modifierFlags] & NSEventModifierFlagCommand;
     NSUInteger shift = modifierFlags & NSEventModifierFlagShift;
     NSUInteger option = modifierFlags & NSEventModifierFlagOption;
-    NSLog(@"Webview_performKeyEquivalent cmd: %d shift: %d keyCode: %d", (int)cmd, (int)shift, (int)keyCode);
+    //NSLog(@"Webview_performKeyEquivalent cmd: %d shift: %d keyCode: %d", (int)cmd, (int)shift, (int)keyCode);
     SEL selector = NULL;
     if (cmd && !shift && !option) {
         switch (keyCode) {
@@ -167,7 +167,7 @@ static BOOL Webview_performKeyEquivalent(id self, SEL _cmd, NSEvent *event) {
     return NO;
 }
 
-void WebViewRegisterPerformKeyMethod(void* nsWebview) {
+void WebViewRegisterPerformKeyEquivalentMethod(void* nsWebview) {
 	WKWebView* webview = (WKWebView*)nsWebview;
     if (!webview) {
         NSLog(@"WebViewRegisterPerformKeyMethod webview nil");
