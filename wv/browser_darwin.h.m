@@ -142,7 +142,7 @@ static BOOL Webview_performKeyEquivalent(id self, SEL _cmd, NSEvent *event) {
                 selector = sel_registerName("reload:");
                 break;
             case 35: // Cmd+P → 打印网页
-                selector = sel_registerName("print:");
+                //selector = sel_registerName("print:");
                 break;
         }
     } else if (cmd && shift && !option) {
