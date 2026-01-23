@@ -136,19 +136,19 @@
 #pragma mark - Toolbar Delegate Impl
 
 - (NSArray<NSString *> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
-    NSLog(@"toolbarDefaultItemIdentifiers");
+   // NSLog(@"toolbarDefaultItemIdentifiers");
     NSMutableArray *identifiers = [NSMutableArray array];
     return identifiers;
 }
 
 - (NSArray<NSString *> *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar {
-    NSLog(@"toolbarAllowedItemIdentifiers");
+    //NSLog(@"toolbarAllowedItemIdentifiers");
     NSMutableArray *identifiers = [NSMutableArray array];
     return identifiers;
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSToolbarItemIdentifier)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag {
-    NSLog(@"toolbarItemIdentifier: %@", itemIdentifier);
+    //NSLog(@"toolbarItemIdentifier: %@", itemIdentifier);
     if ([itemIdentifier isEqualToString:NSToolbarFlexibleSpaceItemIdentifier]) {
         return [[NSToolbarItem alloc] initWithItemIdentifier:NSToolbarFlexibleSpaceItemIdentifier];
     }
