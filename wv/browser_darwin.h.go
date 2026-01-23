@@ -50,6 +50,8 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 	m.UpdateBounds()
 }
 
+// UpdateBounds 更新WebView的边界矩形
+// 当isAddNSWindowSubview为true时，根据当前的对齐方式和锚点设置来计算并更新WebView的位置和大小
 func (m *TWebview) UpdateBounds() {
 	if m.isAddNSWindowSubview {
 		var (
