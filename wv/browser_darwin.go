@@ -162,8 +162,10 @@ func (m *TWebview) SetBrowserOptions() {
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	if form, okForm := owner.(window.IWindow); okForm {
+		// webview 直接添加到窗口
 		m.AddWindowSubviewWebview(form)
 	} else {
+		// webview 添加到容器组件
 		m.windowParent.SetParent(m)
 		m.ICustomPanel.SetParent(owner)
 	}
