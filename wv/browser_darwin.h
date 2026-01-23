@@ -12,6 +12,16 @@ extern "C" {
 
 void SetWebviewTransparent(void* nsWebview, int isTransparent);
 void UpdateWebviewBounds(void* nsWindow, void* nsWebview, float x, float y, float width, float height);
+void WebViewBecomeFirstResponder(void* nsWebview);
+
+void WebViewUndo(void* nsWebview);
+void WebViewRedo(void* nsWebview);
+void WebViewCut(void* nsWebview);
+void WebViewCopy(void* nsWebview);
+void WebViewPaste(void* nsWebview);
+void WebViewSelectAll(void* nsWebview);
+
+void WebViewRegisterPerformKeyMethod(void* nsWebview);
 
 #ifdef __cplusplus
 }

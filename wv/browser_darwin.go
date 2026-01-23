@@ -144,6 +144,8 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 	}
 	m.window.SetOptions()
 	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
+	m.BecomeFirstResponder()
+	m._WebViewRegisterPerformKeyMethod()
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置

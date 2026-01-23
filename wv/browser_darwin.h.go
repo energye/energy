@@ -94,11 +94,58 @@ func (m *TWebview) UpdateBounds() {
 	}
 }
 
+// UpdateWebviewBounds 更新WebView组件的位置和尺寸
+// 该方法将指定的坐标和尺寸参数转换为整数类型并设置组件边界，
+// 同时通过C语言接口更新原生WebView的显示区域
 func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	m.SetBounds(int32(x), int32(y), int32(width), int32(height))
 	nsWindow := unsafe.Pointer(m.nsWindow)
 	nsWebview := unsafe.Pointer(m.browser.Data())
 	C.UpdateWebviewBounds(nsWindow, nsWebview, C.float(x), C.float(y), C.float(width), C.float(height))
+}
+
+// BecomeFirstResponder 使webview成为第一响应者，获取焦点并准备接收用户输入
+// 该方法将当前webview设置为活动状态，使其能够响应键盘事件和其他用户交互
+func (m *TWebview) BecomeFirstResponder() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewBecomeFirstResponder(nsWebview)
+}
+
+func (m *TWebview) Undo() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewUndo(nsWebview)
+}
+
+func (m *TWebview) Redo() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewRedo(nsWebview)
+}
+
+func (m *TWebview) Cut() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewCut(nsWebview)
+}
+
+func (m *TWebview) Copy() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewCopy(nsWebview)
+}
+
+func (m *TWebview) Paste() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewPaste(nsWebview)
+}
+
+func (m *TWebview) SelectAll() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewSelectAll(nsWebview)
+}
+
+// _WebViewRegisterPerformKeyMethod 注册WebView执行键盘方法的功能
+// 该方法将当前浏览器实例与底层C库的键盘方法执行功能进行绑定
+func (m *TWebview) _WebViewRegisterPerformKeyMethod() {
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	C.WebViewRegisterPerformKeyMethod(nsWebview)
 }
 
 func _BoolToCInt(value bool) C.int {

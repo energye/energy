@@ -31,8 +31,19 @@ void AppSetPresentationOptions(NSApplicationPresentationOptions opts) {
 	[[NSApplication sharedApplication] setPresentationOptions:opts];
 }
 
+void AppSetMainMenu(void* nsMenu) {
+	NSMenu* menu = (NSMenu*)nsMenu;
+    if (!menu) {
+        NSLog(@"AppSetMainMenu menu nil");
+        return ;
+    }
+    NSApplication *app = [NSApplication sharedApplication];
+    [app setMainMenu:menu];
+}
+
 */
 import "C"
+import "unsafe"
 
 const (
 	NSApplicationPresentationDefault                   = uint(C.NSApplicationPresentationDefault)                   //默认行为（隐藏菜单栏、Dock 等）
@@ -57,4 +68,8 @@ func AppDockHide() {
 
 func AppDockShow() {
 	C.AppDockShow()
+}
+
+func AppSetMainMenu(nsMenu unsafe.Pointer) {
+	C.AppSetMainMenu(nsMenu)
 }
