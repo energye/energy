@@ -100,6 +100,7 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	nsWebview := unsafe.Pointer(m.browser.Data())
 	C.UpdateWebviewBounds(nsWindow, nsWebview, C.float(x), C.float(y), C.float(width), C.float(height))
 }
+
 func _BoolToCInt(value bool) C.int {
 	if value {
 		return C.int(1)
