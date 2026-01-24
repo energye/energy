@@ -126,6 +126,9 @@ type TNSPasteboard struct {
 }
 
 func WrapNSPasteboard(data uintptr) *TNSPasteboard {
+	if data == 0 {
+		return nil
+	}
 	return &TNSPasteboard{data: unsafe.Pointer(data)}
 }
 

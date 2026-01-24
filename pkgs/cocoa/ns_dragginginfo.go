@@ -63,6 +63,9 @@ type TNSDraggingInfo struct {
 }
 
 func WrapNSDraggingInfo(data darwin.NSDraggingInfoProtocol) *TNSDraggingInfo {
+	if data == 0 {
+		return nil
+	}
 	return &TNSDraggingInfo{data: unsafe.Pointer(data)}
 }
 
