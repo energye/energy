@@ -21,11 +21,11 @@ package cocoa
 
 // 粘贴板数据结构体（Go侧对应）
 typedef struct {
-    const char* filePathsJSON; // 文件路径数组JSON
-    const char* webURLsJSON;   // 网页URL数组JSON
-    const char* textsJSON;     // 文本数组JSON
-    const void* imageData;     // 图片二进制数据
-    NSUInteger imageLength;    // 图片数据长度
+    const char* filePathsJSON; 		// 文件路径数组JSON
+    const char* webURLsJSON;   		// 网页URL数组JSON
+    const char* textsJSON;     		// 文本数组JSON
+    const void* imageData;       	// 图片二进制数据
+    NSUInteger imageLength;      	// 图片数据长度
 } PasteboardData;
 
 // 通用读取粘贴板数据
@@ -54,11 +54,13 @@ PasteboardData ReadPasteboardData(void* nsPasteboard) {
         // 序列化文件路径/URL为JSON
         if (filePaths.count > 0) {
             NSData* fpJSON = [NSJSONSerialization dataWithJSONObject:filePaths options:0 error:nil];
-            data.filePathsJSON = [[[NSString alloc] initWithData:fpJSON encoding:NSUTF8StringEncoding] UTF8String];
+			const char* utf8Str = [[[NSString alloc] initWithData:fpJSON encoding:NSUTF8StringEncoding] UTF8String];
+            data.filePathsJSON = strdup(utf8Str);
         }
         if (webURLs.count > 0) {
             NSData* wuJSON = [NSJSONSerialization dataWithJSONObject:webURLs options:0 error:nil];
-            data.webURLsJSON = [[[NSString alloc] initWithData:wuJSON encoding:NSUTF8StringEncoding] UTF8String];
+			const char* utf8Str = [[[NSString alloc] initWithData:wuJSON encoding:NSUTF8StringEncoding] UTF8String];
+            data.webURLsJSON = strdup(utf8Str);
         }
 
         // 读取文本
@@ -66,7 +68,8 @@ PasteboardData ReadPasteboardData(void* nsPasteboard) {
         NSArray<NSString*>* texts = [pboard readObjectsForClasses:stringClasses options:@{}];
         if (texts.count > 0) {
             NSData* textJSON = [NSJSONSerialization dataWithJSONObject:texts options:0 error:nil];
-            data.textsJSON = [[[NSString alloc] initWithData:textJSON encoding:NSUTF8StringEncoding] UTF8String];
+			const char* utf8Str = [[[NSString alloc] initWithData:textJSON encoding:NSUTF8StringEncoding] UTF8String];
+            data.textsJSON = strdup(utf8Str);
         }
 
         // 读取图片数据
@@ -78,6 +81,18 @@ PasteboardData ReadPasteboardData(void* nsPasteboard) {
         }
     }
     return data;
+}
+
+void FreePasteboardData(PasteboardData data) {
+    if (data.filePathsJSON) {
+        free((void*)data.filePathsJSON);
+    }
+    if (data.webURLsJSON) {
+        free((void*)data.webURLsJSON);
+    }
+    if (data.textsJSON) {
+        free((void*)data.textsJSON);
+    }
 }
 
 const char* PasteboardTypes(void* nsPasteboard) {
@@ -131,10 +146,11 @@ func (m *TNSPasteboard) Types() []string {
 }
 
 type PasteboardData struct {
-	FilePaths []string
-	WebURLs   []string
-	Texts     []string
-	ImageData []byte
+	FilePaths  []string
+	WebURLs    []string
+	Texts      []string
+	PlainTexts string
+	ImageData  []byte
 }
 
 func (m *TNSPasteboard) PasteboardData() *PasteboardData {
@@ -142,7 +158,7 @@ func (m *TNSPasteboard) PasteboardData() *PasteboardData {
 		return nil
 	}
 	cData := C.ReadPasteboardData(m.data)
-
+	defer C.FreePasteboardData(cData)
 	result := &PasteboardData{}
 	// 解析文件路径
 	if cData.filePathsJSON != nil {
