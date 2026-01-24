@@ -33,7 +33,6 @@ type LocalLoad struct {
 	FS         emfs.IEmbedFS // Built-in load resource object, use built-in load when not nil, default: nil
 	Proxy      IXHRProxy     // Proxy, which can be forwarded through this configuration when the browser sends xhr requests, you can customize the implementation of the IXHRProxy interface
 	Home       string        // Home resources, default: /index.html
-	exePath    string
 }
 
 func (m *LocalLoad) initDefault() {
@@ -48,7 +47,6 @@ func (m *LocalLoad) initDefault() {
 	} else if m.Home[0] != '/' {
 		m.Home = "/" + m.Home
 	}
-	m.exePath = exec.Path
 	// default resource dir
 	if m.ResRootDir == "" {
 		if m.FS != nil && m.ResRootDir == "" {

@@ -25,29 +25,29 @@ const (
 
 // Options App config option
 type Options struct {
-	Caption                    string                `json:"-"`                          // window title
-	DefaultURL                 string                `json:"-"`                          // load url in window
-	X                          int32                 `json:"x"`                          // initial X position of the window.
-	Y                          int32                 `json:"y"`                          // initial Y position of the window.
-	Width                      int32                 `json:"width"`                      // initial width of the window
-	Height                     int32                 `json:"height"`                     // initial height of the window
-	MinWidth                   types.TConstraintSize `json:"-"`                          // min width of the window
-	MinHeight                  types.TConstraintSize `json:"-"`                          // min height of the window
-	MaxWidth                   types.TConstraintSize `json:"-"`                          // max width of the window
-	MaxHeight                  types.TConstraintSize `json:"-"`                          // max height of the window
-	DefaultWindowStatus        types.TWindowState    `json:"-"`                          // initial window state
-	DisableDevTools            bool                  `json:"disableDevTools"`            //
-	DisableContextMenu         bool                  `json:"disableContextMenu"`         //
-	DisableWebkitAppRegionDClk bool                  `json:"disableWebkitAppRegionDClk"` //
-	DisableResize              bool                  `json:"disableResize"`              //
-	DisableMinimize            bool                  `json:"-"`                          //
-	DisableMaximize            bool                  `json:"-"`                          //
-	DisableSystemMenu          bool                  `json:"-"`                          //
-	Frameless                  bool                  `json:"frameless"`                  //
-	WindowTransparent          bool                  `json:"-"`                          //
-	WebviewTransparent         bool                  `json:"-"`                          //
-	BackgroundColor            *colors.TARGB         `json:"-"`                          //
-	Windows                    Windows               `json:"-"`                          //
-	MacOS                      MacOS                 `json:"-"`                          //
-	Linux                      Linux                 `json:"-"`                          //
+	Caption                    string             `json:"-"`                          // window title
+	DefaultURL                 string             `json:"-"`                          // load url in window
+	X                          int32              `json:"x"`                          // initial X position of the window.
+	Y                          int32              `json:"y"`                          // initial Y position of the window.
+	Width                      int32              `json:"width"`                      // initial width of the window
+	Height                     int32              `json:"height"`                     // initial height of the window
+	MinWidth                   int32              `json:"-"`                          // min width of the window
+	MinHeight                  int32              `json:"-"`                          // min height of the window
+	MaxWidth                   int32              `json:"-"`                          // max width of the window
+	MaxHeight                  int32              `json:"-"`                          // max height of the window
+	DefaultWindowStatus        types.TWindowState `json:"-"`                          // initial window state
+	DisableDevTools            bool               `json:"disableDevTools"`            // macOS: --tags dev
+	DisableContextMenu         bool               `json:"disableContextMenu"`         //
+	DisableWebkitAppRegionDClk bool               `json:"disableWebkitAppRegionDClk"` //
+	DisableResize              bool               `json:"disableResize"`              //
+	DisableMinimize            bool               `json:"-"`                          //
+	DisableMaximize            bool               `json:"-"`                          //
+	DisableSystemMenu          bool               `json:"-"`                          //
+	Frameless                  bool               `json:"frameless"`                  //
+	WindowTransparent          bool               `json:"-"`                          //
+	WebviewTransparent         bool               `json:"-"`                          //
+	BackgroundColor            *colors.TARGB      `json:"-"`                          //
+	Windows                    Windows            `json:"-"`                          //
+	MacOS                      MacOS              `json:"-"`                          //
+	Linux                      Linux              `json:"-"`                          //
 }
