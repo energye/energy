@@ -8,12 +8,11 @@
 //
 //----------------------------------------
 
-package application
+package ipc
 
 import (
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/ipc/callback"
 	"reflect"
 	"strconv"
@@ -23,14 +22,14 @@ import (
 // 该方法会将对象注册到事件处理器中，使其能够接收和处理事件
 //
 //	obj - 需要绑定事件的对象
-func (m *Application) BindEvent(obj any) {
-	m.BindEventPrefix("", obj)
+func BindEvent(obj any) {
+	BindEventPrefix("", obj)
 }
 
 // BindEventPrefix 将对象的方法绑定到事件系统中，使用指定前缀作为事件名称的一部分
 //   - prefix: 事件名称前缀，如果为空则使用对象类型的名称
 //   - obj: 需要绑定的对象指针，该对象的方法将被注册为事件处理器
-func (m *Application) BindEventPrefix(prefix string, obj any) {
+func BindEventPrefix(prefix string, obj any) {
 	objVal := reflect.ValueOf(obj)
 	if objVal.Kind() != reflect.Ptr {
 		return
@@ -81,7 +80,7 @@ func (m *Application) BindEventPrefix(prefix string, obj any) {
 			}
 			return result
 		}
-		ipc.On(eventName, func(context callback.IContext) {
+		On(eventName, func(context callback.IContext) {
 			var err error
 			result := handler(context.Data().([]any), &err)
 			if err != nil {
