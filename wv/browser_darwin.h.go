@@ -17,6 +17,7 @@ package wv
 #cgo darwin LDFLAGS: -framework Cocoa
 
 #include "browser_darwin.h"
+
 */
 import "C"
 import (
@@ -26,6 +27,34 @@ import (
 	"github.com/energye/lcl/types"
 	"unsafe"
 )
+
+var (
+	gEvaluateScriptEventID     int
+	gNextEvaluateScriptEventID = func() int {
+		gEvaluateScriptEventID++
+		return gEvaluateScriptEventID
+	}
+	gEvaluateScriptEventCallback = make(map[int]TOnEvaluateScriptCallback)
+)
+
+//export evaluateScriptCallback
+func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
+	var (
+		result, err string
+		callbackID  int
+	)
+	callbackID = int(cCallbackID)
+	if resC != nil {
+		result = C.GoString(resC)
+	}
+	if errC != nil {
+		err = C.GoString(errC)
+	}
+	if callback, ok := gEvaluateScriptEventCallback[callbackID]; ok {
+		delete(gEvaluateScriptEventCallback, callbackID)
+		callback(result, err)
+	}
+}
 
 func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 	handle := unsafe.Pointer(m.browser.Data())
@@ -141,6 +170,20 @@ func (m *TWebview) Paste() {
 func (m *TWebview) SelectAll() {
 	nsWebview := unsafe.Pointer(m.browser.Data())
 	C.WebViewSelectAll(nsWebview)
+}
+
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+	if script == "" || callback == nil {
+		return
+	}
+	nsWebview := unsafe.Pointer(m.browser.Data())
+	cScript := C.CString(script)
+	defer C.free(unsafe.Pointer(cScript))
+	eventID := gNextEvaluateScriptEventID()
+	cEventID := C.int(eventID)
+	cCallback := (C.CGoEvaluateScriptCallback)(C.evaluateScriptCallback)
+	gEvaluateScriptEventCallback[eventID] = callback
+	C.WebViewEvaluateScriptCallback(nsWebview, cEventID, cScript, cCallback)
 }
 
 // _WebViewRegisterPerformKeyMethod 注册WebView执行键盘方法的功能

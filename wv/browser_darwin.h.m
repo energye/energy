@@ -178,3 +178,33 @@ void WebViewRegisterPerformKeyEquivalentMethod(void* nsWebview) {
     SEL targetSel = sel_registerName("performKeyEquivalent:");
     class_addMethod(webviewClass, targetSel, (IMP)Webview_performKeyEquivalent, methodType);
 }
+
+void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* cScript, CGoEvaluateScriptCallback cGoCallback) {
+	WKWebView* webview = (WKWebView*)nsWebview;
+    if (!webview) {
+        NSLog(@"WebViewEvaluateScriptCallback webview nil");
+        return;
+    }
+    NSString *script = [NSString stringWithUTF8String:cScript];
+    void (^completionHandler)(id, NSError *) = ^(id result, NSError *error) {
+        const char* resStr = NULL;
+        const char* errStr = NULL;
+        if (result != nil) {
+            if ([result isKindOfClass:[NSString class]]) {
+                resStr = [result UTF8String];
+            } else {
+                // 非字符串转为JSON字符串
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:result options:0 error:nil];
+                if (jsonData) {
+                    NSString *jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                    resStr = [jsonStr UTF8String];
+                }
+            }
+        }
+        if (error != nil) {
+            errStr = [error.localizedDescription UTF8String];
+        }
+        cGoCallback(callbackID, resStr, errStr);
+    };
+    [webview evaluateJavaScript:script completionHandler:completionHandler];
+}

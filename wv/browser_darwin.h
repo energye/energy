@@ -10,6 +10,11 @@
 extern "C" {
 #endif
 
+
+typedef void (*CGoEvaluateScriptCallback)(int callbackID, const char* result, const char* error);
+extern void evaluateScriptCallback(int callbackID, char* result, char* error);
+void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* cJSStr, CGoEvaluateScriptCallback cGoCallback);
+
 void SetWebviewTransparent(void* nsWebview, int isTransparent);
 void UpdateWebviewBounds(void* nsWindow, void* nsWebview, float x, float y, float width, float height);
 void WebViewBecomeFirstResponder(void* nsWebview);

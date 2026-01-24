@@ -95,3 +95,4 @@ type TOnLoadChangeEvent func(url, title string, load TLoadChange)
 type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
 type TOnContextMenuCommandEvent func(commandId int32)
 type TOnPopupWindowEvent func(targetURL string) bool
+type TOnEvaluateScriptCallback func(result string, err string)
