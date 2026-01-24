@@ -26,6 +26,15 @@ import (
 	"unsafe"
 )
 
+type TWindowEvent = int
+
+const (
+	TWindowEventEnterFullScreen                      = TWindowEvent(C.TWindowEventEnterFullScreen)
+	TWindowEventExitFullScreen                       = TWindowEvent(C.TWindowEventExitFullScreen)
+	TWindowEventWillUseFullScreenPresentationOptions = TWindowEvent(C.TWindowEventWillUseFullScreenPresentationOptions)
+	TWindowEventDidResize                            = TWindowEvent(C.TWindowEventDidResize)
+)
+
 //export doOnWindowDelegateEvent
 func doOnWindowDelegateEvent(CContext *C.TCallbackContext) *C.GoArguments {
 	ctx := TCallbackContext{

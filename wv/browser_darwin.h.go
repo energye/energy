@@ -72,10 +72,10 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 	m.isAddNSWindowSubview = true
 	var (
 		nsWindow           = unsafe.Pointer(m.nsWindow)
-		nsWebview          = unsafe.Pointer(m.browser.Data())
+		webview            = unsafe.Pointer(m.browser.Data())
 		x, y, w, h float32 = 0, 0, 200, 200
 	)
-	cocoa.WindowAddSubview(nsWindow, nsWebview, x, y, w, h)
+	cocoa.WindowAddSubview(nsWindow, webview, x, y, w, h)
 	m.UpdateBounds()
 }
 
@@ -131,66 +131,66 @@ func (m *TWebview) UpdateBounds() {
 func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	m.SetBounds(int32(x), int32(y), int32(width), int32(height))
 	nsWindow := unsafe.Pointer(m.nsWindow)
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.UpdateWebviewBounds(nsWindow, nsWebview, C.float(x), C.float(y), C.float(width), C.float(height))
+	webview := unsafe.Pointer(m.browser.Data())
+	C.UpdateWebviewBounds(nsWindow, webview, C.float(x), C.float(y), C.float(width), C.float(height))
 }
 
 // BecomeFirstResponder 使webview成为第一响应者，获取焦点并准备接收用户输入
 // 该方法将当前webview设置为活动状态，使其能够响应键盘事件和其他用户交互
 func (m *TWebview) BecomeFirstResponder() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewBecomeFirstResponder(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewBecomeFirstResponder(webview)
 }
 
 func (m *TWebview) Undo() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewUndo(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewUndo(webview)
 }
 
 func (m *TWebview) Redo() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewRedo(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewRedo(webview)
 }
 
 func (m *TWebview) Cut() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewCut(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewCut(webview)
 }
 
 func (m *TWebview) Copy() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewCopy(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewCopy(webview)
 }
 
 func (m *TWebview) Paste() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewPaste(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewPaste(webview)
 }
 
 func (m *TWebview) SelectAll() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewSelectAll(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewSelectAll(webview)
 }
 
 func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
 	if script == "" || callback == nil {
 		return
 	}
-	nsWebview := unsafe.Pointer(m.browser.Data())
+	webview := unsafe.Pointer(m.browser.Data())
 	cScript := C.CString(script)
 	defer C.free(unsafe.Pointer(cScript))
 	eventID := gNextEvaluateScriptEventID()
 	cEventID := C.int(eventID)
 	cCallback := (C.CGoEvaluateScriptCallback)(C.evaluateScriptCallback)
 	gEvaluateScriptEventCallback[eventID] = callback
-	C.WebViewEvaluateScriptCallback(nsWebview, cEventID, cScript, cCallback)
+	C.WebViewEvaluateScriptCallback(webview, cEventID, cScript, cCallback)
 }
 
 // _WebViewRegisterPerformKeyMethod 注册WebView执行键盘方法的功能
 // 该方法将当前浏览器实例与底层C库的键盘方法执行功能进行绑定
 func (m *TWebview) _WebViewRegisterPerformKeyEquivalentMethod() {
-	nsWebview := unsafe.Pointer(m.browser.Data())
-	C.WebViewRegisterPerformKeyEquivalentMethod(nsWebview)
+	webview := unsafe.Pointer(m.browser.Data())
+	C.WebViewRegisterPerformKeyEquivalentMethod(webview)
 }
 
 func _BoolToCInt(value bool) C.int {

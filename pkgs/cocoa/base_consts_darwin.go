@@ -111,8 +111,3 @@ const (
 	NSControlSizeRegular NSControlSize = NSControlSize(C.NSControlSizeRegular)
 	NSControlSizeLarge   NSControlSize = NSControlSize(C.NSControlSizeLarge)
 )
-const (
-	TWindowEventEnterFullScreen                      = int(C.TWindowEventEnterFullScreen)
-	TWindowEventExitFullScreen                       = int(C.TWindowEventExitFullScreen)
-	TWindowEventWillUseFullScreenPresentationOptions = int(C.TWindowEventWillUseFullScreenPresentationOptions)
-)

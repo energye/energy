@@ -84,6 +84,7 @@ func (m *TWindow) SetOptions() {
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 	if options.MacOS.UseWindowDelegate {
 		m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
+		m._InitEvent()
 	}
 	if options.WindowTransparent {
 		m.SetWindowTransparent()

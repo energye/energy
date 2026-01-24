@@ -21,6 +21,7 @@ package window
 */
 import "C"
 import (
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/types"
@@ -94,4 +95,16 @@ func (m *TWindow) Frameless() {
 		mask ^= C.NSWindowStyleMaskTitled
 		nsWindow.SetStyleMask(mask)
 	}
+}
+
+func (m *TWindow) _InitEvent() {
+	nsWindow := m.NSInstance()
+	windowResizeEventId := fmt.Sprintf("%d_%v", cocoa.TWindowEventDidResize, nsWindow)
+	cocoa.RegisterEvent(windowResizeEventId, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		//for _, fn := range m.onWindowResizeList {
+		//	fn(m)
+		//}
+		return nil
+	}))
+
 }

@@ -64,6 +64,15 @@
     if (self.originalDelegate && [self.originalDelegate respondsToSelector:@selector(windowDidResize:)]) {
         [self.originalDelegate windowDidResize:notification];
     }
+    if (self._callback) {
+        NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventDidResize, self.window];
+        TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
+        @try{
+            self._callback(context);
+        } @finally {
+            FreeCallbackContext(context);
+        }
+    }
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification {

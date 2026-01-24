@@ -9,7 +9,8 @@ extern "C" {
 typedef enum {
     TWindowEventEnterFullScreen = 10000,
     TWindowEventExitFullScreen = 10001,
-    TWindowEventWillUseFullScreenPresentationOptions = 10002
+    TWindowEventWillUseFullScreenPresentationOptions = 10002,
+    TWindowEventDidResize = 10003
 } TWindowEvent;
 
 // 颜色
