@@ -44,6 +44,7 @@ type IWebview interface {
 	SetDefaultURL(url string)
 	LoadURL(url string)
 	ExecuteScript(javaScript string)
+	ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback)
 	SetWidth(v int32)
 	SetHeight(v int32)
 	SetBoundsRect(value types.TRect)

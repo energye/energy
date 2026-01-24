@@ -127,6 +127,10 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript, 0)
 }
 
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+	// TODO 待实现
+}
+
 func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 	fmt.Println("SetDefaultBackgroundColor")
 	if m.window != nil && color != nil {

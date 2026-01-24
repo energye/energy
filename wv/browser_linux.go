@@ -294,6 +294,10 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript)
 }
 
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+	// TODO 待实现
+}
+
 func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
 		rootContextMenu := wv.NewContextMenu(contextMenu)
