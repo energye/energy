@@ -186,6 +186,7 @@ void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* 
         return;
     }
     NSString *script = [NSString stringWithUTF8String:cScript];
+    // OpaqueCBlock
     void (^completionHandler)(id, NSError *) = ^(id result, NSError *error) {
         const char* resStr = NULL;
         const char* errStr = NULL;
@@ -193,7 +194,6 @@ void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* 
             if ([result isKindOfClass:[NSString class]]) {
                 resStr = [result UTF8String];
             } else {
-                // 非字符串转为JSON字符串
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:result options:0 error:nil];
                 if (jsonData) {
                     NSString *jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -204,7 +204,11 @@ void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* 
         if (error != nil) {
             errStr = [error.localizedDescription UTF8String];
         }
+        // Go 回调函数
         cGoCallback(callbackID, resStr, errStr);
     };
-    [webview evaluateJavaScript:script completionHandler:completionHandler];
+    // UI 线程
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [webview evaluateJavaScript:script completionHandler:completionHandler];
+    });
 }
