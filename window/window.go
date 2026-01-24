@@ -163,7 +163,7 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 	if application.GApplication != nil {
 		options := application.GApplication.Options
 		//params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
-		if options.WindowIsTransparent {
+		if options.WindowTransparent {
 			params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
 		}
 	}

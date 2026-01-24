@@ -85,7 +85,7 @@ func (m *TWindow) SetOptions() {
 	if options.MacOS.UseWindowDelegate {
 		m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
 	}
-	if options.WindowIsTransparent {
+	if options.WindowTransparent {
 		m.SetWindowTransparent()
 		if options.MacOS.AppearanceName != "" {
 			m.SwitchFrostedMaterial(options.MacOS.AppearanceName)

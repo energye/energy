@@ -44,8 +44,8 @@ type Options struct {
 	DisableMaximize            bool                  `json:"-"`                          //
 	DisableSystemMenu          bool                  `json:"-"`                          //
 	Frameless                  bool                  `json:"frameless"`                  //
-	WindowIsTransparent        bool                  `json:"-"`                          //
-	WebviewIsTransparent       bool                  `json:"-"`                          //
+	WindowTransparent          bool                  `json:"-"`                          //
+	WebviewTransparent         bool                  `json:"-"`                          //
 	BackgroundColor            *colors.TARGB         `json:"-"`                          //
 	Windows                    Windows               `json:"-"`                          //
 	MacOS                      MacOS                 `json:"-"`                          //

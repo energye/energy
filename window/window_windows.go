@@ -44,7 +44,7 @@ func (m *TWindow) SetOptions() {
 	if application.GApplication != nil {
 		hWnd := m.Handle()
 		options := application.GApplication.Options
-		if options.WindowIsTransparent {
+		if options.WindowTransparent {
 			if win32.Windows1122H2() {
 				win32.EnableTranslucency(hWnd, int32(options.Windows.BackdropType))
 			} else {

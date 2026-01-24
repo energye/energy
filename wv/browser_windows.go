@@ -140,7 +140,7 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 			if color.A > 0 && color.A < 255 {
 				color.A = 255
 			}
-			if gApplication.Options.WebviewIsTransparent {
+			if gApplication.Options.WebviewTransparent {
 				color.A = 0
 			}
 			newColor := types.TColor(color.ARGB())

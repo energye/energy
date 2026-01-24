@@ -145,7 +145,7 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 		m.window.SetBrowserId(m.browserId)
 	}
 	m.window.SetOptions()
-	m.SetWebviewTransparent(gApplication.Options.WebviewIsTransparent)
+	m.SetWebviewTransparent(gApplication.Options.WebviewTransparent)
 	m.BecomeFirstResponder()
 	m._WebViewRegisterPerformKeyEquivalentMethod()
 }
