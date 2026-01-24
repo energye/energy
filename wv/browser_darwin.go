@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
-	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
@@ -314,7 +313,7 @@ func (m *TWebview) initDefaultEvent() {
 		return m.window.(window.IDarwinWindow)
 	}
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
-		println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
+		//println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
 		var handle bool
 		if m.messageReceivedDelegate != nil {
 			// ipc message
