@@ -14,7 +14,6 @@ package wv
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
@@ -350,7 +349,6 @@ func (m *TWebview) initDefaultEvent() {
 						data := pMessage.Data.(map[string]any)
 						x := int32(data["x"].(float64))
 						y := int32(data["y"].(float64))
-						fmt.Println("ipc.MT_CONTEXTMENU", pMessage.Data, err, x, y)
 						m.contextMenu(x, y)
 					}
 				}
