@@ -69,17 +69,20 @@ func (m *TWebview) createEnergyJavasScript() {
 	if err == nil {
 		envJS(string(optionsJSON))
 	}
+	browser := make(map[string]any)
+	browser["id"] = m.BrowserId()
 	env := make(map[string]any)
 	env["frameWidth"] = frameWidth
 	env["frameHeight"] = frameHeight
 	env["frameCorner"] = frameCorner
 	env["os"] = runtime.GOOS
+	env["browser"] = browser
 	envJSON, err := json.Marshal(env)
 	if err == nil {
 		envJS(string(envJSON))
 	}
 	m.ExecuteScript(jsCode.String())
-	m.ExecuteScript(`window.energy.drag().setup();`)
+	m.ExecuteScript(`window.energy.drag.setup();`)
 }
 
 type TLoadChange int32

@@ -29,20 +29,20 @@
         // js ipc.on event listener
         // @key {string} event name
         // @value {Listener} listener object
-        #eventListeners;
+        eventListeners;
 
         // js ipc.emit callbacks
         // @key {number} executionID
         // @value {function} callback
-        #emitCallbacks;
+        emitCallbacks;
 
         // js ipc.emit callback executionID, global accumulation
-        #executionID;
+        executionID;
 
         //drag
-        #drag;
+        drag;
 
-        #env = {};
+        env = {};
 
         /**
          * js process message
@@ -60,7 +60,7 @@
          * @public
          */
         setEnv(key, value) {
-            this.#env[key] = value
+            this.env[key] = value
         }
 
         /**
@@ -80,7 +80,7 @@
          * @public
          */
         getEnv(key) {
-            return this.#env[key]
+            return this.env[key]
         }
 
         /**
@@ -88,11 +88,11 @@
          * @memberof Energy
          */
         constructor() {
-            this.#eventListeners = new Map();
-            this.#emitCallbacks = new Map();
-            this.#executionID = 0;
+            this.eventListeners = new Map();
+            this.emitCallbacks = new Map();
+            this.executionID = 0;
             // process message
-            if (this.#deepTest(["chrome", "webview", "postMessage"])) {
+            if (this.deepTest(["chrome", "webview", "postMessage"])) {
                 // webview2
                 let webview = window.chrome.webview;
                 // render process send message => go
@@ -107,21 +107,17 @@
                 //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
                 // console.log("buffer:", bufferData);
                 //});
-            } else if (this.#deepTest(["webkit", "messageHandlers", "processMessage", "postMessage"])) {
+            } else if (this.deepTest(["webkit", "messageHandlers", "processMessage", "postMessage"])) {
                 // webkit
                 // render process send message => go
                 this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage(message);
             } else {
                 throw new Error("Unsupported Platform");
             }
-            this.#drag = new Drag();
+            this.drag = new Drag();
         }
 
-        drag() {
-            return this.#drag;
-        }
-
-        #deepTest(s) {
+        deepTest(s) {
             let obj = window[s.shift()];
             while (obj && s.length) obj = obj[s.shift()];
             return obj;
@@ -130,13 +126,13 @@
         /**
          * @param {object} message
          */
-        #notifyListeners(message) {
+        notifyListeners(message) {
             switch (message.t) {
                 case MT_EVENT_GO_EMIT:
-                    this.#handlerGOEMIT(message);
+                    this.handlerGOEMIT(message);
                     break
                 case MT_EVENT_JS_EMIT_CALLBACK:
-                    this.#handlerJSEMITCallback(message);
+                    this.handlerJSEMITCallback(message);
                     break
             }
         };
@@ -144,11 +140,11 @@
         /**
          * @param {object} message
          */
-        #handlerJSEMITCallback(message) {
+        handlerJSEMITCallback(message) {
             let id = message.i;                         // executionID
-            let callback = this.#emitCallbacks.get(id); // get ipc.emit callback function
+            let callback = this.emitCallbacks.get(id); // get ipc.emit callback function
             if (callback) {
-                this.#emitCallbacks.delete(id); // remove ipc.emit callback function by executionID
+                this.emitCallbacks.delete(id); // remove ipc.emit callback function by executionID
                 let args = message.d;           // arguments
                 if (!Array.isArray(args)) {
                     args = [args];
@@ -160,10 +156,10 @@
         /**
          * @param {object} message
          */
-        #handlerGOEMIT(message) {
+        handlerGOEMIT(message) {
             let id = message.i;   // executionID
             let name = message.n; // name
-            let callback = this.#eventListeners.get(name);
+            let callback = this.eventListeners.get(name);
             if (callback) {
                 let args = message.d; // arguments
                 if (!Array.isArray(args)) {
@@ -189,7 +185,7 @@
          * @private
          */
         __setEventListener(name, callback) {
-            this.#eventListeners.set(name, callback);
+            this.eventListeners.set(name, callback);
         }
 
         /**
@@ -197,7 +193,7 @@
          * @private
          */
         __removeEventListener(name) {
-            this.#eventListeners.delete(name);
+            this.eventListeners.delete(name);
         }
 
         /**
@@ -206,7 +202,7 @@
          * @private
          */
         __setJSEmitCallback(executionID, callback) {
-            this.#emitCallbacks.set(executionID, callback);
+            this.emitCallbacks.set(executionID, callback);
         }
 
         /**
@@ -215,7 +211,7 @@
          */
         __executeEvent(messageData) {
             try {
-                this.#notifyListeners(JSON.parse(messageData));
+                this.notifyListeners(JSON.parse(messageData));
             } catch (e) {
                 throw new Error(e + ' ' + messageData);
             }
@@ -227,8 +223,8 @@
          * @private
          */
         __nextExecutionID() {
-            this.#executionID++;
-            return this.#executionID;
+            this.executionID++;
+            return this.executionID;
         };
 
         __listenDarwinContextMenu() {
@@ -318,18 +314,18 @@
     }
 
     class Drag {
-        #shouldDrag = false;
-        #cssDragProperty = "--webkit-app-region";
-        #cssDragValue = "drag";
+        shouldDrag = false;
+        cssDragProperty = "--webkit-app-region";
+        cssDragValue = "drag";
 
         constructor() {
         }
 
-        #test(e) {
-            let v = window.getComputedStyle(e.target).getPropertyValue(this.#cssDragProperty);
+        hitTest(e) {
+            let v = window.getComputedStyle(e.target).getPropertyValue(this.cssDragProperty);
             if (v) {
                 v = v.trim();
-                if (v !== this.#cssDragValue) {
+                if (v !== this.cssDragValue) {
                     return false;
                 }
                 return e.buttons === 1;
@@ -394,9 +390,9 @@
             }
 
             function mouseMove(e) {
-                if (that.#shouldDrag) {
+                if (that.shouldDrag) {
                     if (isWindows) {
-                        that.#shouldDrag = false;
+                        that.shouldDrag = false;
                     }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
                 } else if (!disableResize && !isDarwin && frameless) {
@@ -405,8 +401,8 @@
             }
 
             function mouseUp(e) {
-                that.#shouldDrag = false;
-                if (that.#test(e)) {
+                that.shouldDrag = false;
+                if (that.hitTest(e)) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_UP, 'up', null);
                 }
@@ -416,19 +412,19 @@
                 if (idcCursor) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_RESIZE, 'resize', idcCursor);
-                } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.#test(e)) {
+                } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.hitTest(e)) {
                     e.preventDefault();
                     if (isWindows) {
-                        that.#shouldDrag = true;
+                        that.shouldDrag = true;
                     }
                     dragMessage(MT_DRAG_DOWN, 'down', {x: e.screenX, y: e.screenY});
                 } else {
-                    that.#shouldDrag = false;
+                    that.shouldDrag = false;
                 }
             }
 
             function dblClick(e) {
-                if (that.#test(e) && !disableWebkitAppRegionDClk) {
+                if (that.hitTest(e) && !disableWebkitAppRegionDClk) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_DBLCLICK, 'dblclk', null);
                 }
