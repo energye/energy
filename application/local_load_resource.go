@@ -40,7 +40,7 @@ func (m *LocalLoadResource) Read(path string) ([]byte, error) {
 	if m.FS == nil {
 		var rootPath string
 		if m.ResRootDir[0] == '@' {
-			rootPath = filepath.Join(m.exePath, m.ResRootDir[1:])
+			rootPath = filepath.Join(m.appDir, m.ResRootDir[1:])
 		} else {
 			rootPath = m.ResRootDir
 		}
