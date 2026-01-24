@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package wkwebview
+package cocoa
 
 /*
 #cgo darwin CFLAGS: -DDARWIN -x objective-c

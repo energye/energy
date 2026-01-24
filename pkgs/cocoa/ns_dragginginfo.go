@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package wkwebview
+package cocoa
 
 /*
 #cgo darwin CFLAGS: -DDARWIN -x objective-c
@@ -37,7 +37,7 @@ import (
 )
 
 // NSDragOperation A group of constants that represent which operations the dragging source can perform on dragging items.
-type NSDragOperation int32
+type NSDragOperation = int32
 
 const (
 	// NSDragOperationCopy A constant that indicates the drag can copy the data that the image represents.
