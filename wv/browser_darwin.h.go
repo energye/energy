@@ -21,7 +21,6 @@ package wv
 */
 import "C"
 import (
-	"fmt"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
@@ -126,7 +125,6 @@ func (m *TWebview) UpdateBounds() {
 					h += float32(windowBoundsRect.Height() - oh)
 				}
 			}
-			fmt.Println("UpdateBounds:", windowBoundsRect.Width(), m.oldBounds.Width())
 		}
 		m.UpdateWebviewBounds(x, y, w, h)
 		m.oldBounds = windowBoundsRect
