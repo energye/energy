@@ -46,7 +46,6 @@ func BindEventPrefix(prefix string, obj any) {
 		method := objVal.Type().Method(i)
 		methodName := method.Name
 		eventName := fmt.Sprintf("%s.%s", prefix, methodName)
-		println("ipc.On-eventName:", eventName)
 		methodVal := objVal.MethodByName(methodName)
 		// 创建事件处理函数，负责参数验证、类型转换和方法调用
 		handler := func(args []any, err *error) []any {
@@ -65,6 +64,7 @@ func BindEventPrefix(prefix string, obj any) {
 			for j := 0; j < paramCount; j++ {
 				argVal := reflect.ValueOf(args[j])
 				targetType := methodType.In(j)
+
 				if convertValue, ok := srcConvertTargetType(argVal, targetType); ok {
 					in[j] = convertValue
 				} else {
