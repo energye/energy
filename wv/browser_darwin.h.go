@@ -21,6 +21,7 @@ package wv
 */
 import "C"
 import (
+	"fmt"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
@@ -71,10 +72,12 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 	m.nsWindow = lcl.PlatformWindow(window.Instance())
 	m.isAddNSWindowSubview = true
 	var (
-		nsWindow           = unsafe.Pointer(m.nsWindow)
-		webview            = unsafe.Pointer(m.browser.Data())
-		x, y, w, h float32 = 0, 0, 200, 200
+		nsWindow      = unsafe.Pointer(m.nsWindow)
+		webview       = unsafe.Pointer(m.browser.Data())
+		webviewBounds = m.BoundsRect()
+		x, y, w, h    = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 	)
+
 	cocoa.WindowAddSubview(nsWindow, webview, x, y, w, h)
 	m.UpdateBounds()
 }
@@ -84,11 +87,11 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 func (m *TWebview) UpdateBounds() {
 	if m.isAddNSWindowSubview {
 		var (
-			webviewAlign             = m.Align()
-			windowBoundsRect         = m.window.BoundsRect()
-			webviewBounds            = m.BoundsRect()
-			x, y, w, h       float32 = 0, 0, 200, 200
-			webviewAnchors           = m.Anchors()
+			webviewAlign     = m.Align()
+			windowBoundsRect = m.window.BoundsRect()
+			webviewBounds    = m.BoundsRect()
+			x, y, w, h       = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
+			webviewAnchors   = m.Anchors()
 		)
 		switch webviewAlign {
 		case types.AlNone, types.AlCustom:
@@ -114,11 +117,16 @@ func (m *TWebview) UpdateBounds() {
 			akRight := webviewAnchors.In(types.AkRight)
 			akBottom := webviewAnchors.In(types.AkBottom)
 			if akRight {
-				w += float32(windowBoundsRect.Width() - m.oldBounds.Width())
+				if ow := m.oldBounds.Width(); ow > 0 {
+					w += float32(windowBoundsRect.Width() - ow)
+				}
 			}
 			if akBottom {
-				h += float32(windowBoundsRect.Height() - m.oldBounds.Height())
+				if oh := m.oldBounds.Height(); oh > 0 {
+					h += float32(windowBoundsRect.Height() - oh)
+				}
 			}
+			fmt.Println("UpdateBounds:", windowBoundsRect.Width(), m.oldBounds.Width())
 		}
 		m.UpdateWebviewBounds(x, y, w, h)
 		m.oldBounds = windowBoundsRect
