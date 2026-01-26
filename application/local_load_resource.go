@@ -24,6 +24,9 @@ type LocalLoadResource struct {
 
 func NewLocalLoadResource(localLoad *LocalLoad) *LocalLoadResource {
 	if localLoad != nil {
+		if localLoad.Scheme == "" || localLoad.Domain == "" {
+			return nil
+		}
 		newLocalLoad := *localLoad
 		ret := &LocalLoadResource{
 			LocalLoad: &newLocalLoad,

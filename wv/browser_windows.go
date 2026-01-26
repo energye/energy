@@ -14,7 +14,7 @@ package wv
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -29,6 +29,7 @@ import (
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
+	"sync"
 )
 
 var (
@@ -39,9 +40,12 @@ var (
 
 type TWebview struct {
 	lcl.IPanel
+	TEnergyWebview
 	browserId               uint32
 	isClose                 bool
 	created                 bool
+	executeScriptCallback   sync.Map
+	executeScriptId         int32
 	window                  window.IWindow
 	windowParent            wv.IWVWindowParent
 	browser                 wv.IWVBrowser
@@ -68,19 +72,12 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.windowParent.SetAlign(types.AlClient)
 
 	m.browser = wv.NewBrowser(owner)
-	options := application.GApplication.Options
-	if options.BackgroundColor != nil {
-		r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
-		color := colors.TColor(colors.RGB(r, g, b))
-		m.SetColor(color)
-	}
 
 	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
-	m.SetBrowserOptions()
 	return m
 }
 
@@ -93,7 +90,6 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
-		m.window.SetOptions()
 	}
 	window.AddOnWindowStateChange(m.doOnWindowStateChange)
 	window.AddOnWindowResize(m.doOnWindowResize)
@@ -102,12 +98,24 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 	window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
 
-// SetBrowserOptions 设置浏览器窗口的选项配置
-func (m *TWebview) SetBrowserOptions() {
-	options := gApplication.Options
+// UpdateBrowserOptions 更新浏览器配置
+func (m *TWebview) UpdateBrowserOptions() {
+	// 1. 获取 LocalLoad 全局配置
+	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
+		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
+		m.SetLocalLoad(newLocalLoad)
+	}
+	// 2 设置浏览器配置
+	options := m.window.Options()
 	if options.DefaultURL != "" {
 		m.SetDefaultURL(options.DefaultURL)
 		//m.LoadURL(options.DefaultURL)
+	}
+
+	if options.BackgroundColor != nil {
+		r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
+		color := colors.TColor(colors.RGB(r, g, b))
+		m.SetColor(color)
 	}
 }
 
@@ -123,16 +131,20 @@ func (m *TWebview) SetColor(color colors.TColor) {
 	m.windowParent.SetColor(color)
 }
 
-func (m *TWebview) ExecuteScript(javaScript string) {
-	m.browser.ExecuteScript(javaScript, 0)
+func (m *TWebview) ExecuteScript(script string) {
+	m.browser.ExecuteScript(script, 0)
 }
 
 func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
-	// TODO 待实现
+	if script == "" || callback == nil {
+		return
+	}
+	m.executeScriptId++
+	m.executeScriptCallback.Store(m.executeScriptId, callback)
+	m.browser.ExecuteScript(script, m.executeScriptId)
 }
 
 func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
-	fmt.Println("SetDefaultBackgroundColor")
 	if m.window != nil && color != nil {
 		setColor := func() {
 			hWnd := m.window.Handle()
@@ -140,7 +152,7 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 			if color.A > 0 && color.A < 255 {
 				color.A = 255
 			}
-			if gApplication.Options.WebviewTransparent {
+			if m.window.Options().WebviewTransparent {
 				color.A = 0
 			}
 			newColor := types.TColor(color.ARGB())
@@ -169,6 +181,12 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 //	2. Specify the event function in the current window and retain the default event behavior
 func (m *TWebview) initDefaultEvent() {
 	streams := make(map[string]lcl.IMemoryStream)
+	m.browser.SetOnExecuteScriptCompleted(func(sender lcl.IObject, errorCode types.HRESULT, resultObjectAsJson string, executionID int32) {
+		if callback, ok := m.executeScriptCallback.Load(executionID); ok {
+			m.executeScriptCallback.Delete(executionID)
+			callback.(TOnEvaluateScriptCallback)(resultObjectAsJson, "")
+		}
+	})
 	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
 		args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
 		defer args.Free()
@@ -177,7 +195,7 @@ func (m *TWebview) initDefaultEvent() {
 		menuItemClear := func(menuItems wv.ICoreWebView2ContextMenuItemCollection) {
 			menuItems.RemoveAllMenuItems()
 		}
-		if gApplication.Options.DisableContextMenu {
+		if m.window.Options().DisableContextMenu {
 			menuItemClear(menuItemCollection)
 			return
 		}
@@ -250,18 +268,18 @@ func (m *TWebview) initDefaultEvent() {
 		args.SetHandled(handle)
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
-		m.SetDefaultBackgroundColor(gApplication.Options.BackgroundColor)
+		m.SetDefaultBackgroundColor(m.window.Options().BackgroundColor)
 		m.windowParent.UpdateSize()
 		// local load
-		if gApplication.LocalLoad != nil {
-			m.browser.AddWebResourceRequestedFilter(gApplication.LocalLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
+		if m.LocalLoadResource() != nil {
+			m.browser.AddWebResourceRequestedFilter(m.LocalLoadResource().LocalLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
 		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos
-		settings.SetAreDevToolsEnabled(!gApplication.Options.DisableDevTools)
+		settings.SetAreDevToolsEnabled(!m.window.Options().DisableDevTools)
 		if m.onBrowserAfterCreated != nil {
 			m.onBrowserAfterCreated(sender)
 		}
@@ -394,8 +412,10 @@ func (m *TWebview) initDefaultEvent() {
 			}
 			if handle && resource != "" {
 				data = []byte(resource)
-			} else if !handle {
-				data, err = gApplication.LocalLoad.Read(path)
+			} else if !handle && m.LocalLoadResource() != nil {
+				data, err = m.LocalLoadResource().Read(path)
+			} else {
+				err = errors.New("resource not found")
 			}
 			if err == nil {
 				stream = lcl.NewMemoryStream()
@@ -433,6 +453,9 @@ func (m *TWebview) CreateBrowser() {
 		return
 	}
 	m.created = true
+	// 1. 更新浏览器配置
+	m.UpdateBrowserOptions()
+	// 2. 初始化 webview
 	if gApplication.InitializationError() {
 		// Log ???
 	} else {
@@ -556,11 +579,12 @@ func (m *TWebview) drag(message ipc.ProcessMessage) {
 		m.window.Maximize()
 	}
 }
+
 func (m *TWebview) resize(ht string) {
 	if m.window == nil {
 		return
 	}
-	if m.window.IsFullScreen() || application.GApplication.Options.DisableResize {
+	if m.window.IsFullScreen() || m.window.Options().DisableResize {
 		return
 	}
 	if win.ReleaseCapture() {

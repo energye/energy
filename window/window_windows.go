@@ -13,6 +13,7 @@
 package window
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
@@ -23,44 +24,42 @@ import (
 
 type TWindow struct {
 	TEnergyWindow
-}
-
-func (m *TWindow) borderFrameless() {
-	hWnd := m.Handle()
-	gwlStyle := win.GetWindowLong(hWnd, win.GWL_STYLE)
-	win.SetWindowLong(hWnd, win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
-	win.SetWindowPos(hWnd, 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+	flagFirstShow bool
 }
 
 func (m *TWindow) _BeforeFormCreate() {
 }
 
 func (m *TWindow) _BeforeFormShow() {
+	if m.flagFirstShow {
+		return
+	}
+	m.flagFirstShow = true
+	m.UpdateWindowOption()
 }
 
-// SetOptions 设置webview窗口的选项配置
-func (m *TWindow) SetOptions() {
+// UpdateWindowOption 设置窗口配置选项
+func (m *TWindow) UpdateWindowOption() {
 	m._HookWndProcMessage()
-	if application.GApplication != nil {
+	if m.options != nil {
 		hWnd := m.Handle()
-		options := application.GApplication.Options
-		if options.WindowTransparent {
+		if m.options.WindowTransparent {
 			if win32.Windows1122H2() {
-				win32.EnableTranslucency(hWnd, int32(options.Windows.BackdropType))
+				win32.EnableTranslucency(hWnd, int32(m.options.Windows.BackdropType))
 			} else {
 				win32.SetTranslucentBackground(hWnd)
 			}
 		}
-		if options.Windows.WindowProtected {
+		if m.options.Windows.WindowProtected {
 			win32.SetWindowDisplayAffinity(hWnd, win.WDA_EXCLUDEFROMCAPTURE)
 		}
-		if options.BackgroundColor != nil {
-			r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
+		if m.options.BackgroundColor != nil {
+			r, g, b := byte(m.options.BackgroundColor.R), byte(m.options.BackgroundColor.G), byte(m.options.BackgroundColor.B)
 			color := colors.TColor(colors.RGB(r, g, b))
 			m.SetColor(color)
 			win32.SetBackgroundColor(hWnd, r, g, b)
 		}
-		switch options.Windows.Theme {
+		switch m.options.Windows.Theme {
 		case application.SystemDefault:
 			win32.ChangeTheme(hWnd, win32.IsCurrentlyDarkMode())
 		case application.Light:
@@ -68,38 +67,38 @@ func (m *TWindow) SetOptions() {
 		case application.Dark:
 			win32.ChangeTheme(hWnd, true)
 		}
-		if !application.GApplication.Options.Frameless {
-			if application.GApplication.Options.DisableResize {
+		if !m.options.Frameless {
+			if m.options.DisableResize {
 				m.SetBorderStyleToFormBorderStyle(types.BsSingle)
 				m.EnabledMaximize(false)
 			}
-			if application.GApplication.Options.DisableMinimize {
+			if m.options.DisableMinimize {
 				m.EnabledMinimize(false)
 			}
-			if application.GApplication.Options.DisableMaximize {
+			if m.options.DisableMaximize {
 				m.EnabledMaximize(false)
 			}
-			if application.GApplication.Options.DisableSystemMenu {
+			if m.options.DisableSystemMenu {
 				m.EnabledSystemMenu(false)
 			}
 		}
 		constr := m.Constraints()
-		if application.GApplication.Options.MaxWidth > 0 || application.GApplication.Options.MaxHeight > 0 {
-			constr.SetMaxWidth(application.GApplication.Options.MaxWidth)
-			constr.SetMaxHeight(application.GApplication.Options.MaxHeight)
+		if m.options.MaxWidth > 0 || m.options.MaxHeight > 0 {
+			constr.SetMaxWidth(m.options.MaxWidth)
+			constr.SetMaxHeight(m.options.MaxHeight)
 		}
-		if application.GApplication.Options.MinWidth > 0 || application.GApplication.Options.MinHeight > 0 {
-			constr.SetMinWidth(application.GApplication.Options.MinWidth)
-			constr.SetMinHeight(application.GApplication.Options.MinHeight)
+		if m.options.MinWidth > 0 || m.options.MinHeight > 0 {
+			constr.SetMinWidth(m.options.MinWidth)
+			constr.SetMinHeight(m.options.MinHeight)
 		}
-		if options.Width <= 0 {
-			options.Width = m.Width()
+		if m.options.Width <= 0 {
+			m.options.Width = m.Width()
 		}
-		if options.Height <= 0 {
-			options.Height = m.Height()
+		if m.options.Height <= 0 {
+			m.options.Height = m.Height()
 		}
-		m.SetCaption(options.Caption)
-		m.SetBounds(options.X, options.Y, options.Width, options.Height)
+		m.SetCaption(m.options.Caption)
+		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 	}
 }
 
@@ -116,10 +115,12 @@ func (m *TWindow) FullScreen() {
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
 		monitorRect := m.Monitor().BoundsRect()
-		if !application.GApplication.Options.Frameless {
+		if !m.options.Frameless {
 			// save current window style, use ExitFullScreen
-			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(hWnd, win.GWL_STYLE))
-			m.borderFrameless()
+			gwlStyle := win.GetWindowLongPtr(hWnd, win.GWL_STYLE)
+			m.oldWindowStyle = gwlStyle
+			win.SetWindowLongPtr(hWnd, win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
+			win.SetWindowPos(hWnd, 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 			m.SetWindowState(types.WsFullScreen)
 		}
 		win.SetWindowPos(hWnd, win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
@@ -129,8 +130,9 @@ func (m *TWindow) FullScreen() {
 func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !application.GApplication.Options.Frameless {
-				win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.oldWindowStyle)
+			hWnd := m.Handle()
+			if !m.options.Frameless {
+				win.SetWindowLongPtr(hWnd, win.GWL_STYLE, m.oldWindowStyle)
 			}
 			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
@@ -146,7 +148,10 @@ func (m *TWindow) UpdateTheme() {
 	if !win32.Windows101809() {
 		return
 	}
-	options := application.GApplication.Options
+	if m.options == nil {
+		return
+	}
+	options := m.options
 	var isDark bool
 	switch options.Windows.Theme {
 	case application.SystemDefault:

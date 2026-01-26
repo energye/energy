@@ -13,7 +13,6 @@
 package window
 
 import (
-	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
@@ -38,7 +37,7 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 		//case messages.PBT_POWERSETTINGCHANGE:
 		//}
 	}
-	if application.GApplication.Options.Frameless {
+	if m.options != nil && m.options.Frameless {
 		switch message {
 		case messages.WM_ACTIVATE:
 			// If we want to have a frameless window but with the default frame decorations, extend the DWM client area.
@@ -79,12 +78,13 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 
 func (m *TWindow) _HookWndProcMessage() {
 	if m.oldWndPrc == 0 {
+		hWnd := m.Handle()
 		wndProcCallback := syscall.NewCallback(m.wndProc)
-		m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
+		m.oldWndPrc = win.SetWindowLongPtr(hWnd, win.GWL_WNDPROC, wndProcCallback)
 		// trigger WM_NCCALCSIZE
 		// https://learn.microsoft.com/en-us/windows/win32/dwm/customframe#removing-the-standard-frame
 		clientRect := m.BoundsRect()
-		win.SetWindowPos(m.Handle(), 0, clientRect.Left, clientRect.Top, clientRect.Right-clientRect.Left, clientRect.Bottom-clientRect.Top, win.SWP_FRAMECHANGED)
+		win.SetWindowPos(hWnd, 0, clientRect.Left, clientRect.Top, clientRect.Right-clientRect.Left, clientRect.Bottom-clientRect.Top, win.SWP_FRAMECHANGED)
 	}
 }
 

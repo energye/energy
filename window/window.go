@@ -14,12 +14,17 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
+	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 )
 
 type IWindow interface {
 	lcl.IEngForm
-	SetOptions()
+	// 设置当前窗口配置选项
+	SetOptions(options application.Options)
+	Options() *application.Options
+	// 更新当前窗口配置选项
+	UpdateWindowOption()
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
 	Restore()
@@ -44,6 +49,7 @@ type TEnergyWindow struct {
 	lcl.TEngForm
 	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
 	isClose                 bool
+	options                 *application.Options
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
@@ -113,7 +119,7 @@ func (m *TWindow) Minimize() {
 }
 
 func (m *TWindow) Maximize() {
-	if m.IsFullScreen() || application.GApplication.Options.DisableMaximize {
+	if m.IsFullScreen() || (m.options != nil && m.options.DisableMaximize) {
 		return
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
@@ -150,7 +156,21 @@ func (m *TWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
 }
 
+func (m *TWindow) SetOptions(options application.Options) {
+	m.options = &options
+}
+
+func (m *TWindow) Options() *application.Options {
+	return m.options
+}
+
 func (m *TWindow) FormCreate(sender lcl.IObject) {
+	if m.options == nil {
+		// 获取全局配置
+		if application.GApplication != nil {
+			m.SetOptions(application.GApplication.Options)
+		}
+	}
 	m.TEngForm.SetOnResize(m.doOnResize)
 	m.TEngForm.SetOnWindowStateChange(m.doOnWindowStateChange)
 	m._BeforeFormCreate()
@@ -160,10 +180,9 @@ func (m *TWindow) FormCreate(sender lcl.IObject) {
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
-	if application.GApplication != nil {
-		options := application.GApplication.Options
+	if m.options != nil {
 		//params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
-		if options.WindowTransparent {
+		if m.options.WindowTransparent {
 			params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
 		}
 	}
@@ -198,7 +217,11 @@ func (m *TWindow) doOnResize(sender lcl.IObject) {
 }
 
 func (m *TWindow) doOnWindowStateChange(sender lcl.IObject) {
-	m.windowsState = m.TEngForm.WindowState()
+	if !tool.IsWindows() {
+		// 窗口状态改变时获取窗口状态
+		// windows 不在此设置该状态, m.windowsState
+		m.windowsState = m.TEngForm.WindowState()
+	}
 	for _, fn := range m.onWindowStateChangeList {
 		fn(sender)
 	}

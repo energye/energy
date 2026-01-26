@@ -13,6 +13,7 @@ package wv
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -32,10 +33,13 @@ func getNextBrowserID() uint32 {
 type IWebview interface {
 	lcl.ICustomPanel
 	// SetWindow 设置webview的窗口实例，并初始化相关回调函数
-	//
-	//	window - 窗口接口实例，用于承载webview内容
+	// window - 窗口接口实例，用于承载webview内容
 	SetWindow(window window.IWindow)
-	SetBrowserOptions()
+	// 设置当前 browser 的自定义资源加载方试
+	SetLocalLoad(localLoad application.LocalLoad)
+	LocalLoadResource() *application.LocalLoadResource
+	// 更新当前 browser 配置
+	UpdateBrowserOptions()
 	SetParent(window lcl.IWinControl)
 	CreateBrowser()
 	BrowserId() uint32
@@ -56,6 +60,18 @@ type IWebview interface {
 	SetOnContextMenu(fn TOnContextMenuEvent)
 	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
 	SetOnPopupWindow(fn TOnPopupWindowEvent)
+}
+
+type TEnergyWebview struct {
+	localLoad *application.LocalLoadResource
+}
+
+func (m *TEnergyWebview) SetLocalLoad(localLoad application.LocalLoad) {
+	m.localLoad = application.NewLocalLoadResource(&localLoad)
+}
+
+func (m *TEnergyWebview) LocalLoadResource() *application.LocalLoadResource {
+	return m.localLoad
 }
 
 func (m *TWebview) createEnergyJavasScript() {
