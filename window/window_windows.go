@@ -13,7 +13,6 @@
 package window
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
