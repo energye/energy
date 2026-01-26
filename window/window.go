@@ -13,7 +13,6 @@ package window
 import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 )
@@ -176,15 +175,6 @@ func (m *TWindow) FormCreate(sender lcl.IObject) {
 	m._BeforeFormCreate()
 	for _, fn := range m.onWindowCreateList {
 		fn(sender)
-	}
-}
-
-func (m *TWindow) CreateParams(params *types.TCreateParams) {
-	if m.options != nil {
-		//params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
-		if m.options.WindowTransparent {
-			params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
-		}
 	}
 }
 

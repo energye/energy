@@ -60,6 +60,10 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 	return lcl.PlatformWindow(m.Instance())
 }
 
+func (m *TWindow) CreateParams(params *types.TCreateParams) {
+
+}
+
 func (m *TWindow) _BeforeFormCreate() {
 	//m._InitEvent()
 }

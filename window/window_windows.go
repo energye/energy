@@ -26,6 +26,21 @@ type TWindow struct {
 	flagFirstShow bool
 }
 
+func (m *TWindow) CreateParams(params *types.TCreateParams) {
+	if m.options != nil {
+		//params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
+		if m.options.WindowTransparent {
+			if win32.Windows8629200() {
+				// > windows 8
+				params.ExStyle = params.ExStyle | win.WS_EX_NOREDIRECTIONBITMAP
+			} else {
+				// windows 7
+				params.ExStyle = params.ExStyle | win.WS_EX_LAYERED
+			}
+		}
+	}
+}
+
 func (m *TWindow) _BeforeFormCreate() {
 }
 
@@ -44,9 +59,15 @@ func (m *TWindow) UpdateWindowOption() {
 		hWnd := m.Handle()
 		if m.options.WindowTransparent {
 			if win32.Windows1122H2() {
+				println(" > Windows11")
 				win32.EnableTranslucency(hWnd, int32(m.options.Windows.BackdropType))
-			} else {
+			} else if win32.Windows101809() {
+				println(" > Windows10")
 				win32.SetTranslucentBackground(hWnd)
+			} else if !win32.Windows8629200() {
+				println(" > Windows7")
+				//var enable uint32 = 1
+				//win.DwmSetWindowAttribute(hWnd, 0x00000002, unsafe.Pointer(&enable), unsafe.Sizeof(enable))
 			}
 		}
 		if m.options.Windows.WindowProtected {
@@ -55,6 +76,7 @@ func (m *TWindow) UpdateWindowOption() {
 		if m.options.BackgroundColor != nil {
 			r, g, b := byte(m.options.BackgroundColor.R), byte(m.options.BackgroundColor.G), byte(m.options.BackgroundColor.B)
 			color := colors.TColor(colors.RGB(r, g, b))
+			_ = color
 			m.SetColor(color)
 			win32.SetBackgroundColor(hWnd, r, g, b)
 		}

@@ -35,9 +35,23 @@ func IsCurrentlyDarkMode() bool {
 }
 
 func IsWindowsVersionLeast(major, minor, buildNumber int) bool {
-	return version.OSVersion.Major >= major &&
-		version.OSVersion.Minor >= minor &&
-		version.OSVersion.Build >= buildNumber
+	if major < 0 || minor < 0 || buildNumber < 0 {
+		return false
+	}
+	osver := version.OSVersion
+	if osver.Major > major {
+		return true
+	}
+	if osver.Major < major {
+		return false
+	}
+	if osver.Minor > minor {
+		return true
+	}
+	if osver.Minor < minor {
+		return false
+	}
+	return osver.Build >= buildNumber
 }
 
 // Windows101809 Windows >= 10 1809
@@ -58,6 +72,26 @@ func Windows1019041() bool {
 // Windows1122H2 Windows >= 11 22H2
 func Windows1122H2() bool {
 	return IsWindowsVersionLeast(10, 0, 22621)
+}
+
+// Windows7617600  Windows 7 >= 6 1 7600
+func Windows7617600() bool {
+	return IsWindowsVersionLeast(6, 1, 7600)
+}
+
+// Windows7617601  Windows 7 >= 6 1 7601 Windows 7 SP1
+func Windows7617601() bool {
+	return IsWindowsVersionLeast(6, 1, 7601)
+}
+
+// Windows8629200 Windows 8 >= 6.2.9200
+func Windows8629200() bool {
+	return IsWindowsVersionLeast(6, 2, 9200)
+}
+
+// Windows8639600  Windows 8.1 >= 6.3.9600
+func Windows8639600() bool {
+	return IsWindowsVersionLeast(6, 3, 9600)
 }
 
 // ChangeTheme windows 10 theme
