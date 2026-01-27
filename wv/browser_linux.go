@@ -20,6 +20,7 @@ import (
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/colors"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
 	"unsafe"
@@ -38,6 +39,7 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	evaluateScriptCallback  TOnEvaluateScriptCallback
 	window                  window.IWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
@@ -105,7 +107,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
-	m.SetBrowserOptions()
 	return m
 }
 
@@ -144,14 +145,21 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 
 // UpdateBrowserOptions 更新浏览器配置
 func (m *TWebview) UpdateBrowserOptions() {
-
+	// 1. 获取 LocalLoad 全局配置
+	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
+		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
+		m.SetLocalLoad(newLocalLoad)
+	}
+	options := m.window.Options()
+	if options.DefaultURL != "" {
+		m.SetDefaultURL(options.DefaultURL)
+	}
+	m.SetBackgroundColor(options.BackgroundColor)
 }
 
-// SetBrowserOptions 设置浏览器窗口的选项配置
-func (m *TWebview) SetBrowserOptions() {
-	options := gApplication.Options
-	if options.DefaultURL != "" {
-		m.browser.LoadURL(options.DefaultURL)
+func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
+	if color == nil {
+		return
 	}
 }
 
@@ -168,6 +176,7 @@ func (m *TWebview) CreateBrowser() {
 		return
 	}
 	m.isCreated = true
+	m.UpdateBrowserOptions()
 	m.browser.CreateBrowser()
 	m.windowParent.SetWebview(m.browser)
 	if m.onBrowserAfterCreated != nil {
@@ -288,10 +297,19 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 }
 
 func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
-	// TODO 待实现
+	m.evaluateScriptCallback = callback
+	m.browser.ExecuteScript(script)
 }
 
 func (m *TWebview) initDefaultEvent() {
+	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue) {
+		callback := m.evaluateScriptCallback
+		if callback != nil {
+			m.evaluateScriptCallback = nil
+			result, err := jsValue.StringValue(), jsValue.ExceptionMessage()
+			callback(result, err)
+		}
+	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
 		rootContextMenu := wv.NewContextMenu(contextMenu)
 		defer rootContextMenu.Free()
