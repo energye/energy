@@ -33,7 +33,7 @@ var (
 )
 
 type TWebview struct {
-	lcl.ICustomPanel
+	wv.IWkWebviewParent
 	TEnergyWebview
 	browserId               uint32
 	isClose                 bool
@@ -41,7 +41,6 @@ type TWebview struct {
 	resizeHT                string
 	evaluateScriptCallback  TOnEvaluateScriptCallback
 	window                  window.IWindow
-	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
@@ -57,16 +56,14 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-	m.ICustomPanel = lcl.NewPanel(owner)
-	m.ICustomPanel.SetParentDoubleBuffered(true)
-	m.ICustomPanel.SetBevelInner(types.BvNone)
-	m.ICustomPanel.SetBevelOuter(types.BvNone)
 
-	m.windowParent = wv.NewWebviewParent(m)
-	m.windowParent.SetWidth(m.Width())
-	m.windowParent.SetHeight(m.Height())
-	m.windowParent.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
-	m.windowParent.SetParentDoubleBuffered(true)
+	m.IWkWebviewParent = wv.NewWebviewParent(owner)
+	m.SetWidth(m.Width())
+	m.SetHeight(m.Height())
+	m.SetBevelInner(types.BvNone)
+	m.SetBevelOuter(types.BvNone)
+	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+	m.SetParentDoubleBuffered(true)
 
 	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
@@ -111,22 +108,19 @@ func NewWebview(owner lcl.IComponent) IWebview {
 }
 
 func (m *TWebview) SetWidth(v int32) {
-	m.ICustomPanel.SetWidth(v + 1) // Gtk3 box width + 1
-	m.windowParent.SetWidth(v)
+	m.IWkWebviewParent.SetWidth(v + 1) // Gtk3 box width + 1
 }
 
 func (m *TWebview) SetHeight(v int32) {
-	m.ICustomPanel.SetHeight(v + 1) // Gtk3 box height + 1
-	m.windowParent.SetHeight(v)
+	m.IWkWebviewParent.SetHeight(v + 1) // Gtk3 box height + 1
 }
 
 func (m *TWebview) SetBoundsRect(value types.TRect) {
-	m.SetBounds(value.Left, value.Top, value.Width(), value.Height())
+	m.IWkWebviewParent.SetBounds(value.Left, value.Top, value.Width(), value.Height())
 }
 
 func (m *TWebview) SetBounds(left int32, top int32, width int32, height int32) {
-	m.ICustomPanel.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
-	m.windowParent.SetBounds(0, 0, width, height)
+	m.IWkWebviewParent.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
 }
 
 func (m *TWebview) SetWindow(window window.IWindow) {
@@ -161,13 +155,13 @@ func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
 	if color == nil {
 		return
 	}
+
 }
 
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
-func (m *TWebview) SetParent(window lcl.IWinControl) {
-	m.ICustomPanel.SetParent(window)
-	m.windowParent.SetParent(m)
+func (m *TWebview) SetParent(owner lcl.IWinControl) {
+	m.IWkWebviewParent.SetParent(owner)
 }
 
 // 在窗口显示时调用
@@ -178,7 +172,7 @@ func (m *TWebview) CreateBrowser() {
 	m.isCreated = true
 	m.UpdateBrowserOptions()
 	m.browser.CreateBrowser()
-	m.windowParent.SetWebview(m.browser)
+	m.SetWebview(m.browser)
 	if m.onBrowserAfterCreated != nil {
 		m.onBrowserAfterCreated(m.browser)
 	}
@@ -209,7 +203,7 @@ func (m *TWebview) Close() {
 		return
 	}
 	m.isClose = true
-	m.windowParent.Free()
+	m.IWkWebviewParent.Free()
 	ipc.UnRegisterProcessMessage(m)
 }
 
