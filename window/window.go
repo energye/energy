@@ -48,6 +48,7 @@ type TEnergyWindow struct {
 	lcl.TEngForm
 	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
 	isClose                 bool
+	flagFirstShow           bool
 	options                 *application.Options
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr
@@ -207,9 +208,8 @@ func (m *TWindow) doOnResize(sender lcl.IObject) {
 }
 
 func (m *TWindow) doOnWindowStateChange(sender lcl.IObject) {
-	if !tool.IsWindows() {
+	if tool.IsDarwin() {
 		// 窗口状态改变时获取窗口状态
-		// windows 不在此设置该状态, m.windowsState
 		m.windowsState = m.TEngForm.WindowState()
 	}
 	for _, fn := range m.onWindowStateChangeList {

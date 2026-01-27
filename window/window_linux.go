@@ -13,7 +13,6 @@
 package window
 
 import (
-	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -29,28 +28,33 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-
+	m.UpdateWindowOption()
 }
 
 func (m *TWindow) _BeforeFormShow() {
+	if m.flagFirstShow {
+		return
+	}
+	m.flagFirstShow = true
 }
 
-// SetOptions 设置webview窗口的选项配置
+// UpdateWindowOption 设置webview窗口的选项配置
 // 该方法用于配置*TWindow实例的各种选项参数
-func (m *TWindow) SetOptions() {
+func (m *TWindow) UpdateWindowOption() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
-	options := application.GApplication.Options
-	if options.Width <= 0 {
-		options.Width = m.Width()
-	}
-	if options.Height <= 0 {
-		options.Height = m.Height()
-	}
-	m.SetCaption(options.Caption)
-	m.SetBounds(options.X, options.Y, options.Width, options.Height)
-	if options.Frameless {
-		m.gtkWindow.SetDecorated(false)
+	if m.options != nil {
+		if m.options.Width <= 0 {
+			m.options.Width = m.Width()
+		}
+		if m.options.Height <= 0 {
+			m.options.Height = m.Height()
+		}
+		m.SetCaption(m.options.Caption)
+		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
+		if m.options.Frameless {
+			m.gtkWindow.SetDecorated(false)
+		}
 	}
 }
 
@@ -66,7 +70,7 @@ func (m *TWindow) FullScreen() {
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
 		monitorRect := m.Monitor().WorkareaRect()
-		if !application.GApplication.Options.Frameless {
+		if !m.options.Frameless {
 			// save current window style, use ExitFullScreen
 			m.SetWindowState(types.WsFullScreen)
 		}
@@ -77,7 +81,7 @@ func (m *TWindow) FullScreen() {
 func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !application.GApplication.Options.Frameless {
+			if !m.options.Frameless {
 				m.SetBoundsRect(m.previousWindowPlacement)
 			}
 			m.windowsState = types.WsNormal

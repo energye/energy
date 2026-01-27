@@ -33,6 +33,7 @@ var (
 
 type TWebview struct {
 	lcl.ICustomPanel
+	TEnergyWebview
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
@@ -108,18 +109,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
-//func (m *TWebview) SetAlign(v types.TAlign) {
-//	switch v {
-//	case types.AlClient:
-//		part := m.Parent()
-//		m.SetWidth(part.Width())
-//		m.SetHeight(part.Height())
-//		m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
-//	default:
-//		m.ICustomPanel.SetAlign(v)
-//	}
-//}
-
 func (m *TWebview) SetWidth(v int32) {
 	m.ICustomPanel.SetWidth(v + 1) // Gtk3 box width + 1
 	m.windowParent.SetWidth(v)
@@ -145,13 +134,17 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
-		m.window.SetOptions()
 	}
 	window.AddOnWindowStateChange(m.doOnWindowStateChange)
 	window.AddOnWindowResize(m.doOnWindowResize)
 	window.AddOnWindowShow(m.doOnWindowShow)
 	window.AddOnWindowClose(m.doOnWindowClose)
 	window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
+}
+
+// UpdateBrowserOptions 更新浏览器配置
+func (m *TWebview) UpdateBrowserOptions() {
+
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -417,10 +410,11 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
 		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
-			if m.window.IsClose() {
+			if !m.browser.IsValid() {
 				return
 			}
 			lcl.RunOnMainThreadAsync(func(id uint32) {
+				m.browser.Free()
 				m.window.Close()
 			})
 		}

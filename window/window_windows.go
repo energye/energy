@@ -23,7 +23,6 @@ import (
 
 type TWindow struct {
 	TEnergyWindow
-	flagFirstShow bool
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
