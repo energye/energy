@@ -14,6 +14,13 @@ type Box struct {
 	Container
 }
 
+func ToGtkBox(gtkBox uintptr) *Box {
+	obj := ToGoObject(unsafe.Pointer(gtkBox))
+	m := new(Box)
+	m.Object = obj
+	return m
+}
+
 // native() returns a pointer to the underlying GtkBox.
 func (v *Box) native() *C.GtkBox {
 	if v == nil || v.GObject == nil {

@@ -82,8 +82,8 @@ func (v *List) Length() uint {
 	return uint(C.g_list_length(v.native()))
 }
 
-// nthDataRaw is a wrapper around g_list_nth_data().
-func (v *List) nthDataRaw(n uint) unsafe.Pointer {
+// NthDataRaw is a wrapper around g_list_nth_data().
+func (v *List) NthDataRaw(n uint) unsafe.Pointer {
 	return unsafe.Pointer(C.g_list_nth_data(v.native(), C.guint(n)))
 }
 
@@ -98,7 +98,7 @@ func (v *List) Nth(n uint) *List {
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
 func (v *List) NthData(n uint) any {
-	ptr := v.nthDataRaw(n)
+	ptr := v.NthDataRaw(n)
 	if v.dataWrap != nil {
 		return v.dataWrap(ptr)
 	}
