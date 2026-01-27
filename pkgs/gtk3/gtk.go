@@ -248,3 +248,42 @@ func marshalSizeRequestMode(p uintptr) (interface{}, error) {
 func MainDoEvent(event *Event) {
 	C.gtk_main_do_event(event.native())
 }
+
+// PolicyType is a representation of GTK's GtkPolicyType.
+type PolicyType int
+
+const (
+	POLICY_ALWAYS    PolicyType = C.GTK_POLICY_ALWAYS
+	POLICY_AUTOMATIC PolicyType = C.GTK_POLICY_AUTOMATIC
+	POLICY_NEVER     PolicyType = C.GTK_POLICY_NEVER
+)
+
+// CornerType is a representation of GTK's GtkCornerType.
+type CornerType int
+
+const (
+	CORNER_TOP_LEFT     CornerType = C.GTK_CORNER_TOP_LEFT
+	CORNER_BOTTOM_LEFT  CornerType = C.GTK_CORNER_BOTTOM_LEFT
+	CORNER_TOP_RIGHT    CornerType = C.GTK_CORNER_TOP_RIGHT
+	CORNER_BOTTOM_RIGHT CornerType = C.GTK_CORNER_BOTTOM_RIGHT
+)
+
+// ShadowType is a representation of GTK's GtkShadowType.
+type ShadowType int
+
+const (
+	SHADOW_NONE       ShadowType = C.GTK_SHADOW_NONE
+	SHADOW_IN         ShadowType = C.GTK_SHADOW_IN
+	SHADOW_OUT        ShadowType = C.GTK_SHADOW_OUT
+	SHADOW_ETCHED_IN  ShadowType = C.GTK_SHADOW_ETCHED_IN
+	SHADOW_ETCHED_OUT ShadowType = C.GTK_SHADOW_ETCHED_OUT
+)
+
+// SensitivityType is a representation of GTK's GtkSensitivityType
+type SensitivityType int
+
+const (
+	SENSITIVITY_AUTO SensitivityType = C.GTK_SENSITIVITY_AUTO
+	SENSITIVITY_ON   SensitivityType = C.GTK_SENSITIVITY_ON
+	SENSITIVITY_OFF  SensitivityType = C.GTK_SENSITIVITY_OFF
+)

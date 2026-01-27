@@ -33,21 +33,6 @@ const (
 	BUTTON_SECONDARY ButtonType = C.GDK_BUTTON_SECONDARY
 )
 
-// Rectangle is a representation of GDK's GdkRectangle type.
-type Rectangle struct {
-	GdkRectangle C.GdkRectangle
-}
-
-// NewRectangle helper function to create a GdkRectanlge
-func NewRectangle(x, y, width, height int) *Rectangle {
-	var r C.GdkRectangle
-	r.x = C.int(x)
-	r.y = C.int(y)
-	r.width = C.int(width)
-	r.height = C.int(height)
-	return &Rectangle{r}
-}
-
 // RGBA To create a GdkRGBA you have to use NewRGBA function.
 type RGBA struct {
 	rgba *C.GdkRGBA
