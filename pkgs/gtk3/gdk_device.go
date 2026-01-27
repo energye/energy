@@ -27,7 +27,7 @@ func (v *Device) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalDevice(p uintptr) (interface{}, error) {
+func marshalDevice(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &Object{ToCObject(unsafe.Pointer(c))}
 	return &Device{obj}, nil

@@ -25,7 +25,7 @@ func (v *EventBox) native() *C.GtkEventBox {
 	return C.toGtkEventBox(p)
 }
 
-func marshalEventBox(p uintptr) (interface{}, error) {
+func marshalEventBox(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapEventBox(obj), nil

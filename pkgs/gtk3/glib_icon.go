@@ -39,7 +39,7 @@ func (v *Icon) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalIcon(p uintptr) (interface{}, error) {
+func marshalIcon(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapIcon(obj), nil
@@ -109,7 +109,7 @@ func (v *FileIcon) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalFileIcon(p uintptr) (interface{}, error) {
+func marshalFileIcon(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapFileIcon(obj), nil

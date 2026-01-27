@@ -31,7 +31,7 @@ func (v *DeviceManager) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalDeviceManager(p uintptr) (interface{}, error) {
+func marshalDeviceManager(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &Object{ToCObject(unsafe.Pointer(c))}
 	return &DeviceManager{obj}, nil
@@ -66,7 +66,7 @@ func (v *Display) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalDisplay(p uintptr) (interface{}, error) {
+func marshalDisplay(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &Object{ToCObject(unsafe.Pointer(c))}
 	return &Display{obj}, nil
@@ -313,7 +313,7 @@ func (v *DisplayManager) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalDisplayManager(p uintptr) (interface{}, error) {
+func marshalDisplayManager(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &Object{ToCObject(unsafe.Pointer(c))}
 	return &DisplayManager{obj}, nil

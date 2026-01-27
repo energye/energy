@@ -38,7 +38,7 @@ type RGBA struct {
 	rgba *C.GdkRGBA
 }
 
-func marshalRGBA(p uintptr) (interface{}, error) {
+func marshalRGBA(p uintptr) (any, error) {
 	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
 	return WrapRGBA(unsafe.Pointer(c)), nil
 }
@@ -223,7 +223,7 @@ const (
 	VISUAL_DIRECT_COLOR VisualType = C.GDK_VISUAL_DIRECT_COLOR
 )
 
-func marshalVisualType(p uintptr) (interface{}, error) {
+func marshalVisualType(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return VisualType(c), nil
 }
@@ -232,7 +232,7 @@ func marshalVisualType(p uintptr) (interface{}, error) {
 // Do not confuse these event types with the signals that GTK+ widgets emit
 type EventType int
 
-func marshalEventType(p uintptr) (interface{}, error) {
+func marshalEventType(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return EventType(c), nil
 }

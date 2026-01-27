@@ -65,7 +65,7 @@ func (v *Image) native() *C.GtkImage {
 	return C.toGtkImage(p)
 }
 
-func marshalImage(p uintptr) interface{} {
+func marshalImage(p uintptr) any {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	return wrapImage(ToGoObject(unsafe.Pointer(c)))
 }

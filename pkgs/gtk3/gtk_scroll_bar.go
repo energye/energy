@@ -21,7 +21,7 @@ func (v *Scrollbar) native() *C.GtkScrollbar {
 	return C.toGtkScrollbar(p)
 }
 
-func marshalScrollbar(p uintptr) (interface{}, error) {
+func marshalScrollbar(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapScrollbar(obj), nil

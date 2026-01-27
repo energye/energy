@@ -25,7 +25,7 @@ func (v *Visual) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func marshalVisual(p uintptr) (interface{}, error) {
+func marshalVisual(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	return &Visual{ToGoObject(unsafe.Pointer(c))}, nil
 }

@@ -21,7 +21,7 @@ func (v *Range) native() *C.GtkRange {
 	return C.toGtkRange(p)
 }
 
-func marshalRange(p uintptr) (interface{}, error) {
+func marshalRange(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapRange(obj), nil

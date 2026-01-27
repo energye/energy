@@ -23,7 +23,7 @@ func (v *Box) native() *C.GtkBox {
 	return C.toGtkBox(p)
 }
 
-func marshalBox(p uintptr) (interface{}, error) {
+func marshalBox(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapBox(obj), nil

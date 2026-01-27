@@ -125,7 +125,7 @@ const (
 	POS_BOTTOM PositionType = C.GTK_POS_BOTTOM
 )
 
-func marshalModifierType(p uintptr) (interface{}, error) {
+func marshalModifierType(p uintptr) (any, error) {
 	c := C.g_value_get_flags((*C.GValue)(unsafe.Pointer(p)))
 	return ModifierType(c), nil
 }
@@ -147,7 +147,7 @@ const (
 	ALIGN_CENTER Align = C.GTK_ALIGN_CENTER
 )
 
-func marshalAlign(p uintptr) (interface{}, error) {
+func marshalAlign(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Align(c), nil
 }
@@ -166,7 +166,7 @@ const (
 	STATE_FLAG_BACKDROP     StateFlags = C.GTK_STATE_FLAG_BACKDROP
 )
 
-func marshalStateFlags(p uintptr) (interface{}, error) {
+func marshalStateFlags(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return StateFlags(c), nil
 }
@@ -184,7 +184,7 @@ const (
 	ICON_SIZE_DIALOG        IconSize = C.GTK_ICON_SIZE_DIALOG
 )
 
-func marshalIconSize(p uintptr) (interface{}, error) {
+func marshalIconSize(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return IconSize(c), nil
 }
@@ -202,7 +202,7 @@ const (
 	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
 
-func marshalImageType(p uintptr) (interface{}, error) {
+func marshalImageType(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ImageType(c), nil
 }
@@ -215,7 +215,7 @@ const (
 	ENTRY_ICON_SECONDARY EntryIconPosition = C.GTK_ENTRY_ICON_SECONDARY
 )
 
-func marshalEntryIconPosition(p uintptr) (interface{}, error) {
+func marshalEntryIconPosition(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return EntryIconPosition(c), nil
 }
@@ -228,7 +228,7 @@ const (
 	ORIENTATION_VERTICAL   Orientation = C.GTK_ORIENTATION_VERTICAL
 )
 
-func marshalOrientation(p uintptr) (interface{}, error) {
+func marshalOrientation(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Orientation(c), nil
 }
@@ -241,7 +241,7 @@ const (
 	PACK_END   PackType = C.GTK_PACK_END
 )
 
-func marshalPackType(p uintptr) (interface{}, error) {
+func marshalPackType(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return PackType(c), nil
 }
@@ -256,7 +256,7 @@ const (
 	JUSTIFY_FILL   Justification = C.GTK_JUSTIFY_FILL
 )
 
-func marshalJustification(p uintptr) (interface{}, error) {
+func marshalJustification(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Justification(c), nil
 }
@@ -270,7 +270,7 @@ const (
 	SIZE_REQUEST_CONSTANT_SIZE    SizeRequestMode = C.GTK_SIZE_REQUEST_CONSTANT_SIZE
 )
 
-func marshalSizeRequestMode(p uintptr) (interface{}, error) {
+func marshalSizeRequestMode(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return SizeRequestMode(c), nil
 }

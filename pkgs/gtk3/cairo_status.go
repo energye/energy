@@ -102,7 +102,7 @@ func StatusToString(status Status) string {
 	return s
 }
 
-func marshalStatus(p uintptr) (interface{}, error) {
+func marshalStatus(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Status(c), nil
 }
@@ -131,7 +131,7 @@ const (
 	FILL_RULE_EVEN_ODD FillRule = C.CAIRO_FILL_RULE_EVEN_ODD
 )
 
-func marshalFillRule(p uintptr) (interface{}, error) {
+func marshalFillRule(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return FillRule(c), nil
 }
@@ -145,7 +145,7 @@ const (
 	LINE_CAP_SQUARE LineCap = C.CAIRO_LINE_CAP_SQUARE
 )
 
-func marshalLineCap(p uintptr) (interface{}, error) {
+func marshalLineCap(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return LineCap(c), nil
 }
@@ -159,7 +159,7 @@ const (
 	LINE_JOIN_BEVEL LineJoin = C.CAIRO_LINE_JOIN_BEVEL
 )
 
-func marshalLineJoin(p uintptr) (interface{}, error) {
+func marshalLineJoin(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return LineJoin(c), nil
 }
@@ -199,7 +199,7 @@ const (
 	OPERATOR_HSL_LUMINOSITY Operator = C.CAIRO_OPERATOR_HSL_LUMINOSITY
 )
 
-func marshalOperator(p uintptr) (interface{}, error) {
+func marshalOperator(p uintptr) (any, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Operator(c), nil
 }

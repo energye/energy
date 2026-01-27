@@ -23,7 +23,7 @@ func (v *Adjustment) native() *C.GtkAdjustment {
 	return C.toGtkAdjustment(p)
 }
 
-func marshalAdjustment(p uintptr) (interface{}, error) {
+func marshalAdjustment(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapAdjustment(obj), nil

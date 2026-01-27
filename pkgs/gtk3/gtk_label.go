@@ -25,7 +25,7 @@ func (v *Label) native() *C.GtkLabel {
 	return C.toGtkLabel(p)
 }
 
-func marshalLabel(p uintptr) (interface{}, error) {
+func marshalLabel(p uintptr) (any, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := ToGoObject(unsafe.Pointer(c))
 	return wrapLabel(obj), nil
