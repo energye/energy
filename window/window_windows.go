@@ -51,7 +51,6 @@ func (m *TWindow) _BeforeFormShow() {
 	m.UpdateWindowOption()
 }
 
-// UpdateWindowOption 设置窗口配置选项
 func (m *TWindow) UpdateWindowOption() {
 	m._HookWndProcMessage()
 	if m.options != nil {

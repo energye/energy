@@ -28,7 +28,6 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	m.UpdateWindowOption()
 }
 
 func (m *TWindow) _BeforeFormShow() {
@@ -36,14 +35,37 @@ func (m *TWindow) _BeforeFormShow() {
 		return
 	}
 	m.flagFirstShow = true
+	m.UpdateWindowOption()
 }
 
-// UpdateWindowOption 设置webview窗口的选项配置
-// 该方法用于配置*TWindow实例的各种选项参数
 func (m *TWindow) UpdateWindowOption() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
 	if m.options != nil {
+		if !m.options.Frameless {
+			if m.options.DisableResize {
+				m.SetBorderStyleToFormBorderStyle(types.BsSingle)
+				m.EnabledMaximize(false)
+			}
+			if m.options.DisableMinimize {
+				m.EnabledMinimize(false)
+			}
+			if m.options.DisableMaximize {
+				m.EnabledMaximize(false)
+			}
+			if m.options.DisableSystemMenu {
+				m.EnabledSystemMenu(false)
+			}
+		}
+		constr := m.Constraints()
+		if m.options.MaxWidth > 0 || m.options.MaxHeight > 0 {
+			constr.SetMaxWidth(m.options.MaxWidth)
+			constr.SetMaxHeight(m.options.MaxHeight)
+		}
+		if m.options.MinWidth > 0 || m.options.MinHeight > 0 {
+			constr.SetMinWidth(m.options.MinWidth)
+			constr.SetMinHeight(m.options.MinHeight)
+		}
 		if m.options.Width <= 0 {
 			m.options.Width = m.Width()
 		}
@@ -69,24 +91,18 @@ func (m *TWindow) FullScreen() {
 		m.windowsState = types.WsFullScreen
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
-		monitorRect := m.Monitor().WorkareaRect()
-		if !m.options.Frameless {
-			// save current window style, use ExitFullScreen
-			m.SetWindowState(types.WsFullScreen)
-		}
-		m.SetBounds(monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height())
+		m.SetWindowState(types.WsFullScreen)
+		m.gtkWindow.Fullscreen()
 	})
 }
 
 func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !m.options.Frameless {
-				m.SetBoundsRect(m.previousWindowPlacement)
-			}
 			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
 			m.SetBoundsRect(m.previousWindowPlacement)
+			m.gtkWindow.Unfullscreen()
 		})
 	}
 }

@@ -19,10 +19,10 @@ import (
 
 type IWindow interface {
 	lcl.IEngForm
-	// 设置当前窗口配置选项
+	// SetOptions 设置当前窗口配置选项
 	SetOptions(options application.Options)
 	Options() *application.Options
-	// 更新当前窗口配置选项
+	// UpdateWindowOption 窗口的选项配置, 该方法用于配置*TWindow实例的各种选项参数
 	UpdateWindowOption()
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
