@@ -5,7 +5,9 @@ package gtk3
 #include <gtk/gtk.h>
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 type EventSignalName = string
 
@@ -20,18 +22,7 @@ const (
 	EsnLeaveNotifyEvent EventSignalName = "leave-notify-event"
 	EsnConfigureEvent   EventSignalName = "configure-event"
 	EsnMapEvent         EventSignalName = "map"
-)
-
-// TccType 事件类型, 用于区分普通通知事件, 还是特殊事件
-type TccType = int
-
-const (
-	TCCNotify TccType = iota
-	TCCClicked
-	TCCTextDidChange
-	TCCTextDidEndEditing
-	TCCSelectionChanged
-	TCCSelectionDidChange
+	EsnDrawEvent        EventSignalName = "draw"
 )
 
 type TNotifyEvent func(sender *Widget)
@@ -42,6 +33,7 @@ type TButtonPressEvent func(sender *Widget, event *EventButton)
 type TLeaveEnterNotifyEvent func(sender *Widget, event *EventCrossing)
 type TConfigureEvent func(sender *Widget, event *EventConfigure) bool
 type TMapEvent func(sender *Widget)
+type TDrawEvent func(sender *Widget, cr *Context) bool
 
 type CallbackContext struct {
 	widget unsafe.Pointer
@@ -50,13 +42,11 @@ type CallbackContext struct {
 }
 
 type Callback struct {
-	type_ TccType
-	cb    func(ctx *CallbackContext)
+	cb func(ctx *CallbackContext)
 }
 
 func MakeButtonPressEvent(cb TButtonPressEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			eventPtr := ctx.input.(unsafe.Pointer)
 			event := ToEventButton(eventPtr)
@@ -67,7 +57,6 @@ func MakeButtonPressEvent(cb TButtonPressEvent) *Callback {
 
 func MakeLeaveEnterNotifyEvent(cb TLeaveEnterNotifyEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			eventPtr := ctx.input.(unsafe.Pointer)
 			event := ToEventCrossing(eventPtr)
@@ -78,7 +67,6 @@ func MakeLeaveEnterNotifyEvent(cb TLeaveEnterNotifyEvent) *Callback {
 
 func MakeNotifyEvent(cb TNotifyEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			cb(wrapWidget(ToGoObject(ctx.widget)))
 		},
@@ -87,7 +75,6 @@ func MakeNotifyEvent(cb TNotifyEvent) *Callback {
 
 func MakeTextChangedEvent(cb TTextChangedEvent) *Callback {
 	return &Callback{
-		type_: TCCTextDidChange,
 		cb: func(ctx *CallbackContext) {
 			text := C.gtk_entry_get_text((*C.GtkEntry)(ctx.widget))
 			cb(wrapWidget(ToGoObject(ctx.widget)), C.GoString(text))
@@ -97,7 +84,6 @@ func MakeTextChangedEvent(cb TTextChangedEvent) *Callback {
 
 func MakeTextCommitEvent(cb TTextCommitEvent) *Callback {
 	return &Callback{
-		type_: TCCTextDidEndEditing,
 		cb: func(ctx *CallbackContext) {
 			text := C.gtk_entry_get_text((*C.GtkEntry)(ctx.widget))
 			cb(wrapWidget(ToGoObject(ctx.widget)), C.GoString(text))
@@ -107,7 +93,6 @@ func MakeTextCommitEvent(cb TTextCommitEvent) *Callback {
 
 func MakeTextKeyEvent(cb TTextKeyEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			keyPtr := ctx.input.(unsafe.Pointer)
 			key := ToKeyEvent(keyPtr)
@@ -119,7 +104,6 @@ func MakeTextKeyEvent(cb TTextKeyEvent) *Callback {
 
 func MakeConfigureEvent(cb TConfigureEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			eventPtr := ctx.input.(unsafe.Pointer)
 			event := ToEventConfigure(eventPtr)
@@ -131,9 +115,19 @@ func MakeConfigureEvent(cb TConfigureEvent) *Callback {
 
 func MakeMapEvent(cb TMapEvent) *Callback {
 	return &Callback{
-		type_: TCCNotify,
 		cb: func(ctx *CallbackContext) {
 			cb(wrapWidget(ToGoObject(ctx.widget)))
+		},
+	}
+}
+
+func MakeDrawEvent(cb TDrawEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			crPtr := ctx.input.(unsafe.Pointer)
+			cr := WrapContext(uintptr(crPtr))
+			result := cb(wrapWidget(ToGoObject(ctx.widget)), cr)
+			ctx.result = result
 		},
 	}
 }

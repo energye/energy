@@ -5,12 +5,14 @@ package gtk3
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <cairo/cairo.h>
 
 extern void go_on_event_handler(GtkWidget* widget, gpointer user_data);
 extern gboolean go_on_key_press_handler(GtkWidget* entry, GdkEventKey* event, gpointer user_data);
 extern void go_on_button_press(GtkWidget* widget, GdkEventButton* event, gpointer user_data);
 extern void go_on_leave_enter_notify(GtkWidget* widget, GdkEventCrossing* event, gpointer user_data);
 extern gboolean go_on_window_configure(GtkWidget *window, GdkEventConfigure *event, gpointer user_data);
+extern gboolean go_on_window_draw(GtkWidget *window, cairo_t *cr, gpointer user_data);
 
 static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
   	g_print("尝试移除信号处理器: handler_id=%lu, widget=%p\n", handler_id, widget);
@@ -78,6 +80,19 @@ func doOnWindowConfigure(widget, event, userData unsafe.Pointer) bool {
 	return false
 }
 
+func doOnWindowDraw(widget, cr, userData unsafe.Pointer) bool {
+	id := uintptr(userData)
+	if cb, ok := eventList[id]; ok {
+		context := &CallbackContext{widget: widget, input: cr}
+		cb.cb(context)
+		result, ok := context.result.(bool)
+		if ok {
+			return result
+		}
+	}
+	return false
+}
+
 //export go_on_event_handler
 func go_on_event_handler(widget *C.GtkWidget, user_data C.gpointer) {
 	doOnEventHandler(unsafe.Pointer(widget), unsafe.Pointer(user_data))
@@ -102,6 +117,12 @@ func go_on_leave_enter_notify(widget *C.GtkWidget, event *C.GdkEventCrossing, us
 //export go_on_window_configure
 func go_on_window_configure(widget *C.GtkWidget, event *C.GdkEventConfigure, user_data C.gpointer) C.gboolean {
 	result := doOnWindowConfigure(unsafe.Pointer(widget), unsafe.Pointer(event), unsafe.Pointer(user_data))
+	return CBool(result)
+}
+
+//export go_on_window_draw
+func go_on_window_draw(widget *C.GtkWidget, cr *C.cairo_t, user_data C.gpointer) C.gboolean {
+	result := doOnWindowDraw(unsafe.Pointer(widget), unsafe.Pointer(cr), unsafe.Pointer(user_data))
 	return CBool(result)
 }
 
@@ -172,6 +193,8 @@ func registerAction(widget IWidget, signal EventSignalName, cb *Callback) *Signa
 		cCb = C.GCallback(C.go_on_leave_enter_notify)
 	case EsnConfigureEvent:
 		cCb = C.GCallback(C.go_on_window_configure)
+	case EsnDrawEvent:
+		cCb = C.GCallback(C.go_on_window_draw)
 	default:
 		cCb = C.GCallback(C.go_on_event_handler)
 	}

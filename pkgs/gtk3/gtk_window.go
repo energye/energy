@@ -574,3 +574,7 @@ func (v *Window) SetOnConfigure(fn TConfigureEvent) *SignalHandler {
 func (v *Window) SetOnMap(fn TMapEvent) *SignalHandler {
 	return registerAction(v, EsnMapEvent, MakeMapEvent(fn))
 }
+
+func (v *Window) SetOnDraw(fn TDrawEvent) *SignalHandler {
+	return registerAction(v, EsnDrawEvent, MakeDrawEvent(fn))
+}
