@@ -28,17 +28,6 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-}
-
-func (m *TWindow) _BeforeFormShow() {
-	if m.flagFirstShow {
-		return
-	}
-	m.flagFirstShow = true
-	m.UpdateWindowOption()
-}
-
-func (m *TWindow) UpdateWindowOption() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
 	if m.options != nil {
@@ -50,6 +39,19 @@ func (m *TWindow) UpdateWindowOption() {
 				m.gtkWindow.SetAppPaintable(true)
 			}
 		}
+	}
+}
+
+func (m *TWindow) _BeforeFormShow() {
+	if m.flagFirstShow {
+		return
+	}
+	m.flagFirstShow = true
+	m.UpdateWindowOption()
+}
+
+func (m *TWindow) UpdateWindowOption() {
+	if m.options != nil {
 		m.gtkWindow.SetDecorated(!m.options.Frameless)
 		if !m.options.Frameless {
 			if m.options.DisableResize {

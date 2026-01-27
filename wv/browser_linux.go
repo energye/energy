@@ -14,31 +14,40 @@ package wv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
-	"github.com/energye/lcl/types/colors"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
+	"strconv"
 	"unsafe"
 )
 
 var (
-	frameWidth  = int32(4)
-	frameHeight = int32(4)
-	frameCorner = frameWidth + frameHeight
+	frameWidth      = int32(4)
+	frameHeight     = int32(4)
+	frameCorner     = frameWidth + frameHeight
+	gScrolledWindow = "scrolled-window-"
+	gWindowParent   = "window-parent-"
 )
 
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
+	windowParentName        string
+	scrolledWindowName      string
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	gtkScrolledWindow       *gtk3.ScrolledWindow
+	gtkWindowParent         *gtk3.Layout
+	gtkCssProvider          *gtk3.CssProvider
 	evaluateScriptCallback  TOnEvaluateScriptCallback
 	window                  window.IWindow
 	browser                 wv.IWkWebview
@@ -57,6 +66,9 @@ type TWebview struct {
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 
+	m.windowParentName = gWindowParent + strconv.Itoa(int(m.browserId))
+	m.scrolledWindowName = gScrolledWindow + strconv.Itoa(int(m.browserId))
+
 	m.IWkWebviewParent = wv.NewWebviewParent(owner)
 	m.SetWidth(m.Width())
 	m.SetHeight(m.Height())
@@ -64,6 +76,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.SetBevelOuter(types.BvNone)
 	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.SetParentDoubleBuffered(true)
+	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
 
 	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
@@ -107,6 +120,22 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
+// SetParent 设置浏览器窗口的父控件
+// 该方法会同时设置内部面板的父控件和窗口父控件的引用
+func (m *TWebview) SetParent(owner lcl.IWinControl) {
+	m.IWkWebviewParent.SetParent(owner)
+	// Handle() 要在 SetParent 之后
+	windowParentHandle := lcl.PlatformHandle(m.Handle())
+	// 获取当前windowParent的gtk组件
+	m.gtkWindowParent = gtk3.ToLayout(unsafe.Pointer(windowParentHandle.Gtk3Widget()))
+
+	//m.gtkWindowParent.SetName(m.windowParentName)
+	//m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
+	//m.gtkScrolledWindow.SetName(m.scrolledWindowName)
+	//m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
+
+}
+
 func (m *TWebview) SetWidth(v int32) {
 	m.IWkWebviewParent.SetWidth(v + 1) // Gtk3 box width + 1
 }
@@ -145,23 +174,52 @@ func (m *TWebview) UpdateBrowserOptions() {
 		m.SetLocalLoad(newLocalLoad)
 	}
 	options := m.window.Options()
+	m.SetBackgroundColor(options.BackgroundColor)
+	if options.WebviewTransparent {
+		//m.SetColor(0)
+		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
+		windowParentNameCss := fmt.Sprintf("#%s {background-color: rgba(%d, %d, %d, %1.1f);}", m.windowParentName, r, g, b, float64(a)/255.0)
+		scrolledWindowNameCss := fmt.Sprintf("#%s {background-color: rgba(%d, %d, %d, %1.1f);}", m.scrolledWindowName, r, g, b, float64(a)/255.0)
+		webviewCss := windowParentNameCss + "\n" + scrolledWindowNameCss
+		webviewCss = fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
+		webviewCss = `
+GtkScrolledWindow {
+   background-color: rgba(0, 0, 0, 0);
+   border-width: 0;
+}
+GtkScrolledWindow GtkViewport {
+   background-color: rgba(0, 0, 0, 0);
+}
+GtkScrollbar {
+   background-color: rgba(128, 128, 128, 0.3);
+   min-width: 8px;
+}
+
+GtkLayout {
+   background-color: rgba(0, 0, 0, 0);
+   padding: 0;
+}
+`
+		println(webviewCss)
+		if m.gtkCssProvider == nil {
+			m.gtkCssProvider = gtk3.NewCssProvider()
+			//m.gtkWindowParent.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			//m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			//m.gtkCssProvider.Unref()
+		}
+		var err error
+		err = m.gtkCssProvider.LoadFromData(webviewCss)
+		if err != nil {
+			println("CssProvider.LoadFromData:", err.Error())
+		}
+		screen := gtk3.ScreenGetDefault()
+		gtk3.AddProviderForScreen(screen, m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+	}
+
 	if options.DefaultURL != "" {
 		m.SetDefaultURL(options.DefaultURL)
 	}
-	m.SetBackgroundColor(options.BackgroundColor)
-}
-
-func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
-	if color == nil {
-		return
-	}
-
-}
-
-// SetParent 设置浏览器窗口的父控件
-// 该方法会同时设置内部面板的父控件和窗口父控件的引用
-func (m *TWebview) SetParent(owner lcl.IWinControl) {
-	m.IWkWebviewParent.SetParent(owner)
 }
 
 // 在窗口显示时调用
@@ -171,8 +229,8 @@ func (m *TWebview) CreateBrowser() {
 	}
 	m.isCreated = true
 	m.UpdateBrowserOptions()
-	m.browser.CreateBrowser()
 	m.SetWebview(m.browser)
+	m.browser.CreateBrowser()
 	if m.onBrowserAfterCreated != nil {
 		m.onBrowserAfterCreated(m.browser)
 	}
