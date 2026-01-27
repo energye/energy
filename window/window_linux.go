@@ -42,6 +42,15 @@ func (m *TWindow) UpdateWindowOption() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
 	if m.options != nil {
+		if m.options.WindowTransparent {
+			screen := m.gtkWindow.GetScreen()
+			visual, err := screen.GetRGBAVisual()
+			if err == nil && visual != nil && screen.IsComposited() {
+				m.gtkWindow.SetVisual(visual)
+				m.gtkWindow.SetAppPaintable(true)
+			}
+		}
+		m.gtkWindow.SetDecorated(!m.options.Frameless)
 		if !m.options.Frameless {
 			if m.options.DisableResize {
 				m.SetBorderStyleToFormBorderStyle(types.BsSingle)
@@ -74,9 +83,6 @@ func (m *TWindow) UpdateWindowOption() {
 		}
 		m.SetCaption(m.options.Caption)
 		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
-		if m.options.Frameless {
-			m.gtkWindow.SetDecorated(false)
-		}
 	}
 }
 

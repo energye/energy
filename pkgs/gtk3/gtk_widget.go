@@ -434,6 +434,11 @@ func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, dest
 	return int(cdestX), int(cdestY), nil
 }
 
+// SetVisual is a wrapper around gtk_widget_set_visual().
+func (v *Widget) SetVisual(visual *Visual) {
+	C.gtk_widget_set_visual(v.native(), (*C.GdkVisual)(unsafe.Pointer(visual.Native())))
+}
+
 // SetAppPaintable is a wrapper around gtk_widget_set_app_paintable().
 func (v *Widget) SetAppPaintable(paintable bool) {
 	C.gtk_widget_set_app_paintable(v.native(), CBool(paintable))
