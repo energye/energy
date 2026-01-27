@@ -9,6 +9,36 @@ import (
 	"unsafe"
 )
 
+func Init(args *[]string) {
+	if args != nil {
+		argc := C.int(len(*args))
+		argv := C.make_strings(argc)
+		defer C.destroy_strings(argv)
+
+		for i, arg := range *args {
+			cstr := C.CString(arg)
+			C.set_string(argv, C.int(i), (*C.gchar)(cstr))
+		}
+
+		C.gtk_init((*C.int)(unsafe.Pointer(&argc)),
+			(***C.char)(unsafe.Pointer(&argv)))
+
+		unhandled := make([]string, argc)
+		for i := 0; i < int(argc); i++ {
+			cstr := C.get_string(argv, C.int(i))
+			unhandled[i] = GoString(cstr)
+			C.free(unsafe.Pointer(cstr))
+		}
+		*args = unhandled
+	} else {
+		C.gtk_init(nil, nil)
+	}
+}
+
+func Main() {
+	C.gtk_main()
+}
+
 // WindowType is a representation of GTK's GtkWindowType.
 type WindowType int
 

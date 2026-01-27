@@ -21,6 +21,16 @@ type Window struct {
 	Bin
 }
 
+// NewWindow is a wrapper around gtk_window_new().
+func NewWindow(t WindowType) (*Window, error) {
+	c := C.gtk_window_new(C.GtkWindowType(t))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := ToGoObject(unsafe.Pointer(c))
+	return wrapWindow(obj), nil
+}
+
 func ToGtkWindow(gtkWindow uintptr) *Window {
 	obj := ToGoObject(unsafe.Pointer(gtkWindow))
 	window := new(Window)
