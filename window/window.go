@@ -15,6 +15,7 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/colors"
 )
 
 type IWindow interface {
@@ -158,6 +159,9 @@ func (m *TWindow) IsMaximize() bool {
 
 func (m *TWindow) SetOptions(options application.Options) {
 	m.options = &options
+	if m.options.BackgroundColor == nil {
+		m.options.BackgroundColor = &colors.TARGB{R: 255, G: 255, B: 255, A: 255}
+	}
 }
 
 func (m *TWindow) Options() *application.Options {
