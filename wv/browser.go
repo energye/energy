@@ -18,7 +18,17 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"runtime"
+	"sync"
 	"sync/atomic"
+)
+
+var (
+	gEvaluateScriptEventID     int
+	gNextEvaluateScriptEventID = func() int {
+		gEvaluateScriptEventID++
+		return gEvaluateScriptEventID
+	}
+	gEvaluateScriptEventCallback = sync.Map{}
 )
 
 // global browser id

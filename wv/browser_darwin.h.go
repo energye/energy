@@ -28,15 +28,6 @@ import (
 	"unsafe"
 )
 
-var (
-	gEvaluateScriptEventID     int
-	gNextEvaluateScriptEventID = func() int {
-		gEvaluateScriptEventID++
-		return gEvaluateScriptEventID
-	}
-	gEvaluateScriptEventCallback = make(map[int]TOnEvaluateScriptCallback)
-)
-
 //export evaluateScriptCallback
 func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
 	var (
@@ -50,9 +41,9 @@ func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
 	if errC != nil {
 		err = C.GoString(errC)
 	}
-	if callback, ok := gEvaluateScriptEventCallback[callbackID]; ok {
-		delete(gEvaluateScriptEventCallback, callbackID)
-		callback(result, err)
+	if callback, ok := gEvaluateScriptEventCallback.Load(callbackID); ok {
+		gEvaluateScriptEventCallback.Delete(id)
+		callback.(TOnEvaluateScriptCallback)(result, err)
 	}
 }
 
@@ -188,7 +179,7 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 	eventID := gNextEvaluateScriptEventID()
 	cEventID := C.int(eventID)
 	cCallback := (C.CGoEvaluateScriptCallback)(C.evaluateScriptCallback)
-	gEvaluateScriptEventCallback[eventID] = callback
+	gEvaluateScriptEventCallback.Store(eventID, callback)
 	C.WebViewEvaluateScriptCallback(webview, cEventID, cScript, cCallback)
 }
 

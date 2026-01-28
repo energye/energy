@@ -43,7 +43,6 @@ type TWebview struct {
 	gtkScrolledWindow       *gtk3.ScrolledWindow
 	gtkWindowParent         *gtk3.Layout
 	gtkCssProvider          *gtk3.CssProvider
-	evaluateScriptCallback  TOnEvaluateScriptCallback
 	window                  window.IWindow
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
@@ -298,21 +297,22 @@ func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
 }
 
 func (m *TWebview) ExecuteScript(javaScript string) {
-	m.browser.ExecuteScript(javaScript)
+	m.browser.ExecuteScript(javaScript, 0)
 }
 
 func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
-	m.evaluateScriptCallback = callback
-	m.browser.ExecuteScript(script)
+	eventID := int32(gNextEvaluateScriptEventID())
+	gEvaluateScriptEventCallback.Store(eventID, callback)
+	m.browser.ExecuteScript(script, eventID)
 }
 
 func (m *TWebview) initDefaultEvent() {
-	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue) {
-		callback := m.evaluateScriptCallback
-		if callback != nil {
-			m.evaluateScriptCallback = nil
+	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue, id int32) {
+		callback, ok := gEvaluateScriptEventCallback.Load(id)
+		if ok {
+			gEvaluateScriptEventCallback.Delete(id)
 			result, err := jsValue.StringValue(), jsValue.ExceptionMessage()
-			callback(result, err)
+			callback.(TOnEvaluateScriptCallback)(result, err)
 		}
 	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
