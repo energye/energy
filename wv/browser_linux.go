@@ -36,11 +36,11 @@ var (
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
-	browserId               uint32
-	isClose                 bool
-	isCreated               bool
-	resizeHT                string
-	gtkScrolledWindow       *gtk3.ScrolledWindow
+	browserId uint32
+	isClose   bool
+	isCreated bool
+	resizeHT  string
+	//gtkScrolledWindow       *gtk3.ScrolledWindow
 	gtkWindowParent         *gtk3.Layout
 	gtkCssProvider          *gtk3.CssProvider
 	window                  window.IWindow
@@ -67,7 +67,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.SetBevelOuter(types.BvNone)
 	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.SetParentDoubleBuffered(true)
-	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
+	//m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
 
 	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
@@ -109,7 +109,7 @@ func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	m.gtkWindowParent = gtk3.ToLayout(unsafe.Pointer(windowParentHandle.Gtk3Widget()))
 
 	m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
-	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
+	//m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
 }
 
@@ -174,7 +174,7 @@ func (m *TWebview) UpdateBrowserOptions() {
 		if m.gtkCssProvider == nil {
 			m.gtkCssProvider = gtk3.NewCssProvider()
 			m.gtkWindowParent.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
-			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			//m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
 			m.gtkCssProvider.Unref()
 		}
 		var err error
