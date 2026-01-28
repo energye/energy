@@ -36,9 +36,6 @@ func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
 	if color == nil {
 		return
 	}
-	if m.window.Options().WebviewTransparent {
-		color.A = 0
-	}
 	webview := m.browser.WebView()
 	cWebview := (*C.WebKitWebView)(unsafe.Pointer(webview))
 	cR := C.gdouble(float64(color.R) / 255.0)

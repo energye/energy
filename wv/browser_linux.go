@@ -73,36 +73,13 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	if gWk2Context == nil {
 		gWk2Context = wv.WebContext.Default()
 	}
-	if gApplication.onCustomSchemes != nil {
-		customSchemes := &TCustomSchemes{}
-		gApplication.onCustomSchemes(customSchemes)
-		for _, scheme := range customSchemes.schemes {
-			if !setRegisterSchemeCache(scheme.Scheme) {
-				gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
-			}
-		}
-	}
-	if gApplication.LocalLoad != nil {
-		if !setRegisterSchemeCache(gApplication.LocalLoad.Scheme) {
-			gWk2Context.RegisterURIScheme(gApplication.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
-		}
-	}
+
 	m.browser.RegisterScriptCode(string(ipcJS))
 	m.browser.RegisterScriptMessageHandler(energyProcessMessage)
 
 	m.settings = wv.NewSettings()
-	m.settings.SetEnableDeveloperExtras(true)
 	m.settings.SetUserAgentWithApplicationDetails(energyApplicationName, energyApplicationVersion)
 	m.settings.SetEnablePageCache(true)
-	// 需要动态判断当前系统环境是否支持？
-	switch gApplication.Options.Linux.HardwareGPU {
-	case application.HGPUDefault:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND) // default
-	case application.HGPUEnable:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS) // 有GPU并安装了驱动
-	case application.HGPUDisable:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER) // 没有驱动或虚拟机时使用
-	}
 	m.browser.SetSettings(m.settings)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
@@ -123,6 +100,22 @@ func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
 	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
+}
+
+func (m *TWebview) SetWidth(v int32) {
+	m.IWkWebviewParent.SetWidth(v + 1) // Gtk3 box width + 1
+}
+
+func (m *TWebview) SetHeight(v int32) {
+	m.IWkWebviewParent.SetHeight(v + 1) // Gtk3 box height + 1
+}
+
+func (m *TWebview) SetBoundsRect(value types.TRect) {
+	m.IWkWebviewParent.SetBounds(value.Left, value.Top, value.Width()+1, value.Height()+1) // Gtk3 box height + 1
+}
+
+func (m *TWebview) SetBounds(left int32, top int32, width int32, height int32) {
+	m.IWkWebviewParent.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
 }
 
 func (m *TWebview) SetWindow(window window.IWindow) {
@@ -146,7 +139,33 @@ func (m *TWebview) UpdateBrowserOptions() {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
+	// 2.
 	options := m.window.Options()
+	if gApplication.onCustomSchemes != nil {
+		customSchemes := &TCustomSchemes{}
+		gApplication.onCustomSchemes(customSchemes)
+		for _, scheme := range customSchemes.schemes {
+			if !setRegisterSchemeCache(scheme.Scheme) {
+				gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
+			}
+		}
+	}
+	if m.localLoad != nil {
+		if !setRegisterSchemeCache(m.localLoad.LocalLoad.Scheme) {
+			gWk2Context.RegisterURIScheme(m.localLoad.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
+		}
+	}
+	m.settings.SetEnableDeveloperExtras(options.DisableDevTools)
+	// 需要动态判断当前系统环境是否支持？
+	switch options.Linux.HardwareGPU {
+	case application.HGPUDefault:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND) // default
+	case application.HGPUEnable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS) // 有GPU并安装了驱动
+	case application.HGPUDisable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER) // 没有驱动或虚拟机时使用
+	}
+
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
 		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
@@ -231,11 +250,7 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-	switch m.Align() {
-	case types.AlClient:
-		br := m.ClientRect()
-		m.SetBounds(br.Left, br.Top, br.Width()+1, br.Height()+1)
-	}
+
 }
 
 // doOnWindowShow 是窗口显示事件的回调函数
@@ -324,7 +339,7 @@ func (m *TWebview) initDefaultEvent() {
 			}
 			menuItems.RemoveAll()
 		}
-		if gApplication.Options.DisableContextMenu {
+		if m.window.Options().DisableContextMenu {
 			menuItemClear(rootContextMenu)
 			return true
 		}
