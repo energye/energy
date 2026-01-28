@@ -24,23 +24,18 @@ import (
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
-	"strconv"
 	"unsafe"
 )
 
 var (
-	frameWidth      = int32(4)
-	frameHeight     = int32(4)
-	frameCorner     = frameWidth + frameHeight
-	gScrolledWindow = "scrolled-window-"
-	gWindowParent   = "window-parent-"
+	frameWidth  = int32(4)
+	frameHeight = int32(4)
+	frameCorner = frameWidth + frameHeight
 )
 
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
-	windowParentName        string
-	scrolledWindowName      string
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
@@ -65,9 +60,6 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-
-	m.windowParentName = gWindowParent + strconv.Itoa(int(m.browserId))
-	m.scrolledWindowName = gScrolledWindow + strconv.Itoa(int(m.browserId))
 
 	m.IWkWebviewParent = wv.NewWebviewParent(owner)
 	m.SetWidth(m.Width())
@@ -129,27 +121,9 @@ func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	// 获取当前windowParent的gtk组件
 	m.gtkWindowParent = gtk3.ToLayout(unsafe.Pointer(windowParentHandle.Gtk3Widget()))
 
-	//m.gtkWindowParent.SetName(m.windowParentName)
-	//m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
-	//m.gtkScrolledWindow.SetName(m.scrolledWindowName)
-	//m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
+	m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
+	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
-}
-
-func (m *TWebview) SetWidth(v int32) {
-	m.IWkWebviewParent.SetWidth(v + 1) // Gtk3 box width + 1
-}
-
-func (m *TWebview) SetHeight(v int32) {
-	m.IWkWebviewParent.SetHeight(v + 1) // Gtk3 box height + 1
-}
-
-func (m *TWebview) SetBoundsRect(value types.TRect) {
-	m.IWkWebviewParent.SetBounds(value.Left, value.Top, value.Width(), value.Height())
-}
-
-func (m *TWebview) SetBounds(left int32, top int32, width int32, height int32) {
-	m.IWkWebviewParent.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
 }
 
 func (m *TWebview) SetWindow(window window.IWindow) {
@@ -176,45 +150,19 @@ func (m *TWebview) UpdateBrowserOptions() {
 	options := m.window.Options()
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
-		//m.SetColor(0)
 		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
-		windowParentNameCss := fmt.Sprintf("#%s {background-color: rgba(%d, %d, %d, %1.1f);}", m.windowParentName, r, g, b, float64(a)/255.0)
-		scrolledWindowNameCss := fmt.Sprintf("#%s {background-color: rgba(%d, %d, %d, %1.1f);}", m.scrolledWindowName, r, g, b, float64(a)/255.0)
-		webviewCss := windowParentNameCss + "\n" + scrolledWindowNameCss
-		webviewCss = fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
-		webviewCss = `
-GtkScrolledWindow {
-   background-color: rgba(0, 0, 0, 0);
-   border-width: 0;
-}
-GtkScrolledWindow GtkViewport {
-   background-color: rgba(0, 0, 0, 0);
-}
-GtkScrollbar {
-   background-color: rgba(128, 128, 128, 0.3);
-   min-width: 8px;
-}
-
-GtkLayout {
-   background-color: rgba(0, 0, 0, 0);
-   padding: 0;
-}
-`
-		println(webviewCss)
+		webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
 		if m.gtkCssProvider == nil {
 			m.gtkCssProvider = gtk3.NewCssProvider()
-			//m.gtkWindowParent.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
-			//m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
-			//m.gtkCssProvider.Unref()
+			m.gtkWindowParent.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			m.gtkCssProvider.Unref()
 		}
 		var err error
 		err = m.gtkCssProvider.LoadFromData(webviewCss)
 		if err != nil {
-			println("CssProvider.LoadFromData:", err.Error())
+			//println("CssProvider.LoadFromData:", err.Error())
 		}
-		screen := gtk3.ScreenGetDefault()
-		gtk3.AddProviderForScreen(screen, m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_APPLICATION)
-
 	}
 
 	if options.DefaultURL != "" {
@@ -284,6 +232,11 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
+	br := m.ClientRect()
+	switch m.Align() {
+	case types.AlClient:
+		m.SetBounds(br.Left, br.Top, br.Width()+1, br.Height()+1)
+	}
 }
 
 // doOnWindowShow 是窗口显示事件的回调函数
