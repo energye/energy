@@ -232,9 +232,9 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-	br := m.ClientRect()
 	switch m.Align() {
 	case types.AlClient:
+		br := m.ClientRect()
 		m.SetBounds(br.Left, br.Top, br.Width()+1, br.Height()+1)
 	}
 }
