@@ -35,11 +35,11 @@ func wrapScrollbar(obj *Object) *Scrollbar {
 }
 
 // NewScrollbar is a wrapper around gtk_scrollbar_new().
-func NewScrollbar(orientation Orientation, adjustment *Adjustment) (*Scrollbar, error) {
+func NewScrollbar(orientation Orientation, adjustment *Adjustment) *Scrollbar {
 	c := C.gtk_scrollbar_new(C.GtkOrientation(orientation), adjustment.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapScrollbar(obj), nil
+	return wrapScrollbar(obj)
 }

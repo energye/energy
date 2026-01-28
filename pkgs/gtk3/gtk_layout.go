@@ -38,13 +38,13 @@ func wrapLayout(obj *Object) *Layout {
 }
 
 // NewLayout is a wrapper around gtk_layout_new().
-func NewLayout(hadjustment, vadjustment *Adjustment) (*Layout, error) {
+func NewLayout(hadjustment, vadjustment *Adjustment) *Layout {
 	c := C.gtk_layout_new(hadjustment.native(), vadjustment.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapLayout(obj), nil
+	return wrapLayout(obj)
 }
 
 // Layout.Put is a wrapper around gtk_layout_put().

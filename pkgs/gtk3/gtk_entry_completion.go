@@ -32,13 +32,13 @@ func wrapEntryCompletion(obj *Object) *EntryCompletion {
 }
 
 // NewEntryCompletion is a wrapper around gtk_entry_completion_new
-func NewEntryCompletion() (*EntryCompletion, error) {
+func NewEntryCompletion() *EntryCompletion {
 	c := C.gtk_entry_completion_new()
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapEntryCompletion(obj), nil
+	return wrapEntryCompletion(obj)
 }
 
 // SetMinimumKeyLength is a wrapper around gtk_entry_completion_set_minimum_key_length

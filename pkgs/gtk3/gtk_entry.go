@@ -59,13 +59,13 @@ func NewEntry() *Entry {
 }
 
 // NewEntryWithBuffer is a wrapper around gtk_entry_new_with_buffer().
-func NewEntryWithBuffer(buffer *EntryBuffer) (*Entry, error) {
+func NewEntryWithBuffer(buffer *EntryBuffer) *Entry {
 	c := C.gtk_entry_new_with_buffer(buffer.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapEntry(obj), nil
+	return wrapEntry(obj)
 }
 
 // GetBuffer is a wrapper around gtk_entry_get_buffer().

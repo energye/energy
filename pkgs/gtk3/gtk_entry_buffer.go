@@ -32,16 +32,16 @@ func wrapEntryBuffer(obj *Object) *EntryBuffer {
 }
 
 // NewEntryBuffer is a wrapper around gtk_entry_buffer_new().
-func NewEntryBuffer(initialChars string, nInitialChars int) (*EntryBuffer, error) {
+func NewEntryBuffer(initialChars string, nInitialChars int) *EntryBuffer {
 	cstr := C.CString(initialChars)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_entry_buffer_new((*C.gchar)(cstr), C.gint(nInitialChars))
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 
 	e := wrapEntryBuffer(ToGoObject(unsafe.Pointer(c)))
-	return e, nil
+	return e
 }
 
 // GetText is a wrapper around gtk_entry_buffer_get_text().  A
