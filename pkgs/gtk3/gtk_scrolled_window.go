@@ -33,14 +33,13 @@ func wrapScrolledWindow(obj *Object) *ScrolledWindow {
 }
 
 // NewScrolledWindow is a wrapper around gtk_scrolled_window_new().
-func NewScrolledWindow(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, error) {
-	c := C.gtk_scrolled_window_new(hadjustment.native(),
-		vadjustment.native())
+func NewScrolledWindow(hadjustment, vadjustment *Adjustment) *ScrolledWindow {
+	c := C.gtk_scrolled_window_new(hadjustment.native(), vadjustment.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapScrolledWindow(obj), nil
+	return wrapScrolledWindow(obj)
 }
 
 // GetPolicy() is a wrapper around gtk_scrolled_window_get_policy().

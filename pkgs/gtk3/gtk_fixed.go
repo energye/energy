@@ -33,13 +33,13 @@ func wrapFixed(obj *Object) *Fixed {
 }
 
 // NewFixed is a wrapper around gtk_fixed_new().
-func NewFixed() (*Fixed, error) {
+func NewFixed() *Fixed {
 	c := C.gtk_fixed_new()
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapFixed(obj), nil
+	return wrapFixed(obj)
 }
 
 // Put is a wrapper around gtk_fixed_put().
