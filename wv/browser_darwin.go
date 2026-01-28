@@ -36,6 +36,7 @@ type _TNSWebview struct {
 
 type TWebview struct {
 	lcl.ICustomPanel
+	TEnergyWebview
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
