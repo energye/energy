@@ -80,7 +80,18 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.settings = wv.NewSettings()
 	m.settings.SetUserAgentWithApplicationDetails(energyApplicationName, energyApplicationVersion)
 	m.settings.SetEnablePageCache(true)
+	m.settings.SetEnableDeveloperExtras(gApplication.Options.DisableDevTools)
+	// 需要动态判断当前系统环境是否支持？
+	switch gApplication.Options.Linux.HardwareGPU {
+	case application.HGPUDefault:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND) // default
+	case application.HGPUEnable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS) // 有GPU并安装了驱动
+	case application.HGPUDisable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER) // 没有驱动或虚拟机时使用
+	}
 	m.browser.SetSettings(m.settings)
+
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
@@ -140,7 +151,6 @@ func (m *TWebview) UpdateBrowserOptions() {
 		m.SetLocalLoad(newLocalLoad)
 	}
 	// 2.
-	options := m.window.Options()
 	if gApplication.onCustomSchemes != nil {
 		customSchemes := &TCustomSchemes{}
 		gApplication.onCustomSchemes(customSchemes)
@@ -155,16 +165,7 @@ func (m *TWebview) UpdateBrowserOptions() {
 			gWk2Context.RegisterURIScheme(m.localLoad.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
 		}
 	}
-	m.settings.SetEnableDeveloperExtras(options.DisableDevTools)
-	// 需要动态判断当前系统环境是否支持？
-	switch options.Linux.HardwareGPU {
-	case application.HGPUDefault:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND) // default
-	case application.HGPUEnable:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS) // 有GPU并安装了驱动
-	case application.HGPUDisable:
-		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER) // 没有驱动或虚拟机时使用
-	}
+	options := m.window.Options()
 
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
