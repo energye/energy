@@ -6,7 +6,6 @@ package gtk3
 // #include "gtk.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/cairo"
 	"unsafe"
 )
 
@@ -146,7 +145,7 @@ func (v *Container) SetBorderWidth(borderWidth uint) {
 }
 
 // PropagateDraw is a wrapper around gtk_container_propagate_draw().
-func (v *Container) PropagateDraw(child IWidget, cr *cairo.Context) {
+func (v *Container) PropagateDraw(child IWidget, cr *Context) {
 	context := (*C.cairo_t)(unsafe.Pointer(cr.Native()))
 	C.gtk_container_propagate_draw(v.native(), child.toWidget(), context)
 }
