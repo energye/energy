@@ -28,19 +28,107 @@ void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdou
 */
 import "C"
 import (
+	"github.com/energye/energy/v3/pkgs/gtk3"
+	"github.com/energye/energy/v3/window"
+	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
 	"unsafe"
 )
+
+func (m *TWebview) getCWkWebview() *C.WebKitWebView {
+	webview := m.browser.WebView()
+	cWebview := (*C.WebKitWebView)(unsafe.Pointer(webview))
+	return cWebview
+}
+
+func (m *TWebview) getGtkWebview() *gtk3.Widget {
+	webview := m.browser.WebView()
+	gtkWebview := gtk3.ToWidget(unsafe.Pointer(webview))
+	return gtkWebview
+}
 
 func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
 	if color == nil {
 		return
 	}
-	webview := m.browser.WebView()
-	cWebview := (*C.WebKitWebView)(unsafe.Pointer(webview))
+	cWebview := m.getCWkWebview()
 	cR := C.gdouble(float64(color.R) / 255.0)
 	cG := C.gdouble(float64(color.G) / 255.0)
 	cB := C.gdouble(float64(color.B) / 255.0)
 	cA := C.gdouble(float64(color.A) / 255.0)
 	C.WebkitSetBackgroundColor(cWebview, cR, cG, cB, cA)
+}
+
+func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
+	if m.window == nil {
+		m.window = iWindow.(window.ILinuxWindow)
+	}
+	m.isAddWindowSubview = true
+	var (
+		webviewBounds = m.BoundsRect()
+		x, y, w, h    = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+	)
+
+	windowLayout := m.window.GTKWindowLayout()
+
+	m.gtkScrolledWindow.SetSizeRequest(int(w), int(h))
+	m.gtkScrolledWindow.Add(m.getGtkWebview())
+
+	windowLayout.Add(m.gtkScrolledWindow)
+	windowLayout.Move(m.gtkScrolledWindow, int(x), int(y))
+
+}
+
+func (m *TWebview) UpdateBounds() {
+	if m.isAddWindowSubview {
+		var (
+			webviewAlign     = m.Align()
+			windowBoundsRect = m.window.BoundsRect()
+			webviewBounds    = m.BoundsRect()
+			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+			webviewAnchors   = m.Anchors()
+		)
+		switch webviewAlign {
+		case types.AlNone, types.AlCustom:
+			x, y, w, h = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+		case types.AlClient:
+			x, y, w, h = 0, 0, windowBoundsRect.Width(), windowBoundsRect.Height()
+		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
+			switch webviewAlign {
+			case types.AlLeft:
+				x, y, w, h = 0, 0, webviewBounds.Width(), windowBoundsRect.Height()
+			case types.AlTop:
+				x, y, w, h = 0, 0, windowBoundsRect.Width(), webviewBounds.Height()
+			case types.AlRight:
+				x, y, w, h = windowBoundsRect.Width()-webviewBounds.Width(), 0, webviewBounds.Width(), windowBoundsRect.Height()
+			case types.AlBottom:
+				x, y, w, h = 0, windowBoundsRect.Height()-webviewBounds.Height(), windowBoundsRect.Width(), webviewBounds.Height()
+			}
+		}
+		switch webviewAlign {
+		case types.AlNone, types.AlCustom:
+			//akLeft := webviewAnchors.In(types.AkLeft)
+			//akTop := webviewAnchors.In(types.AkTop)
+			akRight := webviewAnchors.In(types.AkRight)
+			akBottom := webviewAnchors.In(types.AkBottom)
+			if akRight {
+				if ow := m.oldBounds.Width(); ow > 0 {
+					w += windowBoundsRect.Width() - ow
+				}
+			}
+			if akBottom {
+				if oh := m.oldBounds.Height(); oh > 0 {
+					h += windowBoundsRect.Height() - oh
+				}
+			}
+		}
+		m.UpdateWebviewBounds(x, y, w, h)
+		m.oldBounds = windowBoundsRect
+	}
+}
+
+func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
+	m.SetBounds(x, y, width, height)
+	m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
+	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }

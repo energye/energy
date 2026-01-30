@@ -36,14 +36,15 @@ var (
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
-	browserId uint32
-	isClose   bool
-	isCreated bool
-	resizeHT  string
-	//gtkScrolledWindow       *gtk3.ScrolledWindow
-	gtkWindowParent         *gtk3.Layout
+	browserId               uint32
+	isClose                 bool
+	isCreated               bool
+	resizeHT                string
+	isAddWindowSubview      bool
+	oldBounds               types.TRect
+	gtkScrolledWindow       *gtk3.ScrolledWindow
 	gtkCssProvider          *gtk3.CssProvider
-	window                  window.IWindow
+	window                  window.ILinuxWindow
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
@@ -61,13 +62,11 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 
 	m.IWkWebviewParent = wv.NewWebviewParent(owner)
-	m.SetWidth(m.Width())
-	m.SetHeight(m.Height())
 	m.SetBevelInner(types.BvNone)
 	m.SetBevelOuter(types.BvNone)
 	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.SetParentDoubleBuffered(true)
-	//m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
+	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
 
 	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
@@ -80,7 +79,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.settings = wv.NewSettings()
 	m.settings.SetUserAgentWithApplicationDetails(energyApplicationName, energyApplicationVersion)
 	m.settings.SetEnablePageCache(true)
-	m.settings.SetEnableDeveloperExtras(gApplication.Options.DisableDevTools)
+	m.settings.SetEnableDeveloperExtras(!gApplication.Options.DisableDevTools)
 	// 需要动态判断当前系统环境是否支持？
 	switch gApplication.Options.Linux.HardwareGPU {
 	case application.HGPUDefault:
@@ -102,45 +101,43 @@ func NewWebview(owner lcl.IComponent) IWebview {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
-	m.IWkWebviewParent.SetParent(owner)
-	// Handle() 要在 SetParent 之后
-	windowParentHandle := lcl.PlatformHandle(m.Handle())
-	// 获取当前windowParent的gtk组件
-	m.gtkWindowParent = gtk3.ToLayout(unsafe.Pointer(windowParentHandle.Gtk3Widget()))
-
-	m.gtkWindowParent.GetStyleContext().AddClass("webview-box")
-	//m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
-
+	if form, okForm := owner.(window.IWindow); okForm {
+		// webview 直接添加到窗口
+		m.AddWindowWebview(form)
+	} else {
+		// webview 添加到容器组件
+		m.IWkWebviewParent.SetParent(m)
+	}
 }
 
-func (m *TWebview) SetWidth(v int32) {
-	m.IWkWebviewParent.SetWidth(v + 1) // Gtk3 box width + 1
+// 在窗口显示时调用
+func (m *TWebview) CreateBrowser() {
+	if m.isCreated || m.window == nil {
+		return
+	}
+	m.isCreated = true
+	m.UpdateBrowserOptions()
+	if m.isAddWindowSubview {
+		m.SetWebview(m.browser)
+	}
+	m.browser.CreateBrowser()
+	if m.onBrowserAfterCreated != nil {
+		m.onBrowserAfterCreated(m.browser)
+	}
 }
 
-func (m *TWebview) SetHeight(v int32) {
-	m.IWkWebviewParent.SetHeight(v + 1) // Gtk3 box height + 1
-}
-
-func (m *TWebview) SetBoundsRect(value types.TRect) {
-	m.IWkWebviewParent.SetBounds(value.Left, value.Top, value.Width()+1, value.Height()+1) // Gtk3 box height + 1
-}
-
-func (m *TWebview) SetBounds(left int32, top int32, width int32, height int32) {
-	m.IWkWebviewParent.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
-}
-
-func (m *TWebview) SetWindow(window window.IWindow) {
-	m.window = window
+func (m *TWebview) SetWindow(iWindow window.IWindow) {
+	m.window = iWindow.(window.ILinuxWindow)
 	if m.window != nil {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
 	}
-	window.AddOnWindowStateChange(m.doOnWindowStateChange)
-	window.AddOnWindowResize(m.doOnWindowResize)
-	window.AddOnWindowShow(m.doOnWindowShow)
-	window.AddOnWindowClose(m.doOnWindowClose)
-	window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
+	iWindow.AddOnWindowStateChange(m.doOnWindowStateChange)
+	iWindow.AddOnWindowResize(m.doOnWindowResize)
+	iWindow.AddOnWindowShow(m.doOnWindowShow)
+	iWindow.AddOnWindowClose(m.doOnWindowClose)
+	iWindow.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
 
 // UpdateBrowserOptions 更新浏览器配置
@@ -173,8 +170,7 @@ func (m *TWebview) UpdateBrowserOptions() {
 		webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
 		if m.gtkCssProvider == nil {
 			m.gtkCssProvider = gtk3.NewCssProvider()
-			m.gtkWindowParent.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
-			//m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
 			m.gtkCssProvider.Unref()
 		}
 		var err error
@@ -186,20 +182,6 @@ func (m *TWebview) UpdateBrowserOptions() {
 
 	if options.DefaultURL != "" {
 		m.SetDefaultURL(options.DefaultURL)
-	}
-}
-
-// 在窗口显示时调用
-func (m *TWebview) CreateBrowser() {
-	if m.isCreated || m.window == nil {
-		return
-	}
-	m.isCreated = true
-	m.UpdateBrowserOptions()
-	m.SetWebview(m.browser)
-	m.browser.CreateBrowser()
-	if m.onBrowserAfterCreated != nil {
-		m.onBrowserAfterCreated(m.browser)
 	}
 }
 
@@ -251,13 +233,14 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-
+	m.UpdateBounds()
 }
 
 // doOnWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
 func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	m.CreateBrowser()
+	m.UpdateBounds()
 }
 
 // doOnWindowClose 处理窗口关闭事件的回调函数
@@ -553,48 +536,54 @@ func (m *TWebview) initDefaultEvent() {
 		windowBr               types.TRect
 	)
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		if !isDown {
-			br := m.BoundsRect()
-			w, h := br.Width(), br.Height()
-			x, y := event.X, event.Y
-			if (w-x) < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
-				setCursor(types.CrSizeSE, "se-resize")
-			} else if x < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
-				setCursor(types.CrSizeSW, "sw-resize")
-			} else if x < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
-				setCursor(types.CrSizeNW, "nw-resize")
-			} else if (w-x) < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
-				setCursor(types.CrSizeNE, "ne-resize")
-			} else if x < frameWidth {
-				setCursor(types.CrSizeW, "w-resize")
-			} else if y < frameHeight {
-				setCursor(types.CrSizeN, "n-resize")
-			} else if (h - y) < frameHeight {
-				setCursor(types.CrSizeS, "s-resize")
-			} else if (w - x) < frameWidth {
-				setCursor(types.CrSizeE, "e-resize")
+		if m.window.Options().Frameless {
+			if !isDown {
+				br := m.BoundsRect()
+				w, h := br.Width(), br.Height()
+				x, y := event.X, event.Y
+				if (w-x) < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+					setCursor(types.CrSizeSE, "se-resize")
+				} else if x < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+					setCursor(types.CrSizeSW, "sw-resize")
+				} else if x < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+					setCursor(types.CrSizeNW, "nw-resize")
+				} else if (w-x) < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+					setCursor(types.CrSizeNE, "ne-resize")
+				} else if x < frameWidth {
+					setCursor(types.CrSizeW, "w-resize")
+				} else if y < frameHeight {
+					setCursor(types.CrSizeN, "n-resize")
+				} else if (h - y) < frameHeight {
+					setCursor(types.CrSizeS, "s-resize")
+				} else if (w - x) < frameWidth {
+					setCursor(types.CrSizeE, "e-resize")
+				} else {
+					setCursor(types.CrDefault, "")
+				}
+			} else if isDown && mouseCursor != types.CrDefault {
+				return m.resize(isDown, windowBr, mouseDownX, mouseDownY)
 			} else {
 				setCursor(types.CrDefault, "")
 			}
-		} else if isDown && mouseCursor != types.CrDefault {
-			return m.resize(isDown, windowBr, mouseDownX, mouseDownY)
-		} else {
-			setCursor(types.CrDefault, "")
 		}
 		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		isDown = true
-		if mouseCursor != types.CrDefault && m.window != nil {
-			pos := lcl.Mouse.CursorPos()
-			mouseDownX, mouseDownY = pos.X, pos.Y
-			windowBr = m.window.BoundsRect()
-			return true
+		if m.window.Options().Frameless {
+			isDown = true
+			if mouseCursor != types.CrDefault && m.window != nil {
+				pos := lcl.Mouse.CursorPos()
+				mouseDownX, mouseDownY = pos.X, pos.Y
+				windowBr = m.window.BoundsRect()
+				return true
+			}
 		}
 		return false
 	})
 	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		isDown = false
+		if m.window.Options().Frameless {
+			isDown = false
+		}
 		return false
 	})
 }

@@ -16,20 +16,59 @@ import (
 	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
+	"unsafe"
 )
+
+type ILinuxWindow interface {
+	IWindow
+	GTKWindow() *gtk3.Window
+	GTKWindowLayout() *gtk3.Layout
+}
 
 type TWindow struct {
 	TEnergyWindow
-	gtkWindow *gtk3.Window
+	gtkWindow       *gtk3.Window
+	gtkWindowLayout *gtk3.Layout
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
 
 }
 
+func (m *TWindow) GTKWindow() *gtk3.Window {
+	return m.gtkWindow
+}
+
+func (m *TWindow) GTKWindowLayout() *gtk3.Layout {
+	return m.gtkWindowLayout
+}
+
+func (m *TWindow) getGtkWindowLayout() {
+	var iterate func(list *gtk3.List)
+	iterate = func(list *gtk3.List) {
+		if list == nil {
+			return
+		}
+		for i := uint(0); i < list.Length(); i++ {
+			data := list.NthDataRaw(i)
+			container := gtk3.ToContainer(data)
+			if container.TypeFromInstance().Name() == "GtkLayout" {
+				m.gtkWindowLayout = gtk3.ToLayout(data)
+				break
+			}
+			iterate(container.GetChildren())
+		}
+	}
+	iterate(m.gtkWindow.GetChildren())
+	if m.gtkWindowLayout == nil {
+		println("WARNING: GtkWindow does not have a Layout")
+	}
+}
+
 func (m *TWindow) _BeforeFormCreate() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
-	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
+	m.gtkWindow = gtk3.ToGtkWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
+	m.getGtkWindowLayout()
 	if m.options != nil {
 		if m.options.WindowTransparent {
 			screen := m.gtkWindow.GetScreen()
@@ -40,6 +79,12 @@ func (m *TWindow) _BeforeFormCreate() {
 			}
 		}
 	}
+	//m.gtkWindow.SetOnConfigure(func(sender *gtk3.Widget, event *gtk3.EventConfigure) bool {
+	//	for _, fn := range m.onWindowResizeList {
+	//		fn(nil)
+	//	}
+	//	return false
+	//})
 }
 
 func (m *TWindow) _BeforeFormShow() {

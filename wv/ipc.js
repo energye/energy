@@ -395,7 +395,7 @@
                         that.shouldDrag = false;
                     }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
-                } else if (!disableResize && !isDarwin && frameless) {
+                } else if (!disableResize && !isDarwin && !isLinux && frameless) {
                     mouseDragResize(e)
                 }
             }
