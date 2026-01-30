@@ -13,6 +13,7 @@
 package window
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -23,16 +24,18 @@ type ILinuxWindow interface {
 	IWindow
 	GTKWindow() *gtk3.Window
 	GTKWindowLayout() *gtk3.Layout
-	GTKMenuBar() *gtk3.MenuBar
-	GTKScrolledWindow() *gtk3.ScrolledWindow
+	GTKWindowMenuBar() *gtk3.MenuBar
+	GTKWindowScrolledWindow() *gtk3.ScrolledWindow
 }
 
 type TWindow struct {
 	TEnergyWindow
-	gtkWindow         *gtk3.Window
-	gtkWindowLayout   *gtk3.Layout
-	gtkMenuBar        *gtk3.MenuBar
-	gtkScrolledWindow *gtk3.ScrolledWindow
+	gtkWindow               *gtk3.Window
+	gtkWindowBox            *gtk3.Box
+	gtkWindowLayout         *gtk3.Layout
+	gtkWindowMenuBar        *gtk3.MenuBar
+	gtkWindowScrolledWindow *gtk3.ScrolledWindow
+	gtkCssProvider          *gtk3.CssProvider
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
@@ -43,16 +46,20 @@ func (m *TWindow) GTKWindow() *gtk3.Window {
 	return m.gtkWindow
 }
 
+func (m *TWindow) GTKWindowBox() *gtk3.Box {
+	return m.gtkWindowBox
+}
+
 func (m *TWindow) GTKWindowLayout() *gtk3.Layout {
 	return m.gtkWindowLayout
 }
 
-func (m *TWindow) GTKMenuBar() *gtk3.MenuBar {
-	return m.gtkMenuBar
+func (m *TWindow) GTKWindowMenuBar() *gtk3.MenuBar {
+	return m.gtkWindowMenuBar
 }
 
-func (m *TWindow) GTKScrolledWindow() *gtk3.ScrolledWindow {
-	return m.gtkScrolledWindow
+func (m *TWindow) GTKWindowScrolledWindow() *gtk3.ScrolledWindow {
+	return m.gtkWindowScrolledWindow
 }
 
 func (m *TWindow) getGtkWidget() {
@@ -65,20 +72,50 @@ func (m *TWindow) getGtkWidget() {
 			data := list.NthDataRaw(i)
 			container := gtk3.ToContainer(data)
 			widgetName := container.TypeFromInstance().Name()
-			if widgetName == "GtkLayout" { // window > level 1
+			if widgetName == "GtkBox" { // window > level 1
+				m.gtkWindowBox = gtk3.ToBox(data)
+			} else if widgetName == "GtkMenuBar" { // window > level 2
+				m.gtkWindowMenuBar = gtk3.ToMenuBar(data)
+			} else if widgetName == "GtkScrolledWindow" { // window > level 2
+				m.gtkWindowScrolledWindow = gtk3.ToScrolledWindow(data)
+			} else if widgetName == "GtkLayout" { // window > level 3
 				m.gtkWindowLayout = gtk3.ToLayout(data)
-			} else if widgetName == "GtkMenuBar" {
-				m.gtkMenuBar = gtk3.ToMenuBar(data) // window > level 2
-			} else if widgetName == "GtkScrolledWindow" {
-				m.gtkScrolledWindow = gtk3.ToScrolledWindow(data) // window > level 2
 			}
 			iterate(container.GetChildren())
 		}
 	}
 	iterate(m.gtkWindow.GetChildren())
+	if m.gtkWindowBox == nil {
+		println("WARNING: GtkWindow does not have a Box")
+	}
+	if m.gtkWindowScrolledWindow == nil {
+		println("WARNING: GtkWindow does not have a ScrolledWindow")
+	}
 	if m.gtkWindowLayout == nil {
 		println("WARNING: GtkWindow does not have a Layout")
 	}
+
+	//options := m.options
+	//if options.WebviewTransparent {
+	//	m.gtkWindowBox.GetStyleContext().AddClass("webview-box")
+	//	m.gtkWindowScrolledWindow.GetStyleContext().AddClass("webview-box")
+	//	m.gtkWindowLayout.GetStyleContext().AddClass("webview-box")
+	//
+	//	r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
+	//	webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
+	//	if m.gtkCssProvider == nil {
+	//		m.gtkCssProvider = gtk3.NewCssProvider()
+	//		m.gtkWindowBox.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+	//		m.gtkWindowScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+	//		m.gtkWindowLayout.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+	//		m.gtkCssProvider.Unref()
+	//	}
+	//	var err error
+	//	err = m.gtkCssProvider.LoadFromData(webviewCss)
+	//	if err != nil {
+	//		//println("CssProvider.LoadFromData:", err.Error())
+	//	}
+	//}
 }
 
 func (m *TWindow) _BeforeFormCreate() {

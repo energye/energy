@@ -81,7 +81,7 @@ func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
 
 func (m *TWebview) UpdateBounds() {
 	if m.isAddWindowSubview {
-		allocation := m.window.GTKScrolledWindow().GetAllocation()
+		allocation := m.window.GTKWindowScrolledWindow().GetAllocation()
 		swx := int32(allocation.GetX())
 		swy := int32(allocation.GetY())
 		var (
