@@ -36,11 +36,14 @@ var (
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
-	browserId               uint32
-	isClose                 bool
-	isCreated               bool
-	resizeHT                string
-	isAddWindowSubview      bool
+	browserId          uint32
+	isClose            bool
+	isCreated          bool
+	resizeHT           string
+	isAddWindowSubview bool
+	//align                   types.TAlign
+	//anchors                 types.TSet
+	//bounds                  types.TRect
 	oldBounds               types.TRect
 	gtkScrolledWindow       *gtk3.ScrolledWindow
 	gtkCssProvider          *gtk3.CssProvider
@@ -67,6 +70,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.SetParentDoubleBuffered(true)
 	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
+	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
 	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
@@ -102,12 +106,14 @@ func NewWebview(owner lcl.IComponent) IWebview {
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(owner lcl.IWinControl) {
 	if form, okForm := owner.(window.IWindow); okForm {
+		//m.IWkWebviewParent.SetVisible(false)
 		// webview 直接添加到窗口
 		m.AddWindowWebview(form)
 	} else {
 		// webview 添加到容器组件
-		m.IWkWebviewParent.SetParent(m)
+		m.IWkWebviewParent.SetParent(owner)
 	}
+	//m.IWkWebviewParent.SetParent(owner)
 }
 
 // 在窗口显示时调用
@@ -117,7 +123,7 @@ func (m *TWebview) CreateBrowser() {
 	}
 	m.isCreated = true
 	m.UpdateBrowserOptions()
-	if m.isAddWindowSubview {
+	if !m.isAddWindowSubview {
 		m.SetWebview(m.browser)
 	}
 	m.browser.CreateBrowser()
