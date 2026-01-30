@@ -317,3 +317,14 @@ const (
 	SENSITIVITY_ON   SensitivityType = C.GTK_SENSITIVITY_ON
 	SENSITIVITY_OFF  SensitivityType = C.GTK_SENSITIVITY_OFF
 )
+
+// ArrowType is a representation of GTK's GtkArrowType.
+type ArrowType int
+
+const (
+	ARROW_UP    ArrowType = C.GTK_ARROW_UP
+	ARROW_DOWN  ArrowType = C.GTK_ARROW_DOWN
+	ARROW_LEFT  ArrowType = C.GTK_ARROW_LEFT
+	ARROW_RIGHT ArrowType = C.GTK_ARROW_RIGHT
+	ARROW_NONE  ArrowType = C.GTK_ARROW_NONE
+)

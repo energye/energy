@@ -25,4 +25,6 @@ static GFileIcon *toGFileIcon(void *p) { return (G_FILE_ICON(p)); }
 
 static GFile *toGFile(void *p) { return (G_FILE(p)); }
 
+static GMenuModel *toGMenuModel(void *p) { return (G_MENU_MODEL(p)); }
+
 #endif
