@@ -23,12 +23,16 @@ type ILinuxWindow interface {
 	IWindow
 	GTKWindow() *gtk3.Window
 	GTKWindowLayout() *gtk3.Layout
+	GTKMenuBar() *gtk3.MenuBar
+	GTKScrolledWindow() *gtk3.ScrolledWindow
 }
 
 type TWindow struct {
 	TEnergyWindow
-	gtkWindow       *gtk3.Window
-	gtkWindowLayout *gtk3.Layout
+	gtkWindow         *gtk3.Window
+	gtkWindowLayout   *gtk3.Layout
+	gtkMenuBar        *gtk3.MenuBar
+	gtkScrolledWindow *gtk3.ScrolledWindow
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
@@ -43,7 +47,15 @@ func (m *TWindow) GTKWindowLayout() *gtk3.Layout {
 	return m.gtkWindowLayout
 }
 
-func (m *TWindow) getGtkWindowLayout() {
+func (m *TWindow) GTKMenuBar() *gtk3.MenuBar {
+	return m.gtkMenuBar
+}
+
+func (m *TWindow) GTKScrolledWindow() *gtk3.ScrolledWindow {
+	return m.gtkScrolledWindow
+}
+
+func (m *TWindow) getGtkWidget() {
 	var iterate func(list *gtk3.List)
 	iterate = func(list *gtk3.List) {
 		if list == nil {
@@ -52,9 +64,13 @@ func (m *TWindow) getGtkWindowLayout() {
 		for i := uint(0); i < list.Length(); i++ {
 			data := list.NthDataRaw(i)
 			container := gtk3.ToContainer(data)
-			if container.TypeFromInstance().Name() == "GtkLayout" {
+			widgetName := container.TypeFromInstance().Name()
+			if widgetName == "GtkLayout" { // window > level 1
 				m.gtkWindowLayout = gtk3.ToLayout(data)
-				break
+			} else if widgetName == "GtkMenuBar" {
+				m.gtkMenuBar = gtk3.ToMenuBar(data) // window > level 2
+			} else if widgetName == "GtkScrolledWindow" {
+				m.gtkScrolledWindow = gtk3.ToScrolledWindow(data) // window > level 2
 			}
 			iterate(container.GetChildren())
 		}
@@ -68,7 +84,7 @@ func (m *TWindow) getGtkWindowLayout() {
 func (m *TWindow) _BeforeFormCreate() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
-	m.getGtkWindowLayout()
+	m.getGtkWidget()
 	if m.options != nil {
 		if m.options.WindowTransparent {
 			screen := m.gtkWindow.GetScreen()

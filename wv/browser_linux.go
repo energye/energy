@@ -245,6 +245,9 @@ func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
 // doOnWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
 func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
+	if m.isCreated || m.window == nil {
+		return
+	}
 	m.CreateBrowser()
 	m.UpdateBounds()
 }

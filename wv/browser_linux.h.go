@@ -81,6 +81,9 @@ func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
 
 func (m *TWebview) UpdateBounds() {
 	if m.isAddWindowSubview {
+		allocation := m.window.GTKScrolledWindow().GetAllocation()
+		swx := int32(allocation.GetX())
+		swy := int32(allocation.GetY())
 		var (
 			webviewAlign     = m.Align()
 			windowBoundsRect = m.window.BoundsRect()
@@ -88,6 +91,8 @@ func (m *TWebview) UpdateBounds() {
 			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
 			webviewAnchors   = m.Anchors()
 		)
+		windowBoundsRect.SetSize(windowBoundsRect.Width()-swx, windowBoundsRect.Height()-swy)
+
 		switch webviewAlign {
 		case types.AlNone, types.AlCustom:
 			x, y, w, h = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
