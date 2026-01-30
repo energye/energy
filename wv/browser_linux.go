@@ -425,6 +425,9 @@ func (m *TWebview) initDefaultEvent() {
 		switch loadEvent {
 		case wvTypes.WEBKIT_LOAD_FINISHED:
 			m.createEnergyJavasScript()
+			//lcl.RunOnMainThreadAsync(func(id uint32) {
+			//	m.UpdateBounds()
+			//})
 		}
 		if m.onLoadChange != nil {
 			uri := m.browser.GetURI()

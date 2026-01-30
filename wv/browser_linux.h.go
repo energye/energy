@@ -91,6 +91,7 @@ func (m *TWebview) UpdateBounds() {
 			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
 			webviewAnchors   = m.Anchors()
 		)
+		// 真实的客户区大小, 当有菜单栏时
 		windowBoundsRect.SetSize(windowBoundsRect.Width()-swx, windowBoundsRect.Height()-swy)
 
 		switch webviewAlign {
