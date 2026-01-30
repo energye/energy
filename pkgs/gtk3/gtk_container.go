@@ -14,8 +14,8 @@ type Container struct {
 	Widget
 }
 
-func ToGtkContainer(gtkContainer uintptr) *Container {
-	obj := ToGoObject(unsafe.Pointer(gtkContainer))
+func ToContainer(gtkContainer unsafe.Pointer) *Container {
+	obj := ToGoObject(gtkContainer)
 	m := new(Container)
 	m.Object = obj
 	return m

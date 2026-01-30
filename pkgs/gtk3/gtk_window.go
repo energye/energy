@@ -31,8 +31,8 @@ func NewWindow(t WindowType) (*Window, error) {
 	return wrapWindow(obj), nil
 }
 
-func ToGtkWindow(gtkWindow uintptr) *Window {
-	obj := ToGoObject(unsafe.Pointer(gtkWindow))
+func ToGtkWindow(gtkWindow unsafe.Pointer) *Window {
+	obj := ToGoObject(gtkWindow)
 	window := new(Window)
 	window.Object = obj
 	return window
