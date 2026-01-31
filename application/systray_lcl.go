@@ -23,6 +23,33 @@ import (
 	"strings"
 )
 
+type TTrayImageList struct {
+	imageList  lcl.IImageList
+	imageIndex map[string]int32
+}
+
+func (m *TTrayImageList) ImageIndex(imageName string) int32 {
+	index, ok := m.imageIndex[strings.ToLower(imageName)]
+	if ok {
+		return index
+	}
+	return -1
+}
+
+func (m *TTrayImageList) setImageListData(data []byte, name string, index int32) {
+	pic := lcl.NewPicture()
+	defer pic.Free()
+	mem := lcl.NewMemoryStream()
+	defer mem.Free()
+	lcl.StreamHelper.WriteBuffer(mem, data)
+	mem.SetPosition(0)
+	pic.LoadFromStream(mem)
+	m.imageList.Add(pic.Bitmap(), nil)
+	if name != "" && index != -1 {
+		m.imageIndex[name] = index
+	}
+}
+
 type TTrayIcon struct {
 	oldWndPrc uintptr
 	owner     lcl.IComponent
@@ -129,24 +156,17 @@ func (m *TTrayIcon) Menu() *TTrayMenu {
 	return m.trayMenu
 }
 
-func (m *TTrayMenu) mustImageList(size types.TSize) {
+func (m *TTrayMenu) mustImageList() {
 	if m.imageList == nil {
 		m.imageList = &TTrayImageList{imageList: lcl.NewImageList(m.trayMenu), imageIndex: make(map[string]int32)}
-		if size.Cx > 0 {
-			m.imageList.imageList.SetWidth(size.Cx)
-		}
-		if size.Cy > 0 {
-			m.imageList.imageList.SetHeight(size.Cy)
-		}
 		m.trayMenu.SetImages(m.imageList.imageList)
 	}
 }
 
 // SetImageList 设置托盘菜单的图像列表
 //   - pngImagePathList: PNG图像文件路径列表
-//   - size: 图片尺寸
-func (m *TTrayMenu) SetImageList(pngImagePathList []string, size types.TSize) *TTrayImageList {
-	m.mustImageList(size)
+func (m *TTrayMenu) SetImageList(pngImagePathList []string) *TTrayImageList {
+	m.mustImageList()
 	imageListAddPng := func(filePath string, name string, index int32) {
 		data, err := os.ReadFile(filePath)
 		if data != nil && err == nil {
@@ -164,9 +184,8 @@ func (m *TTrayMenu) SetImageList(pngImagePathList []string, size types.TSize) *T
 // SetImageListEmbed 设置嵌入式图片列表到托盘菜单中
 //   - embed: 嵌入文件系统接口，用于读取嵌入的图片资源
 //   - pngImageEmbedPathList: PNG图片的嵌入路径列表
-//   - size: 图片尺寸
-func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList []string, size types.TSize) *TTrayImageList {
-	m.mustImageList(size)
+func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList []string) *TTrayImageList {
+	m.mustImageList()
 	imageListAddPng := func(imagePath string, name string, index int32) {
 		data, err := embed.ReadFile(imagePath)
 		if data != nil && err == nil {
@@ -183,9 +202,8 @@ func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList
 
 // SetImageListDataBytes 设置图像列表的数据字节
 //   - pngImageDataList: PNG图像数据字节数组的切片
-//   - size: 图像尺寸
-func (m *TTrayMenu) SetImageListDataBytes(pngImageDataList [][]byte, size types.TSize) {
-	m.mustImageList(size)
+func (m *TTrayMenu) SetImageListDataBytes(pngImageDataList [][]byte) {
+	m.mustImageList()
 	for _, data := range pngImageDataList {
 		if data != nil && len(data) > 0 {
 			m.imageList.setImageListData(data, "", -1)

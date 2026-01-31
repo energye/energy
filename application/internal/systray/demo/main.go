@@ -141,11 +141,9 @@ func onReady() {
 			time.Sleep(time.Second * 1)
 			b = !b
 			if b {
-				systray.SetVisible(true)
-				//systray.SetIcon(logoData)
+				systray.SetIcon(logoData)
 			} else {
-				//systray.SetIcon(icoData)
-				systray.SetVisible(false)
+				systray.SetIcon(icoData)
 			}
 		}
 	}()

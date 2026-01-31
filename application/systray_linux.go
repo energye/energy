@@ -16,11 +16,41 @@ package application
 
 import (
 	"github.com/energye/energy/v3/application/internal/systray"
+	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
+
+type TTrayImageList struct {
+	imageList  [][]byte
+	imageIndex map[string]int32
+}
+
+func (m *TTrayImageList) ImageIndex(imageName string) int32 {
+	index, ok := m.imageIndex[strings.ToLower(imageName)]
+	if ok {
+		return index
+	}
+	return -1
+}
+
+func (m *TTrayImageList) setImageListData(data []byte, name string, index int32) {
+	pic := lcl.NewPicture()
+	defer pic.Free()
+	mem := lcl.NewMemoryStream()
+	defer mem.Free()
+	lcl.StreamHelper.WriteBuffer(mem, data)
+	mem.SetPosition(0)
+	pic.LoadFromStream(mem)
+	m.imageList = append(m.imageList, data)
+	if name != "" && index != -1 {
+		m.imageIndex[name] = index
+	}
+}
 
 type TTrayIcon struct {
 	trayMenu *TTrayMenu
@@ -32,6 +62,7 @@ type TTrayMenu struct {
 }
 
 type TTrayMenuItem struct {
+	item *systray.MenuItem
 	menu *TTrayMenu
 }
 
@@ -92,16 +123,150 @@ func (m *TTrayIcon) SetIconBytes(data []byte) {
 	if data == nil || len(data) == 0 {
 		return
 	}
-	pic := lcl.NewPicture()
-	defer pic.Free()
-	mem := lcl.NewMemoryStream()
-	defer mem.Free()
-	lcl.StreamHelper.WriteBuffer(mem, data)
-	mem.SetPosition(0)
-	pic.LoadFromStream(mem)
-	//m.trayIcon.Icon().Assign(pic.Bitmap())
+	systray.SetIcon(data)
 }
 
 func (m *TTrayIcon) SetHint(hint string) {
 	systray.SetTooltip(hint)
+}
+
+// tray menu
+
+func (m *TTrayIcon) Menu() *TTrayMenu {
+	if m.trayMenu == nil {
+		m.trayMenu = &TTrayMenu{}
+	}
+	return m.trayMenu
+}
+
+func (m *TTrayMenu) mustImageList() {
+	if m.imageList == nil {
+		m.imageList = &TTrayImageList{imageList: make([][]byte, 0), imageIndex: make(map[string]int32)}
+	}
+}
+
+// SetImageList 设置托盘菜单的图像列表
+//   - pngImagePathList: PNG图像文件路径列表
+//   - size: 图片尺寸
+func (m *TTrayMenu) SetImageList(pngImagePathList []string) *TTrayImageList {
+	m.mustImageList()
+	imageListAddPng := func(filePath string, name string, index int32) {
+		data, err := os.ReadFile(filePath)
+		if data != nil && err == nil {
+			m.imageList.setImageListData(data, name, index)
+		}
+	}
+	for index, image := range pngImagePathList {
+		_, name := filepath.Split(image)
+		name = strings.ToLower(name)
+		imageListAddPng(image, name, int32(index))
+	}
+	return m.imageList
+}
+
+// SetImageListEmbed 设置嵌入式图片列表到托盘菜单中
+//   - embed: 嵌入文件系统接口，用于读取嵌入的图片资源
+//   - pngImageEmbedPathList: PNG图片的嵌入路径列表
+//   - size: 图片尺寸
+func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList []string) *TTrayImageList {
+	m.mustImageList()
+	imageListAddPng := func(imagePath string, name string, index int32) {
+		data, err := embed.ReadFile(imagePath)
+		if data != nil && err == nil {
+			m.imageList.setImageListData(data, name, index)
+		}
+	}
+	for index, image := range pngImageEmbedPathList {
+		_, name := filepath.Split(image)
+		name = strings.ToLower(name)
+		imageListAddPng(image, name, int32(index))
+	}
+	return m.imageList
+}
+
+// SetImageListDataBytes 设置图像列表的数据字节
+//   - pngImageDataList: PNG图像数据字节数组的切片
+//   - size: 图像尺寸
+func (m *TTrayMenu) SetImageListDataBytes(pngImageDataList [][]byte) {
+	m.mustImageList()
+	for _, data := range pngImageDataList {
+		if data != nil && len(data) > 0 {
+			m.imageList.setImageListData(data, "", -1)
+		}
+	}
+}
+
+// tray menu item
+
+// AddMenuItem 向托盘菜单中添加一个新的菜单项
+//   - label - 菜单项显示的文本标签
+//   - fn - 菜单项被点击时执行的回调函数，可以为nil表示无点击事件
+func (m *TTrayMenu) AddMenuItem(label string, fn func()) *TTrayMenuItem {
+	newMenuItem := systray.AddMenuItem(label, "")
+	menuItem := &TTrayMenuItem{menu: m, item: newMenuItem}
+	if fn != nil {
+		newMenuItem.Click(fn)
+	}
+	return menuItem
+}
+
+// AddSeparator 向系统托盘菜单中添加一个分隔符
+func (m *TTrayMenu) AddSeparator() {
+	systray.AddSeparator()
+}
+
+// AddSubMenuItem 添加子菜单项到当前菜单项
+//   - label - 菜单项显示的标签文本
+//   - fn - 点击菜单项时执行的回调函数，可以为nil表示无点击事件
+func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
+	newMenuItem := m.item.AddSubMenuItem(label, "")
+	menuItem := &TTrayMenuItem{menu: m.menu, item: newMenuItem}
+	if fn != nil {
+		newMenuItem.Click(fn)
+	}
+	return menuItem
+}
+
+// AddSeparator 向系统托盘菜单中添加一个分隔符
+func (m *TTrayMenuItem) AddSeparator() {
+	m.item.AddSeparator()
+}
+
+// SetImage 设置菜单项的图标
+//   - imageName: 图标名称，用于在图像列表中查找对应的图标索引
+//
+// 说明:
+//   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
+func (m *TTrayMenuItem) SetImage(imageName string) {
+	if m.menu != nil && m.menu.imageList != nil {
+		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && len(m.menu.imageList.imageList) < int(imageIndex) {
+			data := m.menu.imageList.imageList[imageIndex]
+			m.item.SetIcon(data)
+		}
+	}
+}
+
+// SetImageIndex 设置菜单项的图像索引
+//
+// - index - 要设置的图像索引，必须为非负整数
+//
+// 说明:
+//   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
+func (m *TTrayMenuItem) SetImageIndex(index int32) {
+	if m.menu != nil && m.menu.imageList != nil && index >= 0 && len(m.menu.imageList.imageList) < int(index) {
+		data := m.menu.imageList.imageList[index]
+		m.item.SetIcon(data)
+	}
+}
+
+func (m *TTrayMenuItem) SetChecked(checked bool) {
+	m.item.SetChecked(checked)
+}
+
+func (m *TTrayMenuItem) Checked() bool {
+	return m.item.Checked()
+}
+
+func (m *TTrayMenuItem) Clear() {
+	m.item.Clear()
 }
