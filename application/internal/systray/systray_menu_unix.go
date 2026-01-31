@@ -95,6 +95,8 @@ func (t *tray) GetProperty(id int32, name string) (value dbus.Variant, err *dbus
 func (t *tray) Event(id int32, eventID string, data dbus.Variant, timestamp uint32) (err *dbus.Error) {
 	if eventID == "clicked" {
 		systrayMenuItemSelected(uint32(id))
+	} else if eventID == "" {
+
 	}
 	return
 }
@@ -239,7 +241,6 @@ func findSubLayout(id int32, vals []dbus.Variant) (*menuLayout, bool) {
 		if item.V0 == id {
 			return item, true
 		}
-
 		if len(item.V2) > 0 {
 			child, ok := findSubLayout(id, item.V2)
 			if ok {
@@ -247,28 +248,7 @@ func findSubLayout(id int32, vals []dbus.Variant) (*menuLayout, bool) {
 			}
 		}
 	}
-
 	return nil, false
-}
-
-func hideMenuItem(item *MenuItem) {
-	instance.menuLock.Lock()
-	defer instance.menuLock.Unlock()
-	m, exists := findLayout(int32(item.id))
-	if exists {
-		m.V1["visible"] = dbus.MakeVariant(false)
-		refresh()
-	}
-}
-
-func showMenuItem(item *MenuItem) {
-	instance.menuLock.Lock()
-	defer instance.menuLock.Unlock()
-	m, exists := findLayout(int32(item.id))
-	if exists {
-		m.V1["visible"] = dbus.MakeVariant(true)
-		refresh()
-	}
 }
 
 func refresh() {
@@ -276,8 +256,7 @@ func refresh() {
 		return
 	}
 	instance.menuVersion++
-	dbusErr := instance.menuProps.Set("com.canonical.dbusmenu", "Version",
-		dbus.MakeVariant(instance.menuVersion))
+	dbusErr := instance.menuProps.Set("com.canonical.dbusmenu", "Version", dbus.MakeVariant(instance.menuVersion))
 	if dbusErr != nil {
 		log.Printf("systray error: failed to update menu version: %s\n", dbusErr)
 		return

@@ -54,7 +54,16 @@ func onReady() {
 	// Sets the icon of a menu item. Only available on Mac.
 	mEnabled.SetTemplateIcon(icon.Data, icon.Data)
 
-	systray.AddMenuItem("Ignored", "Ignored")
+	Ignored := systray.AddMenuItem("Ignored", "Ignored")
+	ccdd := Ignored.AddSubMenuItem("aaaa", "bbbb")
+	ccdd.Click(func() {
+		ccdd.SetChecked(!ccdd.Checked())
+	})
+	Ignored.AddSeparator()
+	abab := Ignored.AddSubMenuItem("aaaa", "bbbb")
+	abab.Click(func() {
+		Ignored.Clear()
+	})
 
 	subMenuTop := systray.AddMenuItem("SubMenuTop", "SubMenu Test (top)")
 	subMenuMiddle := subMenuTop.AddSubMenuItem("SubMenuMiddle", "SubMenu Test (middle)")
@@ -66,13 +75,13 @@ func onReady() {
 	shown := true
 	toggle := func() {
 		if shown {
-			subMenuBottom.Check()
+			subMenuBottom.SetChecked(true)
 			subMenuBottom2.Hide()
 			mEnabled.Hide()
 			shown = false
 			mEnabled.Disable()
 		} else {
-			subMenuBottom.Uncheck()
+			subMenuBottom.SetChecked(false)
 			subMenuBottom2.Show()
 			mEnabled.Show()
 			mEnabled.Enable()
@@ -86,10 +95,10 @@ func onReady() {
 	})
 	mChecked.Click(func() {
 		if mChecked.Checked() {
-			mChecked.Uncheck()
+			mChecked.SetChecked(false)
 			mChecked.SetTitle("Unchecked")
 		} else {
-			mChecked.Check()
+			mChecked.SetChecked(true)
 			mChecked.SetTitle("Checked")
 		}
 	})

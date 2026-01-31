@@ -49,6 +49,9 @@ func NewTrayIcon() *TTrayIcon {
 
 // tray
 
+func (m *TTrayIcon) Close() {
+}
+
 func (m *TTrayIcon) SetOnClick(fn func()) {
 	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
 		fn()

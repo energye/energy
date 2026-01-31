@@ -3,6 +3,7 @@ package systray
 
 import (
 	"fmt"
+	"github.com/godbus/dbus/v5"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -113,6 +114,24 @@ func AddSeparator() {
 	addSeparator(atomic.AddUint32(&currentID, 1))
 }
 
+func (item *MenuItem) AddSeparator() {
+	instance.menuLock.Lock()
+	defer instance.menuLock.Unlock()
+	m, exists := findLayout(int32(item.id))
+	if exists {
+		id := atomic.AddUint32(&currentID, 1)
+		layout := &menuLayout{
+			V0: int32(id),
+			V1: map[string]dbus.Variant{
+				"type": dbus.MakeVariant("separator"),
+			},
+			V2: []dbus.Variant{},
+		}
+		m.V2 = append(m.V2, dbus.MakeVariant(layout))
+		refresh()
+	}
+}
+
 // AddSubMenuItem adds a nested sub-menu item with the designated title and tooltip.
 // It can be safely invoked from different goroutines.
 // Created menu items are checkable on Windows and OSX by default. For Linux you have to use AddSubMenuItemCheckbox
@@ -162,14 +181,42 @@ func (item *MenuItem) Disable() {
 	item.update()
 }
 
+// Clear menu item
+func (item *MenuItem) Clear() {
+	instance.menuLock.Lock()
+	defer instance.menuLock.Unlock()
+	m, exists := findLayout(int32(item.id))
+	if exists {
+		for _, sub := range m.V2 {
+			menu := sub.Value().(*menuLayout)
+			delete(menuItems, uint32(menu.V0))
+		}
+		m.V2 = []dbus.Variant{}
+		m.V1["children-display"] = dbus.MakeVariant("menu")
+		refresh()
+	}
+}
+
 // Hide hides a menu item
 func (item *MenuItem) Hide() {
-	hideMenuItem(item)
+	instance.menuLock.Lock()
+	defer instance.menuLock.Unlock()
+	m, exists := findLayout(int32(item.id))
+	if exists {
+		m.V1["visible"] = dbus.MakeVariant(false)
+		refresh()
+	}
 }
 
 // Show shows a previously hidden menu item
 func (item *MenuItem) Show() {
-	showMenuItem(item)
+	instance.menuLock.Lock()
+	defer instance.menuLock.Unlock()
+	m, exists := findLayout(int32(item.id))
+	if exists {
+		m.V1["visible"] = dbus.MakeVariant(true)
+		refresh()
+	}
 }
 
 // Checked returns if the menu item has a check mark
@@ -177,15 +224,10 @@ func (item *MenuItem) Checked() bool {
 	return item.checked
 }
 
-// Check a menu item regardless if it's previously checked or not
-func (item *MenuItem) Check() {
-	item.checked = true
-	item.update()
-}
-
-// Uncheck a menu item regardless if it's previously unchecked or not
-func (item *MenuItem) Uncheck() {
-	item.checked = false
+// SetChecked a menu item regardless if it's previously checked or not
+func (item *MenuItem) SetChecked(value bool) {
+	item.checked = value
+	item.isCheckable = true
 	item.update()
 }
 
