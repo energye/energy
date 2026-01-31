@@ -197,21 +197,22 @@ func (m *UnimplementedStatusNotifierItem) Scroll(delta int32, orientation string
 	return
 }
 
-func setOnClick(fn func(menu IMenu)) {
+func setOnClick(fn func()) {
 	usni.activate = func(x int32, y int32) {
-		fn(nil)
+		fn()
 	}
 }
 
-func setOnDClick(fn func(menu IMenu)) {
+func setOnDClick(fn func()) {
 	usni.dActivate = func(x int32, y int32) {
-		fn(nil)
+		fn()
 	}
 }
 
 func NativeEnd() {
 	if instance.conn != nil {
 		_ = instance.conn.Close()
+		instance.conn = nil
 	}
 }
 
