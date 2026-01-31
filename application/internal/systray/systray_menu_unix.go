@@ -4,7 +4,7 @@
 package systray
 
 import (
-	"github.com/energye/energy/v3/pkgs/gtk3/systray/internal/generated/menu"
+	"github.com/energye/energy/v3/application/internal/systray/internal/generated/menu"
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
 	"log"
