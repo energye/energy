@@ -83,23 +83,41 @@ func SetTitle(t string) {
 	if props == nil {
 		return
 	}
-	dbusErr := props.Set("org.kde.StatusNotifierItem", "Title",
-		dbus.MakeVariant(t))
+	dbusErr := props.Set("org.kde.StatusNotifierItem", "Title", dbus.MakeVariant(t))
 	if dbusErr != nil {
 		log.Printf("systray error: failed to set Title prop: %s\n", dbusErr)
 		return
 	}
-
 	if conn == nil {
 		return
 	}
-
 	err := notifier.Emit(conn, &notifier.StatusNotifierItem_NewTitleSignal{
 		Path: path,
 		Body: &notifier.StatusNotifierItem_NewTitleSignalBody{},
 	})
 	if err != nil {
 		log.Printf("systray error: failed to emit new title signal: %s\n", err)
+		return
+	}
+}
+
+// SetVisible
+func SetVisible(value bool) {
+	instance.lock.Lock()
+	instance.visible = value
+	props := instance.props
+	defer instance.lock.Unlock()
+	if props == nil {
+		return
+	}
+	dbusErr := props.Set("org.kde.StatusNotifierItem", "Visible", dbus.MakeVariant(value))
+	if dbusErr != nil {
+		log.Printf("systray error: failed to set Visible prop: %s\n", dbusErr)
+		return
+	}
+	err := instance.conn.Emit(path, "org.kde.StatusNotifierItem.NewVisible", dbus.MakeVariant(value))
+	if err != nil {
+		log.Printf("systray error: failed to emit new Visible signal: %s\n", err)
 		return
 	}
 }
@@ -115,8 +133,7 @@ func SetTooltip(tooltipTitle string) {
 	if props == nil {
 		return
 	}
-	dbusErr := props.Set("org.kde.StatusNotifierItem", "ToolTip",
-		dbus.MakeVariant(tooltip{V2: tooltipTitle}))
+	dbusErr := props.Set("org.kde.StatusNotifierItem", "ToolTip", dbus.MakeVariant(tooltip{V2: tooltipTitle}))
 	if dbusErr != nil {
 		log.Printf("systray error: failed to set ToolTip prop: %s\n", dbusErr)
 		return
@@ -252,8 +269,7 @@ func NativeStart() {
 			notifier.IntrospectDataStatusNotifierItem,
 		},
 	}
-	err = conn.Export(introspect.NewIntrospectable(&node), path,
-		"org.freedesktop.DBus.Introspectable")
+	err = conn.Export(introspect.NewIntrospectable(&node), path, "org.freedesktop.DBus.Introspectable")
 	if err != nil {
 		log.Printf("systray error: failed to export node introspection: %s\n", err)
 		return
@@ -267,8 +283,7 @@ func NativeStart() {
 			menu.IntrospectDataDbusmenu,
 		},
 	}
-	err = conn.Export(introspect.NewIntrospectable(&menuNode), menuPath,
-		"org.freedesktop.DBus.Introspectable")
+	err = conn.Export(introspect.NewIntrospectable(&menuNode), menuPath, "org.freedesktop.DBus.Introspectable")
 	if err != nil {
 		log.Printf("systray error: failed to export menu node introspection: %s\n", err)
 		return
@@ -300,6 +315,7 @@ type tray struct {
 	iconData []byte
 	// title and tooltip state
 	title, tooltipTitle string
+	visible             bool
 
 	lock             sync.Mutex
 	menu             *menuLayout
@@ -373,6 +389,12 @@ func (t *tray) createPropSpec() map[string]map[string]*prop.Prop {
 			},
 			"ToolTip": {
 				Value:    tooltip{V2: t.tooltipTitle},
+				Writable: true,
+				Emit:     prop.EmitTrue,
+				Callback: nil,
+			},
+			"Visible": {
+				Value:    t.visible,
 				Writable: true,
 				Emit:     prop.EmitTrue,
 				Callback: nil,

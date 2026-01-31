@@ -51,6 +51,7 @@ var (
 			{Name: "IconThemePath", Type: "s", Access: "read"},
 			{Name: "Menu", Type: "o", Access: "read"},
 			{Name: "ItemIsMenu", Type: "b", Access: "read"},
+			{Name: "Visible", Type: "b", Access: "read"},
 			{Name: "IconName", Type: "s", Access: "read"},
 			{Name: "IconPixmap", Type: "a(iiay)", Access: "read", Annotations: []introspect.Annotation{
 				{Name: "org.qtproject.QtDBus.QtTypeName", Value: "KDbusImageVector"},
@@ -308,6 +309,12 @@ func (o *StatusNotifierItem) GetMenu(ctx context.Context) (menu dbus.ObjectPath,
 // GetItemIsMenu gets org.kde.StatusNotifierItem.ItemIsMenu property.
 func (o *StatusNotifierItem) GetItemIsMenu(ctx context.Context) (itemIsMenu bool, err error) {
 	err = o.object.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Get", 0, InterfaceStatusNotifierItem, "ItemIsMenu").Store(&itemIsMenu)
+	return
+}
+
+// GetVisible gets org.kde.StatusNotifierItem.Visible property.
+func (o *StatusNotifierItem) GetVisible(ctx context.Context) (Visible bool, err error) {
+	err = o.object.CallWithContext(ctx, "org.freedesktop.DBus.Properties.Get", 0, InterfaceStatusNotifierItem, "Visible").Store(&Visible)
 	return
 }
 

@@ -55,12 +55,15 @@ func onReady() {
 	mEnabled.SetTemplateIcon(icon.Data, icon.Data)
 
 	Ignored := systray.AddMenuItem("Ignored", "Ignored")
-	ccdd := Ignored.AddSubMenuItem("aaaa", "bbbb")
+	Ignored.Click(func() {
+		fmt.Println("Ignored click")
+	})
+	ccdd := Ignored.AddSubMenuItem("选中checked", "bbbb")
 	ccdd.Click(func() {
 		ccdd.SetChecked(!ccdd.Checked())
 	})
 	Ignored.AddSeparator()
-	abab := Ignored.AddSubMenuItem("aaaa", "bbbb")
+	abab := Ignored.AddSubMenuItem("清空Ignored", "bbbb")
 	abab.Click(func() {
 		Ignored.Clear()
 	})
@@ -133,13 +136,16 @@ func onReady() {
 		}
 		icoData, _ := ioutil.ReadFile(filepath.Join(wd, "icon"+ext))
 		logoData, _ := ioutil.ReadFile(filepath.Join(wd, "logo"+ext))
+		_, _ = icoData, logoData
 		for true {
 			time.Sleep(time.Second * 1)
 			b = !b
 			if b {
-				systray.SetIcon(logoData)
+				systray.SetVisible(true)
+				//systray.SetIcon(logoData)
 			} else {
-				systray.SetIcon(icoData)
+				//systray.SetIcon(icoData)
+				systray.SetVisible(false)
 			}
 		}
 	}()

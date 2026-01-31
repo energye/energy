@@ -18,11 +18,13 @@ import (
 	"github.com/energye/energy/v3/application/internal/systray"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
+	"log"
 	"os"
 )
 
 type TTrayIcon struct {
 	trayMenu *TTrayMenu
+	visible  bool
 }
 
 type TTrayMenu struct {
@@ -47,33 +49,37 @@ func (m *TTrayIcon) Close() {
 // tray
 
 func (m *TTrayIcon) SetOnClick(fn func()) {
-
+	systray.SetOnClick(fn)
 }
 
 func (m *TTrayIcon) SetOnDblClick(fn func()) {
-
+	systray.SetOnDClick(fn)
 }
 
 func (m *TTrayIcon) SetOnMouseUp(fn func(button types.TMouseButton, shift types.TShiftState, x, y int32)) {
-
+	log.Println("SetOnMouseUp No Implementation")
 }
 
 func (m *TTrayIcon) SetOnMouseDown(fn func(button types.TMouseButton, shift types.TShiftState, x, y int32)) {
-
+	log.Println("SetOnMouseDown No Implementation")
 }
 
 func (m *TTrayIcon) SetOnMouseMove(fn func(shift types.TShiftState, x, y int32)) {
-
+	log.Println("SetOnMouseMove No Implementation")
 }
 
 func (m *TTrayIcon) Show() {
+	m.visible = true
+	systray.SetVisible(m.visible)
 }
 
 func (m *TTrayIcon) Hide() {
+	m.visible = false
+	systray.SetVisible(m.visible)
 }
 
 func (m *TTrayIcon) Visible() bool {
-	return false
+	return m.visible
 }
 
 func (m *TTrayIcon) SetIcon(png string) {
@@ -97,4 +103,5 @@ func (m *TTrayIcon) SetIconBytes(data []byte) {
 }
 
 func (m *TTrayIcon) SetHint(hint string) {
+	systray.SetTooltip(hint)
 }

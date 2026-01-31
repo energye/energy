@@ -9,6 +9,7 @@
 <property name="Title" type="s" access="read"/>
 <property name="Status" type="s" access="read"/>
 <property name="WindowId" type="i" access="read"/>
+<property name="Visible" type="b" access="read"/>
 <!--  An additional path to add to the theme search path to find the icons specified above.  -->
 <property name="IconThemePath" type="s" access="read"/>
 <property name="Menu" type="o" access="read"/>
