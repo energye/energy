@@ -3,7 +3,6 @@ package systray
 
 import (
 	"fmt"
-	"github.com/energye/lcl/lcl"
 	"github.com/godbus/dbus/v5"
 	"log"
 	"sync"
@@ -259,8 +258,6 @@ func systrayMenuItemSelected(id uint32) {
 		return
 	}
 	if item.click != nil {
-		lcl.RunOnMainThreadAsync(func(id uint32) {
-			item.click()
-		})
+		item.click()
 	}
 }
