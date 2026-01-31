@@ -169,7 +169,6 @@ func (m *TWebview) UpdateBrowserOptions() {
 		}
 	}
 	options := m.window.Options()
-
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
 		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
