@@ -239,7 +239,7 @@ func (m *TTrayMenuItem) AddSeparator() {
 //   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
 func (m *TTrayMenuItem) SetImage(imageName string) {
 	if m.menu != nil && m.menu.imageList != nil {
-		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && len(m.menu.imageList.imageList) < int(imageIndex) {
+		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && int(imageIndex) < len(m.menu.imageList.imageList) {
 			data := m.menu.imageList.imageList[imageIndex]
 			m.item.SetIcon(data)
 		}
@@ -253,7 +253,7 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 // 说明:
 //   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
 func (m *TTrayMenuItem) SetImageIndex(index int32) {
-	if m.menu != nil && m.menu.imageList != nil && index >= 0 && len(m.menu.imageList.imageList) < int(index) {
+	if m.menu != nil && m.menu.imageList != nil && index >= 0 && int(index) < len(m.menu.imageList.imageList) {
 		data := m.menu.imageList.imageList[index]
 		m.item.SetIcon(data)
 	}
