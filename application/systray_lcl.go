@@ -1,0 +1,259 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+//go:build !linux
+
+// macOS, windows => LCL tray
+
+package application
+
+import (
+	"github.com/energye/lcl/emfs"
+	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+type TTrayIcon struct {
+	owner    lcl.IComponent
+	trayIcon lcl.ITrayIcon
+	trayMenu *TTrayMenu
+}
+
+type TTrayMenu struct {
+	trayMenu  lcl.IPopupMenu
+	imageList *TTrayImageList
+}
+
+type TTrayMenuItem struct {
+	menu *TTrayMenu
+	item lcl.IMenuItem
+}
+
+// NewTrayIcon 创建并初始化一个新的系统托盘图标实例
+func NewTrayIcon() *TTrayIcon {
+	m := &TTrayIcon{owner: lcl.Application}
+	m.trayIcon = lcl.NewTrayIcon(m.owner)
+	return m
+}
+
+// tray
+
+func (m *TTrayIcon) SetOnClick(fn func()) {
+	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
+		fn()
+	})
+}
+
+func (m *TTrayIcon) SetOnDblClick(fn func()) {
+	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
+		fn()
+	})
+}
+
+func (m *TTrayIcon) SetOnMouseUp(fn func(button types.TMouseButton, shift types.TShiftState, X int32, Y int32)) {
+	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, X int32, Y int32) {
+		fn(button, shift, X, Y)
+	})
+}
+
+func (m *TTrayIcon) Show() {
+	m.trayIcon.SetVisible(true)
+}
+
+func (m *TTrayIcon) Hide() {
+	m.trayIcon.SetVisible(false)
+}
+
+func (m *TTrayIcon) SetIcon(png string) {
+	if data, err := os.ReadFile(png); err == nil {
+		m.SetIconBytes(data)
+	}
+}
+
+func (m *TTrayIcon) SetIconBytes(data []byte) {
+	if data == nil || len(data) == 0 {
+		return
+	}
+	pic := lcl.NewPicture()
+	defer pic.Free()
+	mem := lcl.NewMemoryStream()
+	defer mem.Free()
+	lcl.StreamHelper.WriteBuffer(mem, data)
+	mem.SetPosition(0)
+	pic.LoadFromStream(mem)
+	m.trayIcon.Icon().Assign(pic.Bitmap())
+}
+
+func (m *TTrayIcon) SetHint(hint string) {
+	m.trayIcon.SetHint(hint)
+}
+
+// tray menu
+
+func (m *TTrayIcon) Menu() *TTrayMenu {
+	if m.trayMenu == nil {
+		popupMenu := lcl.NewPopupMenu(m.owner)
+		m.trayMenu = &TTrayMenu{trayMenu: popupMenu}
+		m.trayIcon.SetPopUpMenu(popupMenu)
+	}
+	return m.trayMenu
+}
+
+func (m *TTrayMenu) mustImageList(size types.TSize) {
+	if m.imageList == nil {
+		m.imageList = &TTrayImageList{imageList: lcl.NewImageList(m.trayMenu), imageIndex: make(map[string]int32)}
+		if size.Cx > 0 {
+			m.imageList.imageList.SetWidth(size.Cx)
+		}
+		if size.Cy > 0 {
+			m.imageList.imageList.SetHeight(size.Cy)
+		}
+		m.trayMenu.SetImages(m.imageList.imageList)
+	}
+}
+
+// SetImageList 设置托盘菜单的图像列表
+//   - pngImagePathList: PNG图像文件路径列表
+//   - size: 图片尺寸
+func (m *TTrayMenu) SetImageList(pngImagePathList []string, size types.TSize) *TTrayImageList {
+	m.mustImageList(size)
+	imageListAddPng := func(filePath string, name string, index int32) {
+		data, err := os.ReadFile(filePath)
+		if data != nil && err == nil {
+			m.imageList.setImageListData(data, name, index)
+		}
+	}
+	for index, image := range pngImagePathList {
+		_, name := filepath.Split(image)
+		name = strings.ToLower(name)
+		imageListAddPng(image, name, int32(index))
+	}
+	return m.imageList
+}
+
+// SetImageListEmbed 设置嵌入式图片列表到托盘菜单中
+//   - embed: 嵌入文件系统接口，用于读取嵌入的图片资源
+//   - pngImageEmbedPathList: PNG图片的嵌入路径列表
+//   - size: 图片尺寸
+func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList []string, size types.TSize) *TTrayImageList {
+	m.mustImageList(size)
+	imageListAddPng := func(imagePath string, name string, index int32) {
+		data, err := embed.ReadFile(imagePath)
+		if data != nil && err == nil {
+			m.imageList.setImageListData(data, name, index)
+		}
+	}
+	for index, image := range pngImageEmbedPathList {
+		_, name := filepath.Split(image)
+		name = strings.ToLower(name)
+		imageListAddPng(image, name, int32(index))
+	}
+	return m.imageList
+}
+
+// SetImageListDataBytes 设置图像列表的数据字节
+//   - pngImageDataList: PNG图像数据字节数组的切片
+//   - size: 图像尺寸
+func (m *TTrayMenu) SetImageListDataBytes(pngImageDataList [][]byte, size types.TSize) {
+	m.mustImageList(size)
+	for _, data := range pngImageDataList {
+		if data != nil && len(data) > 0 {
+			m.imageList.setImageListData(data, "", -1)
+		}
+	}
+}
+
+// tray menu item
+
+// AddMenuItem 向托盘菜单中添加一个新的菜单项
+//   - label - 菜单项显示的文本标签
+//   - fn - 菜单项被点击时执行的回调函数，可以为nil表示无点击事件
+func (m *TTrayMenu) AddMenuItem(label string, fn func()) *TTrayMenuItem {
+	newMenuItem := lcl.NewMenuItem(m.trayMenu)
+	menuItem := &TTrayMenuItem{menu: m, item: newMenuItem}
+	newMenuItem.SetCaption(label)
+	m.trayMenu.Items().Add(newMenuItem)
+	if fn != nil {
+		newMenuItem.SetOnClick(func(sender lcl.IObject) {
+			fn()
+		})
+	}
+	return menuItem
+}
+
+// AddSeparator 向系统托盘菜单中添加一个分隔符
+func (m *TTrayMenu) AddSeparator() {
+	newMenuItem := lcl.NewMenuItem(m.trayMenu)
+	newMenuItem.SetCaption("-")
+	m.trayMenu.Items().Add(newMenuItem)
+}
+
+// AddSubMenuItem 添加子菜单项到当前菜单项
+//   - label - 菜单项显示的标签文本
+//   - fn - 点击菜单项时执行的回调函数，可以为nil表示无点击事件
+func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
+	newMenuItem := lcl.NewMenuItem(m.item)
+	menuItem := &TTrayMenuItem{menu: m.menu, item: newMenuItem}
+	newMenuItem.SetCaption(label)
+	m.item.Add(newMenuItem)
+	if fn != nil {
+		newMenuItem.SetOnClick(func(sender lcl.IObject) {
+			fn()
+		})
+	}
+	return menuItem
+}
+
+// AddSeparator 向系统托盘菜单中添加一个分隔符
+func (m *TTrayMenuItem) AddSeparator() {
+	newMenuItem := lcl.NewMenuItem(m.item)
+	newMenuItem.SetCaption("-")
+	m.item.Add(newMenuItem)
+}
+
+// SetImage 设置菜单项的图标
+//   - imageName: 图标名称，用于在图像列表中查找对应的图标索引
+//
+// 说明:
+//   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
+func (m *TTrayMenuItem) SetImage(imageName string) {
+	if m.menu != nil && m.menu.imageList != nil {
+		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 {
+			m.item.SetImageIndex(imageIndex)
+		}
+	}
+}
+
+// SetImageIndex 设置菜单项的图像索引
+//
+// - index - 要设置的图像索引，必须为非负整数
+//
+// 说明:
+//   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
+func (m *TTrayMenuItem) SetImageIndex(index int32) {
+	if m.menu != nil && m.menu.imageList != nil && index >= 0 {
+		m.item.SetImageIndex(index)
+	}
+}
+
+func (m *TTrayMenuItem) SetChecked(checked bool) {
+	m.item.SetChecked(checked)
+}
+
+func (m *TTrayMenuItem) Checked() bool {
+	return m.item.Checked()
+}
+
+func (m *TTrayMenuItem) Clear() {
+	m.item.Clear()
+}
