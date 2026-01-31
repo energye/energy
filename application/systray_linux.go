@@ -13,3 +13,22 @@
 // linux => dbus tray
 
 package application
+
+type TTrayIcon struct {
+	trayMenu *TTrayMenu
+}
+
+type TTrayMenu struct {
+	imageList *TTrayImageList
+}
+
+type TTrayMenuItem struct {
+	menu *TTrayMenu
+}
+
+// NewTrayIcon 创建并初始化一个新的系统托盘图标实例
+func NewTrayIcon() *TTrayIcon {
+	m := &TTrayIcon{}
+
+	return m
+}

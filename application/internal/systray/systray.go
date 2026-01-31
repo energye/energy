@@ -4,25 +4,16 @@ package systray
 import (
 	"fmt"
 	"log"
-	"runtime"
 	"sync"
 	"sync/atomic"
 )
 
 var (
-	systrayReady  func()
-	systrayExit   func()
-	menuItems     = make(map[uint32]*MenuItem)
-	menuItemsLock sync.RWMutex
-
-	currentID             = uint32(0)
-	quitOnce              sync.Once
+	menuItems             = make(map[uint32]*MenuItem)
+	menuItemsLock         sync.RWMutex
+	currentID                   = uint32(0)
 	dClickTimeMinInterval int64 = 500
 )
-
-func init() {
-	runtime.LockOSThread()
-}
 
 type IMenu interface {
 	ShowMenu() error
@@ -77,15 +68,6 @@ func newMenuItem(title string, tooltip string, parent *MenuItem) *MenuItem {
 	}
 }
 
-// Run initializes GUI and starts the event loop, then invokes the onReady
-// callback. It blocks until systray.Quit() is called.
-func Run(onReady, onExit func()) {
-	setInternalLoop(true)
-	Register(onReady, onExit)
-
-	nativeLoop()
-}
-
 // 设置鼠标左键双击事件的时间间隔 默认500毫秒
 func SetDClickTimeMinInterval(value int64) {
 	dClickTimeMinInterval = value
@@ -101,63 +83,9 @@ func SetOnDClick(fn func(menu IMenu)) {
 	setOnDClick(fn)
 }
 
-// 设置托盘鼠标右键事件反馈回调
-// 支持windows 和 macosx，不支持linux
-// 设置事件，菜单默认将不展示，通过menu.ShowMenu()函数显示
-// 未设置事件，默认右键显示托盘菜单
-// macosx ShowMenu()只支持OnRClick函数内调用
-func SetOnRClick(fn func(menu IMenu)) {
-	setOnRClick(fn)
-}
-
-// RunWithExternalLoop allows the systemtray module to operate with other tookits.
-// The returned start and end functions should be called by the toolkit when the application has started and will end.
-func RunWithExternalLoop(onReady, onExit func()) (start, end func()) {
-	Register(onReady, onExit)
-
-	return nativeStart, func() {
-		nativeEnd()
-		Quit()
-	}
-}
-
-// Register initializes GUI and registers the callbacks but relies on the
-// caller to run the event loop somewhere else. It's useful if the program
-// needs to show other UI elements, for example, webview.
-// To overcome some OS weirdness, On macOS versions before Catalina, calling
-// this does exactly the same as Run().
-func Register(onReady func(), onExit func()) {
-	if onReady == nil {
-		systrayReady = nil
-	} else {
-		var readyCh = make(chan interface{})
-		// Run onReady on separate goroutine to avoid blocking event loop
-		go func() {
-			<-readyCh
-			onReady()
-		}()
-		systrayReady = func() {
-			systrayReady = nil
-			close(readyCh)
-		}
-	}
-	// unlike onReady, onExit runs in the event loop to make sure it has time to
-	// finish before the process terminates
-	if onExit == nil {
-		onExit = func() {}
-	}
-	systrayExit = onExit
-	registerSystray()
-}
-
 // ResetMenu will remove all menu items
 func ResetMenu() {
 	resetMenu()
-}
-
-// Quit the systray
-func Quit() {
-	quitOnce.Do(quit)
 }
 
 // AddMenuItem adds a menu item with the designated title and tooltip.

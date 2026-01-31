@@ -11,20 +11,17 @@ import (
 	"time"
 )
 
+var quitChan = make(chan struct{})
+
 func main() {
 	MainRun()
 }
 
-var start func()
-var end func()
-
 func MainRun() {
-	onExit := func() {
-		now := time.Now()
-		fmt.Println("Exit at", now.String())
-	}
-
-	systray.Run(onReady, onExit)
+	systray.NativeStart()
+	onReady()
+	<-quitChan
+	systray.NativeEnd()
 }
 
 func addQuitItem() {
@@ -32,9 +29,7 @@ func addQuitItem() {
 	mQuit.Enable()
 	mQuit.Click(func() {
 		fmt.Println("Requesting quit")
-		systray.Quit()
-		//systray.Quit()// macos error
-		//end() // macos error
+		quitChan <- struct{}{}
 		fmt.Println("Finished quitting")
 	})
 }
@@ -56,11 +51,7 @@ func onReady() {
 		}
 		fmt.Println("SetOnDClick")
 	})
-	// OnRClick linux not impl
-	systray.SetOnRClick(func(menu systray.IMenu) {
-		menu.ShowMenu()
-		fmt.Println("SetOnRClick")
-	})
+
 	addQuitItem()
 
 	systray.SetTemplateIcon(icon.Data, icon.Data)

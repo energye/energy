@@ -29,9 +29,6 @@ const (
 )
 
 var (
-	// to signal quitting the internal main loop
-	quitChan = make(chan struct{})
-
 	// instance is the current instance of our DBus tray server
 	instance = &tray{menu: &menuLayout{}, menuVersion: 1}
 )
@@ -134,29 +131,6 @@ func (item *MenuItem) SetTemplateIcon(templateIconBytes []byte, regularIconBytes
 	item.SetIcon(regularIconBytes)
 }
 
-func setInternalLoop(_ bool) {
-	// nothing to action on Linux
-}
-
-func registerSystray() {
-}
-
-func nativeLoop() int {
-	nativeStart()
-	<-quitChan
-	nativeEnd()
-	return 0
-}
-
-func nativeEnd() {
-	systrayExit()
-	instance.conn.Close()
-}
-
-func quit() {
-	close(quitChan)
-}
-
 var usni = &UnimplementedStatusNotifierItem{}
 
 type UnimplementedStatusNotifierItem struct {
@@ -235,13 +209,13 @@ func setOnDClick(fn func(menu IMenu)) {
 	}
 }
 
-func setOnRClick(dClick func(IMenu)) {
+func NativeEnd() {
+	if instance.conn != nil {
+		_ = instance.conn.Close()
+	}
 }
 
-func nativeStart() {
-	if systrayReady != nil {
-		systrayReady()
-	}
+func NativeStart() {
 	conn, _ := dbus.ConnectSessionBus()
 	err := notifier.ExportStatusNotifierItem(conn, path, usni)
 	if err != nil {
