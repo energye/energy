@@ -40,6 +40,7 @@ type MenuItem struct {
 	checked bool
 	// has the menu item a checkbox (Linux)
 	isCheckable bool
+	isRadio     bool
 	// parent item, for sub menus
 	parent *MenuItem
 }
@@ -228,6 +229,15 @@ func (item *MenuItem) Checked() bool {
 func (item *MenuItem) SetChecked(value bool) {
 	item.checked = value
 	item.isCheckable = true
+	item.isRadio = false
+	item.update()
+}
+
+// SetRadio a menu item regardless if it's previously radio or not
+func (item *MenuItem) SetRadio(value bool) {
+	item.checked = value
+	item.isCheckable = false
+	item.isRadio = true
 	item.update()
 }
 

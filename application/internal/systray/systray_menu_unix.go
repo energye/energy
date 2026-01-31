@@ -222,6 +222,13 @@ func applyItemToLayout(in *MenuItem, out *menuLayout) {
 		} else {
 			out.V1["toggle-state"] = dbus.MakeVariant(0)
 		}
+	} else if in.isRadio {
+		out.V1["toggle-type"] = dbus.MakeVariant("radio")
+		if in.checked {
+			out.V1["toggle-state"] = dbus.MakeVariant(1)
+		} else {
+			out.V1["toggle-state"] = dbus.MakeVariant(0)
+		}
 	} else {
 		out.V1["toggle-type"] = dbus.MakeVariant("")
 		out.V1["toggle-state"] = dbus.MakeVariant(0)

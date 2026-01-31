@@ -241,7 +241,7 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 	if m.menu != nil && m.menu.imageList != nil {
 		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && int(imageIndex) < len(m.menu.imageList.imageList) {
 			data := m.menu.imageList.imageList[imageIndex]
-			m.item.SetIcon(data)
+			m.item.SetTemplateIcon(data)
 		}
 	}
 }
@@ -261,6 +261,10 @@ func (m *TTrayMenuItem) SetImageIndex(index int32) {
 
 func (m *TTrayMenuItem) SetChecked(checked bool) {
 	m.item.SetChecked(checked)
+}
+
+func (m *TTrayMenuItem) SetRadio(radio bool) {
+	m.item.SetRadio(radio)
 }
 
 func (m *TTrayMenuItem) Checked() bool {
