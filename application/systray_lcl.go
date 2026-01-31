@@ -24,9 +24,10 @@ import (
 )
 
 type TTrayIcon struct {
-	owner    lcl.IComponent
-	trayIcon lcl.ITrayIcon
-	trayMenu *TTrayMenu
+	oldWndPrc uintptr
+	owner     lcl.IComponent
+	trayIcon  lcl.ITrayIcon
+	trayMenu  *TTrayMenu
 }
 
 type TTrayMenu struct {
@@ -60,9 +61,21 @@ func (m *TTrayIcon) SetOnDblClick(fn func()) {
 	})
 }
 
-func (m *TTrayIcon) SetOnMouseUp(fn func(button types.TMouseButton, shift types.TShiftState, X int32, Y int32)) {
+func (m *TTrayIcon) SetOnMouseUp(fn func(button types.TMouseButton, shift types.TShiftState, x, y int32)) {
 	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, X int32, Y int32) {
 		fn(button, shift, X, Y)
+	})
+}
+
+func (m *TTrayIcon) SetOnMouseDown(fn func(button types.TMouseButton, shift types.TShiftState, x, y int32)) {
+	m.trayIcon.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, X int32, Y int32) {
+		fn(button, shift, X, Y)
+	})
+}
+
+func (m *TTrayIcon) SetOnMouseMove(fn func(shift types.TShiftState, x, y int32)) {
+	m.trayIcon.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, X int32, Y int32) {
+		fn(shift, X, Y)
 	})
 }
 
@@ -72,6 +85,10 @@ func (m *TTrayIcon) Show() {
 
 func (m *TTrayIcon) Hide() {
 	m.trayIcon.SetVisible(false)
+}
+
+func (m *TTrayIcon) Visible() bool {
+	return m.trayIcon.Visible()
 }
 
 func (m *TTrayIcon) SetIcon(png string) {
