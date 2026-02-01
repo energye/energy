@@ -319,6 +319,18 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 }
 
 func (m *TWebview) initDefaultEvent() {
+	m._SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint32) {
+		fmt.Println("_SetOnDDragDataReceived", context, x, y, data, info, time)
+		if data == nil || data.GetLength() == 0 {
+			return
+		}
+		fileNames := data.GetURIs()
+		fmt.Println("fileNames", fileNames)
+	})
+	m._SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint32) bool {
+		fmt.Println("_SetOnDragDrop", context, x, y, time)
+		return false
+	})
 	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue, id int32) {
 		callback, ok := gEvaluateScriptEventCallback.Load(id)
 		if ok {

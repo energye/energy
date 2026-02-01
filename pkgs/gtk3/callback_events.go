@@ -12,28 +12,42 @@ import (
 type EventSignalName = string
 
 const (
-	EsnClicked          EventSignalName = "clicked"
-	EsnChanged          EventSignalName = "changed"
-	EsnActivate         EventSignalName = "activate"
-	EsnKeyPressEvent    EventSignalName = "key-press-event"
-	EsnKeyReleaseEvent  EventSignalName = "key-release-event"
-	EsnButtonPressEvent EventSignalName = "button-press-event"
-	EsnEnterNotifyEvent EventSignalName = "enter-notify-event"
-	EsnLeaveNotifyEvent EventSignalName = "leave-notify-event"
-	EsnConfigureEvent   EventSignalName = "configure-event"
-	EsnMapEvent         EventSignalName = "map"
-	EsnDrawEvent        EventSignalName = "draw"
+	EsnClicked               EventSignalName = "clicked"
+	EsnChanged               EventSignalName = "changed"
+	EsnActivate              EventSignalName = "activate"
+	EsnKeyPressEvent         EventSignalName = "key-press-event"
+	EsnKeyReleaseEvent       EventSignalName = "key-release-event"
+	EsnButtonPressEvent      EventSignalName = "button-press-event"
+	EsnEnterNotifyEvent      EventSignalName = "enter-notify-event"
+	EsnLeaveNotifyEvent      EventSignalName = "leave-notify-event"
+	EsnConfigureEvent        EventSignalName = "configure-event"
+	EsnMapEvent              EventSignalName = "map"
+	EsnDrawEvent             EventSignalName = "draw"
+	EsnDragDataReceivedEvent EventSignalName = "drag-data-received"
+	EsnDragDropEvent         EventSignalName = "drag-drop"
 )
 
 type TNotifyEvent func(sender *Widget)
+
 type TTextChangedEvent func(sender *Widget, text string)
+
 type TTextCommitEvent func(sender *Widget, text string)
+
 type TTextKeyEvent func(sender *Widget, key *EventKey) bool
+
 type TButtonPressEvent func(sender *Widget, event *EventButton)
+
 type TLeaveEnterNotifyEvent func(sender *Widget, event *EventCrossing)
+
 type TConfigureEvent func(sender *Widget, event *EventConfigure) bool
+
 type TMapEvent func(sender *Widget)
+
 type TDrawEvent func(sender *Widget, cr *Context) bool
+
+type TDragDataReceivedEvent func(sender *Widget, context *DragContext, x, y int, data *SelectionData, info uint, time uint32)
+
+type TDragDropEvent func(sender *Widget, context *DragContext, x, y int, time uint32) bool
 
 type CallbackContext struct {
 	widget unsafe.Pointer
@@ -127,6 +141,33 @@ func MakeDrawEvent(cb TDrawEvent) *Callback {
 			crPtr := ctx.input.(unsafe.Pointer)
 			cr := WrapContext(uintptr(crPtr))
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), cr)
+			ctx.result = result
+		},
+	}
+}
+
+func MakeDragDataReceivedEvent(cb TDragDataReceivedEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			args := ctx.input.([]any)
+			context := ToDragContext(args[0].(unsafePointer))
+			x, y := args[1].(int), args[2].(int)
+			data := ToSelectionData(args[3].(unsafe.Pointer))
+			info := args[4].(uint)
+			time := args[5].(uint32)
+			cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, data, info, time)
+		},
+	}
+}
+
+func MakeDragDropEvent(cb TDragDropEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			args := ctx.input.([]any)
+			context := ToDragContext(args[0].(unsafePointer))
+			x, y := args[1].(int), args[2].(int)
+			time := args[5].(uint32)
+			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
 			ctx.result = result
 		},
 	}

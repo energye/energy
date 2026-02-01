@@ -139,3 +139,11 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
 	m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
 	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }
+
+func (m *TWebview) _SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDataReceivedEvent, gtk3.MakeDragDataReceivedEvent(fn))
+}
+
+func (m *TWebview) _SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDropEvent, gtk3.MakeDragDropEvent(fn))
+}
