@@ -243,7 +243,11 @@ func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
 	newMenuItem := m.item.AddMenuItem(m.tray(), label, "")
 	menuItem := &TTrayMenuItem{menu: m.menu, item: newMenuItem}
 	if fn != nil {
-		newMenuItem.Click(fn)
+		newMenuItem.Click(func() {
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				fn()
+			})
+		})
 	}
 	return menuItem
 }
