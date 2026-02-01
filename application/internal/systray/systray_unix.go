@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 //go:build linux
 
 //Note that you need to have github.com/knightpp/dbus-codegen-go installed from "custom" branch
@@ -23,7 +33,7 @@ import (
 )
 
 var (
-	currentID = int32(0)
+	gCurrentID = int32(0)
 )
 
 const (

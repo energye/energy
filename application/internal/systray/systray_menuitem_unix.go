@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 //go:build linux
 
 package systray
@@ -59,7 +69,7 @@ func (m *MenuItem) String() string {
 // newMenuItem returns a populated MenuItem object
 func newMenuItem(title string, tooltip string, parent *MenuItem) *MenuItem {
 	m := &MenuItem{
-		id:          atomic.AddInt32(&currentID, 1),
+		id:          atomic.AddInt32(&gCurrentID, 1),
 		title:       title,
 		tooltip:     tooltip,
 		shortcutKey: "",
@@ -75,10 +85,9 @@ func newMenuItem(title string, tooltip string, parent *MenuItem) *MenuItem {
 }
 
 func (m *MenuItem) AddSeparator(tray *Tray) {
-	id := atomic.AddInt32(&currentID, 1)
 	item := newMenuItem("-", "-", m)
 	item.layout = &menuLayout{
-		V0: id,
+		V0: item.id,
 		V1: map[string]dbus.Variant{
 			"type": dbus.MakeVariant("separator"),
 		},
