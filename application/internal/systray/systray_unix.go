@@ -236,7 +236,7 @@ func (m *Tray) NativeEnd() {
 }
 
 func NativeStart() *Tray {
-	m := &Tray{ /*menu: &menuLayout{}, */ menuVersion: 1, usni: &UnimplementedStatusNotifierItem{}, menuItems: make(map[int32]*MenuItem)}
+	m := &Tray{menuVersion: 1, usni: &UnimplementedStatusNotifierItem{}, menuItems: make(map[int32]*MenuItem)}
 	conn, _ := dbus.ConnectSessionBus()
 	err := notifier.ExportStatusNotifierItem(conn, path, m.usni)
 	if err != nil {
@@ -574,17 +574,12 @@ func convertToPixels(data []byte) PX {
 	if len(data) == 0 {
 		return PX{}
 	}
-
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		log.Printf("Failed to read icon format %v", err)
 		return PX{}
 	}
-
-	return PX{
-		img.Bounds().Dx(), img.Bounds().Dy(),
-		argbForImage(img),
-	}
+	return PX{W: img.Bounds().Dx(), H: img.Bounds().Dy(), Pix: argbForImage(img)}
 }
 
 func argbForImage(img image.Image) []byte {
