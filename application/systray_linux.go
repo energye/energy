@@ -16,6 +16,7 @@ package application
 
 import (
 	"github.com/energye/energy/v3/application/internal/systray"
+	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -72,11 +73,17 @@ type TTrayMenuItem struct {
 func NewTrayIcon() *TTrayIcon {
 	tray := systray.NativeStart()
 	m := &TTrayIcon{tray: tray}
+	api.SetOnReleaseCallback(func() {
+		m.Close()
+	})
 	return m
 }
 
 func (m *TTrayIcon) Close() {
-	m.tray.NativeEnd()
+	if m.tray != nil {
+		m.tray.NativeEnd()
+		m.tray = nil
+	}
 }
 
 // tray
