@@ -45,9 +45,9 @@ type TMapEvent func(sender *Widget)
 
 type TDrawEvent func(sender *Widget, cr *Context) bool
 
-type TDragDataReceivedEvent func(sender *Widget, context *DragContext, x, y int, data *SelectionData, info uint, time uint32)
+type TDragDataReceivedEvent func(sender *Widget, context *DragContext, x, y int, data *SelectionData, info uint, time uint)
 
-type TDragDropEvent func(sender *Widget, context *DragContext, x, y int, time uint32) bool
+type TDragDropEvent func(sender *Widget, context *DragContext, x, y int, time uint) bool
 
 type CallbackContext struct {
 	widget unsafe.Pointer
@@ -154,7 +154,7 @@ func MakeDragDataReceivedEvent(cb TDragDataReceivedEvent) *Callback {
 			x, y := args[1].(int), args[2].(int)
 			data := ToSelectionData(args[3].(unsafe.Pointer))
 			info := args[4].(uint)
-			time := args[5].(uint32)
+			time := args[5].(uint)
 			cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, data, info, time)
 		},
 	}
@@ -166,7 +166,7 @@ func MakeDragDropEvent(cb TDragDropEvent) *Callback {
 			args := ctx.input.([]any)
 			context := ToDragContext(args[0].(unsafePointer))
 			x, y := args[1].(int), args[2].(int)
-			time := args[3].(uint32)
+			time := args[3].(uint)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
 			ctx.result = result
 		},

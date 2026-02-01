@@ -72,7 +72,7 @@ func doOnWindowDraw(widget, cr, userData unsafePointer) bool {
 }
 
 func doOnDragDataReceived(widget unsafePointer, context unsafePointer, x, y int, data unsafePointer,
-	info uint, time uint32, userData unsafePointer) {
+	info uint, time uint, userData unsafePointer) {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, data, info, time}}
