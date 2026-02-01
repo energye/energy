@@ -25,6 +25,7 @@ void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdou
         webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(webview), &colour);
     }
 }
+
 */
 import "C"
 import (

@@ -169,6 +169,11 @@ func (m *TWebview) UpdateBrowserOptions() {
 		}
 	}
 	options := m.window.Options()
+
+	target := gtk3.NewTargetEntry("text/uri-list", 0, 0)
+	targets := []gtk3.TargetEntry{*target}
+	m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_ALL, targets, gtk3.ACTION_COPY)
+
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
 		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A

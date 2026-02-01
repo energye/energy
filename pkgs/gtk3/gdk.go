@@ -339,3 +339,15 @@ const (
 	NOTIFY_NONLINEAR_VIRTUAL NotifyType = C.GDK_NOTIFY_NONLINEAR_VIRTUAL
 	NOTIFY_UNKNOWN           NotifyType = C.GDK_NOTIFY_UNKNOWN
 )
+
+// DragAction is a representation of GDK's GdkDragAction.
+type DragAction int
+
+const (
+	ACTION_DEFAULT DragAction = C.GDK_ACTION_DEFAULT
+	ACTION_COPY    DragAction = C.GDK_ACTION_COPY
+	ACTION_MOVE    DragAction = C.GDK_ACTION_MOVE
+	ACTION_LINK    DragAction = C.GDK_ACTION_LINK
+	ACTION_PRIVATE DragAction = C.GDK_ACTION_PRIVATE
+	ACTION_ASK     DragAction = C.GDK_ACTION_ASK
+)

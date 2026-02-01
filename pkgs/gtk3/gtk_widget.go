@@ -230,12 +230,12 @@ func (v *Widget) SetName(name string) {
 // GetName is a wrapper around gtk_widget_get_name().  A non-nil
 // error is returned in the case that gtk_widget_get_name returns NULL to
 // differentiate between NULL and an empty string.
-func (v *Widget) GetName() (string, error) {
+func (v *Widget) GetName() string {
 	c := C.gtk_widget_get_name(v.native())
 	if c == nil {
-		return "", nilPtrErr
+		return ""
 	}
-	return C.GoString((*C.char)(c)), nil
+	return C.GoString((*C.char)(c))
 }
 
 // GetSensitive is a wrapper around gtk_widget_get_sensitive().
@@ -386,12 +386,12 @@ func (v *Widget) GetToplevel() IWidget {
 // GetTooltipMarkup is a wrapper around gtk_widget_get_tooltip_markup().
 // A non-nil error is returned in the case that gtk_widget_get_tooltip_markup
 // returns NULL to differentiate between NULL and an empty string.
-func (v *Widget) GetTooltipMarkup() (string, error) {
+func (v *Widget) GetTooltipMarkup() string {
 	c := C.gtk_widget_get_tooltip_markup(v.native())
 	if c == nil {
-		return "", nilPtrErr
+		return ""
 	}
-	return C.GoString((*C.char)(c)), nil
+	return C.GoString((*C.char)(c))
 }
 
 // SetTooltipMarkup is a wrapper around gtk_widget_set_tooltip_markup().
@@ -405,12 +405,12 @@ func (v *Widget) SetTooltipMarkup(text string) {
 // A non-nil error is returned in the case that
 // gtk_widget_get_tooltip_text returns NULL to differentiate between NULL
 // and an empty string.
-func (v *Widget) GetTooltipText() (string, error) {
+func (v *Widget) GetTooltipText() string {
 	c := C.gtk_widget_get_tooltip_text(v.native())
 	if c == nil {
-		return "", nilPtrErr
+		return ""
 	}
-	return C.GoString((*C.char)(c)), nil
+	return C.GoString((*C.char)(c))
 }
 
 // SetTooltipText is a wrapper around gtk_widget_set_tooltip_text().
@@ -647,6 +647,16 @@ func (v *Widget) GetPreferredSize() (*Requisition, *Requisition) {
 	return minR, natR
 }
 
+// DragDestSet is a wrapper around gtk_drag_dest_set().
+func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions DragAction) {
+	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
+// DragSourceSet is a wrapper around gtk_drag_source_set().
+func (v *Widget) DragSourceSet(startButtonMask ModifierType, targets []TargetEntry, actions DragAction) {
+	C.gtk_drag_source_set(v.native(), C.GdkModifierType(startButtonMask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
 // Allocation is a representation of GTK's GtkAllocation type.
 type Allocation struct {
 	Rectangle
@@ -655,4 +665,27 @@ type Allocation struct {
 // Native returns a pointer to the underlying GtkAllocation.
 func (v *Allocation) native() *C.GtkAllocation {
 	return (*C.GtkAllocation)(unsafe.Pointer(&v.GdkRectangle))
+}
+
+// TargetEntry is a representation of GTK's GtkTargetEntry
+type TargetEntry C.GtkTargetEntry
+
+func (v *TargetEntry) native() *C.GtkTargetEntry {
+	return (*C.GtkTargetEntry)(unsafe.Pointer(v))
+}
+
+// NewTargetEntry is a wrapper around gtk_target_entry_new().
+func NewTargetEntry(target string, flags TargetFlags, info uint) *TargetEntry {
+	cstr := C.CString(target)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_target_entry_new((*C.gchar)(cstr), C.guint(flags), C.guint(info))
+	if c == nil {
+		return nil
+	}
+	t := (*TargetEntry)(unsafe.Pointer(c))
+	return t
+}
+
+func (v *TargetEntry) free() {
+	C.gtk_target_entry_free(v.native())
 }

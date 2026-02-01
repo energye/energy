@@ -328,3 +328,23 @@ const (
 	ARROW_RIGHT ArrowType = C.GTK_ARROW_RIGHT
 	ARROW_NONE  ArrowType = C.GTK_ARROW_NONE
 )
+
+// DestDefaults is a representation of GTK's GtkDestDefaults.
+type DestDefaults int
+
+const (
+	DEST_DEFAULT_MOTION    DestDefaults = C.GTK_DEST_DEFAULT_MOTION
+	DEST_DEFAULT_HIGHLIGHT DestDefaults = C.GTK_DEST_DEFAULT_HIGHLIGHT
+	DEST_DEFAULT_DROP      DestDefaults = C.GTK_DEST_DEFAULT_DROP
+	DEST_DEFAULT_ALL       DestDefaults = C.GTK_DEST_DEFAULT_ALL
+)
+
+// TargetFlags is a representation of GTK's GtkTargetFlags.
+type TargetFlags int
+
+const (
+	TARGET_SAME_APP     TargetFlags = C.GTK_TARGET_SAME_APP
+	TARGET_SAME_WIDGET  TargetFlags = C.GTK_TARGET_SAME_WIDGET
+	TARGET_OTHER_APP    TargetFlags = C.GTK_TARGET_OTHER_APP
+	TARGET_OTHER_WIDGET TargetFlags = C.GTK_TARGET_OTHER_WIDGET
+)
