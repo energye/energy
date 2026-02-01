@@ -53,12 +53,14 @@ func (m *TTrayImageList) setImageListData(data []byte, name string, index int32)
 }
 
 type TTrayIcon struct {
+	tray     *systray.Tray
 	trayMenu *TTrayMenu
 	visible  bool
 }
 
 type TTrayMenu struct {
 	imageList *TTrayImageList
+	trayIcon  *TTrayIcon
 }
 
 type TTrayMenuItem struct {
@@ -68,23 +70,23 @@ type TTrayMenuItem struct {
 
 // NewTrayIcon 创建并初始化一个新的系统托盘图标实例
 func NewTrayIcon() *TTrayIcon {
-	m := &TTrayIcon{}
-	systray.NativeStart()
+	tray := systray.NativeStart()
+	m := &TTrayIcon{tray: tray}
 	return m
 }
 
 func (m *TTrayIcon) Close() {
-	systray.NativeEnd()
+	m.tray.NativeEnd()
 }
 
 // tray
 
 func (m *TTrayIcon) SetOnClick(fn func()) {
-	systray.SetOnClick(fn)
+	m.tray.SetOnClick(fn)
 }
 
 func (m *TTrayIcon) SetOnDblClick(fn func()) {
-	systray.SetOnDClick(fn)
+	m.tray.SetOnDClick(fn)
 }
 
 func (m *TTrayIcon) SetOnMouseUp(fn func(button types.TMouseButton, shift types.TShiftState, x, y int32)) {
@@ -101,12 +103,12 @@ func (m *TTrayIcon) SetOnMouseMove(fn func(shift types.TShiftState, x, y int32))
 
 func (m *TTrayIcon) Show() {
 	m.visible = true
-	systray.SetVisible(m.visible)
+	m.tray.SetVisible(m.visible)
 }
 
 func (m *TTrayIcon) Hide() {
 	m.visible = false
-	systray.SetVisible(m.visible)
+	m.tray.SetVisible(m.visible)
 }
 
 func (m *TTrayIcon) Visible() bool {
@@ -123,18 +125,18 @@ func (m *TTrayIcon) SetIconBytes(data []byte) {
 	if data == nil || len(data) == 0 {
 		return
 	}
-	systray.SetIcon(data)
+	m.tray.SetIcon(data)
 }
 
 func (m *TTrayIcon) SetHint(hint string) {
-	systray.SetTooltip(hint)
+	m.tray.SetTooltip(hint)
 }
 
 // tray menu
 
 func (m *TTrayIcon) Menu() *TTrayMenu {
 	if m.trayMenu == nil {
-		m.trayMenu = &TTrayMenu{}
+		m.trayMenu = &TTrayMenu{trayIcon: m}
 	}
 	return m.trayMenu
 }
@@ -198,11 +200,15 @@ func (m *TTrayMenu) SetImageListDataBytes(pngImageDataList [][]byte) {
 
 // tray menu item
 
+func (m *TTrayMenu) tray() *systray.Tray {
+	return m.trayIcon.tray
+}
+
 // AddMenuItem 向托盘菜单中添加一个新的菜单项
 //   - label - 菜单项显示的文本标签
 //   - fn - 菜单项被点击时执行的回调函数，可以为nil表示无点击事件
 func (m *TTrayMenu) AddMenuItem(label string, fn func()) *TTrayMenuItem {
-	newMenuItem := systray.AddMenuItem(label, "")
+	newMenuItem := m.tray().Menu().AddMenuItem(m.tray(), label, "")
 	menuItem := &TTrayMenuItem{menu: m, item: newMenuItem}
 	if fn != nil {
 		newMenuItem.Click(func() {
@@ -216,14 +222,18 @@ func (m *TTrayMenu) AddMenuItem(label string, fn func()) *TTrayMenuItem {
 
 // AddSeparator 向系统托盘菜单中添加一个分隔符
 func (m *TTrayMenu) AddSeparator() {
-	systray.AddSeparator()
+	m.trayIcon.tray.Menu().AddSeparator(m.trayIcon.tray)
+}
+
+func (m *TTrayMenuItem) tray() *systray.Tray {
+	return m.menu.trayIcon.tray
 }
 
 // AddSubMenuItem 添加子菜单项到当前菜单项
 //   - label - 菜单项显示的标签文本
 //   - fn - 点击菜单项时执行的回调函数，可以为nil表示无点击事件
 func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
-	newMenuItem := m.item.AddSubMenuItem(label, "")
+	newMenuItem := m.item.AddMenuItem(m.tray(), label, "")
 	menuItem := &TTrayMenuItem{menu: m.menu, item: newMenuItem}
 	if fn != nil {
 		newMenuItem.Click(fn)
@@ -233,7 +243,7 @@ func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
 
 // AddSeparator 向系统托盘菜单中添加一个分隔符
 func (m *TTrayMenuItem) AddSeparator() {
-	m.item.AddSeparator()
+	m.item.AddSeparator(m.tray())
 }
 
 // SetImage 设置菜单项的图标
@@ -245,7 +255,7 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 	if m.menu != nil && m.menu.imageList != nil {
 		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && int(imageIndex) < len(m.menu.imageList.imageList) {
 			data := m.menu.imageList.imageList[imageIndex]
-			m.item.SetTemplateIcon(data)
+			m.item.SetIcon(m.tray(), data)
 		}
 	}
 }
@@ -259,16 +269,16 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 func (m *TTrayMenuItem) SetImageIndex(index int32) {
 	if m.menu != nil && m.menu.imageList != nil && index >= 0 && int(index) < len(m.menu.imageList.imageList) {
 		data := m.menu.imageList.imageList[index]
-		m.item.SetIcon(data)
+		m.item.SetIcon(m.tray(), data)
 	}
 }
 
 func (m *TTrayMenuItem) SetChecked(checked bool) {
-	m.item.SetChecked(checked)
+	m.item.SetChecked(m.tray(), checked)
 }
 
 func (m *TTrayMenuItem) SetRadio(radio bool) {
-	m.item.SetRadio(radio)
+	m.item.SetRadio(m.tray(), radio)
 }
 
 func (m *TTrayMenuItem) Checked() bool {
@@ -276,5 +286,5 @@ func (m *TTrayMenuItem) Checked() bool {
 }
 
 func (m *TTrayMenuItem) Clear() {
-	m.item.Clear()
+	m.item.Clear(m.tray())
 }

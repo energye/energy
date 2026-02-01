@@ -11,21 +11,20 @@ import (
 	"time"
 )
 
-var quitChan = make(chan struct{})
+var (
+	quitChan = make(chan struct{})
+	tray     *systray.Tray
+)
 
 func main() {
-	MainRun()
-}
-
-func MainRun() {
-	systray.NativeStart()
+	tray = systray.NativeStart()
 	onReady()
 	<-quitChan
-	systray.NativeEnd()
+	tray.NativeEnd()
 }
 
 func addQuitItem() {
-	mQuit := systray.AddMenuItem("Quit(退出)", "Quit the whole app")
+	mQuit := tray.Menu().AddMenuItem(tray, "Quit(退出)", "Quit the whole app")
 	mQuit.Enable()
 	mQuit.Click(func() {
 		fmt.Println("Requesting quit")
@@ -36,79 +35,79 @@ func addQuitItem() {
 
 func onReady() {
 	fmt.Println("systray.onReady")
-	systray.SetTemplateIcon(icon.Data, icon.Data)
-	systray.SetTitle("Energy Sys Tray")
-	systray.SetTooltip("Energy tooltip")
-	systray.SetOnClick(func() {
+	tray.SetIcon(icon.Data)
+	tray.SetTitle("Energy Sys Tray")
+	tray.SetTooltip("Energy tooltip")
+	tray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
-	systray.SetOnDClick(func() {
+	tray.SetOnDClick(func() {
 		fmt.Println("SetOnDClick")
 	})
 	addQuitItem()
-
-	systray.SetTemplateIcon(icon.Data, icon.Data)
-	mChange := systray.AddMenuItem("Change Me", "Change Me")
-	mChecked := systray.AddMenuItemCheckbox("Checked", "Check Me", true)
-	mEnabled := systray.AddMenuItem("Enabled", "Enabled")
+	mChange := tray.Menu().AddMenuItem(tray, "Change Me", "Change Me")
+	mChecked := tray.Menu().AddMenuItem(tray, "Checked", "Check Me")
+	mChecked.SetChecked(tray, true)
+	mEnabled := tray.Menu().AddMenuItem(tray, "Enabled", "Enabled")
 	// Sets the icon of a menu item. Only available on Mac.
-	mEnabled.SetTemplateIcon(icon.Data)
+	mEnabled.SetIcon(tray, icon.Data)
 
-	Ignored := systray.AddMenuItem("Ignored", "Ignored")
+	Ignored := tray.Menu().AddMenuItem(tray, "Ignored", "Ignored")
 	Ignored.Click(func() {
 		fmt.Println("Ignored click")
 	})
-	ccdd := Ignored.AddSubMenuItem("选中checked", "bbbb")
+	ccdd := Ignored.AddMenuItem(tray, "选中checked", "bbbb")
 	ccdd.Click(func() {
-		ccdd.SetChecked(!ccdd.Checked())
+		ccdd.SetChecked(tray, !ccdd.Checked())
 	})
-	Ignored.AddSeparator()
-	abab := Ignored.AddSubMenuItem("清空Ignored", "bbbb")
+	Ignored.AddSeparator(tray)
+	abab := Ignored.AddMenuItem(tray, "清空Ignored", "bbbb")
 	abab.Click(func() {
-		Ignored.Clear()
+		Ignored.Clear(tray)
 	})
 
-	subMenuTop := systray.AddMenuItem("SubMenuTop", "SubMenu Test (top)")
-	subMenuMiddle := subMenuTop.AddSubMenuItem("SubMenuMiddle", "SubMenu Test (middle)")
-	subMenuBottom := subMenuMiddle.AddSubMenuItemCheckbox("SubMenuBottom - Toggle Panic!", "SubMenu Test (bottom) - Hide/Show Panic!", false)
-	subMenuBottom2 := subMenuMiddle.AddSubMenuItem("SubMenuBottom - Panic!", "SubMenu Test (bottom)")
-	subMenuBottom2.SetIcon(icon.Data)
-	systray.AddSeparator()
-	mToggle := systray.AddMenuItem("Toggle", "Toggle some menu items")
+	subMenuTop := tray.Menu().AddMenuItem(tray, "SubMenuTop", "SubMenu Test (top)")
+	subMenuMiddle := subMenuTop.AddMenuItem(tray, "SubMenuMiddle", "SubMenu Test (middle)")
+	subMenuBottom := subMenuMiddle.AddMenuItem(tray, "SubMenuBottom - Toggle Panic!", "SubMenu Test (bottom) - Hide/Show Panic!")
+	subMenuBottom.SetChecked(tray, true)
+	subMenuBottom2 := subMenuMiddle.AddMenuItem(tray, "SubMenuBottom - Panic!", "SubMenu Test (bottom)")
+	subMenuBottom2.SetIcon(tray, icon.Data)
+	tray.Menu().AddSeparator(tray)
+	mToggle := tray.Menu().AddMenuItem(tray, "Toggle", "Toggle some menu items")
 	shown := true
 	toggle := func() {
 		if shown {
-			subMenuBottom.SetChecked(true)
-			subMenuBottom2.Hide()
-			mEnabled.Hide()
+			subMenuBottom.SetChecked(tray, true)
+			subMenuBottom2.Hide(tray)
+			mEnabled.Hide(tray)
 			shown = false
-			mEnabled.Disable()
+			mEnabled.SetEnable(tray, true)
 		} else {
-			subMenuBottom.SetChecked(false)
-			subMenuBottom2.Show()
-			mEnabled.Show()
-			mEnabled.Enable()
+			subMenuBottom.SetChecked(tray, false)
+			subMenuBottom2.Show(tray)
+			mEnabled.Show(tray)
+			mEnabled.SetEnable(tray, false)
 			shown = true
 		}
 	}
-	mReset := systray.AddMenuItem("Reset", "Reset all items")
+	mReset := tray.Menu().AddMenuItem(tray, "Reset", "Reset all items")
 
 	mChange.Click(func() {
-		mChange.SetTitle("I've Changed")
+		mChange.SetTitle(tray, "I've Changed")
 	})
 	mChecked.Click(func() {
 		if mChecked.Checked() {
-			mChecked.SetChecked(false)
-			mChecked.SetTitle("Unchecked")
+			mChecked.SetChecked(tray, false)
+			mChecked.SetTitle(tray, "Unchecked")
 		} else {
-			mChecked.SetChecked(true)
-			mChecked.SetTitle("Checked")
+			mChecked.SetChecked(tray, true)
+			mChecked.SetTitle(tray, "Checked")
 		}
 	})
 	mEnabled.Click(func() {
-		mEnabled.SetTitle("Disabled")
-		fmt.Println("mEnabled.Disabled()", mEnabled.Disabled())
-		mEnabled.Disable()
+		mEnabled.SetTitle(tray, "Disabled")
+		fmt.Println("mEnabled.Disabled()", mEnabled.Enable())
+		mEnabled.SetEnable(tray, false)
 	})
 	subMenuBottom2.Click(func() {
 		panic("panic button pressed")
@@ -117,7 +116,7 @@ func onReady() {
 		toggle()
 	})
 	mReset.Click(func() {
-		systray.ResetMenu()
+		tray.ResetMenu()
 		addQuitItem()
 	})
 	mToggle.Click(func() {
@@ -141,9 +140,9 @@ func onReady() {
 			time.Sleep(time.Second * 1)
 			b = !b
 			if b {
-				systray.SetIcon(logoData)
+				tray.SetIcon(logoData)
 			} else {
-				systray.SetIcon(icoData)
+				tray.SetIcon(icoData)
 			}
 		}
 	}()

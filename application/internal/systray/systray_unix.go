@@ -1,5 +1,4 @@
-//go:build linux || freebsd || openbsd || netbsd
-// +build linux freebsd openbsd netbsd
+//go:build linux
 
 //Note that you need to have github.com/knightpp/dbus-codegen-go installed from "custom" branch
 //go:generate dbus-codegen-go -prefix org.kde -package notifier -output internal/generated/notifier/status_notifier_item.go internal/StatusNotifierItem.xml
@@ -12,7 +11,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v3/application/internal/systray/internal/generated/menu"
 	"github.com/energye/energy/v3/application/internal/systray/internal/generated/notifier"
-	dbus "github.com/godbus/dbus/v5"
+	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"
 	"image"
@@ -23,46 +22,53 @@ import (
 	"time"
 )
 
+var (
+	currentID = int32(0)
+)
+
 const (
 	path     = "/StatusNotifierItem"
 	menuPath = "/StatusNotifierMenu"
 )
 
-var (
-	// instance is the current instance of our DBus tray server
-	instance = &tray{menu: &menuLayout{}, menuVersion: 1}
-)
+// Tray is a basic type that handles the dbus functionality
+type Tray struct {
+	conn                *dbus.Conn // the DBus connection that we will use
+	iconData            []byte     // icon data for the main systray icon
+	title, tooltipTitle string     // title and tooltip state
+	visible             bool
+	lock                sync.Mutex
+	props, menuProps    *prop.Properties
+	menuVersion         uint32
+	menuItems           map[int32]*MenuItem
+	menu                *MenuItem
+	usni                *UnimplementedStatusNotifierItem
+}
 
-// SetTemplateIcon sets the systray icon as a template icon (on macOS), falling back
-// to a regular icon on other platforms.
-// templateIconBytes and iconBytes should be the content of .ico for windows and
-// .ico/.jpg/.png for other platforms.
-func SetTemplateIcon(templateIconBytes []byte, regularIconBytes []byte) {
-	// TODO handle the templateIconBytes?
-	SetIcon(regularIconBytes)
+func (m *Tray) Menu() *MenuItem {
+	if m.menu == nil {
+		m.menu = &MenuItem{layout: &menuLayout{
+			V0: 0,
+			V1: map[string]dbus.Variant{},
+			V2: []dbus.Variant{},
+		}}
+	}
+	return m.menu
 }
 
 // SetIcon sets the systray icon.
 // iconBytes should be the content of .ico for windows and .ico/.jpg/.png
 // for other platforms.
-func SetIcon(iconBytes []byte) {
-	instance.lock.Lock()
-	instance.iconData = iconBytes
-	props := instance.props
-	conn := instance.conn
-	defer instance.lock.Unlock()
-
-	if props == nil {
+func (m *Tray) SetIcon(iconBytes []byte) {
+	m.iconData = iconBytes
+	if m.props == nil {
 		return
 	}
-
-	props.SetMust("org.kde.StatusNotifierItem", "IconPixmap", []PX{convertToPixels(iconBytes)})
-
-	if conn == nil {
+	m.props.SetMust("org.kde.StatusNotifierItem", "IconPixmap", []PX{convertToPixels(iconBytes)})
+	if m.conn == nil {
 		return
 	}
-
-	err := notifier.Emit(conn, &notifier.StatusNotifierItem_NewIconSignal{
+	err := notifier.Emit(m.conn, &notifier.StatusNotifierItem_NewIconSignal{
 		Path: path,
 		Body: &notifier.StatusNotifierItem_NewIconSignalBody{},
 	})
@@ -73,25 +79,21 @@ func SetIcon(iconBytes []byte) {
 }
 
 // SetTitle sets the systray title, only available on Mac and Linux.
-func SetTitle(t string) {
-	instance.lock.Lock()
-	instance.title = t
-	props := instance.props
-	conn := instance.conn
-	defer instance.lock.Unlock()
+func (m *Tray) SetTitle(t string) {
+	m.title = t
 
-	if props == nil {
+	if m.props == nil {
 		return
 	}
-	dbusErr := props.Set("org.kde.StatusNotifierItem", "Title", dbus.MakeVariant(t))
+	dbusErr := m.props.Set("org.kde.StatusNotifierItem", "Title", dbus.MakeVariant(t))
 	if dbusErr != nil {
 		log.Printf("systray error: failed to set Title prop: %s\n", dbusErr)
 		return
 	}
-	if conn == nil {
+	if m.conn == nil {
 		return
 	}
-	err := notifier.Emit(conn, &notifier.StatusNotifierItem_NewTitleSignal{
+	err := notifier.Emit(m.conn, &notifier.StatusNotifierItem_NewTitleSignal{
 		Path: path,
 		Body: &notifier.StatusNotifierItem_NewTitleSignalBody{},
 	})
@@ -102,11 +104,11 @@ func SetTitle(t string) {
 }
 
 // SetVisible
-func SetVisible(value bool) {
-	instance.lock.Lock()
-	instance.visible = value
-	props := instance.props
-	defer instance.lock.Unlock()
+func (m *Tray) SetVisible(value bool) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	m.visible = value
+	props := m.props
 	if props == nil {
 		return
 	}
@@ -115,7 +117,7 @@ func SetVisible(value bool) {
 		log.Printf("systray error: failed to set Visible prop: %s\n", dbusErr)
 		return
 	}
-	err := instance.conn.Emit(path, "org.kde.StatusNotifierItem.NewVisible", dbus.MakeVariant(value))
+	err := m.conn.Emit(path, "org.kde.StatusNotifierItem.NewVisible", dbus.MakeVariant(value))
 	if err != nil {
 		log.Printf("systray error: failed to emit new Visible signal: %s\n", err)
 		return
@@ -124,11 +126,11 @@ func SetVisible(value bool) {
 
 // SetTooltip sets the systray tooltip to display on mouse hover of the tray icon,
 // only available on Mac and Windows.
-func SetTooltip(tooltipTitle string) {
-	instance.lock.Lock()
-	instance.tooltipTitle = tooltipTitle
-	props := instance.props
-	defer instance.lock.Unlock()
+func (m *Tray) SetTooltip(tooltipTitle string) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	m.tooltipTitle = tooltipTitle
+	props := m.props
 
 	if props == nil {
 		return
@@ -139,16 +141,6 @@ func SetTooltip(tooltipTitle string) {
 		return
 	}
 }
-
-// SetTemplateIcon sets the icon of a menu item as a template icon (on macOS). On Windows and
-// Linux, it falls back to the regular icon bytes.
-// templateIconBytes and regularIconBytes should be the content of .ico for windows and
-// .ico/.jpg/.png for other platforms.
-func (item *MenuItem) SetTemplateIcon(iconBytes []byte) {
-	item.SetIcon(iconBytes)
-}
-
-var usni = &UnimplementedStatusNotifierItem{}
 
 type UnimplementedStatusNotifierItem struct {
 	contextMenu       func(x int32, y int32)
@@ -214,32 +206,33 @@ func (m *UnimplementedStatusNotifierItem) Scroll(delta int32, orientation string
 	return
 }
 
-func setOnClick(fn func()) {
-	usni.activate = func(x int32, y int32) {
+func (m *Tray) SetOnClick(fn func()) {
+	m.usni.activate = func(x int32, y int32) {
 		fn()
 	}
 }
 
-func setOnDClick(fn func()) {
-	usni.dActivate = func(x int32, y int32) {
+func (m *Tray) SetOnDClick(fn func()) {
+	m.usni.dActivate = func(x int32, y int32) {
 		fn()
 	}
 }
 
-func NativeEnd() {
-	if instance.conn != nil {
-		_ = instance.conn.Close()
-		instance.conn = nil
+func (m *Tray) NativeEnd() {
+	if m.conn != nil {
+		_ = m.conn.Close()
+		m.conn = nil
 	}
 }
 
-func NativeStart() {
+func NativeStart() *Tray {
+	m := &Tray{ /*menu: &menuLayout{}, */ menuVersion: 1, usni: &UnimplementedStatusNotifierItem{}, menuItems: make(map[int32]*MenuItem)}
 	conn, _ := dbus.ConnectSessionBus()
-	err := notifier.ExportStatusNotifierItem(conn, path, usni)
+	err := notifier.ExportStatusNotifierItem(conn, path, m.usni)
 	if err != nil {
 		log.Printf("systray error: failed to export status notifier item: %s\n", err)
 	}
-	err = menu.ExportDbusmenu(conn, menuPath, instance)
+	err = menu.ExportDbusmenu(conn, menuPath, m)
 	if err != nil {
 		log.Printf("systray error: failed to export status notifier item: %s\n", err)
 	}
@@ -250,15 +243,15 @@ func NativeStart() {
 		log.Printf("systray error: failed to request name: %s\n", err)
 		// it's not critical error: continue
 	}
-	props, err := prop.Export(conn, path, instance.createPropSpec())
+	props, err := prop.Export(conn, path, m.createPropSpec())
 	if err != nil {
 		log.Printf("systray error: failed to export notifier item properties to bus: %s\n", err)
-		return
+		return nil
 	}
-	menuProps, err := prop.Export(conn, menuPath, createMenuPropSpec())
+	menuProps, err := prop.Export(conn, menuPath, m.createMenuPropSpec())
 	if err != nil {
 		log.Printf("systray error: failed to export notifier menu properties to bus: %s\n", err)
-		return
+		return nil
 	}
 
 	node := introspect.Node{
@@ -272,7 +265,7 @@ func NativeStart() {
 	err = conn.Export(introspect.NewIntrospectable(&node), path, "org.freedesktop.DBus.Introspectable")
 	if err != nil {
 		log.Printf("systray error: failed to export node introspection: %s\n", err)
-		return
+		return nil
 	}
 
 	menuNode := introspect.Node{
@@ -286,14 +279,14 @@ func NativeStart() {
 	err = conn.Export(introspect.NewIntrospectable(&menuNode), menuPath, "org.freedesktop.DBus.Introspectable")
 	if err != nil {
 		log.Printf("systray error: failed to export menu node introspection: %s\n", err)
-		return
+		return nil
 	}
 
-	instance.lock.Lock()
-	instance.conn = conn
-	instance.props = props
-	instance.menuProps = menuProps
-	instance.lock.Unlock()
+	m.lock.Lock()
+	m.conn = conn
+	m.props = props
+	m.menuProps = menuProps
+	m.lock.Unlock()
 
 	var (
 		obj  dbus.BusObject
@@ -304,31 +297,14 @@ func NativeStart() {
 	if call.Err != nil {
 		log.Printf("systray error: failed to register our icon with the notifier watcher (maybe no tray is running?): %s\n", call.Err)
 	}
+	return m
 }
 
-// tray is a basic type that handles the dbus functionality
-type tray struct {
-	// the DBus connection that we will use
-	conn *dbus.Conn
-
-	// icon data for the main systray icon
-	iconData []byte
-	// title and tooltip state
-	title, tooltipTitle string
-	visible             bool
-
-	lock             sync.Mutex
-	menu             *menuLayout
-	menuLock         sync.RWMutex
-	props, menuProps *prop.Properties
-	menuVersion      uint32
-}
-
-func (*tray) iface() string {
+func (*Tray) iface() string {
 	return notifier.InterfaceStatusNotifierItem
 }
 
-func (t *tray) createPropSpec() map[string]map[string]*prop.Prop {
+func (t *Tray) createPropSpec() map[string]map[string]*prop.Prop {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 	return map[string]map[string]*prop.Prop{
@@ -400,6 +376,173 @@ func (t *tray) createPropSpec() map[string]map[string]*prop.Prop {
 				Callback: nil,
 			},
 		}}
+}
+
+func (m *Tray) Refresh() {
+	if m.conn == nil || m.menuProps == nil {
+		return
+	}
+	m.menuVersion++
+	dbusErr := m.menuProps.Set("com.canonical.dbusmenu", "Version", dbus.MakeVariant(m.menuVersion))
+	if dbusErr != nil {
+		log.Printf("systray error: failed to update menu version: %s\n", dbusErr)
+		return
+	}
+	err := menu.Emit(m.conn, &menu.Dbusmenu_LayoutUpdatedSignal{
+		Path: menuPath,
+		Body: &menu.Dbusmenu_LayoutUpdatedSignalBody{
+			Revision: m.menuVersion,
+		},
+	})
+	if err != nil {
+		log.Printf("systray error: failed to emit layout updated signal: %s\n", err)
+	}
+}
+
+func (m *Tray) ResetMenu() {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	m.menu.Clear(m)
+	m.menuItems = make(map[int32]*MenuItem)
+	m.menuVersion++
+	m.Refresh()
+}
+
+// copyLayout makes full copy of layout
+func copyLayout(in *menuLayout, depth int32) *menuLayout {
+	out := menuLayout{
+		V0: in.V0,
+		V1: make(map[string]dbus.Variant, len(in.V1)),
+	}
+	for k, v := range in.V1 {
+		out.V1[k] = v
+	}
+	if depth != 0 {
+		depth--
+		out.V2 = make([]dbus.Variant, len(in.V2))
+		for i, v := range in.V2 {
+			out.V2[i] = dbus.MakeVariant(copyLayout(v.Value().(*menuLayout), depth))
+		}
+	} else {
+		out.V2 = []dbus.Variant{}
+	}
+	return &out
+}
+
+// GetLayout is com.canonical.dbusmenu.GetLayout method.
+func (m *Tray) GetLayout(parentID int32, recursionDepth int32, propertyNames []string) (revision uint32, layout menuLayout, err *dbus.Error) {
+	revision = m.menuVersion
+	if parentID == 0 {
+		layout = *copyLayout(m.Menu().layout, recursionDepth)
+	} else if partItem, ok := m.menuItems[parentID]; ok {
+		layout = *copyLayout(partItem.layout, recursionDepth)
+	}
+	return
+}
+
+// GetGroupProperties is com.canonical.dbusmenu.GetGroupProperties method.
+func (m *Tray) GetGroupProperties(ids []int32, propertyNames []string) (properties []struct {
+	V0 int32
+	V1 map[string]dbus.Variant
+}, err *dbus.Error) {
+	for _, id := range ids {
+		if item, ok := m.menuItems[id]; ok {
+			p := struct {
+				V0 int32
+				V1 map[string]dbus.Variant
+			}{
+				V0: item.layout.V0,
+				V1: make(map[string]dbus.Variant, len(item.layout.V1)),
+			}
+			properties = append(properties, p)
+		}
+	}
+	return
+}
+
+// GetProperty is com.canonical.dbusmenu.GetProperty method.
+func (m *Tray) GetProperty(id int32, name string) (value dbus.Variant, err *dbus.Error) {
+	if item, ok := m.menuItems[id]; ok {
+		value = item.layout.V1[name]
+	}
+	return
+}
+
+// Event is com.canonical.dbusmenu.Event method.
+func (m *Tray) Event(id int32, eventID string, data dbus.Variant, timestamp uint32) (err *dbus.Error) {
+	if eventID == "clicked" {
+		if item, ok := m.menuItems[id]; ok && item.click != nil {
+			item.click()
+		}
+	} else if eventID == "" {
+
+	}
+	return
+}
+
+// EventGroup is com.canonical.dbusmenu.EventGroup method.
+func (m *Tray) EventGroup(events []struct {
+	V0 int32
+	V1 string
+	V2 dbus.Variant
+	V3 uint32
+}) (idErrors []int32, err *dbus.Error) {
+	for _, event := range events {
+		if event.V1 == "clicked" {
+			if item, ok := m.menuItems[event.V0]; ok && item.click != nil {
+				item.click()
+			}
+		}
+	}
+	return
+}
+
+// AboutToShow is com.canonical.dbusmenu.AboutToShow method.
+func (t *Tray) AboutToShow(id int32) (needUpdate bool, err *dbus.Error) {
+	return
+}
+
+// AboutToShowGroup is com.canonical.dbusmenu.AboutToShowGroup method.
+func (t *Tray) AboutToShowGroup(ids []int32) (updatesNeeded []int32, idErrors []int32, err *dbus.Error) {
+	return
+}
+
+func (t *Tray) createMenuPropSpec() map[string]map[string]*prop.Prop {
+	return map[string]map[string]*prop.Prop{
+		"com.canonical.dbusmenu": {
+			"Version": {
+				Value:    t.menuVersion,
+				Writable: true,
+				Emit:     prop.EmitTrue,
+				Callback: nil,
+			},
+			"TextDirection": {
+				Value:    "ltr",
+				Writable: false,
+				Emit:     prop.EmitTrue,
+				Callback: nil,
+			},
+			"Status": {
+				Value:    "normal",
+				Writable: false,
+				Emit:     prop.EmitTrue,
+				Callback: nil,
+			},
+			"IconThemePath": {
+				Value:    []string{},
+				Writable: false,
+				Emit:     prop.EmitTrue,
+				Callback: nil,
+			},
+		},
+	}
+}
+
+// menuLayout is a named struct to map into generated bindings. It represents the layout of a menu item
+type menuLayout = struct {
+	V0 int32                   // the unique ID of this item
+	V1 map[string]dbus.Variant // properties for this menu item layout
+	V2 []dbus.Variant          // child menu item layouts
 }
 
 // PX is picture pix map structure with width and high
