@@ -166,7 +166,7 @@ func MakeDragDropEvent(cb TDragDropEvent) *Callback {
 			args := ctx.input.([]any)
 			context := ToDragContext(args[0].(unsafePointer))
 			x, y := args[1].(int), args[2].(int)
-			time := args[5].(uint32)
+			time := args[3].(uint32)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
 			ctx.result = result
 		},

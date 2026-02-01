@@ -83,7 +83,7 @@ func doOnDragDataReceived(widget unsafePointer, context unsafePointer, x, y int,
 func doOnDragDrop(widget unsafePointer, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
-		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, time, userData}}
+		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, time}}
 		cb.cb(cbkCtx)
 		result, ok := cbkCtx.result.(bool)
 		if ok {
