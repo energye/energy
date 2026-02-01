@@ -12,6 +12,7 @@ package gtk3
 import "C"
 import (
 	"errors"
+	"reflect"
 	"unsafe"
 )
 
@@ -44,6 +45,49 @@ func CBool(b bool) C.gboolean {
 
 func GoBool(b C.gboolean) bool {
 	return b != C.FALSE
+}
+
+func toGoStringArray(c **C.gchar) []string {
+	if c == nil {
+		return nil
+	}
+	defer C.g_strfreev(c)
+	strsLen := 0
+	for scan := c; *scan != nil; scan = nextgcharptr(scan) {
+		strsLen++
+	}
+	strs := make([]string, strsLen)
+	for i := range strs {
+		strs[i] = C.GoString((*C.char)(*c))
+		c = nextgcharptr(c)
+	}
+	return strs
+}
+
+func nextgcharptr(gcharptr **C.gchar) **C.gchar {
+	return (**C.gchar)(unsafe.Pointer(uintptr(unsafe.Pointer(gcharptr)) + 1))
+}
+
+func ucharString(guchar *C.guchar) string {
+	// Seek and find the string length.
+	var strlen int
+	for ptr := guchar; *ptr != 0; ptr = nextguchar(ptr) {
+		strlen++
+	}
+
+	// Array of unsigned char means GoString is unavailable, so maybe this is
+	// fine.
+	var data []byte
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&data))
+	sliceHeader.Len = strlen
+	sliceHeader.Cap = strlen
+	sliceHeader.Data = uintptr(unsafe.Pointer(guchar))
+
+	// Return a copy of the string.
+	return string(data)
+}
+func nextguchar(guchar *C.guchar) *C.guchar {
+	return (*C.guchar)(unsafe.Pointer(uintptr(unsafe.Pointer(guchar)) + 1))
 }
 
 func ToCObject(p unsafe.Pointer) *C.GObject {

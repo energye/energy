@@ -5,6 +5,7 @@ package gtk3
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include <cairo/cairo.h>
 
 extern void go_on_event_handler(GtkWidget* widget, gpointer user_data);
@@ -13,6 +14,8 @@ extern void go_on_button_press(GtkWidget* widget, GdkEventButton* event, gpointe
 extern void go_on_leave_enter_notify(GtkWidget* widget, GdkEventCrossing* event, gpointer user_data);
 extern gboolean go_on_window_configure(GtkWidget *window, GdkEventConfigure *event, gpointer user_data);
 extern gboolean go_on_window_draw(GtkWidget *window, cairo_t *cr, gpointer user_data);
+extern void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint32 time, gpointer user_data);
+
 
 static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
   	g_print("尝试移除信号处理器: handler_id=%lu, widget=%p\n", handler_id, widget);
@@ -124,6 +127,11 @@ func go_on_window_configure(widget *C.GtkWidget, event *C.GdkEventConfigure, use
 func go_on_window_draw(widget *C.GtkWidget, cr *C.cairo_t, user_data C.gpointer) C.gboolean {
 	result := doOnWindowDraw(unsafe.Pointer(widget), unsafe.Pointer(cr), unsafe.Pointer(user_data))
 	return CBool(result)
+}
+
+//export on_drag_data_received
+func on_drag_data_received(widget *C.GtkWidget, context *C.GdkDragContext, x C.gint, y C.gint, data *C.GtkSelectionData, info C.guint, time C.guint32, user_data C.gpointer) {
+
 }
 
 // 事件列表
