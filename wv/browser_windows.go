@@ -135,7 +135,7 @@ func (m *TWebview) ExecuteScript(script string) {
 	m.browser.ExecuteScript(script, 0)
 }
 
-func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
 	if script == "" || callback == nil {
 		return
 	}
@@ -184,7 +184,7 @@ func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnExecuteScriptCompleted(func(sender lcl.IObject, errorCode types.HRESULT, resultObjectAsJson string, executionID int32) {
 		if callback, ok := m.executeScriptCallback.Load(executionID); ok {
 			m.executeScriptCallback.Delete(executionID)
-			callback.(TOnEvaluateScriptCallback)(resultObjectAsJson, "")
+			callback.(TOnEvaluateScriptCallbackEvent)(resultObjectAsJson, "")
 		}
 	})
 	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {

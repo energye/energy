@@ -308,26 +308,37 @@ func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
 	m.onPopupWindow = fn
 }
 
+func (m *TWebview) SetOnDraggable(fn TOnPopupWindowEvent) {
+}
+
 func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript, 0)
 }
 
-func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
 	eventID := int32(gNextEvaluateScriptEventID())
 	gEvaluateScriptEventCallback.Store(eventID, callback)
 	m.browser.ExecuteScript(script, eventID)
 }
 
 func (m *TWebview) initDefaultEvent() {
-	m._SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint32) {
-		fmt.Println("_SetOnDDragDataReceived", context, x, y, data, info, time)
-		if data == nil || data.GetLength() == 0 {
-			return
+	m._SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
+		fmt.Println("_SetOnDragDataReceived", context, x, y, data, info, time)
+		dataLen := data.GetLength()
+		if dataLen == 0 || (info != 2 && info != 5) {
+			fmt.Println("dataLen", dataLen)
+			//return
 		}
+		//if info == 2 {
+		//} else if info == 5 {
+		text := data.GetData()
+		fmt.Println("text", len(text))
+		//}
 		fileNames := data.GetURIs()
 		fmt.Println("fileNames", fileNames)
+		context.Finish(false, false, time)
 	})
-	m._SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint32) bool {
+	m._SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
 		fmt.Println("_SetOnDragDrop", context, x, y, time)
 		return false
 	})
@@ -336,7 +347,7 @@ func (m *TWebview) initDefaultEvent() {
 		if ok {
 			gEvaluateScriptEventCallback.Delete(id)
 			result, err := jsValue.StringValue(), jsValue.ExceptionMessage()
-			callback.(TOnEvaluateScriptCallback)(result, err)
+			callback.(TOnEvaluateScriptCallbackEvent)(result, err)
 		}
 	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {

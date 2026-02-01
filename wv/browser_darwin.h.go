@@ -43,7 +43,7 @@ func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
 	}
 	if callback, ok := gEvaluateScriptEventCallback.Load(callbackID); ok {
 		gEvaluateScriptEventCallback.Delete(id)
-		callback.(TOnEvaluateScriptCallback)(result, err)
+		callback.(TOnEvaluateScriptCallbackEvent)(result, err)
 	}
 }
 
@@ -169,7 +169,7 @@ func (m *TWebview) SelectAll() {
 	C.WebViewSelectAll(webview)
 }
 
-func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallback) {
+func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
 	if script == "" || callback == nil {
 		return
 	}

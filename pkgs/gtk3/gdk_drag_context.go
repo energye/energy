@@ -2,6 +2,7 @@ package gtk3
 
 // #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0
 // #include <gdk/gdk.h>
+// #include <gtk/gtk.h>
 // #include "gdk.go.h"
 import "C"
 import "unsafe"
@@ -36,4 +37,8 @@ func (v *DragContext) ListTargets() *List {
 		return nil
 	}
 	return WrapList(uintptr(unsafe.Pointer(clist)))
+}
+
+func (v *DragContext) Finish(success bool, del bool, time uint) {
+	C.gtk_drag_finish(v.native(), CBool(success), CBool(del), C.uint(time))
 }
