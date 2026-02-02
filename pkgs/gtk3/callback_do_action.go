@@ -10,7 +10,6 @@
 
 package gtk3
 
-import "C"
 import (
 	"unsafe"
 )
@@ -80,7 +79,7 @@ func doOnWindowDraw(widget, cr, userData unsafePointer) bool {
 	return false
 }
 
-func doOnDragDataReceived(widget unsafePointer, context unsafePointer, x, y int, data unsafePointer,
+func doOnDragDataReceived(widget, context unsafePointer, x, y int, data unsafePointer,
 	info uint, time uint, userData unsafePointer) {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
@@ -89,7 +88,7 @@ func doOnDragDataReceived(widget unsafePointer, context unsafePointer, x, y int,
 	}
 }
 
-func doOnDragDrop(widget unsafePointer, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
+func doOnDragDrop(widget, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, time}}
@@ -102,7 +101,7 @@ func doOnDragDrop(widget unsafePointer, context unsafePointer, x, y int, time ui
 	return false
 }
 
-func doOnDragMotion(widget unsafePointer, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
+func doOnDragMotion(widget, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, time}}
@@ -115,7 +114,7 @@ func doOnDragMotion(widget unsafePointer, context unsafePointer, x, y int, time 
 	return false
 }
 
-func doOnDragLeave(widget unsafePointer, context unsafePointer, time uint, userData unsafePointer) {
+func doOnDragLeave(widget, context unsafePointer, time uint, userData unsafePointer) {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: []any{context, time}}
@@ -123,7 +122,7 @@ func doOnDragLeave(widget unsafePointer, context unsafePointer, time uint, userD
 	}
 }
 
-func doOngDragDataDeleteOrBeginOrEnd(widget unsafePointer, context unsafePointer, userData unsafePointer) {
+func doOngDragDataDeleteOrBeginOrEnd(widget, context, userData unsafePointer) {
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: context}
