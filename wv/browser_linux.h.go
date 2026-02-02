@@ -36,16 +36,36 @@ import (
 	"unsafe"
 )
 
+type TGtkWebview struct {
+	wkWebview *C.WebKitWebView
+	wsWebview *gtk3.Widget
+}
+
 func (m *TWebview) getCWkWebview() *C.WebKitWebView {
-	webview := m.browser.WebView()
-	cWebview := (*C.WebKitWebView)(unsafe.Pointer(webview))
-	return cWebview
+	if m.gtkWebview == nil {
+		m.gtkWebview = &TGtkWebview{}
+	}
+	if m.gtkWebview.wkWebview == nil {
+		webview := m.browser.WebView()
+		m.gtkWebview.wkWebview = (*C.WebKitWebView)(unsafe.Pointer(webview))
+	}
+	return m.gtkWebview.wkWebview
 }
 
 func (m *TWebview) getGtkWebview() *gtk3.Widget {
-	webview := m.browser.WebView()
-	gtkWebview := gtk3.ToWidget(unsafe.Pointer(webview))
-	return gtkWebview
+	if m.gtkWebview == nil {
+		m.gtkWebview = &TGtkWebview{}
+	}
+	if m.gtkWebview.wsWebview == nil {
+		webview := m.browser.WebView()
+		m.gtkWebview.wsWebview = gtk3.ToWidget(unsafe.Pointer(webview))
+	}
+	return m.gtkWebview.wsWebview
+}
+
+func (m *TWebview) mustGtkWebview() {
+	m.getCWkWebview()
+	m.getGtkWebview()
 }
 
 func (m *TWebview) SetBackgroundColor(color *colors.TARGB) {
@@ -140,30 +160,30 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
 	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }
 
-func (m *TWebview) SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDataReceivedEvent, gtk3.MakeDragDataReceivedEvent(fn))
+func (m *TGtkWebview) SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDataReceivedEvent, gtk3.MakeDragDataReceivedEvent(fn))
 }
 
-func (m *TWebview) SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDropEvent, gtk3.MakeDragDropEvent(fn))
+func (m *TGtkWebview) SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDropEvent, gtk3.MakeDragDropEvent(fn))
 }
 
-func (m *TWebview) SetOnDragMotion(fn gtk3.TDragMotionEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragMotionEvent, gtk3.MakeDragMotionEvent(fn))
+func (m *TGtkWebview) SetOnDragMotion(fn gtk3.TDragMotionEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragMotionEvent, gtk3.MakeDragMotionEvent(fn))
 }
 
-func (m *TWebview) SetOnDragLeave(fn gtk3.TDragLeaveEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragLeaveEvent, gtk3.MakeDragLeaveEvent(fn))
+func (m *TGtkWebview) SetOnDragLeave(fn gtk3.TDragLeaveEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragLeaveEvent, gtk3.MakeDragLeaveEvent(fn))
 }
 
-func (m *TWebview) SetOnDragDataDelete(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDataDeleteEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragDataDelete(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDataDeleteEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
 }
 
-func (m *TWebview) SetOnDragBegin(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragBeginEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragBegin(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragBeginEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
 }
 
-func (m *TWebview) SetOnDragEnd(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragEndEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragEnd(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragEndEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
 }

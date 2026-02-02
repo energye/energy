@@ -70,6 +70,9 @@ type IWebview interface {
 	SetOnContextMenu(fn TOnContextMenuEvent)
 	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
 	SetOnPopupWindow(fn TOnPopupWindowEvent)
+	SetOnDragEnter(fn TOnDragEnterEvent)
+	SetOnDragLeave(fn TOnDragLeaveEvent)
+	SetOnDragOver(fn TOnDragOverEvent)
 }
 
 type TEnergyWebview struct {
@@ -119,6 +122,19 @@ const (
 	LcFinish
 )
 
+type TDragType int32
+
+const (
+	DragTypeFileURI TDragType = iota // file list
+	DragTypeData                     // file bytes
+)
+
+type TDragData struct {
+	Type      TDragType
+	Data      []byte
+	Filenames []string
+}
+
 type TOnProcessMessageEvent func(message string)
 type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
 type TOnLoadChangeEvent func(url, title string, load TLoadChange)
@@ -126,4 +142,6 @@ type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
 type TOnContextMenuCommandEvent func(commandId int32)
 type TOnPopupWindowEvent func(targetURL string) bool
 type TOnEvaluateScriptCallbackEvent func(result string, err string)
-type TOnDraggableEvent func()
+type TOnDragEnterEvent func(x, y int32)
+type TOnDragLeaveEvent func()
+type TOnDragOverEvent func(data *TDragData, x, y int32)
