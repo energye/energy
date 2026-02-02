@@ -53,19 +53,23 @@ func toGoStringArray(c **C.gchar) []string {
 	}
 	defer C.g_strfreev(c)
 	strsLen := 0
-	for scan := c; *scan != nil; scan = nextgcharptr(scan) {
+	scanPtr := c
+	for ; *scanPtr != nil; scanPtr = nextGCharPtr(scanPtr) {
 		strsLen++
 	}
 	strs := make([]string, strsLen)
+	currentPtr := c
 	for i := range strs {
-		strs[i] = C.GoString((*C.char)(*c))
-		c = nextgcharptr(c)
+		strs[i] = C.GoString((*C.char)(*currentPtr))
+		currentPtr = nextGCharPtr(currentPtr)
 	}
 	return strs
 }
 
-func nextgcharptr(gcharptr **C.gchar) **C.gchar {
-	return (**C.gchar)(unsafe.Pointer(uintptr(unsafe.Pointer(gcharptr)) + 1))
+func nextGCharPtr(current **C.gchar) **C.gchar {
+	ptrSize := unsafe.Sizeof(*current)
+	nextAddr := uintptr(unsafe.Pointer(current)) + ptrSize
+	return (**C.gchar)(unsafe.Pointer(nextAddr))
 }
 
 func ucharString(guchar *C.guchar) string {

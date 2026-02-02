@@ -107,23 +107,6 @@ func (v *SelectionData) GetURIs() []string {
 	return toGoStringArray(uriPtrs)
 }
 
-func (v *SelectionData) GetExtraclURIs() []string {
-	uriData := (*C.guchar)(C.gtk_selection_data_get_data(v.native()))
-	if uriData == nil {
-		return nil
-	}
-	cCharData := (*C.char)(unsafe.Pointer(uriData))
-	if cCharData == nil {
-		return nil
-	}
-	uris := C.g_uri_list_extract_uris(cCharData)
-	if uris == nil {
-		return nil
-	}
-	defer C.g_strfreev((**C.gchar)(unsafe.Pointer(uris)))
-	return toGoStringArray(uris)
-}
-
 func (v *SelectionData) Free() {
 	C.gtk_selection_data_free(v.native())
 }
