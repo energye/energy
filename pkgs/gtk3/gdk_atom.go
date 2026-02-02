@@ -9,6 +9,10 @@ import "unsafe"
 // Atom is a representation of GDK's GdkAtom.
 type Atom uintptr
 
+func ToAtom(v unsafe.Pointer) Atom {
+	return Atom(v)
+}
+
 // native returns the underlying GdkAtom.
 func (v Atom) native() C.GdkAtom {
 	return C.toGdkAtom(unsafe.Pointer(uintptr(v)))
