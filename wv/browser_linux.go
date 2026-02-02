@@ -643,8 +643,7 @@ func (m *TWebview) initDefaultDragEvent() {
 
 	m.gtkWebview.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
 		isURIList := isDragTarget(context, targetURIList, targetPlain)
-		fmt.Println("SetOnDragDataReceived", context, x, y, data, info, time, "isURIList:", isURIList)
-		if info != 2 && info != 1 {
+		if info != 2 && info != 1 || !isURIList {
 			return
 		}
 		dataLen := data.GetLength()
@@ -659,7 +658,7 @@ func (m *TWebview) initDefaultDragEvent() {
 				dragData.Filenames = data.GetURIs()
 			} else if info == 1 {
 				dragData.Type = DragTypeData
-				dragData.Data = data.GetData()[:]
+				dragData.Data = data.GetData()
 			}
 			// over
 			m.onDragOver(dragData, int32(x), int32(y))
