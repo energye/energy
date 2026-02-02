@@ -98,6 +98,10 @@ func ToGoObject(instance unsafe.Pointer) *Object {
 	return &Object{GObject: cObj}
 }
 
+func ToCInt(v int) C.int {
+	return C.int(v)
+}
+
 func GoString(cStr *C.gchar) string {
 	return C.GoString((*C.char)(cStr))
 }
@@ -141,11 +145,24 @@ func (v *Object) ForceFloating() {
 func (v *Object) StopEmission(s string) {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
-	C.g_signal_stop_emission_by_name((C.gpointer)(v.GObject),
-		(*C.gchar)(cstr))
+	C.g_signal_stop_emission_by_name((C.gpointer)(v.GObject), (*C.gchar)(cstr))
 }
 
 // IsA is a wrapper around g_type_is_a().
 func (v *Object) IsA(typ Type) bool {
 	return GoBool(C.g_type_is_a(C.GType(v.TypeFromInstance()), C.GType(typ)))
+}
+
+func (v *Object) SetData(key string, value unsafe.Pointer) {
+	cKey := C.CString(key)
+	defer C.free(unsafe.Pointer(cKey))
+	cData := C.gpointer(uintptr(value))
+	C.g_object_set_data(v.native(), cKey, cData)
+}
+
+func (v *Object) GetData(key string) unsafe.Pointer {
+	cKey := C.CString(key)
+	defer C.free(unsafe.Pointer(cKey))
+	cData := C.g_object_get_data(v.native(), cKey)
+	return unsafe.Pointer(cData)
 }

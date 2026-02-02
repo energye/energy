@@ -657,6 +657,10 @@ func (v *Widget) DragSourceSet(startButtonMask ModifierType, targets []TargetEnt
 	C.gtk_drag_source_set(v.native(), C.GdkModifierType(startButtonMask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
 }
 
+func (v *Widget) DragGetData(context *DragContext, target Atom, time uint) {
+	C.gtk_drag_get_data(v.native(), context.native(), target.native(), C.uint(time))
+}
+
 // Allocation is a representation of GTK's GtkAllocation type.
 type Allocation struct {
 	Rectangle
