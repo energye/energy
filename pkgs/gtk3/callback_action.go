@@ -67,8 +67,7 @@ func go_on_window_draw(widget *C.GtkWidget, cr *C.cairo_t, user_data C.gpointer)
 }
 
 //export go_on_drag_data_received
-func go_on_drag_data_received(widget *C.GtkWidget, context *C.GdkDragContext, x C.gint, y C.gint,
-	data *C.GtkSelectionData, info C.guint, time C.guint, user_data C.gpointer) {
+func go_on_drag_data_received(widget *C.GtkWidget, context *C.GdkDragContext, x C.gint, y C.gint, data *C.GtkSelectionData, info C.guint, time C.guint, user_data C.gpointer) {
 	doOnDragDataReceived(unsafePointer(widget), unsafePointer(context), int(x), int(y),
 		unsafePointer(data), uint(info), uint(time), unsafePointer(user_data))
 }

@@ -15,8 +15,7 @@ type SelectionData struct {
 }
 
 func ToSelectionData(pointer unsafe.Pointer) *SelectionData {
-	c := (*C.GValue)(pointer)
-	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	p := (*C.GtkSelectionData)(pointer)
 	return &SelectionData{GtkSelectionData: p}
 }
 
@@ -25,10 +24,7 @@ func (v *SelectionData) native() *C.GtkSelectionData {
 	if v == nil {
 		return nil
 	}
-	// I don't understand why we need this, but we do.
-	c := (*C.GValue)(unsafe.Pointer(v))
-	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
-	return p
+	return v.GtkSelectionData
 }
 
 // GetLength is a wrapper around gtk_selection_data_get_length().
@@ -111,6 +107,23 @@ func (v *SelectionData) GetURIs() []string {
 	return toGoStringArray(uriPtrs)
 }
 
-func (v *SelectionData) free() {
+func (v *SelectionData) GetExtraclURIs() []string {
+	uriData := (*C.guchar)(C.gtk_selection_data_get_data(v.native()))
+	if uriData == nil {
+		return nil
+	}
+	cCharData := (*C.char)(unsafe.Pointer(uriData))
+	if cCharData == nil {
+		return nil
+	}
+	uris := C.g_uri_list_extract_uris(cCharData)
+	if uris == nil {
+		return nil
+	}
+	defer C.g_strfreev((**C.gchar)(unsafe.Pointer(uris)))
+	return toGoStringArray(uris)
+}
+
+func (v *SelectionData) Free() {
 	C.gtk_selection_data_free(v.native())
 }
