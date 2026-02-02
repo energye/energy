@@ -686,6 +686,6 @@ func NewTargetEntry(target string, flags TargetFlags, info uint) *TargetEntry {
 	return t
 }
 
-func (v *TargetEntry) free() {
+func (v *TargetEntry) Free() {
 	C.gtk_target_entry_free(v.native())
 }

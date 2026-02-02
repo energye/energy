@@ -15,7 +15,9 @@ type SelectionData struct {
 }
 
 func ToSelectionData(pointer unsafe.Pointer) *SelectionData {
-	return &SelectionData{GtkSelectionData: (*C.GtkSelectionData)(pointer)}
+	c := (*C.GValue)(pointer)
+	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	return &SelectionData{GtkSelectionData: p}
 }
 
 // native returns a pointer to the underlying GtkSelectionData.

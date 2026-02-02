@@ -92,3 +92,24 @@ func doOnDragDrop(widget unsafePointer, context unsafePointer, x, y int, time ui
 	}
 	return false
 }
+
+func doOnDragMotion(widget unsafePointer, context unsafePointer, x, y int, time uint, userData unsafePointer) bool {
+	id := uintptr(userData)
+	if cb, ok := eventList[id]; ok {
+		cbkCtx := &CallbackContext{widget: widget, input: []any{context, x, y, time}}
+		cb.cb(cbkCtx)
+		result, ok := cbkCtx.result.(bool)
+		if ok {
+			return result
+		}
+	}
+	return false
+}
+
+func doOnDragLeave(widget unsafePointer, context unsafePointer, time uint, userData unsafePointer) {
+	id := uintptr(userData)
+	if cb, ok := eventList[id]; ok {
+		cbkCtx := &CallbackContext{widget: widget, input: []any{context, time}}
+		cb.cb(cbkCtx)
+	}
+}

@@ -15,7 +15,10 @@ extern void go_on_leave_enter_notify(GtkWidget* widget, GdkEventCrossing* event,
 extern gboolean go_on_window_configure(GtkWidget *window, GdkEventConfigure *event, gpointer user_data);
 extern gboolean go_on_window_draw(GtkWidget *window, cairo_t *cr, gpointer user_data);
 extern void go_on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint32 time, gpointer user_data);
-extern gboolean go_on_drag_drop (GtkWidget* self, GdkDragContext* context, gint x, gint y, guint time, gpointer user_data);
+extern gboolean go_on_drag_drop(GtkWidget* self, GdkDragContext* context, gint x, gint y, guint time, gpointer user_data);
+extern gboolean go_on_drag_motion(GtkWidget* self, GdkDragContext* context, gint x, gint y, guint time, gpointer user_data);
+extern void go_on_drag_leave(GtkWidget* self, GdkDragContext* context, guint time, gpointer user_data);
+
 
 static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
   	g_print("尝试移除信号处理器: handler_id=%lu, widget=%p\n", handler_id, widget);
@@ -76,6 +79,17 @@ func go_on_drag_drop(widget *C.GtkWidget, context *C.GdkDragContext, x C.gint, y
 	return CBool(result)
 }
 
+//export go_on_drag_motion
+func go_on_drag_motion(widget *C.GtkWidget, context *C.GdkDragContext, x C.gint, y C.gint, time C.guint, user_data C.gpointer) C.gboolean {
+	result := doOnDragMotion(unsafePointer(widget), unsafePointer(context), int(x), int(y), uint(time), unsafePointer(user_data))
+	return CBool(result)
+}
+
+//export go_on_drag_leave
+func go_on_drag_leave(widget *C.GtkWidget, context *C.GdkDragContext, time C.guint, user_data C.gpointer) {
+	doOnDragLeave(unsafePointer(widget), unsafePointer(context), uint(time), unsafePointer(user_data))
+}
+
 func RegisterAction(widget IWidget, signal EventSignalName, cb *Callback) *SignalHandler {
 	return registerAction(widget, signal, cb)
 }
@@ -96,6 +110,10 @@ func registerAction(widget IWidget, signal EventSignalName, cb *Callback) *Signa
 		cCb = C.GCallback(C.go_on_drag_data_received)
 	case EsnDragDropEvent:
 		cCb = C.GCallback(C.go_on_drag_drop)
+	case EsnDragMotionEvent:
+		cCb = C.GCallback(C.go_on_drag_motion)
+	case EsnDragLeaveEvent:
+		cCb = C.GCallback(C.go_on_drag_leave)
 	default:
 		cCb = C.GCallback(C.go_on_event_handler)
 	}

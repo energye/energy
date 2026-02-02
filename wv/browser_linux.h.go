@@ -140,10 +140,18 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
 	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }
 
-func (m *TWebview) _SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
+func (m *TWebview) SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
 	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDataReceivedEvent, gtk3.MakeDragDataReceivedEvent(fn))
 }
 
-func (m *TWebview) _SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
+func (m *TWebview) SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
 	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDropEvent, gtk3.MakeDragDropEvent(fn))
+}
+
+func (m *TWebview) SetOnDragMotion(fn gtk3.TDragMotionEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragMotionEvent, gtk3.MakeDragMotionEvent(fn))
+}
+
+func (m *TWebview) SetOnDragLeave(fn gtk3.TDragLeaveEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragLeaveEvent, gtk3.MakeDragLeaveEvent(fn))
 }

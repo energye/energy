@@ -25,6 +25,8 @@ const (
 	EsnDrawEvent             EventSignalName = "draw"
 	EsnDragDataReceivedEvent EventSignalName = "drag-data-received"
 	EsnDragDropEvent         EventSignalName = "drag-drop"
+	EsnDragMotionEvent       EventSignalName = "drag-motion"
+	EsnDragLeaveEvent        EventSignalName = "drag-leave"
 )
 
 type TNotifyEvent func(sender *Widget)
@@ -48,6 +50,10 @@ type TDrawEvent func(sender *Widget, cr *Context) bool
 type TDragDataReceivedEvent func(sender *Widget, context *DragContext, x, y int, data *SelectionData, info uint, time uint)
 
 type TDragDropEvent func(sender *Widget, context *DragContext, x, y int, time uint) bool
+
+type TDragMotionEvent func(sender *Widget, context *DragContext, x, y int, time uint) bool
+
+type TDragLeaveEvent func(sender *Widget, context *DragContext, time uint)
 
 type CallbackContext struct {
 	widget unsafe.Pointer
@@ -169,6 +175,30 @@ func MakeDragDropEvent(cb TDragDropEvent) *Callback {
 			time := args[3].(uint)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
 			ctx.result = result
+		},
+	}
+}
+
+func MakeDragMotionEvent(cb TDragMotionEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			args := ctx.input.([]any)
+			context := ToDragContext(args[0].(unsafePointer))
+			x, y := args[1].(int), args[2].(int)
+			time := args[3].(uint)
+			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
+			ctx.result = result
+		},
+	}
+}
+
+func MakeDragLeaveEvent(cb TDragLeaveEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			args := ctx.input.([]any)
+			context := ToDragContext(args[0].(unsafePointer))
+			time := args[1].(uint)
+			cb(wrapWidget(ToGoObject(ctx.widget)), context, time)
 		},
 	}
 }

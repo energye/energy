@@ -170,9 +170,10 @@ func (m *TWebview) UpdateBrowserOptions() {
 	}
 	options := m.window.Options()
 
-	//target := gtk3.NewTargetEntry("text/uri-list", 0, 0)
+	//target := gtk3.NewTargetEntry("text/uri-list", 0, 2)
 	//targets := []gtk3.TargetEntry{*target}
-	//m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_ALL, targets, gtk3.ACTION_COPY)
+	//m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_DROP, targets, gtk3.ACTION_COPY)
+	//target.Free()
 
 	m.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
@@ -308,8 +309,8 @@ func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
 	m.onPopupWindow = fn
 }
 
-func (m *TWebview) SetOnDraggable(fn TOnPopupWindowEvent) {
-}
+//func (m *TWebview) SetOnDraggable(fn TOnPopupWindowEvent) {
+//}
 
 func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript, 0)
@@ -322,8 +323,11 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 }
 
 func (m *TWebview) initDefaultEvent() {
-	m._SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
-		fmt.Println("_SetOnDragDataReceived", context, x, y, data, info, time)
+	m.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
+		fmt.Println("SetOnDragDataReceived", context, x, y, data, info, time)
+		if info != 2 {
+			return
+		}
 		dataLen := data.GetLength()
 		if dataLen == 0 || (info != 2 && info != 5) {
 			fmt.Println("dataLen", dataLen)
@@ -336,12 +340,20 @@ func (m *TWebview) initDefaultEvent() {
 		//}
 		fileNames := data.GetURIs()
 		fmt.Println("fileNames", fileNames)
-		context.Finish(false, false, time)
+		//context.Finish(false, false, time)
 	})
-	m._SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
-		fmt.Println("_SetOnDragDrop", context, x, y, time)
+	m.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+		fmt.Println("SetOnDragDrop", context, x, y, time)
 		return false
 	})
+	m.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+		fmt.Println("SetOnDragMotion", context, x, y, time)
+		return false
+	})
+	m.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
+		fmt.Println("SetOnDragLeave", context, time)
+	})
+
 	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue, id int32) {
 		callback, ok := gEvaluateScriptEventCallback.Load(id)
 		if ok {
