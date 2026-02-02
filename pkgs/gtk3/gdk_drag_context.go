@@ -42,3 +42,7 @@ func (v *DragContext) ListTargets() *List {
 func (v *DragContext) Finish(success bool, del bool, time uint) {
 	C.gtk_drag_finish(v.native(), CBool(success), CBool(del), C.uint(time))
 }
+
+func (v *DragContext) DragStatus(actions DragAction, time uint) {
+	C.gdk_drag_status(v.native(), C.GdkDragAction(actions), C.uint(time))
+}

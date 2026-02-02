@@ -343,7 +343,6 @@ func (m *TWebview) initDefaultEvent() {
 			return
 		}
 		dataLen := data.GetLength()
-		fmt.Println("dataLen", dataLen)
 		if dataLen <= 0 {
 			context.Finish(false, false, time)
 			return
@@ -361,7 +360,6 @@ func (m *TWebview) initDefaultEvent() {
 		if !isURIList {
 			return false
 		}
-		sender.SetData("data-x", unsafe.Pointer(uintptr(x)))
 		target := gtk3.GdkAtomIntern(targetURIList, false)
 		sender.DragGetData(context, target, time)
 		return true
@@ -369,7 +367,13 @@ func (m *TWebview) initDefaultEvent() {
 	m.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
 		isURIList := isDragTarget(context, targetURIList)
 		fmt.Println("SetOnDragMotion", context, x, y, time, "isURIList:", isURIList)
-		return false
+		if !isURIList {
+			return false
+		}
+		// enter
+		context.DragStatus(gtk3.ACTION_COPY, time)
+		// over
+		return true
 	})
 	m.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
 		isURIList := isDragTarget(context, targetURIList)
