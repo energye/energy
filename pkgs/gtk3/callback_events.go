@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 package gtk3
 
 /*
@@ -27,6 +37,9 @@ const (
 	EsnDragDropEvent         EventSignalName = "drag-drop"
 	EsnDragMotionEvent       EventSignalName = "drag-motion"
 	EsnDragLeaveEvent        EventSignalName = "drag-leave"
+	EsnDragDataDeleteEvent   EventSignalName = "drag-data-delete"
+	EsnDragBeginEvent        EventSignalName = "drag-begin"
+	EsnDragEndEvent          EventSignalName = "drag-end"
 )
 
 type TNotifyEvent func(sender *Widget)
@@ -47,13 +60,15 @@ type TMapEvent func(sender *Widget)
 
 type TDrawEvent func(sender *Widget, cr *Context) bool
 
+// type drag event
+
 type TDragDataReceivedEvent func(sender *Widget, context *DragContext, x, y int, data *SelectionData, info uint, time uint)
-
 type TDragDropEvent func(sender *Widget, context *DragContext, x, y int, time uint) bool
-
 type TDragMotionEvent func(sender *Widget, context *DragContext, x, y int, time uint) bool
-
 type TDragLeaveEvent func(sender *Widget, context *DragContext, time uint)
+type TDragDataDeleteOrBeginOrEndEvent func(sender *Widget, context *DragContext)
+
+// make event
 
 type CallbackContext struct {
 	widget unsafe.Pointer
@@ -199,6 +214,15 @@ func MakeDragLeaveEvent(cb TDragLeaveEvent) *Callback {
 			context := ToDragContext(args[0].(unsafePointer))
 			time := args[1].(uint)
 			cb(wrapWidget(ToGoObject(ctx.widget)), context, time)
+		},
+	}
+}
+
+func MakeDragDataDeleteOrBeginOrEndEvent(cb TDragDataDeleteOrBeginOrEndEvent) *Callback {
+	return &Callback{
+		cb: func(ctx *CallbackContext) {
+			context := ToDragContext(ctx.input.(unsafePointer))
+			cb(wrapWidget(ToGoObject(ctx.widget)), context)
 		},
 	}
 }

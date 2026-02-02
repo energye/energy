@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 package gtk3
 
 /*
@@ -18,6 +28,7 @@ extern void go_on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
 extern gboolean go_on_drag_drop(GtkWidget* self, GdkDragContext* context, gint x, gint y, guint time, gpointer user_data);
 extern gboolean go_on_drag_motion(GtkWidget* self, GdkDragContext* context, gint x, gint y, guint time, gpointer user_data);
 extern void go_on_drag_leave(GtkWidget* self, GdkDragContext* context, guint time, gpointer user_data);
+extern void go_on_drag_data_delete_or_begin_or_end(GtkWidget* self, GdkDragContext* context, gpointer user_data);
 
 
 static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
@@ -89,9 +100,15 @@ func go_on_drag_leave(widget *C.GtkWidget, context *C.GdkDragContext, time C.gui
 	doOnDragLeave(unsafePointer(widget), unsafePointer(context), uint(time), unsafePointer(user_data))
 }
 
+//export go_on_drag_data_delete_or_begin_or_end
+func go_on_drag_data_delete_or_begin_or_end(widget *C.GtkWidget, context *C.GdkDragContext, user_data C.gpointer) {
+	doOngDragDataDeleteOrBeginOrEnd(unsafePointer(widget), unsafePointer(context), unsafePointer(user_data))
+}
+
 func RegisterAction(widget IWidget, signal EventSignalName, cb *Callback) *SignalHandler {
 	return registerAction(widget, signal, cb)
 }
+
 func registerAction(widget IWidget, signal EventSignalName, cb *Callback) *SignalHandler {
 	var cCb C.GCallback
 	switch signal {
@@ -113,6 +130,8 @@ func registerAction(widget IWidget, signal EventSignalName, cb *Callback) *Signa
 		cCb = C.GCallback(C.go_on_drag_motion)
 	case EsnDragLeaveEvent:
 		cCb = C.GCallback(C.go_on_drag_leave)
+	case EsnDragDataDeleteEvent, EsnDragBeginEvent, EsnDragEndEvent:
+		cCb = C.GCallback(C.go_on_drag_data_delete_or_begin_or_end)
 	default:
 		cCb = C.GCallback(C.go_on_event_handler)
 	}

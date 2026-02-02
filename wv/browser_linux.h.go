@@ -155,3 +155,15 @@ func (m *TWebview) SetOnDragMotion(fn gtk3.TDragMotionEvent) *gtk3.SignalHandler
 func (m *TWebview) SetOnDragLeave(fn gtk3.TDragLeaveEvent) *gtk3.SignalHandler {
 	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragLeaveEvent, gtk3.MakeDragLeaveEvent(fn))
 }
+
+func (m *TWebview) SetOnDragDataDelete(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragDataDeleteEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+}
+
+func (m *TWebview) SetOnDragBegin(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragBeginEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+}
+
+func (m *TWebview) SetOnDragEnd(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
+	return gtk3.RegisterAction(m.getGtkWebview(), gtk3.EsnDragEndEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+}

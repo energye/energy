@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 package gtk3
 
 import "C"
@@ -8,7 +18,6 @@ import (
 type unsafePointer = unsafe.Pointer
 
 func doOnEventHandler(widget, userData unsafePointer) {
-	//println("doOnEventHandler userData:", uintptr(userData))
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		context := &CallbackContext{widget: widget}
@@ -110,6 +119,14 @@ func doOnDragLeave(widget unsafePointer, context unsafePointer, time uint, userD
 	id := uintptr(userData)
 	if cb, ok := eventList[id]; ok {
 		cbkCtx := &CallbackContext{widget: widget, input: []any{context, time}}
+		cb.cb(cbkCtx)
+	}
+}
+
+func doOngDragDataDeleteOrBeginOrEnd(widget unsafePointer, context unsafePointer, userData unsafePointer) {
+	id := uintptr(userData)
+	if cb, ok := eventList[id]; ok {
+		cbkCtx := &CallbackContext{widget: widget, input: context}
 		cb.cb(cbkCtx)
 	}
 }

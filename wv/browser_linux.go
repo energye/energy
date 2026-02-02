@@ -99,6 +99,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
+	m.initDefaultDragEvent()
 	return m
 }
 
@@ -323,62 +324,6 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 }
 
 func (m *TWebview) initDefaultEvent() {
-	targetURIList := "text/uri-list"
-	isDragTarget := func(context *gtk3.DragContext, target string) bool {
-		targets := context.ListTargets()
-		for i := uint(0); i < targets.Length(); i++ {
-			data := targets.NthDataRaw(i)
-			name := gtk3.ToAtom(data).Name()
-			if name == target {
-				return true
-			}
-		}
-		return false
-	}
-	_ = isDragTarget
-	m.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
-		isURIList := isDragTarget(context, targetURIList)
-		fmt.Println("SetOnDragDataReceived", context, x, y, data, info, time, "isURIList:", isURIList)
-		if info != 2 {
-			return
-		}
-		dataLen := data.GetLength()
-		if dataLen <= 0 {
-			context.Finish(false, false, time)
-			return
-		}
-		dataBytes := data.GetData()
-		fmt.Println("dataBytes:", string(dataBytes))
-		urls := data.GetURIs()
-		fmt.Println("urls:", urls)
-		fmt.Println("fileNames", len(dataBytes), uintptr(sender.GetData("data-x")))
-		//context.Finish(false, false, time)
-	})
-	m.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
-		isURIList := isDragTarget(context, targetURIList)
-		fmt.Println("SetOnDragDrop:", context, x, y, time, "isURIList:", isURIList, sender.TypeFromInstance().Name())
-		if !isURIList {
-			return false
-		}
-		target := gtk3.GdkAtomIntern(targetURIList, false)
-		sender.DragGetData(context, target, time)
-		return true
-	})
-	m.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
-		isURIList := isDragTarget(context, targetURIList)
-		fmt.Println("SetOnDragMotion", context, x, y, time, "isURIList:", isURIList)
-		if !isURIList {
-			return false
-		}
-		// enter
-		context.DragStatus(gtk3.ACTION_COPY, time)
-		// over
-		return true
-	})
-	m.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
-		isURIList := isDragTarget(context, targetURIList)
-		fmt.Println("SetOnDragLeave", context, time, "isURIList:", isURIList)
-	})
 
 	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue, id int32) {
 		callback, ok := gEvaluateScriptEventCallback.Load(id)
@@ -660,6 +605,70 @@ func (m *TWebview) initDefaultEvent() {
 			isDown = false
 		}
 		return false
+	})
+}
+
+func (m *TWebview) initDefaultDragEvent() {
+	targetURIList := "text/uri-list"
+	isDragTarget := func(context *gtk3.DragContext, target string) bool {
+		targets := context.ListTargets()
+		for i := uint(0); i < targets.Length(); i++ {
+			data := targets.NthDataRaw(i)
+			name := gtk3.ToAtom(data).Name()
+			if name == target {
+				return true
+			}
+		}
+		return false
+	}
+	m.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
+		isURIList := isDragTarget(context, targetURIList)
+		fmt.Println("SetOnDragDataReceived", context, x, y, data, info, time, "isURIList:", isURIList)
+		if info != 2 {
+			return
+		}
+		dataLen := data.GetLength()
+		if dataLen <= 0 {
+			context.Finish(false, false, time)
+			return
+		}
+		dataBytes := data.GetData()
+		fmt.Println("dataBytes:", string(dataBytes))
+		urls := data.GetURIs()
+		fmt.Println("urls:", urls)
+		fmt.Println("fileNames", len(dataBytes), uintptr(sender.GetData("data-x")))
+		//context.Finish(false, false, time)
+	})
+	m.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+		isURIList := isDragTarget(context, targetURIList)
+		fmt.Println("SetOnDragDrop:", context, x, y, time, "isURIList:", isURIList, sender.TypeFromInstance().Name())
+		if !isURIList {
+			return false
+		}
+		target := gtk3.GdkAtomIntern(targetURIList, false)
+		sender.DragGetData(context, target, time)
+		return true
+	})
+	m.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+		isURIList := isDragTarget(context, targetURIList)
+		fmt.Println("SetOnDragMotion", context, x, y, time, "isURIList:", isURIList)
+		if !isURIList {
+			return false
+		}
+		// enter
+		context.DragStatus(gtk3.ACTION_COPY, time)
+		// over
+		return true
+	})
+	m.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
+		isURIList := isDragTarget(context, targetURIList)
+		fmt.Println("SetOnDragLeave", context, time, "isURIList:", isURIList)
+	})
+	m.SetOnDragBegin(func(sender *gtk3.Widget, context *gtk3.DragContext) {
+		fmt.Println("SetOnDragBegin")
+	})
+	m.SetOnDragEnd(func(sender *gtk3.Widget, context *gtk3.DragContext) {
+		fmt.Println("SetOnDragEnd")
 	})
 }
 
