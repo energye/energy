@@ -86,7 +86,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 
 	m.settings = wv.NewSettings()
 	m.settings.SetUserAgentWithApplicationDetails(energyApplicationName, energyApplicationVersion)
-	m.settings.SetEnablePageCache(true)
+	//m.settings.SetEnablePageCache(true)
 	m.settings.SetEnableDeveloperExtras(!gApplication.Options.DisableDevTools)
 	// 需要动态判断当前系统环境是否支持？
 	switch gApplication.Options.Linux.HardwareGPU {
@@ -645,33 +645,33 @@ func (m *TWebview) initDefaultDragEvent() {
 			return false, 0
 		}
 		isDragEnter = false
-		isHandle    = false
-		isDragOver  = false
+		//isHandle    = false
+		isDragOver = false
 	)
 
 	// 持续触发
 	m.gtkWebview.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
 		//println("SetOnDragMotion:", isContinue)
-		if isHandle {
-			return false
-		}
+		//if isHandle {
+		//	return false
+		//}
 		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
 		if !isDragEnter {
 			isDragEnter = true
-			isHandle = false
+			//isHandle = false
 			// enter
 			if m.onDragEnter != nil {
-				isHandle = m.onDragEnter(dataType, int32(x), int32(y))
-				if isHandle {
-					return false
-				}
+				m.onDragEnter(dataType, int32(x), int32(y))
+				//if isHandle {
+				//	return false
+				//}
 			}
 		}
 		if !isURIList {
 			return false
 		}
 		context.DragStatus(gtk3.ACTION_COPY, time)
-		return true
+		return false
 	})
 	m.gtkWebview.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
 		//println("SetOnDragLeave")
@@ -685,7 +685,7 @@ func (m *TWebview) initDefaultDragEvent() {
 		if isDragOver {
 			isDragOver = false
 			isDragEnter = false
-			isHandle = false
+			//isHandle = false
 			isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
 			if info != 2 && info != 1 || !isURIList {
 				return
@@ -724,7 +724,7 @@ func (m *TWebview) initDefaultDragEvent() {
 			isDragOver = true
 			target := gtk3.GdkAtomIntern(targetName, false)
 			sender.DragGetData(context, target, time)
-			return !isHandle
+			//return !isHandle
 		}
 		return false
 	})
