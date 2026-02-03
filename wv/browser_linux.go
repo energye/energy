@@ -642,7 +642,7 @@ func (m *TWebview) initDefaultDragEvent() {
 					}
 				}
 			}
-			return false, 0
+			return false, DragTypeNo
 		}
 		isDragEnter = false
 		//isHandle    = false
@@ -667,7 +667,7 @@ func (m *TWebview) initDefaultDragEvent() {
 				//}
 			}
 		}
-		if !isURIList {
+		if !isURIList { // TODO
 			return false
 		}
 		context.DragStatus(gtk3.ACTION_COPY, time)

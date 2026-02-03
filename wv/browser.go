@@ -125,7 +125,8 @@ const (
 type TDragType int32
 
 const (
-	DragTypeFileURI TDragType = iota // file list
+	DragTypeNo      TDragType = iota // file list
+	DragTypeFileURI                  // file list
 	DragTypeData                     // file bytes
 )
 
