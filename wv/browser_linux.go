@@ -625,83 +625,108 @@ func (m *TWebview) initDefaultDragEvent() {
 	m.mustGtkWebview()
 	var (
 		targetURIList, targetPlain = "text/uri-list", "text/plain"
-		isDragTarget               = func(context *gtk3.DragContext, targets ...string) bool {
+		isDragTarget               = func(context *gtk3.DragContext, targets ...string) (bool, TDragType) {
 			targetList := context.ListTargets()
 			for i := uint(0); i < targetList.Length(); i++ {
 				data := targetList.NthDataRaw(i)
 				name := gtk3.ToAtom(data).Name()
 				for _, target := range targets {
 					if name == target {
-						return true
+						var dataType TDragType
+						if target == targetURIList {
+							dataType = DragTypeFileURI
+						} else {
+							dataType = DragTypeData
+						}
+						return true, dataType
 					}
 				}
 			}
-			return false
+			return false, 0
 		}
 		isDragEnter = false
+		isHandle    = false
+		isDragOver  = false
 	)
 
-	m.gtkWebview.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
-		isURIList := isDragTarget(context, targetURIList, targetPlain)
-		if info != 2 && info != 1 || !isURIList {
-			return
-		}
-		dataLen := data.GetLength()
-		if dataLen <= 0 {
-			context.Finish(false, false, time)
-			return
-		}
-		if m.onDragOver != nil {
-			dragData := &TDragData{}
-			if info == 2 {
-				dragData.Type = DragTypeFileURI
-				dragData.Filenames = data.GetURIs()
-			} else if info == 1 {
-				dragData.Type = DragTypeData
-				dragData.Data = data.GetData()
-			}
-			// over
-			m.onDragOver(dragData, int32(x), int32(y))
-		}
-		context.Finish(true, false, time)
-	})
-	m.gtkWebview.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
-		isURIList := isDragTarget(context, targetURIList)
-		isPlain := isDragTarget(context, targetPlain)
-		isDragEnter = false
-		if isURIList || isPlain {
-			targetName := ""
-			if isURIList {
-				targetName = targetURIList
-			} else if isPlain {
-				targetName = targetPlain
-			}
-			target := gtk3.GdkAtomIntern(targetName, false)
-			sender.DragGetData(context, target, time)
-			return true
-		}
-		return false
-	})
+	// 持续触发
 	m.gtkWebview.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
-		isURIList := isDragTarget(context, targetURIList, targetPlain)
-		if !isURIList {
+		//println("SetOnDragMotion:", isContinue)
+		if isHandle {
 			return false
 		}
+		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
 		if !isDragEnter {
 			isDragEnter = true
+			isHandle = false
 			// enter
 			if m.onDragEnter != nil {
-				m.onDragEnter(int32(x), int32(y))
+				isHandle = m.onDragEnter(dataType, int32(x), int32(y))
+				if isHandle {
+					return false
+				}
 			}
+		}
+		if !isURIList {
+			return false
 		}
 		context.DragStatus(gtk3.ACTION_COPY, time)
 		return true
 	})
 	m.gtkWebview.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
+		//println("SetOnDragLeave")
 		// leave
 		if m.onDragLeave != nil {
 			m.onDragLeave()
 		}
+	})
+	m.gtkWebview.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
+		//println("SetOnDragDataReceived:", isContinue)
+		if isDragOver {
+			isDragOver = false
+			isDragEnter = false
+			isHandle = false
+			isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
+			if info != 2 && info != 1 || !isURIList {
+				return
+			}
+			dataLen := data.GetLength()
+			if dataLen == 0 {
+				//context.Finish(false, false, time)
+				return
+			}
+			if m.onDragOver != nil {
+				dragData := &TDragData{Type: dataType}
+				if info == 2 {
+					dragData.Filenames = data.GetURIs()
+				} else if info == 1 {
+					dragData.Data = data.GetData()
+				}
+				// over
+				m.onDragOver(dragData, int32(x), int32(y))
+				//context.Finish(true, false, time)
+			}
+		}
+	})
+	m.gtkWebview.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+		//println("SetOnDragDrop:", isContinue)
+		//if !isContinue {
+		//	return false
+		//}
+		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
+		if isURIList {
+			targetName := ""
+			if dataType == DragTypeFileURI {
+				targetName = targetURIList
+			} else if dataType == DragTypeData {
+				targetName = targetPlain
+			}
+			isDragOver = true
+			target := gtk3.GdkAtomIntern(targetName, false)
+			sender.DragGetData(context, target, time)
+			return !isHandle
+		}
+		return false
 	})
 }
 

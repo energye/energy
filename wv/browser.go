@@ -142,6 +142,6 @@ type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
 type TOnContextMenuCommandEvent func(commandId int32)
 type TOnPopupWindowEvent func(targetURL string) bool
 type TOnEvaluateScriptCallbackEvent func(result string, err string)
-type TOnDragEnterEvent func(x, y int32)
+type TOnDragEnterEvent func(type_ TDragType, x, y int32) bool
 type TOnDragLeaveEvent func()
 type TOnDragOverEvent func(data *TDragData, x, y int32)
