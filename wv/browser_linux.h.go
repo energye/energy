@@ -107,10 +107,10 @@ func (m *TWebview) UpdateBounds() {
 		swy := int32(allocation.GetY())
 		var (
 			webviewAlign     = m.Align()
+			webviewAnchors   = m.Anchors()
 			windowBoundsRect = m.window.BoundsRect()
 			webviewBounds    = m.BoundsRect()
 			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
-			webviewAnchors   = m.Anchors()
 		)
 		// 真实的客户区大小, 当有菜单栏时
 		windowBoundsRect.SetSize(windowBoundsRect.Width()-swx, windowBoundsRect.Height()-swy)
@@ -138,6 +138,7 @@ func (m *TWebview) UpdateBounds() {
 			//akTop := webviewAnchors.In(types.AkTop)
 			akRight := webviewAnchors.In(types.AkRight)
 			akBottom := webviewAnchors.In(types.AkBottom)
+			//fmt.Println("webviewAlign:", webviewAlign, "webviewAnchors:", webviewAnchors, "akRight:", akRight, "akBottom:", akBottom)
 			if akRight {
 				if ow := m.oldBounds.Width(); ow > 0 {
 					w += windowBoundsRect.Width() - ow

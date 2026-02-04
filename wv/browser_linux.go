@@ -69,9 +69,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 
 	m.IWkWebviewParent = wv.NewWebviewParent(owner)
-	m.SetBevelInner(types.BvNone)
-	m.SetBevelOuter(types.BvNone)
-	m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.SetParentDoubleBuffered(true)
 	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
 	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
