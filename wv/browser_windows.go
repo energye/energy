@@ -57,6 +57,9 @@ type TWebview struct {
 	onContextMenu           TOnContextMenuEvent
 	onContextMenuCommand    TOnContextMenuCommandEvent
 	onPopupWindow           TOnPopupWindowEvent
+	onDragEnter             TOnDragEnterEvent
+	onDragLeave             TOnDragLeaveEvent
+	onDragOver              TOnDragOverEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -78,6 +81,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
+	m.initDefaultDragEvent()
 	return m
 }
 
@@ -144,6 +148,133 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 	m.browser.ExecuteScript(script, m.executeScriptId)
 }
 
+// CreateBrowser 创建浏览器实例
+// 该方法负责初始化webview浏览器，确保只创建一次，并在应用程序初始化完成后创建浏览器窗口
+func (m *TWebview) CreateBrowser() {
+	if m.created || m.window == nil {
+		return
+	}
+	m.created = true
+	// 1. 更新浏览器配置
+	m.UpdateBrowserOptions()
+	// 2. 初始化 webview
+	if gApplication.InitializationError() {
+		// Log ???
+	} else {
+		if gApplication.Initialized() {
+			m.browser.CreateBrowserWithHandleBool(m.windowParent.Handle(), true)
+		}
+	}
+}
+
+// BrowserId 返回TWebview实例关联的浏览器ID
+func (m *TWebview) BrowserId() uint32 {
+	return m.browserId
+}
+
+// SendMessage 发送消息到webview浏览器
+func (m *TWebview) SendMessage(payload []byte) {
+	if m.isClose {
+		return
+	}
+	m.browser.PostWebMessageAsString(string(payload))
+}
+
+// Close 关闭webview窗口并清理相关资源
+func (m *TWebview) Close() {
+	if m.isClose {
+		return
+	}
+	m.isClose = true
+	m.windowParent.Free()
+	ipc.UnRegisterProcessMessage(m)
+}
+
+// SetDefaultURL 设置WebView的默认URL
+func (m *TWebview) SetDefaultURL(url string) {
+	m.browser.SetDefaultURL(url)
+}
+
+// LoadURL 加载指定的URL地址到webview中
+func (m *TWebview) LoadURL(url string) {
+	m.browser.Navigate(url)
+}
+
+// Browser 返回TWebview实例关联的浏览器对象
+func (m *TWebview) Browser() wv.IWVBrowser {
+	return m.browser
+}
+
+func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
+}
+
+func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
+}
+
+// doOnWindowShow 是窗口显示事件的回调函数
+// 当窗口显示时触发此函数，用于创建浏览器实例
+func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
+	m.CreateBrowser()
+}
+
+// doOnWindowClose 处理窗口关闭事件的回调函数
+// 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
+func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+	if m.browser != nil {
+		m.browser.Stop()
+	}
+}
+
+// doOnWindowCloseQuery 处理窗口关闭查询事件
+// 当用户尝试关闭窗口时触发此回调函数
+func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+}
+
+// SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
+func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
+	m.onBrowserAfterCreated = fn
+}
+
+// SetOnResourceRequest 设置资源请求事件处理函数
+// 该方法用于注册一个回调函数，当webview发起资源请求时会触发此回调
+func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
+	m.onResourceRequest = fn
+}
+
+// SetOnProcessMessage 设置处理进程消息的回调函数
+// 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
+func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
+	m.onProcessMessage = fn
+}
+
+func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
+	m.onLoadChange = fn
+}
+
+func (m *TWebview) SetOnContextMenu(fn TOnContextMenuEvent) {
+	m.onContextMenu = fn
+}
+
+func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
+	m.onContextMenuCommand = fn
+}
+
+func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
+	m.onPopupWindow = fn
+}
+
+func (m *TWebview) SetOnDragEnter(fn TOnDragEnterEvent) {
+	m.onDragEnter = fn
+}
+
+func (m *TWebview) SetOnDragLeave(fn TOnDragLeaveEvent) {
+	m.onDragLeave = fn
+}
+
+func (m *TWebview) SetOnDragOver(fn TOnDragOverEvent) {
+	m.onDragOver = fn
+}
+
 func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 	if m.window != nil && color != nil {
 		setColor := func() {
@@ -172,6 +303,10 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 			})
 		}
 	}
+}
+
+func (m *TWebview) initDefaultDragEvent() {
+
 }
 
 // Default preset function implementation
@@ -444,121 +579,6 @@ func (m *TWebview) initDefaultEvent() {
 			response.Free()
 		}
 	})
-}
-
-// CreateBrowser 创建浏览器实例
-// 该方法负责初始化webview浏览器，确保只创建一次，并在应用程序初始化完成后创建浏览器窗口
-func (m *TWebview) CreateBrowser() {
-	if m.created || m.window == nil {
-		return
-	}
-	m.created = true
-	// 1. 更新浏览器配置
-	m.UpdateBrowserOptions()
-	// 2. 初始化 webview
-	if gApplication.InitializationError() {
-		// Log ???
-	} else {
-		if gApplication.Initialized() {
-			m.browser.CreateBrowserWithHandleBool(m.windowParent.Handle(), true)
-		}
-	}
-}
-
-// BrowserId 返回TWebview实例关联的浏览器ID
-func (m *TWebview) BrowserId() uint32 {
-	return m.browserId
-}
-
-// SendMessage 发送消息到webview浏览器
-func (m *TWebview) SendMessage(payload []byte) {
-	if m.isClose {
-		return
-	}
-	m.browser.PostWebMessageAsString(string(payload))
-}
-
-// Close 关闭webview窗口并清理相关资源
-func (m *TWebview) Close() {
-	if m.isClose {
-		return
-	}
-	m.isClose = true
-	m.windowParent.Free()
-	ipc.UnRegisterProcessMessage(m)
-}
-
-// SetDefaultURL 设置WebView的默认URL
-func (m *TWebview) SetDefaultURL(url string) {
-	m.browser.SetDefaultURL(url)
-}
-
-// LoadURL 加载指定的URL地址到webview中
-func (m *TWebview) LoadURL(url string) {
-	m.browser.Navigate(url)
-}
-
-// Browser 返回TWebview实例关联的浏览器对象
-func (m *TWebview) Browser() wv.IWVBrowser {
-	return m.browser
-}
-
-func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
-}
-
-func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-}
-
-// doOnWindowShow 是窗口显示事件的回调函数
-// 当窗口显示时触发此函数，用于创建浏览器实例
-func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
-	m.CreateBrowser()
-}
-
-// doOnWindowClose 处理窗口关闭事件的回调函数
-// 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
-func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
-	if m.browser != nil {
-		m.browser.Stop()
-	}
-}
-
-// doOnWindowCloseQuery 处理窗口关闭查询事件
-// 当用户尝试关闭窗口时触发此回调函数
-func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
-}
-
-// SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
-func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
-	m.onBrowserAfterCreated = fn
-}
-
-// SetOnResourceRequest 设置资源请求事件处理函数
-// 该方法用于注册一个回调函数，当webview发起资源请求时会触发此回调
-func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
-	m.onResourceRequest = fn
-}
-
-// SetOnProcessMessage 设置处理进程消息的回调函数
-// 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
-func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
-	m.onProcessMessage = fn
-}
-
-func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
-	m.onLoadChange = fn
-}
-
-func (m *TWebview) SetOnContextMenu(fn TOnContextMenuEvent) {
-	m.onContextMenu = fn
-}
-
-func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
-	m.onContextMenuCommand = fn
-}
-
-func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
-	m.onPopupWindow = fn
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {

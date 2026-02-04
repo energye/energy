@@ -288,6 +288,10 @@ func (m *TTrayMenuItem) SetChecked(checked bool) {
 	m.item.SetChecked(checked)
 }
 
+func (m *TTrayMenuItem) SetRadio(checked bool) {
+	m.item.SetRadioItem(checked)
+}
+
 func (m *TTrayMenuItem) Checked() bool {
 	return m.item.Checked()
 }
