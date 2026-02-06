@@ -272,6 +272,22 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 	}
 }
 
+func (m *TTrayMenuItem) SetPngImage(pngImage []byte) {
+	if pngImage == nil {
+		return
+	}
+	stream := lcl.NewMemoryStream()
+	lcl.StreamHelper.Write(stream, pngImage)
+	stream.SetPosition(0)
+	png := lcl.NewPortableNetworkGraphic()
+	png.LoadFromStreamWithStream(stream)
+
+	m.item.Bitmap().Assign(png)
+
+	png.Free()
+	stream.Free()
+}
+
 // SetImageIndex 设置菜单项的图像索引
 //
 // - index - 要设置的图像索引，必须为非负整数

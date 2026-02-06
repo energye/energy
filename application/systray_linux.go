@@ -271,6 +271,13 @@ func (m *TTrayMenuItem) SetImage(imageName string) {
 	}
 }
 
+func (m *TTrayMenuItem) SetPngImage(pngImage []byte) {
+	if pngImage == nil {
+		return
+	}
+	m.item.SetIcon(m.tray(), pngImage)
+}
+
 // SetImageIndex 设置菜单项的图像索引
 //
 // - index - 要设置的图像索引，必须为非负整数
