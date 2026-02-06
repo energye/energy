@@ -12,5 +12,12 @@ package wv
 
 import _ "embed"
 
-//go:embed ipc.js
+// ipc js
+//
+//go:embed embed_ipc.js
 var ipcJS []byte
+
+// drag js
+//
+//go:embed embed_drag.js
+var dragJS []byte

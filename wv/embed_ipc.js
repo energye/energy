@@ -50,7 +50,7 @@
          * @public
          */
         processMessage(message) {
-            throw new Error("Unsupported Platform");
+            throw new Error("ENERGY IPC Message Unsupported Platform");
         };
 
         /**
@@ -91,36 +91,49 @@
             this.eventListeners = new Map();
             this.emitCallbacks = new Map();
             this.executionID = 0;
+
             // process message
-            if (this.deepTest(["chrome", "webview", "postMessage"])) {
+
+            if (window.chrome?.webview?.postMessage) {
                 // webview2
-                let webview = window.chrome.webview;
                 // render process send message => go
-                this.processMessage = (message) => webview.postMessage(message);
-                // render process receive browser process string message
-                webview.addEventListener("message", event => {
+                this.processMessage = window.chrome.webview.postMessage.bind(window.chrome.webview)
+                // render process receive browser process message
+                window.chrome.webview.addEventListener("message", event => {
                     window.energy.__executeEvent(event.data);
                 });
-                // render process receive browser process buffer message
-                //webview.addEventListener("sharedbufferreceived", event => {
-                //let buffer = event.getBuffer();
-                //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
-                // console.log("buffer:", bufferData);
-                //});
-            } else if (this.deepTest(["webkit", "messageHandlers", "processMessage", "postMessage"])) {
+            } else if (window.webkit?.messageHandlers?.processMessage?.postMessage) {
                 // webkit
                 // render process send message => go
-                this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage(message);
+                this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
             } else {
-                throw new Error("Unsupported Platform");
+                console.warn('ENERGY IPC Message Unsupported Platform');
             }
             this.drag = new Drag();
         }
 
-        deepTest(s) {
-            let obj = window[s.shift()];
-            while (obj && s.length) obj = obj[s.shift()];
-            return obj;
+        /**
+         * 构造一个包含消息类型、名称、数据和执行ID的对象。
+         *
+         * @param {string}      t - const 消息类型 (MessageType)
+         * @param {string}      n - string 名称 (name)
+         * @param {*}           d - any 数据 (data)
+         * @param {number}      i - int 执行 ID (executionID)
+         * @returns {Object} 包含t、n、d、i属性的对象
+         */
+        makePayload(t, n, d, i) {
+            const data = {
+                t: t,  // MessageType
+                n: n,  // name
+                d: d,  // data
+                i: i,  // executionID
+            };
+            return JSON.stringify(data/*, (key, value) => {
+                if (value === "" || value === null) {
+                    return undefined;
+                }
+                return value;
+            }*/);
         };
 
         /**
@@ -168,13 +181,7 @@
                 let result = callback.apply(null, args);
                 // not 0 go has callback function
                 if (id !== 0) {
-                    const payload = {
-                        t: MT_EVENT_GO_EMIT_CALLBACK,                  // MessageType
-                        n: name,                                 // name
-                        d: [].slice.apply([result]),     // data
-                        i: id,                                   // executionID
-                    };
-                    this.processMessage(JSON.stringify(payload));
+                    this.processMessage(this.makePayload(MT_EVENT_GO_EMIT_CALLBACK, name, [].slice.apply([result]), id));
                 }
             }
         }
@@ -230,14 +237,16 @@
         __listenDarwinContextMenu() {
             let that = this;
             let disableContextMenu = that.getEnv("disableContextMenu");
+
             function contextMenuHandler(event) {
                 event.preventDefault();
                 let x = event.screenX;
                 let y = event.screenY;
-                let data = {t: MT_CONTEXTMENU, d: {x: x, y: y},}
-                that.processMessage(JSON.stringify(data));
+                let data = that.makePayload(MT_CONTEXTMENU, "", {x: x, y: y}, 0)
+                that.processMessage(data);
             }
-            if(disableContextMenu){
+
+            if (disableContextMenu) {
                 window.addEventListener('contextmenu', contextMenuHandler);
             }
         }
@@ -300,16 +309,12 @@
                 executionID = window.energy.__nextExecutionID();
                 window.energy.__setJSEmitCallback(executionID, callback)
             }
-            const payload = {
-                t: MT_EVENT_JS_EMIT,           // MessageType
-                n: name,                 // name
-                d: [].slice.apply(data), // data
-                i: executionID,          // executionID
-            };
+
+            const payload = energy.makePayload(MT_EVENT_JS_EMIT, name, [].slice.apply(data), executionID)
             // call js event
 
             // call go event
-            energy.processMessage(JSON.stringify(payload));
+            energy.processMessage(payload);
         }
     }
 
@@ -336,9 +341,10 @@
 
         setup() {
             let that = this;
+
             function dragMessage(t, n, d) {
-                const payload = {t: t, n: n, d: d};
-                window.energy.processMessage(JSON.stringify(payload));
+                const payload = window.energy.makePayload(t, n, d, 0);
+                window.energy.processMessage(payload);
             }
 
             let idcCursor = null;

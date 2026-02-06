@@ -15,6 +15,7 @@ package wv
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -23,6 +24,7 @@ import (
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
+	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
 	"github.com/energye/lcl/types/messages"
@@ -430,6 +432,7 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnNavigationCompleted(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationCompletedEventArgs) {
 		m.createEnergyJavasScript()
+		m.ExecuteScript(string(dragJS))
 		if m.onLoadChange != nil {
 			webview = wv.NewCoreWebView2(webview)
 			defer webview.Free()
@@ -452,7 +455,7 @@ func (m *TWebview) initDefaultEvent() {
 		var handle bool
 		args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 		message := args.WebMessageAsString()
-		args.Free()
+		defer args.Free()
 		if m.messageReceivedDelegate != nil {
 			// ipc message
 			var pMessage ipc.ProcessMessage
@@ -466,6 +469,7 @@ func (m *TWebview) initDefaultEvent() {
 					// ipc on, emit event
 					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					fmt.Println("m.window != nil", m.window != nil)
 					// ipc drag window
 					if m.window != nil {
 						m.drag(pMessage)
@@ -479,9 +483,13 @@ func (m *TWebview) initDefaultEvent() {
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
-					//fmt.Println("pMessage.Data", pMessage.Data)
-					//m._SetCursor(17)
+				//fmt.Println("pMessage.Data", pMessage.Data)
+				//m._SetCursor(17)
+				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
+					m.dragDrop(pMessage, webview, args)
 				}
+			} else {
+				println("MessageReceived-ERROR：", err.Error())
 			}
 		}
 		if !handle && m.onProcessMessage != nil {
@@ -579,6 +587,46 @@ func (m *TWebview) initDefaultEvent() {
 			response.Free()
 		}
 	})
+}
+
+func (m *TWebview) dragDrop(message ipc.ProcessMessage, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
+	data, ok := message.Data.(map[string]any)
+	if !ok {
+		return
+	}
+	dataType := TDragType(tool.ToInt(data["type"]))
+	x := int32(tool.ToInt(data["x"]))
+	y := int32(tool.ToInt(data["y"]))
+	switch message.Type {
+	case ipc.MT_DRAG_DROP_ENTER:
+		if m.onDragEnter != nil {
+			m.onDragEnter(dataType, x, y)
+		}
+	case ipc.MT_DRAG_DROP_LEAVE:
+		if m.onDragLeave != nil {
+			m.onDragLeave()
+		}
+	case ipc.MT_DRAG_DROP_OVER:
+		if m.onDragOver != nil {
+			dragData := &TDragData{Type: dataType}
+			if dataType == DragTypeData {
+				dragData.Data = []byte(data["text"].(string))
+			} else if dataType == DragTypeFile {
+				var files []string
+				additionalObjects := wv.NewCoreWebView2ObjectCollectionView(args.AdditionalObjects())
+				defer additionalObjects.Free()
+				count := additionalObjects.Count()
+				for i := uint32(0); i < count; i++ {
+					unknown := additionalObjects.Items(i)
+					file := wv.NewCoreWebView2File(wv.AsCoreWebView2File(unknown))
+					files = append(files, file.Path())
+					file.Free()
+				}
+				dragData.Filenames = files
+			}
+			m.onDragOver(dragData, x, y)
+		}
+	}
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {

@@ -125,9 +125,9 @@ const (
 type TDragType int32
 
 const (
-	DragTypeNo      TDragType = iota // file list
-	DragTypeFileURI                  // file list
-	DragTypeData                     // file bytes
+	DragTypeNo   TDragType = iota // file list
+	DragTypeFile                  // file list
+	DragTypeData                  // file bytes
 )
 
 type TDragData struct {

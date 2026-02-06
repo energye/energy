@@ -631,7 +631,7 @@ func (m *TWebview) initDefaultDragEvent() {
 					if name == target {
 						var dataType TDragType
 						if target == targetURIList {
-							dataType = DragTypeFileURI
+							dataType = DragTypeFile
 						} else {
 							dataType = DragTypeData
 						}
@@ -713,7 +713,7 @@ func (m *TWebview) initDefaultDragEvent() {
 		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
 		if isURIList {
 			targetName := ""
-			if dataType == DragTypeFileURI {
+			if dataType == DragTypeFile {
 				targetName = targetURIList
 			} else if dataType == DragTypeData {
 				targetName = targetPlain
