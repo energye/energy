@@ -214,16 +214,9 @@ func (m *TTrayMenu) tray() *systray.Tray {
 // AddMenuItem 向托盘菜单中添加一个新的菜单项
 //   - label - 菜单项显示的文本标签
 //   - fn - 菜单项被点击时执行的回调函数，可以为nil表示无点击事件
-func (m *TTrayMenu) AddMenuItem(label string, fn func()) *TTrayMenuItem {
+func (m *TTrayMenu) AddMenuItem(label string) *TTrayMenuItem {
 	newMenuItem := m.tray().Menu().AddMenuItem(m.tray(), label, "")
 	menuItem := &TTrayMenuItem{menu: m, item: newMenuItem}
-	if fn != nil {
-		newMenuItem.Click(func() {
-			lcl.RunOnMainThreadAsync(func(id uint32) {
-				fn()
-			})
-		})
-	}
 	return menuItem
 }
 
@@ -239,16 +232,9 @@ func (m *TTrayMenuItem) tray() *systray.Tray {
 // AddSubMenuItem 添加子菜单项到当前菜单项
 //   - label - 菜单项显示的标签文本
 //   - fn - 点击菜单项时执行的回调函数，可以为nil表示无点击事件
-func (m *TTrayMenuItem) AddSubMenuItem(label string, fn func()) *TTrayMenuItem {
+func (m *TTrayMenuItem) AddSubMenuItem(label string) *TTrayMenuItem {
 	newMenuItem := m.item.AddMenuItem(m.tray(), label, "")
 	menuItem := &TTrayMenuItem{menu: m.menu, item: newMenuItem}
-	if fn != nil {
-		newMenuItem.Click(func() {
-			lcl.RunOnMainThreadAsync(func(id uint32) {
-				fn()
-			})
-		})
-	}
 	return menuItem
 }
 
@@ -262,20 +248,22 @@ func (m *TTrayMenuItem) AddSeparator() {
 //
 // 说明:
 //   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
-func (m *TTrayMenuItem) SetImage(imageName string) {
+func (m *TTrayMenuItem) SetImage(imageName string) *TTrayMenuItem {
 	if m.menu != nil && m.menu.imageList != nil {
 		if imageIndex := m.menu.imageList.ImageIndex(imageName); imageIndex != -1 && int(imageIndex) < len(m.menu.imageList.imageList) {
 			data := m.menu.imageList.imageList[imageIndex]
 			m.item.SetIcon(m.tray(), data)
 		}
 	}
+	return m
 }
 
-func (m *TTrayMenuItem) SetPngImage(pngImage []byte) {
-	if pngImage == nil {
+func (m *TTrayMenuItem) SetBitmap(image []byte) *TTrayMenuItem {
+	if image == nil {
 		return
 	}
-	m.item.SetIcon(m.tray(), pngImage)
+	m.item.SetIcon(m.tray(), image)
+	return m
 }
 
 // SetImageIndex 设置菜单项的图像索引
@@ -284,23 +272,27 @@ func (m *TTrayMenuItem) SetPngImage(pngImage []byte) {
 //
 // 说明:
 //   - 该方法会检查菜单及其图像列表是否存在，如果存在则根据图标名称获取索引并设置到菜单项上
-func (m *TTrayMenuItem) SetImageIndex(index int32) {
+func (m *TTrayMenuItem) SetImageIndex(index int32) *TTrayMenuItem {
 	if m.menu != nil && m.menu.imageList != nil && index >= 0 && int(index) < len(m.menu.imageList.imageList) {
 		data := m.menu.imageList.imageList[index]
 		m.item.SetIcon(m.tray(), data)
 	}
+	return m
 }
 
-func (m *TTrayMenuItem) SetChecked(checked bool) {
+func (m *TTrayMenuItem) SetChecked(checked bool) *TTrayMenuItem {
 	m.item.SetChecked(m.tray(), checked)
+	return m
 }
 
-func (m *TTrayMenuItem) SetRadio(radio bool) {
+func (m *TTrayMenuItem) SetRadio(radio bool) *TTrayMenuItem {
 	m.item.SetRadio(m.tray(), radio)
+	return m
 }
 
-func (m *TTrayMenuItem) SetEnabled(enabled bool) {
+func (m *TTrayMenuItem) SetEnabled(enabled bool) *TTrayMenuItem {
 	m.item.SetEnabled(m.tray(), enabled)
+	return m
 }
 
 func (m *TTrayMenuItem) Enabled() bool {
@@ -315,10 +307,23 @@ func (m *TTrayMenuItem) Clear() {
 	m.item.Clear(m.tray())
 }
 
-func (m *TTrayMenuItem) SetOnMeasureItem(fn lcl.TMenuMeasureItemEvent) {
+func (m *TTrayMenuItem) SetOnMeasureItem(fn lcl.TMenuMeasureItemEvent) *TTrayMenuItem {
 	log.Println("SetOnMeasureItem No Implementation")
+	return m
 }
 
-func (m *TTrayMenuItem) SetOnDrawItem(fn lcl.TMenuDrawItemEvent) {
+func (m *TTrayMenuItem) SetOnDrawItem(fn lcl.TMenuDrawItemEvent) *TTrayMenuItem {
 	log.Println("SetOnDrawItem No Implementation")
+	return m
+}
+
+func (m *TTrayMenuItem) SetOnClick(fn func()) *TTrayMenuItem {
+	if fn != nil {
+		m.item.Click(func() {
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				fn()
+			})
+		})
+	}
+	return m
 }
