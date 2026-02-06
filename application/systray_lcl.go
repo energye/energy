@@ -289,7 +289,16 @@ func (m *TTrayMenuItem) SetChecked(checked bool) {
 }
 
 func (m *TTrayMenuItem) SetRadio(checked bool) {
+	m.item.SetGroupIndex(1)
 	m.item.SetRadioItem(checked)
+}
+
+func (m *TTrayMenuItem) SetEnabled(enabled bool) {
+	m.item.SetEnabled(enabled)
+}
+
+func (m *TTrayMenuItem) Enabled() bool {
+	return m.item.Enabled()
 }
 
 func (m *TTrayMenuItem) Checked() bool {
@@ -298,4 +307,12 @@ func (m *TTrayMenuItem) Checked() bool {
 
 func (m *TTrayMenuItem) Clear() {
 	m.item.Clear()
+}
+
+func (m *TTrayMenuItem) SetOnMeasureItem(fn lcl.TMenuMeasureItemEvent) {
+	m.item.SetOnMeasureItem(fn)
+}
+
+func (m *TTrayMenuItem) SetOnDrawItem(fn lcl.TMenuDrawItemEvent) {
+	m.item.SetOnDrawItem(fn)
 }

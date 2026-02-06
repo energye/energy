@@ -292,10 +292,26 @@ func (m *TTrayMenuItem) SetRadio(radio bool) {
 	m.item.SetRadio(m.tray(), radio)
 }
 
+func (m *TTrayMenuItem) SetEnabled(enabled bool) {
+	m.item.SetEnabled(m.tray(), enabled)
+}
+
+func (m *TTrayMenuItem) Enabled() bool {
+	return m.item.Enabled(m.tray())
+}
+
 func (m *TTrayMenuItem) Checked() bool {
 	return m.item.Checked()
 }
 
 func (m *TTrayMenuItem) Clear() {
 	m.item.Clear(m.tray())
+}
+
+func (m *TTrayMenuItem) SetOnMeasureItem(fn lcl.TMenuMeasureItemEvent) {
+	log.Println("SetOnMeasureItem No Implementation")
+}
+
+func (m *TTrayMenuItem) SetOnDrawItem(fn lcl.TMenuDrawItemEvent) {
+	log.Println("SetOnDrawItem No Implementation")
 }
