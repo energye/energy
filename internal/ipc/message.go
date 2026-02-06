@@ -38,6 +38,12 @@ const (
 	MT_CONTEXTMENU
 )
 
+const (
+	MT_DRAG_DROP_ENTER MessageType = iota + 100
+	MT_DRAG_DROP_LEAVE
+	MT_DRAG_DROP_OVER
+)
+
 type ProcessMessage struct {
 	Type MessageType `json:"t"` // MessageType, Used to distinguish message types, this constant is defined the same in GO and JS
 	Name string      `json:"n"` // Message name
