@@ -23,6 +23,10 @@ import (
 	"strings"
 )
 
+type ILCLSystray interface {
+	LCLTray() lcl.ITrayIcon
+}
+
 type TTrayImageList struct {
 	imageList  lcl.IImageList
 	imageIndex map[string]int32
@@ -76,7 +80,12 @@ func NewTrayIcon() *TTrayIcon {
 
 // tray
 
+func (m *TTrayIcon) LCLTray() lcl.ITrayIcon {
+	return m.trayIcon
+}
+
 func (m *TTrayIcon) Close() {
+	// LCL No Implementation
 }
 
 func (m *TTrayIcon) SetOnClick(fn func()) {
