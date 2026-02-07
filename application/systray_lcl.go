@@ -76,10 +76,6 @@ func NewTrayIcon() *TTrayIcon {
 
 // tray
 
-func (m *TTrayIcon) Instance() uintptr {
-	return m.trayIcon.Instance()
-}
-
 func (m *TTrayIcon) Close() {
 	// LCL No Implementation
 }
