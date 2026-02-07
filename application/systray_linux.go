@@ -79,6 +79,11 @@ func NewTrayIcon() *TTrayIcon {
 	return m
 }
 
+func (m *TTrayIcon) Instance() uintptr {
+	// Native No Implementation
+	return 0
+}
+
 func (m *TTrayIcon) Close() {
 	if m.tray != nil {
 		m.tray.NativeEnd()
