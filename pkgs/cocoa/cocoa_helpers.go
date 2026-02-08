@@ -45,7 +45,7 @@ func InspectControl(handle uintptr) {
 	fmt.Println("\n类型匹配检查:")
 	for _, typ := range commonTypes {
 		cType := C.CString(typ)
-		isMatch := bool(C.isObjectOfClass(cHandle, cType))
+		isMatch := int(C.isObjectOfClass(cHandle, cType)) > 0
 		C.free(unsafe.Pointer(cType))
 		fmt.Printf("  是 %-12s: %v\n", typ, isMatch)
 	}

@@ -55,14 +55,6 @@ const (
 	BezelStyleInline            NSBezelStyle = C.NSBezelStyleInline
 )
 
-// 控件大小
-const (
-	ControlSizeMini    NSControlSize = C.NSControlSizeMini
-	ControlSizeSmall   NSControlSize = C.NSControlSizeSmall
-	ControlSizeRegular NSControlSize = C.NSControlSizeRegular
-	ControlSizeLarge   NSControlSize = C.NSControlSizeLarge
-)
-
 type ItemVisibilityPriority = int
 
 const (
