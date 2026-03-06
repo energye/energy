@@ -28,10 +28,20 @@ NSPasteboard* DraggingPasteboard(void* nsDraggingInfo) {
     return [dragInfo draggingPasteboard];
 }
 
+NSPoint DraggingLocation(void* nsDraggingInfo) {
+	id<NSDraggingInfo> dragInfo = (id<NSDraggingInfo>)nsDraggingInfo;
+	if (!dragInfo) {
+        NSLog(@"DraggingPasteboard dragInfo is nil");
+        return NSMakePoint(0, 0);
+    }
+    return [dragInfo draggingLocation];
+}
+
 */
 import "C"
 
 import (
+	"github.com/energye/lcl/types"
 	"github.com/energye/wv/darwin"
 	"unsafe"
 )
@@ -75,4 +85,14 @@ func (m *TNSDraggingInfo) DraggingPasteboard() *TNSPasteboard {
 	}
 	cResult := C.DraggingPasteboard(m.data)
 	return WrapNSPasteboard(uintptr(unsafe.Pointer(cResult)))
+}
+
+func (m *TNSDraggingInfo) DraggingLocation() (point types.TPoint) {
+	if m.data == nil {
+		return
+	}
+	dl := C.DraggingLocation(m.data)
+	point.X = int32(dl.x)
+	point.Y = int32(dl.y)
+	return
 }

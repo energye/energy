@@ -125,6 +125,17 @@ type TNSPasteboard struct {
 	data unsafe.Pointer
 }
 
+type NSTypes []string
+
+func (m NSTypes) In(s string) bool {
+	for _, v := range m {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
 func WrapNSPasteboard(data uintptr) *TNSPasteboard {
 	if data == 0 {
 		return nil
@@ -132,7 +143,7 @@ func WrapNSPasteboard(data uintptr) *TNSPasteboard {
 	return &TNSPasteboard{data: unsafe.Pointer(data)}
 }
 
-func (m *TNSPasteboard) Types() []string {
+func (m *TNSPasteboard) Types() NSTypes {
 	if m.data == nil {
 		return nil
 	}
@@ -141,7 +152,7 @@ func (m *TNSPasteboard) Types() []string {
 		return nil
 	}
 	data := C.GoString(cData)
-	var result []string
+	var result NSTypes
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
 		return nil
 	}
