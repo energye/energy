@@ -12,6 +12,13 @@
 extern "C" {
 #endif
 
+typedef struct {
+    int32_t Left;
+    int32_t Top;
+    int32_t Right;
+    int32_t Bottom;
+} TRect;
+
 void WindowMaximize(void* nsWindow);
 void WindowRestore(void* nsWindow);
 void WindowMinimized(void* nsWindow);
@@ -33,6 +40,8 @@ void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAp
 @end
 
 TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback);
+TRect WindowContentViewFrame(void* nsWindow);
+
 
 #ifdef __cplusplus
 }

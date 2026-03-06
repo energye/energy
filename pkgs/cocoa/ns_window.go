@@ -23,6 +23,7 @@ extern GoArguments* doOnWindowDelegateEvent(TCallbackContext *CContext);
 */
 import "C"
 import (
+	"github.com/energye/lcl/types"
 	"unsafe"
 )
 
@@ -138,4 +139,13 @@ func SetWindowRadius(window unsafe.Pointer, value float32) {
 
 func WindowAddSubview(window, view unsafe.Pointer, x, y, width, height float32) {
 	C.WindowAddSubview(window, view, C.float(x), C.float(y), C.float(width), C.float(height))
+}
+
+func WindowContentViewFrame(window unsafe.Pointer) (rect types.TRect) {
+	nsRect := C.WindowContentViewFrame(window)
+	rect.Left = int32(nsRect.Left)
+	rect.Top = int32(nsRect.Top)
+	rect.Right = int32(nsRect.Right)
+	rect.Bottom = int32(nsRect.Bottom)
+	return
 }

@@ -351,3 +351,28 @@ void WindowAddSubview(void* nsWindow, void* nsView, float x, float y, float widt
     CGRect viewFrame = CGRectMake(x, y, width, height);
 	[view setFrame:viewFrame];
 }
+
+TRect WindowContentViewFrame(void* nsWindow) {
+    TRect rect = {0};
+ 	NSWindow* window = (NSWindow*)nsWindow;
+     if (!window) {
+         NSLog(@"WindowContentViewFrame window is nil");
+         return rect;
+     }
+    NSView *contentView = [window contentView];
+    if (!contentView) {
+        NSLog(@"WindowContentViewFrame contentView is nil");
+        return rect;
+    }
+    CGRect originalFrame = contentView.frame;
+    CGFloat superViewHeight = contentView.superview.frame.size.height;
+    CGFloat topLeftX = originalFrame.origin.x;
+    CGFloat topLeftY = superViewHeight - originalFrame.origin.y - originalFrame.size.height;
+    CGFloat width = originalFrame.size.width;
+    CGFloat height = originalFrame.size.height;
+    rect.Left = (int32_t)round(topLeftX);
+    rect.Top = (int32_t)round(topLeftY);
+    rect.Right = rect.Left + (int32_t)round(width);
+    rect.Bottom = rect.Top + (int32_t)round(height);
+    return rect;
+}
