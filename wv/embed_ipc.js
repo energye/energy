@@ -105,7 +105,9 @@
             } else if (window.webkit?.messageHandlers?.processMessage?.postMessage) {
                 // webkit
                 // render process send message => go
-                this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
+                // this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
+                this.processMessage = window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
+                // this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage(message);
             } else {
                 console.warn('ENERGY IPC Message Unsupported Platform');
             }

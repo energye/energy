@@ -42,7 +42,7 @@ func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
 		err = C.GoString(errC)
 	}
 	if callback, ok := gEvaluateScriptEventCallback.Load(callbackID); ok {
-		gEvaluateScriptEventCallback.Delete(id)
+		gEvaluateScriptEventCallback.Delete(callbackID)
 		callback.(TOnEvaluateScriptCallbackEvent)(result, err)
 	}
 }
@@ -69,7 +69,6 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 	)
 
 	cocoa.WindowAddSubview(nsWindow, webview, x, y, w, h)
-	m.UpdateBounds()
 }
 
 // UpdateBounds 更新WebView的边界矩形
@@ -77,27 +76,29 @@ func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
 func (m *TWebview) UpdateBounds() {
 	if m.isAddNSWindowSubview {
 		var (
-			webviewAlign     = m.Align()
-			windowBoundsRect = m.window.BoundsRect()
-			webviewBounds    = m.BoundsRect()
-			x, y, w, h       = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
-			webviewAnchors   = m.Anchors()
+			webviewAlign   = m.Align()
+			windowBounds   = m.window.BoundsRect()
+			webviewBounds  = m.BoundsRect()
+			x, y, w, h     = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
+			webviewAnchors = m.Anchors()
 		)
+		//println("UpdateBounds-windowBounds:", windowBounds.Left, windowBounds.Top, windowBounds.Width(), windowBounds.Height())
+		//println("UpdateBounds-webviewBounds:", webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height())
 		switch webviewAlign {
 		case types.AlNone, types.AlCustom:
 			x, y, w, h = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 		case types.AlClient:
-			x, y, w, h = 0, 0, float32(windowBoundsRect.Width()), float32(windowBoundsRect.Height())
+			x, y, w, h = 0, 0, float32(windowBounds.Width()), float32(windowBounds.Height())
 		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
 			switch webviewAlign {
 			case types.AlLeft:
-				x, y, w, h = 0, 0, float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
+				x, y, w, h = 0, 0, float32(webviewBounds.Width()), float32(windowBounds.Height())
 			case types.AlTop:
-				x, y, w, h = 0, 0, float32(windowBoundsRect.Width()), float32(webviewBounds.Height())
+				x, y, w, h = 0, 0, float32(windowBounds.Width()), float32(webviewBounds.Height())
 			case types.AlRight:
-				x, y, w, h = float32(windowBoundsRect.Width()-webviewBounds.Width()), 0, float32(webviewBounds.Width()), float32(windowBoundsRect.Height())
+				x, y, w, h = float32(windowBounds.Width()-webviewBounds.Width()), 0, float32(webviewBounds.Width()), float32(windowBounds.Height())
 			case types.AlBottom:
-				x, y, w, h = 0, float32(windowBoundsRect.Height()-webviewBounds.Height()), float32(windowBoundsRect.Width()), float32(webviewBounds.Height())
+				x, y, w, h = 0, float32(windowBounds.Height()-webviewBounds.Height()), float32(windowBounds.Width()), float32(webviewBounds.Height())
 			}
 		}
 		switch webviewAlign {
@@ -107,18 +108,20 @@ func (m *TWebview) UpdateBounds() {
 			akRight := webviewAnchors.In(types.AkRight)
 			akBottom := webviewAnchors.In(types.AkBottom)
 			if akRight {
+				//println("m.oldBounds.Width()", m.oldBounds.Width())
 				if ow := m.oldBounds.Width(); ow > 0 {
-					w += float32(windowBoundsRect.Width() - ow)
+					w += float32(windowBounds.Width() - ow)
 				}
 			}
 			if akBottom {
+				//println("m.oldBounds.Height()", m.oldBounds.Height())
 				if oh := m.oldBounds.Height(); oh > 0 {
-					h += float32(windowBoundsRect.Height() - oh)
+					h += float32(windowBounds.Height() - oh)
 				}
 			}
 		}
 		m.UpdateWebviewBounds(x, y, w, h)
-		m.oldBounds = windowBoundsRect
+		m.oldBounds = windowBounds
 	}
 }
 
@@ -130,6 +133,7 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	nsWindow := unsafe.Pointer(m.nsWindow)
 	webview := unsafe.Pointer(m.browser.Data())
 	C.UpdateWebviewBounds(nsWindow, webview, C.float(x), C.float(y), C.float(width), C.float(height))
+	//println("UpdateWebviewBounds:", int(x), int(y), int(width), int(height))
 }
 
 // BecomeFirstResponder 使webview成为第一响应者，获取焦点并准备接收用户输入

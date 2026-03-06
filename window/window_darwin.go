@@ -20,7 +20,6 @@ package window
 import "C"
 
 import (
-	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -69,36 +68,37 @@ func (m *TWindow) _BeforeFormCreate() {
 }
 
 func (m *TWindow) _BeforeFormShow() {
-}
-
-// SetOptions 设置webview窗口的选项配置
-// 该方法用于配置*TWindow实例的各种选项参数
-func (m *TWindow) SetOptions() {
-	if application.GApplication == nil {
+	if m.flagFirstShow {
 		return
 	}
-	options := application.GApplication.Options
-	if options.Width <= 0 {
-		options.Width = m.Width()
-	}
-	if options.Height <= 0 {
-		options.Height = m.Height()
-	}
-	m.SetCaption(options.Caption)
-	m.SetBounds(options.X, options.Y, options.Width, options.Height)
-	if options.MacOS.UseWindowDelegate {
-		m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
-		m._InitEvent()
-	}
-	if options.WindowTransparent {
-		m.SetWindowTransparent()
-		if options.MacOS.AppearanceName != "" {
-			m.SwitchFrostedMaterial(options.MacOS.AppearanceName)
+	m.flagFirstShow = true
+	m.UpdateWindowOption()
+}
+
+func (m *TWindow) UpdateWindowOption() {
+	if m.options != nil {
+		if m.options.Width <= 0 {
+			m.options.Width = m.Width()
 		}
-	}
-	if options.BackgroundColor != nil {
-		r, g, b, a := uint8(options.BackgroundColor.R), uint8(options.BackgroundColor.G), uint8(options.BackgroundColor.B), uint8(options.BackgroundColor.A)
-		m.SetBackgroundColor(r, g, b, a)
+		if m.options.Height <= 0 {
+			m.options.Height = m.Height()
+		}
+		m.SetCaption(m.options.Caption)
+		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
+		if m.options.MacOS.UseWindowDelegate {
+			m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
+			m._InitEvent()
+		}
+		if m.options.WindowTransparent {
+			m.SetWindowTransparent()
+			if m.options.MacOS.AppearanceName != "" {
+				m.SwitchFrostedMaterial(m.options.MacOS.AppearanceName)
+			}
+		}
+		if m.options.BackgroundColor != nil {
+			r, g, b, a := uint8(m.options.BackgroundColor.R), uint8(m.options.BackgroundColor.G), uint8(m.options.BackgroundColor.B), uint8(m.options.BackgroundColor.A)
+			m.SetBackgroundColor(r, g, b, a)
+		}
 	}
 	m.SetWindowRadius()
 	m.Frameless()

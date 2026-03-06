@@ -14,6 +14,7 @@ package wv
 
 import (
 	"encoding/json"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
@@ -56,6 +57,9 @@ type TWebview struct {
 	onContextMenu           TOnContextMenuEvent
 	onContextMenuCommand    TOnContextMenuCommandEvent
 	onPopupWindow           TOnPopupWindowEvent
+	onDragEnter             TOnDragEnterEvent
+	onDragLeave             TOnDragLeaveEvent
+	onDragOver              TOnDragOverEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -119,35 +123,39 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
-	m.SetBrowserOptions()
 	return m
 }
 
 func (m *TWebview) SetWindow(iWindow window.IWindow) {
-	if iWindow == nil {
-		return
-	}
 	m.window = iWindow
+	if m.window != nil {
+		if m.window.BrowserId() == 0 {
+			m.window.SetBrowserId(m.browserId)
+		}
+	}
 	m.window.AddOnWindowStateChange(m.doOnWindowStateChange)
 	m.window.AddOnWindowResize(m.doOnWindowResize)
 	m.window.AddOnWindowShow(m.doOnWindowShow)
 	m.window.AddOnWindowClose(m.doOnWindowClose)
 	m.window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
-	if m.window.BrowserId() == 0 {
-		m.window.SetBrowserId(m.browserId)
-	}
-	m.window.SetOptions()
-	m.SetWebviewTransparent(gApplication.Options.WebviewTransparent)
-	m.BecomeFirstResponder()
-	m._WebViewRegisterPerformKeyEquivalentMethod()
 }
 
-// SetBrowserOptions 设置浏览器窗口的选项配置
-func (m *TWebview) SetBrowserOptions() {
-	options := gApplication.Options
+// UpdateBrowserOptions 更新浏览器配置
+func (m *TWebview) UpdateBrowserOptions() {
+	// 1. 获取 LocalLoad 全局配置
+	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
+		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
+		m.SetLocalLoad(newLocalLoad)
+	}
+
+	options := m.window.Options()
 	if options.DefaultURL != "" {
 		m.browser.LoadURL(options.DefaultURL)
 	}
+
+	m.SetWebviewTransparent(options.WebviewTransparent)
+	m.BecomeFirstResponder()
+	m._WebViewRegisterPerformKeyEquivalentMethod()
 }
 
 // SetParent 设置浏览器窗口的父控件
@@ -169,6 +177,7 @@ func (m *TWebview) CreateBrowser() {
 		return
 	}
 	m.isCreated = true
+	m.UpdateBrowserOptions()
 	m.windowParent.SetWebview(m.browser.Data())
 	if m.onBrowserAfterCreated != nil {
 		m.onBrowserAfterCreated(m.browser)
@@ -225,8 +234,8 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	if m.isCreated {
 		return
 	}
-	m.CreateBrowser()
 	m.UpdateBounds()
+	m.CreateBrowser()
 }
 
 // onWindowClose 处理窗口关闭事件的回调函数
@@ -293,6 +302,18 @@ func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
 
 func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
 	m.onPopupWindow = fn
+}
+
+func (m *TWebview) SetOnDragEnter(fn TOnDragEnterEvent) {
+	m.onDragEnter = fn
+}
+
+func (m *TWebview) SetOnDragLeave(fn TOnDragLeaveEvent) {
+	m.onDragLeave = fn
+}
+
+func (m *TWebview) SetOnDragOver(fn TOnDragOverEvent) {
+	m.onDragOver = fn
 }
 
 func (m *TWebview) ExecuteScript(javaScript string) {
@@ -372,6 +393,7 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnFinishNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
+		//println("browser-OnFinishNavigation")
 		m.createEnergyJavasScript()
 		m.listenDarwinContextMenuJavaScript()
 		if m.onLoadChange != nil {
