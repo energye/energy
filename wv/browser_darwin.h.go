@@ -82,8 +82,8 @@ func (m *TWebview) UpdateBounds() {
 			x, y, w, h     = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 			webviewAnchors = m.Anchors()
 		)
-		println("UpdateBounds-windowBounds:", windowBounds.Left, windowBounds.Top, windowBounds.Width(), windowBounds.Height())
-		println("UpdateBounds-webviewBounds:", webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height())
+		//println("UpdateBounds-windowBounds:", windowBounds.Left, windowBounds.Top, windowBounds.Width(), windowBounds.Height())
+		//println("UpdateBounds-webviewBounds:", webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height())
 		switch webviewAlign {
 		case types.AlNone, types.AlCustom:
 			x, y, w, h = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
