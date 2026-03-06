@@ -45,7 +45,7 @@ type TWebview struct {
 	isCreated               bool
 	resizeHT                string
 	menu                    lcl.IPopupMenu
-	window                  window.IWindow
+	window                  window.IDarwinWindow
 	nsWindow                lcl.NSWindow
 	oldBounds               types.TRect
 	isAddNSWindowSubview    bool
@@ -130,12 +130,13 @@ func NewWebview(owner lcl.IComponent) IWebview {
 }
 
 func (m *TWebview) SetWindow(iWindow window.IWindow) {
-	m.window = iWindow
+	m.window = iWindow.(window.IDarwinWindow)
 	if m.window != nil {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
 	}
+	//m.oldBounds = m.window.BoundsRect()
 	m.window.AddOnWindowStateChange(m.doOnWindowStateChange)
 	m.window.AddOnWindowResize(m.doOnWindowResize)
 	m.window.AddOnWindowShow(m.doOnWindowShow)
@@ -237,8 +238,8 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	if m.isCreated {
 		return
 	}
-	m.UpdateBounds()
 	m.CreateBrowser()
+	m.UpdateBounds()
 }
 
 // onWindowClose 处理窗口关闭事件的回调函数
@@ -597,6 +598,9 @@ func (m *TWebview) initDefaultDragEvent() {
 		return cocoa.NSDragOperationNone
 	})
 	m.browser.SetOnDraggingUpdated(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
+		if m.onDragLeave == nil {
+			return cocoa.NSDragOperationNone
+		}
 		dragInfo := cocoa.WrapNSDraggingInfo(sender)
 		dragPasteboard := dragInfo.DraggingPasteboard()
 		nsTypes := dragPasteboard.Types()

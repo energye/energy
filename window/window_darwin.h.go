@@ -100,6 +100,10 @@ func (m *TWindow) Frameless() {
 	}
 }
 
+func (m *TWindow) ContentViewFrame() types.TRect {
+	return cocoa.WindowContentViewFrame(m.NSInstance())
+}
+
 func (m *TWindow) _InitEvent() {
 	nsWindow := m.NSInstance()
 	windowResizeEventId := fmt.Sprintf("%d_%v", cocoa.TWindowEventDidResize, nsWindow)
@@ -109,5 +113,4 @@ func (m *TWindow) _InitEvent() {
 		//}
 		return nil
 	}))
-
 }

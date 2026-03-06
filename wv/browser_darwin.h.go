@@ -55,11 +55,11 @@ func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 }
 
 // AddWindowSubviewWebview 将webview作为子视图添加到窗口中
-func (m *TWebview) AddWindowSubviewWebview(window window.IWindow) {
+func (m *TWebview) AddWindowSubviewWebview(iWindow window.IWindow) {
 	if m.window == nil {
-		m.window = window
+		m.window = iWindow.(window.IDarwinWindow)
 	}
-	m.nsWindow = lcl.PlatformWindow(window.Instance())
+	m.nsWindow = lcl.PlatformWindow(iWindow.Instance())
 	m.isAddNSWindowSubview = true
 	var (
 		nsWindow      = unsafe.Pointer(m.nsWindow)

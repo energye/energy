@@ -39,6 +39,7 @@ type IDarwinWindow interface {
 	NSInstance() unsafe.Pointer
 	NSWindow() lcl.NSWindow
 	DragWindow()
+	ContentViewFrame() types.TRect
 }
 
 type TWindow struct {
