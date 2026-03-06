@@ -136,10 +136,10 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 			m.window.SetBrowserId(m.browserId)
 		}
 	}
-	//m.oldBounds = m.window.BoundsRect()
 	m.window.AddOnWindowStateChange(m.doOnWindowStateChange)
 	m.window.AddOnWindowResize(m.doOnWindowResize)
 	m.window.AddOnWindowShow(m.doOnWindowShow)
+	m.window.AddOnWindowCreate(m.doOnWindowCreate)
 	m.window.AddOnWindowClose(m.doOnWindowClose)
 	m.window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
@@ -239,6 +239,10 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 		return
 	}
 	m.CreateBrowser()
+	m.UpdateBounds()
+}
+
+func (m *TWebview) doOnWindowCreate(sender lcl.IObject) {
 	m.UpdateBounds()
 }
 

@@ -61,11 +61,9 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
-
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	//m._InitEvent()
 }
 
 func (m *TWindow) _BeforeFormShow() {
