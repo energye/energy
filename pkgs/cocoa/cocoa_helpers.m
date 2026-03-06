@@ -57,9 +57,10 @@ const char* getObjectClassName(void* objHandle) {
 }
 
 // 检查对象是否为指定类（或其子类）的实例
-BOOL isObjectOfClass(void* objHandle, const char* className) {
+int isObjectOfClass(void* objHandle, const char* className) {
     if (!objHandle || !className) return NO;
     NSObject* obj = (NSObject*)objHandle;
     Class targetClass = NSClassFromString([NSString stringWithUTF8String:className]);
-    return [obj isKindOfClass:targetClass];
+    BOOL result = [obj isKindOfClass:targetClass];
+    return result ? 1 : 0;
 }

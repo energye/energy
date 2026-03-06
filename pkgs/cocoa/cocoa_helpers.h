@@ -24,7 +24,7 @@ InheritanceChain getObjectInheritanceChain(void* objHandle);
 const char* getObjectClassName(void* objHandle);
 
 // 检查对象是否为指定类（或其子类）的实例
-BOOL isObjectOfClass(void* objHandle, const char* className);
+int isObjectOfClass(void* objHandle, const char* className);
 
 #ifdef __cplusplus
 }
