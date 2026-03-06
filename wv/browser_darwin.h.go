@@ -194,6 +194,14 @@ func (m *TWebview) _WebViewRegisterPerformKeyEquivalentMethod() {
 	C.WebViewRegisterPerformKeyEquivalentMethod(webview)
 }
 
+func (m *TWebview) ConvertPoint(inPoint types.TPoint) (point types.TPoint) {
+	webview := unsafe.Pointer(m.browser.Data())
+	outPoint := C.ConvertPoint(webview, C.float(inPoint.X), C.float(inPoint.Y))
+	point.X = int32(outPoint.x)
+	point.Y = int32(outPoint.y)
+	return
+}
+
 func _BoolToCInt(value bool) C.int {
 	if value {
 		return C.int(1)

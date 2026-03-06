@@ -16,12 +16,14 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/cocoa"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
 	wvTypes "github.com/energye/wv/types/darwin"
+	"strings"
 	"unsafe"
 )
 
@@ -123,6 +125,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
+	m.initDefaultDragEvent()
 	return m
 }
 
@@ -566,3 +569,86 @@ func (m *TWebview) contextMenu(x, y int32) {
 //func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
 //	fmt.Println("OnStopURLSchemeTask")
 //}
+
+func (m *TWebview) initDefaultDragEvent() {
+	leave := false
+	m.browser.SetOnDraggingEntered(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
+		if m.onDragEnter == nil {
+			return cocoa.NSDragOperationNone
+		}
+		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragPasteboard := dragInfo.DraggingPasteboard()
+		nsTypes := dragPasteboard.Types()
+		isPlainText := nsTypes.In("public.utf8-plain-text")
+		isFilename := nsTypes.In("public.file-url")
+		if isPlainText || isFilename {
+			leave = true
+			type_ := DragTypeNo
+			if isPlainText {
+				type_ = DragTypeData
+			} else if isFilename {
+				type_ = DragTypeFile
+			}
+			point := m.ConvertPoint(dragInfo.DraggingLocation())
+			m.onDragEnter(type_, point.X, point.Y)
+			*handle = true
+			return cocoa.NSDragOperationCopy
+		}
+		return cocoa.NSDragOperationNone
+	})
+	m.browser.SetOnDraggingUpdated(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
+		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragPasteboard := dragInfo.DraggingPasteboard()
+		nsTypes := dragPasteboard.Types()
+		isPlainText := nsTypes.In("public.utf8-plain-text")
+		isFilename := nsTypes.In("public.file-url")
+		if isPlainText || isFilename {
+			if m.onDragLeave != nil && leave {
+				leave = false
+				m.onDragLeave()
+			}
+			*handle = true
+			return cocoa.NSDragOperationCopy
+		}
+		return cocoa.NSDragOperationNone
+	})
+	//m.browser.SetOnDraggingEnded(func(sender wv.NSDraggingInfoProtocol, handle *bool) {
+	//	println("SetOnDraggingEnded")
+	//})
+	//m.browser.SetOnDraggingExited(func(sender wv.NSDraggingInfoProtocol, handle *bool) {
+	//	println("SetOnDraggingExited")
+	//})
+	m.browser.SetOnPrepareForDragOperation(func(sender wv.NSDraggingInfoProtocol) bool {
+		return true
+	})
+	m.browser.SetOnPerformDragOperation(func(sender wv.NSDraggingInfoProtocol) bool {
+		if m.onDragOver == nil {
+			return false
+		}
+		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragPasteboard := dragInfo.DraggingPasteboard()
+		nsTypes := dragPasteboard.Types()
+		isPlainText := nsTypes.In("public.utf8-plain-text")
+		isFilename := nsTypes.In("public.file-url")
+		if isPlainText || isFilename {
+			point := m.ConvertPoint(dragInfo.DraggingLocation())
+			data := dragPasteboard.PasteboardData()
+			type_ := DragTypeNo
+			var (
+				plainTextData []byte
+				filenames     []string
+			)
+			if isPlainText {
+				type_ = DragTypeData
+				plainTextData = []byte(strings.Join(data.Texts, "\n"))
+			} else if isFilename {
+				type_ = DragTypeFile
+				filenames = data.FilePaths
+			}
+			dragData := &TDragData{Type: type_, Data: plainTextData, Filenames: filenames}
+			m.onDragOver(dragData, point.X, point.Y)
+			return true
+		}
+		return false
+	})
+}

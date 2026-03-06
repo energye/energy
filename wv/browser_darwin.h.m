@@ -151,11 +151,11 @@ static BOOL Webview_performKeyEquivalent(id self, SEL _cmd, NSEvent *event) {
                 WebViewRedo(self);
                 return YES;
          }
-     }
+    }
     if (selector) {
         // 在UI线程运行
         //dispatch_async(dispatch_get_main_queue(), ^{
-            //
+            // ...
         //});
         if (selector && [self respondsToSelector:selector]) {
             ((void (*)(id, SEL, id))objc_msgSend)(self, selector, self);
@@ -211,4 +211,15 @@ void WebViewEvaluateScriptCallback(void* nsWebview, int callbackID, const char* 
     dispatch_async(dispatch_get_main_queue(), ^{
         [webview evaluateJavaScript:script completionHandler:completionHandler];
     });
+}
+
+NSPoint ConvertPoint(void* nsWebview, float x, float y) {
+	WKWebView* webview = (WKWebView*)nsWebview;
+    if (!webview) {
+        NSLog(@"ConvertPoint webview is nil");
+        return NSMakePoint(0, 0);
+    }
+    NSPoint inPoint = NSMakePoint(x, y);
+    NSPoint pointInView = [webview convertPoint:inPoint fromView:nil];
+    return pointInView;
 }

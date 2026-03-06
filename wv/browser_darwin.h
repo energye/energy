@@ -28,6 +28,8 @@ void WebViewSelectAll(void* nsWebview);
 
 void WebViewRegisterPerformKeyEquivalentMethod(void* nsWebview);
 
+NSPoint ConvertPoint(void* nsWebview, float x, float y);
+
 #ifdef __cplusplus
 }
 #endif
