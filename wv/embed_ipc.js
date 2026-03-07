@@ -26,24 +26,6 @@
 
     // Energy
     class Energy {
-        // js ipc.on event listener
-        // @key {string} event name
-        // @value {Listener} listener object
-        eventListeners;
-
-        // js ipc.emit callbacks
-        // @key {number} executionID
-        // @value {function} callback
-        emitCallbacks;
-
-        // js ipc.emit callback executionID, global accumulation
-        executionID;
-
-        //drag
-        drag;
-
-        env = {};
-
         /**
          * js process message
          * @param {string} message json
@@ -88,8 +70,15 @@
          * @memberof Energy
          */
         constructor() {
+            // js ipc.on event listener
+            // @key {string} event name
+            // @value {Listener} listener object
             this.eventListeners = new Map();
+            // js ipc.emit callbacks
+            // @key {number} executionID
+            // @value {function} callback
             this.emitCallbacks = new Map();
+            this.env = {};
             this.executionID = 0;
 
             // process message
@@ -321,11 +310,10 @@
     }
 
     class Drag {
-        shouldDrag = false;
-        cssDragProperty = "--webkit-app-region";
-        cssDragValue = "drag";
-
         constructor() {
+            this.shouldDrag = false;
+            this.cssDragProperty = "--webkit-app-region";
+            this.cssDragValue = "drag";
         }
 
         hitTest(e) {
