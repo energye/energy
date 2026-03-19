@@ -27,7 +27,6 @@ English
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
-### 我正在参加 Gitee 2025 最受欢迎的开源软件投票活动，快来给我投票吧！https://gitee.com/activity/2025opensource?ident=I9NTFU
 
 ### [Project Introduction](https://energye.github.io/en/course/what-is-energy)
 
@@ -46,6 +45,10 @@ English
 - Front-end technology: Support mainstream frameworks, such as Vue, React, Angular or pure HTML+CSS+JS.
 - Event driven: High performance event driven communication based on IPC allowing intercommunication between Go and Web.
 - Resource loading: You can either read local resources or resources built into execution files either with or without HTTP services.
+
+### ENERGY New 3.0
+- [ENERGY GUI Designer](https://github.com/energye/designer)
+
 
 ### Built-in dependency&integration
 

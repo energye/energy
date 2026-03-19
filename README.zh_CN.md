@@ -27,8 +27,6 @@
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
-### 我正在参加 Gitee 2025 最受欢迎的开源软件投票活动，快来给我投票吧！https://gitee.com/activity/2025opensource?ident=I9NTFU
-
 ### [项目简介](https://energye.github.io/course/what-is-energy)
 
 > Energy 是 Go 基于 [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) 和 [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework) 开发的 GUI 框架, 用于开发Windows、MacOS 和 Linux 跨平台桌面应用.
@@ -49,6 +47,10 @@
 > - 前端技术: 支持主流前端框架。例如：Vue、React、Angular 和 原生HTML+CSS+JS等
 > - 事件驱动: 高性能事件驱动, 基于IPC通信，实现Go和Web端迅捷调用及数据交互
 > - 资源加载: 可无需http服务支撑，直接读取本地资源或内置到执行文件的资源, 也支持http服务加载资源
+
+
+### ENERGY 新 3.0
+- [ENERGY GUI Designer](https://github.com/energye/designer)
 
 ### 内置依赖&集成
 

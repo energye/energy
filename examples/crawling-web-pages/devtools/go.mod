@@ -1,6 +1,8 @@
 module devtools
 
-go 1.18
+go 1.21
+
+toolchain go1.24.6
 
 require (
 	github.com/energye/energy/v2 v2.4.5
