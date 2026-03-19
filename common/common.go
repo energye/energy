@@ -209,9 +209,9 @@ func ValueToInt(v interface{}) int {
 	case string:
 		return int(StrToInt64(v.(string)))
 	case float32:
-		return int(math.Round(float64(StrToFloat32(v.(string)))))
+		return int(math.Round(float64(v.(float32))))
 	case float64:
-		return int(math.Round(StrToFloat64(v.(string))))
+		return int(math.Round(v.(float64)))
 	case bool:
 		if v.(bool) {
 			return 1
