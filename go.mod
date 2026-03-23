@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/energye/cef v1.0.1
 	github.com/energye/lcl v1.0.1
 	github.com/energye/wv v1.0.1
 )

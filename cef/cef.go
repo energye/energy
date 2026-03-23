@@ -9,3 +9,7 @@
 //----------------------------------------
 
 package cef
+
+import (
+	_ "github.com/energye/cef/cef"
+)
