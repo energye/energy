@@ -36,6 +36,11 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 		//case messages.PBT_APMRESUMESUSPEND:
 		//case messages.PBT_POWERSETTINGCHANGE:
 		//}
+	case messages.WM_MOVE, messages.WM_MOVING:
+		// webview2 browser.NotifyParentWindowPositionChanged()
+		for _, fn := range m.onWindowResizeList {
+			fn(m)
+		}
 	}
 	if m.options != nil && m.options.Frameless {
 		switch message {

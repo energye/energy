@@ -15,7 +15,6 @@ package wv
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -211,6 +210,7 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
+	m.browser.NotifyParentWindowPositionChanged()
 }
 
 // doOnWindowShow 是窗口显示事件的回调函数
