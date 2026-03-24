@@ -13,6 +13,7 @@
 package window
 
 import (
+	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
@@ -41,6 +42,12 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 		for _, fn := range m.onWindowResizeList {
 			fn(m)
 		}
+	//case messages.WM_KILLFOCUS:
+	//case messages.WM_SETFOCUS:
+	//case messages.WM_DPICHANGED:
+	case messages.WM_ENTERSIZEMOVE:
+		// window set focus
+		win32.SetFocus(hwnd)
 	}
 	if m.options != nil && m.options.Frameless {
 		switch message {
@@ -59,7 +66,6 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 			if wParam != 0 {
 				// Content overflow screen issue when maximizing borderless windows
 				// See: https://github.com/MicrosoftEdge/WebView2Feedback/issues/2549
-				//isMinimize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MINIMIZE != 0
 				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
 				if isMaximize {
 					rect := (*types.TRect)(unsafe.Pointer(lParam))
@@ -78,7 +84,7 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 			}
 		}
 	}
-	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
+	return win.CallWindowProc(m.oldWndPrc, hwnd, message, wParam, lParam)
 }
 
 func (m *TWindow) _HookWndProcMessage() {

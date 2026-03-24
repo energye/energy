@@ -15,7 +15,14 @@ package win32
 import (
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
+	"syscall"
 	"unsafe"
+)
+
+var (
+	user32dll = syscall.NewLazyDLL("user32.dll")
+	_SetFocus = user32dll.NewProc("SetFocus")
+	_GetFocus = user32dll.NewProc("GetFocus")
 )
 
 // SetWindowAlpha 设置窗口整体透明度
@@ -125,4 +132,15 @@ func SetBackgroundColor(hWnd types.HWND, r, g, b uint8) bool {
 	brush := win.CreateSolidBrush(r, g, b)
 	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, brush)
 	return ret
+}
+
+func SetFocus(hWnd types.HWND) types.HWND {
+	ret, _, _ := _SetFocus.Call(
+		uintptr(hWnd))
+	return types.HWND(ret)
+}
+
+func GetFocus() types.HWND {
+	ret, _, _ := _GetFocus.Call()
+	return types.HWND(ret)
 }
