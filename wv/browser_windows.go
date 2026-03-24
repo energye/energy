@@ -469,7 +469,6 @@ func (m *TWebview) initDefaultEvent() {
 					// ipc on, emit event
 					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
-					fmt.Println("m.window != nil", m.window != nil)
 					// ipc drag window
 					if m.window != nil {
 						m.drag(pMessage)
