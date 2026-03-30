@@ -10,16 +10,25 @@
 
 package pack
 
-var (
-	// Identity app id
-	//  appName + appId + arch
-	//  go build -ldflags "-X github.com/energye/energy/v3/application/pack.Identity=app_com.energy.app_amd64"
-	Identity string
+import (
+	"encoding/json"
 )
 
-//type Info struct {
-//	Name    string `json:"name"`
-//	Id      string `json:"id"`
-//	Version string `json:"version"`
-//	Arch    string `json:"arch"`
-//}
+var (
+	// JSON app id
+	//  appName + appId + version + arch
+	//  go build -ldflags "-X github.com/energye/energy/v3/application/pack.JSON="{}""
+	JSON = "{}"
+	Info = &info{}
+)
+
+type info struct {
+	Name    string `json:"name"`
+	Id      string `json:"id"`
+	Version string `json:"version"`
+	Arch    string `json:"arch"`
+}
+
+func init() {
+	_ = json.Unmarshal([]byte(JSON), &Info)
+}
