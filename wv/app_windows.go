@@ -78,12 +78,15 @@ func NewApplication() *Application {
 			IWVLoader: NewWVLoader(),
 		}
 		localAppDataDir := appLocalAppData()
-
-		if pack.Info.Id != "" {
-			localAppDataDir = filepath.Join(localAppDataDir, pack.Info.Id)
+		if pack.IsDev {
+			localAppDataDir = filepath.Join(localAppDataDir, "ENERGY.DEV")
 		} else {
-			fileName := strings.TrimSuffix(exec.Name, filepath.Ext(exec.Name))
-			localAppDataDir = filepath.Join(localAppDataDir, "com.energy."+fileName)
+			if pack.Info.Id != "" {
+				localAppDataDir = filepath.Join(localAppDataDir, pack.Info.Id)
+			} else {
+				fileName := strings.TrimSuffix(exec.Name, filepath.Ext(exec.Name))
+				localAppDataDir = filepath.Join(localAppDataDir, "com.energy."+fileName)
+			}
 		}
 		gApplication.SetUserDataFolder(filepath.Join(localAppDataDir, "WebView2"))
 		dir, _ := filepath.Split(libname.LibName)
