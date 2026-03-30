@@ -15,13 +15,16 @@ package wv
 import (
 	"fmt"
 	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/application/pack"
 	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool/exec"
 	wv "github.com/energye/wv/windows"
+	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 // application
@@ -55,6 +58,18 @@ func NewWVLoader() wv.IWVLoader {
 	return gGlobalWVLoader
 }
 
+func appLocalAppData() string {
+	localAppData := os.Getenv("LOCALAPPDATA")
+	if localAppData != "" {
+		return localAppData
+	}
+	localAppData = os.Getenv("USERPROFILE")
+	if localAppData != "" {
+		return filepath.Join(localAppData, "AppData", "Local")
+	}
+	return os.TempDir()
+}
+
 // NewApplication 创建并返回单例Application实例
 // 如果全局Application实例尚未初始化，则进行初始化设置
 func NewApplication() *Application {
@@ -62,7 +77,14 @@ func NewApplication() *Application {
 		gApplication = &Application{
 			IWVLoader: NewWVLoader(),
 		}
-		gApplication.SetUserDataFolder(filepath.Join(exec.AppDir(), "energyCache"))
+		localAppData := appLocalAppData()
+		if pack.Identity != "" {
+			localAppData = filepath.Join(localAppData, pack.Identity)
+		} else {
+			fileName := strings.TrimSuffix(exec.Name, filepath.Ext(exec.Name))
+			localAppData = filepath.Join(localAppData, "com.energy."+fileName)
+		}
+		gApplication.SetUserDataFolder(filepath.Join(localAppData, "WebView2"))
 		dir, _ := filepath.Split(libname.LibName)
 		wv2Loader := filepath.Join(dir, gWebView2Loader)
 		gApplication.SetLoaderDllPath(wv2Loader)
