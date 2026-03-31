@@ -19,7 +19,7 @@ var (
 	//  appName + appId + version + arch
 	//  go build -ldflags "-X github.com/energye/energy/v3/application/pack.JSON="{}""
 	JSON = "{}"
-	Info = &info{}
+	Info = info{}
 )
 
 type info struct {
