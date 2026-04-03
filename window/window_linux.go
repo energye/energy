@@ -117,6 +117,8 @@ func (m *TWindow) getGtkWidget() {
 	//}
 }
 
+// InternalBeforeFormCreate 在表单创建之前执行的内部初始化方法
+// 该方法在 TWindow 实例化过程中被调用
 func (m *TWindow) InternalBeforeFormCreate() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
