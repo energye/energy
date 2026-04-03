@@ -75,7 +75,7 @@ func (m *TWindow) getGtkWidget() {
 				m.gtkWindowBox = gtk3.ToBox(data)
 			} else if widgetName == "GtkMenuBar" { // window > level 2
 				m.gtkWindowMenuBar = gtk3.ToMenuBar(data)
-			} else if widgetName == "GtkScrolledWindow" { // window > level 2
+			} else if widgetName == "GtkScrolledWindow" || widgetName == "LCLGtkScrolledWindow" { // window > level 2
 				m.gtkWindowScrolledWindow = gtk3.ToScrolledWindow(data)
 			} else if widgetName == "GtkLayout" { // window > level 3
 				m.gtkWindowLayout = gtk3.ToLayout(data)
