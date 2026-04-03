@@ -117,7 +117,7 @@ func (m *TWindow) getGtkWidget() {
 	//}
 }
 
-func (m *TWindow) _BeforeFormCreate() {
+func (m *TWindow) InternalBeforeFormCreate() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
 	m.gtkWindow = gtk3.ToGtkWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
 	m.getGtkWidget()

@@ -177,7 +177,6 @@ func (m *TWindow) FormCreate(sender lcl.IObject) {
 	}
 	m.TEngForm.SetOnResize(m.doOnResize)
 	m.TEngForm.SetOnWindowStateChange(m.doOnWindowStateChange)
-	m._BeforeFormCreate()
 	for _, fn := range m.onWindowCreateList {
 		fn(sender)
 	}

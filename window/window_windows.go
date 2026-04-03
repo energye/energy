@@ -40,7 +40,7 @@ func (m *TWindow) CreateParams(params *types.TCreateParams) {
 	}
 }
 
-func (m *TWindow) _BeforeFormCreate() {
+func (m *TWindow) InternalBeforeFormCreate() {
 }
 
 func (m *TWindow) _BeforeFormShow() {
