@@ -260,7 +260,7 @@ func (m *TTrayMenuItem) SetImage(imageName string) *TTrayMenuItem {
 
 func (m *TTrayMenuItem) SetBitmap(image []byte) *TTrayMenuItem {
 	if image == nil {
-		return
+		return m
 	}
 	m.item.SetIcon(m.tray(), image)
 	return m
@@ -291,12 +291,12 @@ func (m *TTrayMenuItem) SetRadio(radio bool) *TTrayMenuItem {
 }
 
 func (m *TTrayMenuItem) SetEnabled(enabled bool) *TTrayMenuItem {
-	m.item.SetEnabled(m.tray(), enabled)
+	m.item.SetEnable(m.tray(), enabled)
 	return m
 }
 
 func (m *TTrayMenuItem) Enabled() bool {
-	return m.item.Enabled(m.tray())
+	return m.item.Enable()
 }
 
 func (m *TTrayMenuItem) Checked() bool {
