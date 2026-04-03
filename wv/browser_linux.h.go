@@ -127,7 +127,7 @@ func (m *TWebview) UpdateBounds() {
 			case types.AlTop:
 				x, y, w, h = 0, 0, windowBoundsRect.Width(), webviewBounds.Height()
 			case types.AlRight:
-				x, y, w, h = windowBoundsRect.Width()-webviewBounds.Width(), 0, webviewBounds.Width(), windowBoundsRect.Height()
+				x, y, w, h = webviewBounds.Left, 0, webviewBounds.Width()+(windowBoundsRect.Width()-webviewBounds.Width()), windowBoundsRect.Height()
 			case types.AlBottom:
 				x, y, w, h = 0, windowBoundsRect.Height()-webviewBounds.Height(), windowBoundsRect.Width(), webviewBounds.Height()
 			}
