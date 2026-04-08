@@ -41,7 +41,7 @@ static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
 */
 import "C"
 import (
-	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"sync"
 )
 

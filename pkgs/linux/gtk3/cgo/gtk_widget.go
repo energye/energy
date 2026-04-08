@@ -6,7 +6,7 @@ package cgo
 import "C"
 import (
 	"errors"
-	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
@@ -38,7 +38,7 @@ func wrapWidget(obj *Object) *Widget {
 	return &Widget{InitiallyUnowned{obj}}
 }
 
-func ToWidget(p unsafe.Pointer) *Widget {
+func AsWidget(p unsafe.Pointer) IWidget {
 	return &Widget{InitiallyUnowned{ToGoObject(p)}}
 }
 

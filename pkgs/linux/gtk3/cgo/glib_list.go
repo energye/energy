@@ -5,7 +5,7 @@ package cgo
 // #include "glib.go.h"
 import "C"
 import (
-	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
@@ -159,8 +159,9 @@ func (v *List) Data() any {
 // Foreach acts the same as g_list_foreach().
 // No user_data argument is implemented because of Go clojure capabilities.
 func (v *List) Foreach(fn func(item any)) {
-	for l := v; l != nil; l = l.Next() {
-		fn(l.Data())
+	var l IList
+	for l = v; l != nil; l = l.Next() {
+		fn(l.(*List).Data())
 	}
 }
 
