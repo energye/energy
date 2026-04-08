@@ -12,7 +12,7 @@ type ScrolledWindow struct {
 	Bin
 }
 
-func ToScrolledWindow(p unsafe.Pointer) *ScrolledWindow {
+func AsScrolledWindow(p unsafe.Pointer) *ScrolledWindow {
 	return &ScrolledWindow{Bin{Container{Widget{InitiallyUnowned{ToGoObject(p)}}}}}
 }
 

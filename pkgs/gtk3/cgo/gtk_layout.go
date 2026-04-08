@@ -17,7 +17,7 @@ type Layout struct {
 	Container
 }
 
-func ToLayout(p unsafe.Pointer) *Layout {
+func AsLayout(p unsafe.Pointer) ILayout {
 	return &Layout{Container{Widget{InitiallyUnowned{ToGoObject(p)}}}}
 }
 

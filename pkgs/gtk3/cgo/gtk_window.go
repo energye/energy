@@ -32,7 +32,7 @@ func NewWindow(t WindowType) (*Window, error) {
 	return wrapWindow(obj), nil
 }
 
-func ToGtkWindow(gtkWindow unsafe.Pointer) *Window {
+func AsWindow(gtkWindow unsafe.Pointer) IWindow {
 	obj := ToGoObject(gtkWindow)
 	window := new(Window)
 	window.Object = obj
@@ -393,8 +393,9 @@ func (v *Window) GetSize() (width, height int) {
 }
 
 // GetTitle is a wrapper around gtk_window_get_title().
-func (v *Window) GetTitle() (string, error) {
-	return stringReturn(C.gtk_window_get_title(v.native()))
+func (v *Window) GetTitle() string {
+	title, _ := stringReturn(C.gtk_window_get_title(v.native()))
+	return title
 }
 
 // GetTransientFor is a wrapper around gtk_window_get_transient_for().

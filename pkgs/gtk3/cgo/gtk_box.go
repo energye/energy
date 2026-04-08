@@ -15,7 +15,7 @@ type Box struct {
 	Container
 }
 
-func ToBox(gtkBox unsafe.Pointer) *Box {
+func AsBox(gtkBox unsafe.Pointer) IBox {
 	obj := ToGoObject(gtkBox)
 	m := new(Box)
 	m.Object = obj

@@ -1,0 +1,46 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+//go:build !cgo
+
+package gtk3
+
+import (
+	"github.com/energye/energy/v3/pkgs/gtk3/nocgo"
+	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	"unsafe"
+)
+
+func AsScrolledWindow(ptr unsafe.Pointer) IScrolledWindow {
+	return nocgo.AsScrolledWindow(ptr)
+}
+
+func AsWindow(ptr unsafe.Pointer) IWindow {
+	return nocgo.AsWindow(ptr)
+}
+func AsContainer(ptr unsafe.Pointer) IContainer {
+	return nocgo.AsContainer(ptr)
+}
+
+func AsBox(ptr unsafe.Pointer) IBox {
+	return nocgo.AsBox(ptr)
+}
+
+func AsMenuBar(ptr unsafe.Pointer) IMenuBar {
+	return nocgo.AsMenuBar(ptr)
+}
+
+func AsLayout(ptr unsafe.Pointer) ILayout {
+	return nocgo.AsLayout(ptr)
+}
+
+func NewCssProvider() ICssProvider {
+	return nocgo.NewCssProvider()
+}

@@ -17,7 +17,7 @@ type MenuBar struct {
 	MenuShell
 }
 
-func ToMenuBar(p unsafe.Pointer) *MenuBar {
+func AsMenuBar(p unsafe.Pointer) IMenuBar {
 	m := new(MenuBar)
 	m.Object = ToGoObject(p)
 	return m
@@ -41,13 +41,13 @@ func wrapMenuBar(obj *Object) *MenuBar {
 }
 
 // NewMenuBar is a wrapper around gtk_menu_bar_new().
-func NewMenuBar() (*MenuBar, error) {
+func NewMenuBar() IMenuBar {
 	c := C.gtk_menu_bar_new()
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapMenuBar(obj), nil
+	return wrapMenuBar(obj)
 }
 
 // ToggleButton is a representation of GTK's GtkToggleButton.

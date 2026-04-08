@@ -7,6 +7,7 @@ package cgo
 import "C"
 import (
 	"errors"
+	. "github.com/energye/energy/v3/pkgs/gtk3/types"
 	"unsafe"
 )
 
@@ -40,7 +41,7 @@ func wrapCssProvider(obj *Object) *CssProvider {
 }
 
 // CssProviderNew is a wrapper around gtk_css_provider_new().
-func NewCssProvider() *CssProvider {
+func NewCssProvider() ICssProvider {
 	c := C.gtk_css_provider_new()
 	if c == nil {
 		return nil
@@ -73,12 +74,12 @@ func (v *CssProvider) LoadFromData(data string) error {
 }
 
 // ToString is a wrapper around gtk_css_provider_to_string().
-func (v *CssProvider) ToString() (string, error) {
+func (v *CssProvider) ToString() string {
 	c := C.gtk_css_provider_to_string(v.native())
 	if c == nil {
-		return "", nilPtrErr
+		return ""
 	}
-	return C.GoString(c), nil
+	return C.GoString(c)
 }
 
 // CssProviderGetNamed is a wrapper around gtk_css_provider_get_named().
