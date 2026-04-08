@@ -20,6 +20,10 @@ func AsSelectionData(pointer unsafe.Pointer) ISelectionData {
 	return &SelectionData{GtkSelectionData: p}
 }
 
+func (v *SelectionData) Instance() uintptr {
+	return uintptr(unsafe.Pointer(v.GtkSelectionData))
+}
+
 // native returns a pointer to the underlying GtkSelectionData.
 func (v *SelectionData) native() *C.GtkSelectionData {
 	if v == nil {

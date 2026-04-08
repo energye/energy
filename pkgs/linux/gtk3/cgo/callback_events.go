@@ -171,9 +171,9 @@ func MakeDragDataReceivedEvent(cb TDragDataReceivedEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			args := ctx.input.([]any)
-			context := ToDragContext(args[0].(unsafePointer))
+			context := AsDragContext(args[0].(unsafePointer))
 			x, y := args[1].(int), args[2].(int)
-			data := ToSelectionData(args[3].(unsafe.Pointer))
+			data := AsSelectionData(args[3].(unsafe.Pointer))
 			info := args[4].(uint)
 			time := args[5].(uint)
 			cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, data, info, time)
@@ -185,7 +185,7 @@ func MakeDragDropEvent(cb TDragDropEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			args := ctx.input.([]any)
-			context := ToDragContext(args[0].(unsafePointer))
+			context := AsDragContext(args[0].(unsafePointer))
 			x, y := args[1].(int), args[2].(int)
 			time := args[3].(uint)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
@@ -198,7 +198,7 @@ func MakeDragMotionEvent(cb TDragMotionEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			args := ctx.input.([]any)
-			context := ToDragContext(args[0].(unsafePointer))
+			context := AsDragContext(args[0].(unsafePointer))
 			x, y := args[1].(int), args[2].(int)
 			time := args[3].(uint)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), context, x, y, time)
@@ -211,7 +211,7 @@ func MakeDragLeaveEvent(cb TDragLeaveEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			args := ctx.input.([]any)
-			context := ToDragContext(args[0].(unsafePointer))
+			context := AsDragContext(args[0].(unsafePointer))
 			time := args[1].(uint)
 			cb(wrapWidget(ToGoObject(ctx.widget)), context, time)
 		},
@@ -221,7 +221,7 @@ func MakeDragLeaveEvent(cb TDragLeaveEvent) *Callback {
 func MakeDragDataDeleteOrBeginOrEndEvent(cb TDragDataDeleteOrBeginOrEndEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
-			context := ToDragContext(ctx.input.(unsafePointer))
+			context := AsDragContext(ctx.input.(unsafePointer))
 			cb(wrapWidget(ToGoObject(ctx.widget)), context)
 		},
 	}
