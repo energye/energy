@@ -10,13 +10,18 @@
 
 package nocgo
 
-import "github.com/energye/lcl/api/imports"
+import (
+	"github.com/energye/energy/v3/pkgs/linux"
+	"github.com/energye/lcl/api/imports"
+	"unsafe"
+)
 
-var gtk3 *dnyLibrary
+var ptrSize = unsafe.Sizeof(uintptr(0))
+
+var gtk3 *linux.DnyLibrary
 
 func init() {
-	gtk3 = libLoad(libgtk3)
-	setLibClose(gtk3)
+	gtk3 = linux.LibLoad(linux.Libgtk3)
 	gtk3.Table = []*imports.Table{
 		// window
 		imports.NewTable("gtk_window_new", 0),
@@ -60,8 +65,18 @@ func init() {
 		imports.NewTable("gtk_style_context_add_class", 0),
 		imports.NewTable("gtk_style_context_remove_class", 0),
 		imports.NewTable("gtk_style_context_add_provider", 0),
+		// SelectionData
+		imports.NewTable("gtk_selection_data_get_length", 0),
+		imports.NewTable("gtk_selection_data_get_data_with_length", 0),
+		imports.NewTable("gtk_selection_data_set", 0),
+		imports.NewTable("gtk_selection_data_get_text", 0),
+		imports.NewTable("gtk_selection_data_set_text", 0),
+		imports.NewTable("gtk_selection_data_set_uris", 0),
+		imports.NewTable("gtk_selection_data_get_uris", 0),
+		imports.NewTable("gtk_selection_data_free", 0),
 	}
-	gtk3.mapperIndex()
+	gtk3.SetLibClose()
+	gtk3.MapperIndex()
 }
 
 func ToCBool(b bool) uintptr {

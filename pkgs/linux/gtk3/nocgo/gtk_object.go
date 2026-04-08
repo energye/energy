@@ -11,7 +11,9 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/pkgs/linux"
 	"github.com/energye/lcl/api/imports"
+	"reflect"
 	"unsafe"
 )
 
@@ -37,14 +39,36 @@ func (m *Object) Unref() {
 	gobject2_0.SysCall("g_object_unref", m.Instance())
 }
 
-var gobject2_0 *dnyLibrary
+func ucharString(guchar uintptr) string {
+	// Seek and find the string length.
+	var strlen int
+	for ptr := guchar; ptr != 0; ptr = nextguchar(ptr) {
+		strlen++
+	}
+	// Array of unsigned char means GoString is unavailable, so maybe this is
+	// fine.
+	var data []byte
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&data))
+	sliceHeader.Len = strlen
+	sliceHeader.Cap = strlen
+	sliceHeader.Data = guchar
+
+	// Return a copy of the string.
+	return string(data)
+}
+
+func nextguchar(guchar uintptr) uintptr {
+	return *(*uintptr)(unsafe.Pointer(guchar + 1))
+}
+
+var gobject2_0 *linux.DnyLibrary
 
 func init() {
-	gobject2_0 = libLoad(libgobject2_0)
-	setLibClose(gobject2_0)
+	gobject2_0 = linux.LibLoad(linux.Libgobject2_0)
 	gobject2_0.Table = []*imports.Table{
 		imports.NewTable("g_object_ref", 0),
 		imports.NewTable("g_object_unref", 0),
 	}
-	gobject2_0.mapperIndex()
+	gobject2_0.SetLibClose()
+	gobject2_0.MapperIndex()
 }

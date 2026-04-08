@@ -45,6 +45,18 @@ func AsLayout(ptr unsafe.Pointer) ILayout {
 	return cgo.AsLayout(ptr)
 }
 
+func AsDragContext(ptr unsafe.Pointer) IDragContext {
+	return cgo.AsDragContext(ptr)
+}
+
+func AsAtom(ptr unsafe.Pointer) IAtom {
+	return cgo.AsAtom(ptr)
+}
+
+func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
+	return cgo.GdkAtomIntern(atomName, onlyIfExists)
+}
+
 func NewCssProvider() ICssProvider {
 	return cgo.NewCssProvider()
 }

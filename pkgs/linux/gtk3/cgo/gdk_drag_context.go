@@ -5,14 +5,17 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gdk.go.h"
 import "C"
-import "unsafe"
+import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"unsafe"
+)
 
 // DragContext is a representation of GDK's GdkDragContext.
 type DragContext struct {
 	*Object
 }
 
-func ToDragContext(p unsafe.Pointer) *DragContext {
+func AsDragContext(p unsafe.Pointer) IDragContext {
 	obj := ToGoObject(p)
 	return &DragContext{obj}
 }
@@ -31,7 +34,7 @@ func (v *DragContext) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *DragContext) ListTargets() *List {
+func (v *DragContext) ListTargets() IList {
 	clist := C.gdk_drag_context_list_targets(v.native())
 	if clist == nil {
 		return nil
@@ -43,6 +46,6 @@ func (v *DragContext) Finish(success bool, del bool, time uint) {
 	C.gtk_drag_finish(v.native(), CBool(success), CBool(del), C.uint(time))
 }
 
-func (v *DragContext) DragStatus(actions DragAction, time uint) {
+func (v *DragContext) Status(actions DragAction, time uint) {
 	C.gdk_drag_status(v.native(), C.GdkDragAction(actions), C.uint(time))
 }

@@ -5,11 +5,12 @@ package cgo
 // #include "gdk.go.h"
 import "C"
 import "unsafe"
+import "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 
 // Atom is a representation of GDK's GdkAtom.
-type Atom uintptr
+type Atom types.TAtom
 
-func ToAtom(v unsafe.Pointer) Atom {
+func AsAtom(v unsafe.Pointer) Atom {
 	return Atom(v)
 }
 
@@ -31,23 +32,3 @@ func GdkAtomIntern(atomName string, onlyIfExists bool) Atom {
 	c := C.gdk_atom_intern((*C.gchar)(cstr), CBool(onlyIfExists))
 	return Atom(uintptr(unsafe.Pointer(c)))
 }
-
-// Selections
-const (
-	SELECTION_PRIMARY       Atom = 1
-	SELECTION_SECONDARY     Atom = 2
-	SELECTION_CLIPBOARD     Atom = 69
-	TARGET_BITMAP           Atom = 5
-	TARGET_COLORMAP         Atom = 7
-	TARGET_DRAWABLE         Atom = 17
-	TARGET_PIXMAP           Atom = 20
-	TARGET_STRING           Atom = 31
-	SELECTION_TYPE_ATOM     Atom = 4
-	SELECTION_TYPE_BITMAP   Atom = 5
-	SELECTION_TYPE_COLORMAP Atom = 7
-	SELECTION_TYPE_DRAWABLE Atom = 17
-	SELECTION_TYPE_INTEGER  Atom = 19
-	SELECTION_TYPE_PIXMAP   Atom = 20
-	SELECTION_TYPE_WINDOW   Atom = 33
-	SELECTION_TYPE_STRING   Atom = 31
-)

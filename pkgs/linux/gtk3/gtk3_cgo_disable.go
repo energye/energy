@@ -44,6 +44,17 @@ func AsLayout(ptr unsafe.Pointer) ILayout {
 func AsWidget(ptr unsafe.Pointer) IWidget {
 	return nocgo.AsWidget(ptr)
 }
+func AsDragContext(ptr unsafe.Pointer) IDragContext {
+	return nocgo.AsDragContext(ptr)
+}
+
+func AsAtom(ptr unsafe.Pointer) IAtom {
+	return nocgo.AsAtom(ptr)
+}
+
+func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
+	return nocgo.GdkAtomIntern(atomName, onlyIfExists)
+}
 
 func NewCssProvider() ICssProvider {
 	return nocgo.NewCssProvider()

@@ -13,6 +13,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/pkgs/linux"
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/api/imports"
 	"unsafe"
@@ -47,18 +48,77 @@ func CStr(str string) uintptr {
 	return api.PasStr(str)
 }
 
-func GErrorFree(errPtr uintptr) {
-	glib2_0.SysCall("g_error_free", errPtr)
+func GErrorFree(ptr uintptr) {
+	glib2_0.SysCall("g_error_free", ptr)
 }
 
-var glib2_0 *dnyLibrary
+func GFree(ptr uintptr) {
+	glib2_0.SysCall("g_free", ptr)
+}
+
+func GMalloc(size uintptr) uintptr {
+	r := glib2_0.SysCall("g_malloc", size)
+	return r
+}
+
+// makeCStringArray 构建char**，返回 base 指针和每个字符串指针列表
+func makeCStringArray(strs []string) (base uintptr, items []uintptr) {
+	count := len(strs)
+	arraySize := uintptr(count+1) * ptrSize
+	base = GMalloc(arraySize)
+	if base == 0 {
+		return 0, nil
+	}
+	items = make([]uintptr, count)
+	for i, s := range strs {
+		cstr := CStr(s)
+		items[i] = cstr
+		ptrAddr := base + uintptr(i)*ptrSize
+		*(*unsafe.Pointer)(unsafe.Pointer(ptrAddr)) = unsafe.Pointer(cstr)
+	}
+
+	nullAddr := base + uintptr(count)*ptrSize
+	*(*unsafe.Pointer)(unsafe.Pointer(nullAddr)) = nil
+	return base, items
+}
+
+// freeCStringArray 释放 base 和所有字符串
+func freeCStringArray(base uintptr, items []uintptr) {
+	for _, p := range items {
+		if p != 0 {
+			GFree(p)
+		}
+	}
+	if base != 0 {
+		GFree(base)
+	}
+}
+
+func toGoStringArray(cArrPtr uintptr) []string {
+	if cArrPtr == 0 {
+		return nil
+	}
+	var array []string
+	for i := 0; ; i++ {
+		ptr := *(*uintptr)(unsafe.Pointer(cArrPtr + uintptr(i)*ptrSize))
+		if ptr == 0 {
+			break
+		}
+		s := GoStr(ptr)
+		array = append(array, s)
+	}
+	return array
+}
+
+var glib2_0 *linux.DnyLibrary
 
 func init() {
-	glib2_0 = libLoad(libglib2_0)
-	setLibClose(glib2_0)
+	glib2_0 = linux.LibLoad(linux.Libglib2_0)
 	glib2_0.Table = []*imports.Table{
 		imports.NewTable("strlen", 0),
 		imports.NewTable("g_error_free", 0),
+		imports.NewTable("g_free", 0),
+		imports.NewTable("g_malloc", 0),
 		// list
 		imports.NewTable("g_list_append", 0),
 		imports.NewTable("g_list_prepend", 0),
@@ -69,5 +129,6 @@ func init() {
 		imports.NewTable("g_list_last", 0),
 		imports.NewTable("g_list_free", 0),
 	}
-	glib2_0.mapperIndex()
+	glib2_0.SetLibClose()
+	glib2_0.MapperIndex()
 }

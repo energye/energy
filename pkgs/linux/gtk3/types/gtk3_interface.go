@@ -132,3 +132,26 @@ type IRectangle interface {
 	GetHeight() int
 	SetHeight(height int)
 }
+
+type IDragContext interface {
+	IObject
+	ListTargets() IList
+	Finish(success bool, del bool, time uint)
+	Status(actions DragAction, time uint)
+}
+
+type ISelectionData interface {
+	Instance() uintptr
+	GetLength() int
+	GetData() []byte
+	SetData(atom TAtom, data []byte)
+	GetText() string
+	SetText(text string) bool
+	SetURIs(uris []string) bool
+	GetURIs() []string
+	Free()
+}
+
+type IAtom interface {
+	Name() string
+}

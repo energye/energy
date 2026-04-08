@@ -5,6 +5,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"reflect"
 	"runtime"
 	"unsafe"
@@ -14,7 +15,7 @@ type SelectionData struct {
 	GtkSelectionData *C.GtkSelectionData
 }
 
-func ToSelectionData(pointer unsafe.Pointer) *SelectionData {
+func AsSelectionData(pointer unsafe.Pointer) ISelectionData {
 	p := (*C.GtkSelectionData)(pointer)
 	return &SelectionData{GtkSelectionData: p}
 }
@@ -58,7 +59,7 @@ func (v *SelectionData) GetData() []byte {
 }
 
 // SetData is a wrapper around gtk_selection_data_set_data_with_length().
-func (v *SelectionData) SetData(atom Atom, data []byte) {
+func (v *SelectionData) SetData(atom TAtom, data []byte) {
 	C.gtk_selection_data_set(
 		v.native(),
 		C.GdkAtom(unsafe.Pointer(atom)),

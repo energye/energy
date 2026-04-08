@@ -8,52 +8,50 @@
 //
 //----------------------------------------
 
-package nocgo
+package linux
 
 import (
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/api/imports"
-	"unsafe"
 )
-
-var ptrSize = unsafe.Sizeof(uintptr(0))
 
 const (
-	libgtk3                    = "libgtk-3.so.0"
-	libgdk3                    = "libgdk-3.so.0"
-	libgobject2_0              = "libgobject-2.0.so.0"
-	libglib2_0                 = "libglib-2.0.so.0"
-	libgio2_0                  = "libgio-2.0.so.0"
-	libcairo                   = "libcairo.so.2"
-	libpango1_0                = "libpango-1.0.so.0"
-	libwebkit2gtk4_0_37        = "libwebkit2gtk-4.0.so.37"
-	libjavascriptcoregtk4_0_18 = "libjavascriptcoregtk-4.0.so.18"
+	Libgtk3                    = "libgtk-3.so.0"
+	Libgdk3                    = "libgdk-3.so.0"
+	Libgobject2_0              = "libgobject-2.0.so.0"
+	Libglib2_0                 = "libglib-2.0.so.0"
+	Libgio2_0                  = "libgio-2.0.so.0"
+	Libcairo                   = "libcairo.so.2"
+	Libpango1_0                = "libpango-1.0.so.0"
+	Libwebkit2gtk4_0_37        = "libwebkit2gtk-4.0.so.37"
+	Libjavascriptcoregtk4_0_18 = "libjavascriptcoregtk-4.0.so.18"
 )
 
-type dnyLibrary struct {
+type DnyLibrary struct {
 	*imports.Imports
 	index map[string]int
 }
 
-func libLoad(libName string) *dnyLibrary {
+func LibLoad(libName string) *DnyLibrary {
 	dll, err := imports.NewDLL(libName)
 	if err == nil {
-		m := &dnyLibrary{Imports: &imports.Imports{Dll: dll}}
+		m := &DnyLibrary{Imports: &imports.Imports{Dll: dll}}
 		m.NextType()
 		return m
 	}
 	return nil
 }
 
-func setLibClose(lib *dnyLibrary) {
+func (m *DnyLibrary) SetLibClose() {
+	if m == nil {
+		return
+	}
 	api.SetOnReleaseCallback(func() {
-		if lib != nil {
-			lib.Dll.Release()
-		}
+		m.Dll.Release()
 	})
 }
 
-func (m *dnyLibrary) mapperIndex() {
+func (m *DnyLibrary) MapperIndex() {
 	if m.index == nil {
 		m.index = make(map[string]int, len(m.Table))
 	}
@@ -62,21 +60,21 @@ func (m *dnyLibrary) mapperIndex() {
 	}
 }
 
-func (m *dnyLibrary) Proc(index int) imports.ProcAddr {
+func (m *DnyLibrary) Proc(index int) imports.ProcAddr {
 	if m == nil {
 		return 0
 	}
 	return m.Imports.Proc(index)
 }
 
-func (m *dnyLibrary) SysCallN(index int, args ...uintptr) uintptr {
+func (m *DnyLibrary) SysCallN(index int, args ...uintptr) uintptr {
 	if m == nil || m.Imports == nil {
 		return 0
 	}
 	return m.Imports.SysCallN(index, args...)
 }
 
-func (m *dnyLibrary) SysCall(name string, args ...uintptr) uintptr {
+func (m *DnyLibrary) SysCall(name string, args ...uintptr) uintptr {
 	if m == nil || m.Imports == nil {
 		return 0
 	}
