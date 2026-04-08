@@ -14,6 +14,7 @@ package window
 
 import (
 	"github.com/energye/energy/v3/pkgs/gtk3"
+	gtk3Types "github.com/energye/energy/v3/pkgs/gtk3/types"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"unsafe"
@@ -21,64 +22,64 @@ import (
 
 type ILinuxWindow interface {
 	IWindow
-	GTKWindow() *gtk3.Window
-	GTKWindowLayout() *gtk3.Layout
-	GTKWindowMenuBar() *gtk3.MenuBar
-	GTKWindowScrolledWindow() *gtk3.ScrolledWindow
+	GTKWindow() gtk3Types.IWindow
+	GTKWindowLayout() gtk3Types.ILayout
+	GTKWindowMenuBar() gtk3Types.IMenuBar
+	GTKWindowScrolledWindow() gtk3Types.IScrolledWindow
 }
 
 type TWindow struct {
 	TEnergyWindow
-	gtkWindow               *gtk3.Window
-	gtkWindowBox            *gtk3.Box
-	gtkWindowLayout         *gtk3.Layout
-	gtkWindowMenuBar        *gtk3.MenuBar
-	gtkWindowScrolledWindow *gtk3.ScrolledWindow
-	gtkCssProvider          *gtk3.CssProvider
+	gtkWindow               gtk3Types.IWindow
+	gtkWindowBox            gtk3Types.IBox
+	gtkWindowLayout         gtk3Types.ILayout
+	gtkWindowMenuBar        gtk3Types.IMenuBar
+	gtkWindowScrolledWindow gtk3Types.IScrolledWindow
+	gtkCssProvider          gtk3Types.ICssProvider
 }
 
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
 
 }
 
-func (m *TWindow) GTKWindow() *gtk3.Window {
+func (m *TWindow) GTKWindow() gtk3Types.IWindow {
 	return m.gtkWindow
 }
 
-func (m *TWindow) GTKWindowBox() *gtk3.Box {
+func (m *TWindow) GTKWindowBox() gtk3Types.IBox {
 	return m.gtkWindowBox
 }
 
-func (m *TWindow) GTKWindowLayout() *gtk3.Layout {
+func (m *TWindow) GTKWindowLayout() gtk3Types.ILayout {
 	return m.gtkWindowLayout
 }
 
-func (m *TWindow) GTKWindowMenuBar() *gtk3.MenuBar {
+func (m *TWindow) GTKWindowMenuBar() gtk3Types.IMenuBar {
 	return m.gtkWindowMenuBar
 }
 
-func (m *TWindow) GTKWindowScrolledWindow() *gtk3.ScrolledWindow {
+func (m *TWindow) GTKWindowScrolledWindow() gtk3Types.IScrolledWindow {
 	return m.gtkWindowScrolledWindow
 }
 
 func (m *TWindow) getGtkWidget() {
-	var iterate func(list *gtk3.List)
-	iterate = func(list *gtk3.List) {
+	var iterate func(list gtk3Types.IList)
+	iterate = func(list gtk3Types.IList) {
 		if list == nil {
 			return
 		}
 		for i := uint(0); i < list.Length(); i++ {
 			data := list.NthDataRaw(i)
-			container := gtk3.ToContainer(data)
-			widgetName := container.TypeFromInstance().Name()
+			container := gtk3.AsContainer(data)
+			widgetName := container.GetName()
 			if widgetName == "GtkBox" { // window > level 1
-				m.gtkWindowBox = gtk3.ToBox(data)
+				m.gtkWindowBox = gtk3.AsBox(data)
 			} else if widgetName == "GtkMenuBar" { // window > level 2
-				m.gtkWindowMenuBar = gtk3.ToMenuBar(data)
+				m.gtkWindowMenuBar = gtk3.AsMenuBar(data)
 			} else if widgetName == "GtkScrolledWindow" || widgetName == "LCLGtkScrolledWindow" { // window > level 2
-				m.gtkWindowScrolledWindow = gtk3.ToScrolledWindow(data)
+				m.gtkWindowScrolledWindow = gtk3.AsScrolledWindow(data)
 			} else if widgetName == "GtkLayout" { // window > level 3
-				m.gtkWindowLayout = gtk3.ToLayout(data)
+				m.gtkWindowLayout = gtk3.AsLayout(data)
 			}
 			iterate(container.GetChildren())
 		}
@@ -121,13 +122,13 @@ func (m *TWindow) getGtkWidget() {
 // 该方法在 TWindow 实例化过程中被调用
 func (m *TWindow) InternalBeforeFormCreate() {
 	gtkHandle := lcl.PlatformHandle(m.Handle())
-	m.gtkWindow = gtk3.ToGtkWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
+	m.gtkWindow = gtk3.AsWindow(unsafe.Pointer(gtkHandle.Gtk3Window()))
 	m.getGtkWidget()
 	if m.options != nil {
 		if m.options.WindowTransparent {
 			screen := m.gtkWindow.GetScreen()
-			visual, err := screen.GetRGBAVisual()
-			if err == nil && visual != nil && screen.IsComposited() {
+			visual := screen.GetRGBAVisual()
+			if visual != nil && screen.IsComposited() {
 				m.gtkWindow.SetVisual(visual)
 				m.gtkWindow.SetAppPaintable(true)
 			}
