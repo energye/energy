@@ -155,3 +155,13 @@ type ISelectionData interface {
 type IAtom interface {
 	Name() string
 }
+
+type IEvent interface {
+	Instance() uintptr
+	Free()
+	ScanCode() int
+}
+
+type IEventKey interface {
+	IEvent
+}

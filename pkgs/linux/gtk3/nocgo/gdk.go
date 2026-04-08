@@ -30,6 +30,9 @@ func init() {
 		// Atom
 		imports.NewTable("gdk_atom_name", 0),
 		imports.NewTable("gdk_atom_intern", 0),
+		// Event
+		imports.NewTable("gdk_event_free", 0),
+		imports.NewTable("gdk_event_get_scancode", 0),
 	}
 	gdk3.SetLibClose()
 	gdk3.MapperIndex()
