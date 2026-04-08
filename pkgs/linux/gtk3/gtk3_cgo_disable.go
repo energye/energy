@@ -13,7 +13,7 @@
 package gtk3
 
 import (
-	"github.com/energye/energy/v3/pkgs/gtk3/nocgo"
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/nocgo"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -41,7 +41,7 @@ func AsLayout(ptr unsafe.Pointer) ILayout {
 	return nocgo.AsLayout(ptr)
 }
 
-func AsWidget(ptr unsafe.Pointer) IMenuBar {
+func AsWidget(ptr unsafe.Pointer) IWidget {
 	return nocgo.AsWidget(ptr)
 }
 
