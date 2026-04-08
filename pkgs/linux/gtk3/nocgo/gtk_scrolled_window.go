@@ -11,19 +11,20 @@
 package nocgo
 
 import (
-	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
-type Visual struct {
-	Object
+// ScrolledWindow is a representation of GTK's GtkScrolledWindow.
+type ScrolledWindow struct {
+	Bin
 }
 
-func AsVisual(ptr unsafe.Pointer) IVisual {
+func AsScrolledWindow(ptr unsafe.Pointer) IScrolledWindow {
 	if ptr == nil {
 		return nil
 	}
-	m := new(Visual)
+	m := new(ScrolledWindow)
 	m.instance = ptr
 	return m
 }

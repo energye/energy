@@ -11,20 +11,20 @@
 package nocgo
 
 import (
-	. "github.com/energye/energy/v3/pkgs/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
-// ScrolledWindow is a representation of GTK's GtkScrolledWindow.
-type ScrolledWindow struct {
-	Bin
+// MenuShell is a representation of GTK's GtkMenuShell.
+type MenuShell struct {
+	Container
 }
 
-func AsScrolledWindow(ptr unsafe.Pointer) IScrolledWindow {
+func AsMenuShell(ptr unsafe.Pointer) IMenuShell {
 	if ptr == nil {
 		return nil
 	}
-	m := new(ScrolledWindow)
+	m := new(MenuShell)
 	m.instance = ptr
 	return m
 }
