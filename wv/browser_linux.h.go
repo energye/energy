@@ -29,7 +29,8 @@ void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdou
 */
 import "C"
 import (
-	"github.com/energye/energy/v3/pkgs/gtk3"
+	"github.com/energye/energy/v3/pkgs/linux/gtk3"
+	gtk3Types "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
@@ -38,7 +39,7 @@ import (
 
 type TGtkWebview struct {
 	wkWebview *C.WebKitWebView
-	wsWebview *gtk3.Widget
+	wsWebview gtk3Types.IWidget
 }
 
 func (m *TWebview) getCWkWebview() *C.WebKitWebView {
@@ -52,13 +53,13 @@ func (m *TWebview) getCWkWebview() *C.WebKitWebView {
 	return m.gtkWebview.wkWebview
 }
 
-func (m *TWebview) getGtkWebview() *gtk3.Widget {
+func (m *TWebview) getGtkWebview() gtk3Types.IWidget {
 	if m.gtkWebview == nil {
 		m.gtkWebview = &TGtkWebview{}
 	}
 	if m.gtkWebview.wsWebview == nil {
 		webview := m.browser.WebView()
-		m.gtkWebview.wsWebview = gtk3.ToWidget(unsafe.Pointer(webview))
+		m.gtkWebview.wsWebview = gtk3.AsWidget(unsafe.Pointer(webview))
 	}
 	return m.gtkWebview.wsWebview
 }

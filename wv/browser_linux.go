@@ -17,7 +17,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/pkgs/gtk3"
+	"github.com/energye/energy/v3/pkgs/linux/gtk3"
+	gtk3Types "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
@@ -45,8 +46,8 @@ type TWebview struct {
 	//anchors                 types.TSet
 	//bounds                  types.TRect
 	oldBounds               types.TRect
-	gtkScrolledWindow       *gtk3.ScrolledWindow
-	gtkCssProvider          *gtk3.CssProvider
+	gtkScrolledWindow       gtk3Types.IScrolledWindow
+	gtkCssProvider          gtk3Types.ICssProvider
 	window                  window.ILinuxWindow
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
@@ -70,7 +71,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 
 	m.IWkWebviewParent = wv.NewWebviewParent(owner)
 	m.SetParentDoubleBuffered(true)
-	m.gtkScrolledWindow = gtk3.ToScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
+	m.gtkScrolledWindow = gtk3.AsScrolledWindow(unsafe.Pointer(m.ScrolledWindow()))
 	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
 	m.browser = wv.NewWebview(owner)
@@ -183,7 +184,7 @@ func (m *TWebview) UpdateBrowserOptions() {
 		webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
 		if m.gtkCssProvider == nil {
 			m.gtkCssProvider = gtk3.NewCssProvider()
-			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3.STYLE_PROVIDER_PRIORITY_USER)
+			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3Types.STYLE_PROVIDER_PRIORITY_USER)
 			m.gtkCssProvider.Unref()
 		}
 		var err error
@@ -647,7 +648,7 @@ func (m *TWebview) initDefaultDragEvent() {
 	)
 
 	// 持续触发
-	m.gtkWebview.SetOnDragMotion(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+	m.gtkWebview.SetOnDragMotion(func(sender gtk3Types.IWidget, context *gtk3.DragContext, x, y int, time uint) bool {
 		//println("SetOnDragMotion:", isContinue)
 		//if isHandle {
 		//	return false
@@ -667,7 +668,7 @@ func (m *TWebview) initDefaultDragEvent() {
 		if !isURIList { // TODO
 			return false
 		}
-		context.DragStatus(gtk3.ACTION_COPY, time)
+		context.Status(gtk3.ACTION_COPY, time)
 		return false
 	})
 	m.gtkWebview.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
