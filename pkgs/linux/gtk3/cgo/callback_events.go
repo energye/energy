@@ -94,7 +94,7 @@ func MakeLeaveEnterNotifyEvent(cb TLeaveEnterNotifyEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			eventPtr := ctx.input.(unsafe.Pointer)
-			event := ToEventCrossing(eventPtr)
+			event := AsEventCrossing(eventPtr)
 			cb(wrapWidget(ToGoObject(ctx.widget)), event)
 		},
 	}

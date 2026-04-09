@@ -204,3 +204,8 @@ type IEventConfigure interface {
 	Height() int
 	Type() EventType
 }
+
+type IContext interface {
+	Instance() uintptr
+	Status() Status
+}

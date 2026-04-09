@@ -6,6 +6,7 @@ package cgo
 import "C"
 
 import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"reflect"
 	"unsafe"
 )
@@ -13,6 +14,17 @@ import (
 // Context is a representation of Cairo's cairo_t.
 type Context struct {
 	context *C.cairo_t
+}
+
+func AsContext(ptr unsafe.Pointer) IContext {
+	if ptr == nil {
+		return nil
+	}
+	return WrapContext(uintptr(ptr))
+}
+
+func (m *Context) Instance() uintptr {
+	return uintptr(unsafe.Pointer(m.context))
 }
 
 // native returns a pointer to the underlying cairo_t.

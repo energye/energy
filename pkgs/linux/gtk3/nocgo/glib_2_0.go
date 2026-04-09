@@ -8,8 +8,6 @@
 //
 //----------------------------------------
 
-//go:build !cgo
-
 package nocgo
 
 import (

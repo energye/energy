@@ -10,7 +10,9 @@
 
 package nocgo
 
-import "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+)
 import "unsafe"
 
 // Atom is a representation of GDK's GdkAtom.
