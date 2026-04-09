@@ -74,6 +74,8 @@ func init() {
 		imports.NewTable("gtk_selection_data_set_uris", 0),
 		imports.NewTable("gtk_selection_data_get_uris", 0),
 		imports.NewTable("gtk_selection_data_free", 0),
+		// Entry
+		imports.NewTable("gtk_entry_new", 0),
 	}
 	gtk3.SetLibClose()
 	gtk3.MapperIndex()

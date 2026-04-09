@@ -60,6 +60,14 @@ func AsEventCrossing(ptr unsafe.Pointer) IEventCrossing {
 	return nocgo.AsEventCrossing(ptr)
 }
 
+func AsEntry(ptr unsafe.Pointer) IEntry {
+	return nocgo.AsEntry(ptr)
+}
+
+func NewEntry() IEntry {
+	return nocgo.NewEntry()
+}
+
 func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 	return nocgo.GdkAtomIntern(atomName, onlyIfExists)
 }

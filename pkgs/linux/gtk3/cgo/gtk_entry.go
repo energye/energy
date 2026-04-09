@@ -6,10 +6,11 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
-type IEntry interface {
+type _IEntry interface {
 	toEntry() *C.GtkEntry
 }
 
@@ -21,7 +22,7 @@ type Entry struct {
 	CellEditable
 }
 
-func ToEntry(p unsafe.Pointer) *Entry {
+func AsEntry(p unsafe.Pointer) *Entry {
 	return wrapEntry(ToGoObject(p))
 }
 
@@ -49,7 +50,7 @@ func wrapEntry(obj *Object) *Entry {
 }
 
 // NewEntry is a wrapper around gtk_entry_new().
-func NewEntry() *Entry {
+func NewEntry() IEntry {
 	c := C.gtk_entry_new()
 	if c == nil {
 		return nil

@@ -209,3 +209,10 @@ type IContext interface {
 	Instance() uintptr
 	Status() Status
 }
+
+type IEntry interface {
+	IWidget
+	SetText(text string)
+	GetText() string
+	GetTextLength() uint16
+}
