@@ -44,6 +44,7 @@ func AsLayout(ptr unsafe.Pointer) ILayout {
 func AsWidget(ptr unsafe.Pointer) IWidget {
 	return nocgo.AsWidget(ptr)
 }
+
 func AsDragContext(ptr unsafe.Pointer) IDragContext {
 	return nocgo.AsDragContext(ptr)
 }
@@ -62,6 +63,22 @@ func AsEventCrossing(ptr unsafe.Pointer) IEventCrossing {
 
 func AsEntry(ptr unsafe.Pointer) IEntry {
 	return nocgo.AsEntry(ptr)
+}
+
+func AsKeyEvent(p unsafe.Pointer) IEventKey {
+	return nocgo.AsKeyEvent(p)
+}
+
+func AsContext(ptr unsafe.Pointer) IContext {
+	return nocgo.AsContext(ptr)
+}
+
+func AsSelectionData(ptr unsafe.Pointer) ISelectionData {
+	return nocgo.AsSelectionData(ptr)
+}
+
+func AsEventConfigure(ptr unsafe.Pointer) IEventConfigure {
+	return nocgo.AsEventConfigure(ptr)
 }
 
 func NewEntry() IEntry {

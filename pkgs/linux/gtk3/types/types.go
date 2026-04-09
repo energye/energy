@@ -21,11 +21,13 @@ type GInt8 = int8
 type GUint32 = uint32
 type GUint = uint32
 type GInt = int32
-type GPChar = uint
+type GPChar = uintptr
 type GUInt16 = uint16
 type GUInt8 = uint8
+type GULong = uint
 type PGDouble = uintptr
 type PGdkDevice = uintptr
+type PGtkWidget = uintptr
 
 type StyleProviderPriority = uint
 

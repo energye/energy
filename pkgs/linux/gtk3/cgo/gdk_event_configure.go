@@ -14,13 +14,13 @@ type EventConfigure struct {
 	*Event
 }
 
-func NewEventConfigure() *EventConfigure {
+func NewEventConfigure() IEventConfigure {
 	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventConfigure{}))
 	ev := Event{ee}
 	return &EventConfigure{&ev}
 }
 
-func ToEventConfigure(p unsafe.Pointer) *EventConfigure {
+func AsEventConfigure(p unsafe.Pointer) IEventConfigure {
 	return &EventConfigure{&Event{GdkEvent: (*C.GdkEvent)(p)}}
 }
 

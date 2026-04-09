@@ -61,6 +61,14 @@ func nextguchar(guchar uintptr) uintptr {
 	return *(*uintptr)(unsafe.Pointer(guchar + 1))
 }
 
+func GSignalConnectData(object uintptr, detailedSignal string, cHandler uintptr, data uintptr) uintptr {
+	//gobject2_0.SysCall("g_signal_connect_data")
+	//var gSignalConnect func(object uintptr, detailedSignal *byte, cHandler uintptr, data uintptr) uintptr
+	//purego.RegisterLibFunc(&gSignalConnect, libgobject, "g_signal_connect_data")
+
+	return 0
+}
+
 var gobject2_0 *linux.DnyLibrary
 
 func init() {
@@ -68,6 +76,7 @@ func init() {
 	gobject2_0.Table = []*imports.Table{
 		imports.NewTable("g_object_ref", 0),
 		imports.NewTable("g_object_unref", 0),
+		imports.NewTable("g_signal_connect_data", 0),
 	}
 	gobject2_0.SetLibClose()
 	gobject2_0.MapperIndex()
