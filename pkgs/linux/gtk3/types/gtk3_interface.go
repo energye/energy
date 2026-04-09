@@ -164,4 +164,43 @@ type IEvent interface {
 
 type IEventKey interface {
 	IEvent
+	KeyVal() uint
+	HardwareKeyCode() uint16
+	Type() EventType
+	State() uint
+}
+
+type IEventButton interface {
+	IEvent
+	X() float64
+	Y() float64
+	XRoot() float64
+	YRoot() float64
+	Button() ButtonType
+	State() uint
+	Time() uint32
+	Type() EventType
+}
+
+type IEventCrossing interface {
+	IEvent
+	X() float64
+	Y() float64
+	XRoot() float64
+	YRoot() float64
+	State() uint
+	Time() uint32
+	Type() EventType
+	Mode() CrossingMode
+	Detail() NotifyType
+	Focus() bool
+}
+
+type IEventConfigure interface {
+	IEvent
+	X() int
+	Y() int
+	Width() int
+	Height() int
+	Type() EventType
 }

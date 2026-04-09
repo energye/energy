@@ -53,6 +53,14 @@ func AsAtom(ptr unsafe.Pointer) IAtom {
 	return cgo.AsAtom(ptr)
 }
 
+func AsEventButton(ptr unsafe.Pointer) IEventButton {
+	return cgo.AsEventButton(ptr)
+}
+
+func AsEventCrossing(ptr unsafe.Pointer) IEventCrossing {
+	return cgo.AsEventCrossing(ptr)
+}
+
 func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 	return cgo.GdkAtomIntern(atomName, onlyIfExists)
 }

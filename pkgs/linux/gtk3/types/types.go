@@ -10,6 +10,21 @@
 
 package types
 
+import "github.com/energye/lcl/types"
+
+type GDouble = float64
+type GBoolean = int32
+type PGdkWindow = uintptr
+type GInt8 = int8
+type GUint32 = uint32
+type GUint = uint32
+type GInt = int32
+type GPChar = uint
+type GUInt16 = uint16
+type GUInt8 = uint8
+type PGDouble = uintptr
+type PGdkDevice = uintptr
+
 type StyleProviderPriority = uint
 
 const (
@@ -103,3 +118,165 @@ const (
 	EVENT_TOUCH_CANCEL        EventType = 40
 	EVENT_LAST                EventType = 41
 )
+
+// ButtonType constants
+type ButtonType = uint
+
+const (
+	BUTTON_PRIMARY   ButtonType = 1
+	BUTTON_MIDDLE    ButtonType = 2
+	BUTTON_SECONDARY ButtonType = 3
+)
+
+type CrossingMode = int
+
+const (
+	CROSSING_NORMAL CrossingMode = iota
+	CROSSING_GRAB
+	CROSSING_UNGRAB
+	CROSSING_GTK_GRAB
+	CROSSING_GTK_UNGRAB
+	CROSSING_STATE_CHANGED
+	CROSSING_TOUCH_BEGIN
+	CROSSING_TOUCH_END
+	CROSSING_DEVICE_SWITCH
+)
+
+type NotifyType = int
+
+const (
+	NOTIFY_ANCESTOR NotifyType = iota
+	NOTIFY_VIRTUAL
+	NOTIFY_INFERIOR
+	NOTIFY_NONLINEAR
+	NOTIFY_NONLINEAR_VIRTUAL
+	NOTIFY_UNKNOWN
+)
+
+type TGdkEventType = int32
+
+const (
+	TGdkEventTypeMinValue   = -0x7FFFFFFF
+	GDK_NOTHING             = -1
+	GDK_DELETE              = 0
+	GDK_DESTROY             = 1
+	GDK_EXPOSE              = 2
+	GDK_MOTION_NOTIFY       = 3
+	GDK_BUTTON_PRESS        = 4
+	GDK_DOUBLE_BUTTON_PRESS = 5
+	GDK_2BUTTON_PRESS       = 5
+	GDK_TRIPLE_BUTTON_PRESS = 6
+	GDK_3BUTTON_PRESS       = 6
+	GDK_BUTTON_RELEASE      = 7
+	GDK_KEY_PRESS           = 8
+	GDK_KEY_RELEASE         = 9
+	GDK_ENTER_NOTIFY        = 10
+	GDK_LEAVE_NOTIFY        = 11
+	GDK_FOCUS_CHANGE        = 12
+	GDK_CONFIGURE           = 13
+	GDK_MAP                 = 14
+	GDK_UNMAP               = 15
+	GDK_PROPERTY_NOTIFY     = 16
+	GDK_SELECTION_CLEAR     = 17
+	GDK_SELECTION_REQUEST   = 18
+	GDK_SELECTION_NOTIFY    = 19
+	GDK_PROXIMITY_IN        = 20
+	GDK_PROXIMITY_OUT       = 21
+	GDK_DRAG_ENTER          = 22
+	GDK_DRAG_LEAVE          = 23
+	GDK_DRAG_MOTION_        = 24
+	GDK_DRAG_STATUS_        = 25
+	GDK_DROP_START          = 26
+	GDK_DROP_FINISHED       = 27
+	GDK_CLIENT_EVENT        = 28
+	GDK_VISIBILITY_NOTIFY   = 29
+	GDK_SCROLL              = 31
+	GDK_WINDOW_STATE        = 32
+	GDK_SETTING             = 33
+	GDK_OWNER_CHANGE        = 34
+	GDK_GRAB_BROKEN         = 35
+	GDK_DAMAGE              = 36
+	GDK_TOUCH_BEGIN         = 37
+	GDK_TOUCH_UPDATE        = 38
+	GDK_TOUCH_END           = 39
+	GDK_TOUCH_CANCEL        = 40
+	GDK_TOUCHPAD_SWIPE      = 41
+	GDK_TOUCHPAD_PINCH      = 42
+	GDK_PAD_BUTTON_PRESS    = 43
+	GDK_PAD_BUTTON_RELEASE  = 44
+	GDK_PAD_RING            = 45
+	GDK_PAD_STRIP           = 46
+	GDK_PAD_GROUP_MODE      = 47
+	GDK_EVENT_LAST          = 48
+	TGdkEventTypeMaxValue   = 0x7FFFFFFF
+)
+
+type TGdkCrossingMode = int32
+
+const (
+	TGdkCrossingModeMinValue   = -0x7FFFFFFF
+	GDK_CROSSING_NORMAL        = 0
+	GDK_CROSSING_GRAB          = 1
+	GDK_CROSSING_UNGRAB        = 2
+	GDK_CROSSING_GTK_GRAB      = 3
+	GDK_CROSSING_GTK_UNGRAB    = 4
+	GDK_CROSSING_STATE_CHANGED = 5
+	GDK_CROSSING_TOUCH_BEGIN   = 6
+	GDK_CROSSING_TOUCH_END     = 7
+	GDK_CROSSING_DEVICE_SWITCH = 8
+	TGdkCrossingModeMaxValue   = 0x7FFFFFFF
+)
+
+type TGdkNotifyType = int32
+
+const (
+	TGdkNotifyTypeMinValue       = -0x7FFFFFFF
+	GDK_NOTIFY_ANCESTOR          = 0
+	GDK_NOTIFY_VIRTUAL           = 1
+	GDK_NOTIFY_INFERIOR          = 2
+	GDK_NOTIFY_NONLINEAR         = 3
+	GDK_NOTIFY_NONLINEAR_VIRTUAL = 4
+	GDK_NOTIFY_UNKNOWN           = 5
+	TGdkNotifyTypeMaxValue       = 0x7FFFFFFF
+)
+
+type TGdkModifierTypeIdx = int32
+
+const (
+	TGdkModifierTypeIdxMinValue   = 0
+	GDK_SHIFT_MASK                = 0
+	GDK_LOCK_MASK                 = 1
+	GDK_CONTROL_MASK              = 2
+	GDK_MOD1_MASK                 = 3
+	GDK_MOD2_MASK                 = 4
+	GDK_MOD3_MASK                 = 5
+	GDK_MOD4_MASK                 = 6
+	GDK_MOD5_MASK                 = 7
+	GDK_BUTTON1_MASK              = 8
+	GDK_BUTTON2_MASK              = 9
+	GDK_BUTTON3_MASK              = 10
+	GDK_BUTTON4_MASK              = 11
+	GDK_BUTTON5_MASK              = 12
+	GDK_MODIFIER_RESERVED_13_MASK = 13
+	GDK_MODIFIER_RESERVED_14_MASK = 14
+	GDK_MODIFIER_RESERVED_15_MASK = 15
+	GDK_MODIFIER_RESERVED_16_MASK = 16
+	GDK_MODIFIER_RESERVED_17_MASK = 17
+	GDK_MODIFIER_RESERVED_18_MASK = 18
+	GDK_MODIFIER_RESERVED_19_MASK = 19
+	GDK_MODIFIER_RESERVED_20_MASK = 20
+	GDK_MODIFIER_RESERVED_21_MASK = 21
+	GDK_MODIFIER_RESERVED_22_MASK = 22
+	GDK_MODIFIER_RESERVED_23_MASK = 23
+	GDK_MODIFIER_RESERVED_24_MASK = 24
+	GDK_MODIFIER_RESERVED_25_MASK = 25
+	GDK_SUPER_MASK                = 26
+	GDK_HYPER_MASK                = 27
+	GDK_META_MASK                 = 28
+	GDK_MODIFIER_RESERVED_29_MASK = 29
+	GDK_RELEASE_MASK              = 30
+	TGdkModifierTypeIdxMaxValue   = 31
+)
+
+// TGdkModifierType :  TGdkModifierTypeIdx
+type TGdkModifierType = types.TSet

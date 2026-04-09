@@ -20,7 +20,7 @@ func NewEventCrossing() *EventCrossing {
 	return &EventCrossing{&ev}
 }
 
-func ToEventCrossing(p unsafe.Pointer) *EventCrossing {
+func AsEventCrossing(p unsafe.Pointer) IEventCrossing {
 	return &EventCrossing{&Event{GdkEvent: (*C.GdkEvent)(p)}}
 }
 
@@ -82,18 +82,6 @@ func (v *EventCrossing) Time() uint32 {
 func (v *EventCrossing) Type() EventType {
 	c := v.native()._type
 	return EventType(c)
-}
-
-func (v *EventCrossing) MotionVal() (float64, float64) {
-	x := v.native().x
-	y := v.native().y
-	return float64(x), float64(y)
-}
-
-func (v *EventCrossing) MotionValRoot() (float64, float64) {
-	x := v.native().x_root
-	y := v.native().y_root
-	return float64(x), float64(y)
 }
 
 func (v *EventCrossing) Mode() CrossingMode {

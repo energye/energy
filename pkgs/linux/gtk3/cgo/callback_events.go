@@ -84,7 +84,7 @@ func MakeButtonPressEvent(cb TButtonPressEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			eventPtr := ctx.input.(unsafe.Pointer)
-			event := ToEventButton(eventPtr)
+			event := AsEventButton(eventPtr)
 			cb(wrapWidget(ToGoObject(ctx.widget)), event)
 		},
 	}

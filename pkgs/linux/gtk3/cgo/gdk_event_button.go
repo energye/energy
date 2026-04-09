@@ -20,7 +20,7 @@ func NewEventButton() *EventButton {
 	return &EventButton{&ev}
 }
 
-func ToEventButton(p unsafe.Pointer) *EventButton {
+func AsEventButton(p unsafe.Pointer) IEventButton {
 	return &EventButton{&Event{GdkEvent: (*C.GdkEvent)(p)}}
 }
 
@@ -87,16 +87,4 @@ func (v *EventButton) Time() uint32 {
 func (v *EventButton) Type() EventType {
 	c := v.native()._type
 	return EventType(c)
-}
-
-func (v *EventButton) MotionVal() (float64, float64) {
-	x := v.native().x
-	y := v.native().y
-	return float64(x), float64(y)
-}
-
-func (v *EventButton) MotionValRoot() (float64, float64) {
-	x := v.native().x_root
-	y := v.native().y_root
-	return float64(x), float64(y)
 }

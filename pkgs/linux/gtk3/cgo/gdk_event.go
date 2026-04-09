@@ -14,6 +14,10 @@ type Event struct {
 	GdkEvent *C.GdkEvent
 }
 
+func (m *Event) Instance() uintptr {
+	return uintptr(unsafe.Pointer(m.GdkEvent))
+}
+
 // native returns a pointer to the underlying GdkEvent.
 func (v *Event) native() *C.GdkEvent {
 	if v == nil {
