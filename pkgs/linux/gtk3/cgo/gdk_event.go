@@ -4,7 +4,10 @@ package cgo
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"
-import "unsafe"
+import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"unsafe"
+)
 
 // Event is a representation of GDK's GdkEvent.
 type Event struct {
@@ -31,6 +34,7 @@ func (v *Event) Free() {
 func (v *Event) ScanCode() int {
 	return int(C.gdk_event_get_scancode(v.native()))
 }
+
 func (v *Event) ToEvent() *Event {
 	return v
 }
@@ -46,7 +50,7 @@ func NewEventKey() *EventKey {
 	return &EventKey{&ev}
 }
 
-func ToKeyEvent(p unsafe.Pointer) *EventKey {
+func AsKeyEvent(p unsafe.Pointer) *EventKey {
 	return &EventKey{Event: &Event{GdkEvent: (*C.GdkEvent)(p)}}
 }
 

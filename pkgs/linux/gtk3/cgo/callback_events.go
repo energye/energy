@@ -130,7 +130,7 @@ func MakeTextKeyEvent(cb TTextKeyEvent) *Callback {
 	return &Callback{
 		cb: func(ctx *CallbackContext) {
 			keyPtr := ctx.input.(unsafe.Pointer)
-			key := ToKeyEvent(keyPtr)
+			key := AsKeyEvent(keyPtr)
 			result := cb(wrapWidget(ToGoObject(ctx.widget)), key)
 			ctx.result = result
 		},

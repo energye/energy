@@ -4,7 +4,11 @@ package cgo
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"
-import "unsafe"
+
+import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"unsafe"
+)
 
 // EventTouch is a representation of GDK's GdkEventTouch
 type EventTouch struct {
