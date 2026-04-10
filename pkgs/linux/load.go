@@ -15,6 +15,8 @@ import (
 	"github.com/energye/lcl/api/imports"
 )
 
+// sudo apt install -y libwebkit2gtk-4.0-37 libjavascriptcoregtk-4.0-18
+
 const (
 	Libgtk3                    = "libgtk-3.so.0"
 	Libgdk3                    = "libgdk-3.so.0"

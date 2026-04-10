@@ -85,7 +85,7 @@ func (m *Widget) GetStyleContext() IStyleContext {
 }
 
 func (m *Widget) DragGetData(context IDragContext, target IAtom, time uint) {
-	gtk3.SysCall("gtk_drag_get_data", m.Instance(), uintptr(target.Atom()), uintptr(time))
+	gtk3.SysCall("gtk_drag_get_data", m.Instance(), context.Instance(), uintptr(target.Atom()), uintptr(time))
 }
 
 func (m *Widget) IsContainer() bool {
