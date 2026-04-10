@@ -37,6 +37,13 @@ type PContext = uintptr
 type PDragContext = uintptr
 type PSelectionData = uintptr
 
+type GdkRGBA struct {
+	Red   float64
+	Green float64
+	Blue  float64
+	Alpha float64
+}
+
 // const
 
 type StyleProviderPriority = uint

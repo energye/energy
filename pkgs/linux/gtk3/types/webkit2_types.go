@@ -8,14 +8,4 @@
 //
 //----------------------------------------
 
-package webkit2gtk
-
-import (
-	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
-	"github.com/energye/energy/v3/pkgs/linux/webkit2gtk/cgo"
-	"unsafe"
-)
-
-func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
-	return cgo.AsWebkit2(ptr)
-}
+package types

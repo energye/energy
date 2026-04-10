@@ -29,6 +29,10 @@ func (m *Object) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
+func (m *Object) SetInstance(ptr unsafe.Pointer) {
+	m.instance = ptr
+}
+
 // Ref is a wrapper around g_object_ref().
 func (m *Object) Ref() {
 	gobject2_0.SysCall("g_object_ref", m.Instance())

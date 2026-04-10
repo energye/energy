@@ -16,7 +16,7 @@ package cgo
 #cgo pkg-config: webkit2gtk-4.0
 
 #include <webkit2/webkit2.h>
-#include "webkit2gtk4_0_cgo_enable.go.h"
+#include "webkit2gtk4_0.go.h"
 
 void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdouble b, gdouble a) {
 	if (webview != NULL && WEBKIT_IS_WEB_VIEW(webview))

@@ -23,8 +23,15 @@ const (
 	Libgio2_0                  = "libgio-2.0.so.0"
 	Libcairo                   = "libcairo.so.2"
 	Libpango1_0                = "libpango-1.0.so.0"
+	Libwebkit2gtk4_0           = "libwebkit2gtk-4.0.so"
 	Libwebkit2gtk4_0_37        = "libwebkit2gtk-4.0.so.37"
+	Libwebkit2gtk4_0_0         = "libwebkit2gtk-4.0.so.0"
+	Libwebkit2gtk4_1           = "libwebkit2gtk-4.1.so"
+	Libwebkit2gtk4_1_0         = "libwebkit2gtk-4.1.so.0"
+	Libjavascriptcoregtk4_0    = "libjavascriptcoregtk-4.0.so"
 	Libjavascriptcoregtk4_0_18 = "libjavascriptcoregtk-4.0.so.18"
+	Libjavascriptcoregtk4_0_0  = "libjavascriptcoregtk-4.0.so.0"
+	Libjavascriptcoregtk4_1    = "libjavascriptcoregtk-4.1.so"
 )
 
 type DnyLibrary struct {

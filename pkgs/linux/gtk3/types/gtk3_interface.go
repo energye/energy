@@ -45,7 +45,7 @@ type IWidget interface {
 	SetSizeRequest(width, height int)
 	GetSizeRequest() (width, height int)
 	GetStyleContext() IStyleContext
-	DragGetData(context IDragContext, target TAtom, time uint)
+	DragGetData(context IDragContext, target IAtom, time uint)
 	IsContainer() bool
 }
 
@@ -166,6 +166,7 @@ type ISelectionData interface {
 
 type IAtom interface {
 	Name() string
+	Atom() TAtom
 }
 
 type IEvent interface {

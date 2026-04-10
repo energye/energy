@@ -79,6 +79,8 @@ func init() {
 		imports.NewTable("gtk_entry_set_text", 0),
 		imports.NewTable("gtk_entry_get_text", 0),
 		imports.NewTable("gtk_entry_get_text_length", 0),
+		// drag
+		imports.NewTable("gtk_drag_get_data", 0),
 	}
 	gtk3.SetLibClose()
 	gtk3.MapperIndex()

@@ -11,14 +11,14 @@
 package nocgo
 
 import (
-	"github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 )
 import "unsafe"
 
 // Atom is a representation of GDK's GdkAtom.
-type Atom types.TAtom
+type Atom TAtom
 
-func AsAtom(v unsafe.Pointer) Atom {
+func AsAtom(v unsafe.Pointer) IAtom {
 	return Atom(v)
 }
 
@@ -27,8 +27,12 @@ func (m Atom) Name() string {
 	return GoStr(r)
 }
 
+func (m Atom) Atom() TAtom {
+	return TAtom(m)
+}
+
 // GdkAtomIntern is a wrapper around gdk_atom_intern
-func GdkAtomIntern(atomName string, onlyIfExists bool) Atom {
+func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 	r := gdk3.SysCall("gdk_atom_intern", CStr(atomName), ToCBool(onlyIfExists))
 	return Atom(r)
 }
