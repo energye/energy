@@ -661,6 +661,11 @@ func (v *Widget) DragGetData(context *DragContext, target Atom, time uint) {
 	C.gtk_drag_get_data(v.native(), context.native(), target.native(), C.uint(time))
 }
 
+func (m *Widget) IsContainer() bool {
+	containerGType := TypeFromName("GtkContainer")
+	return m.TypeFromInstance().IsA(containerGType)
+}
+
 // Allocation is a representation of GTK's GtkAllocation type.
 type Allocation struct {
 	Rectangle

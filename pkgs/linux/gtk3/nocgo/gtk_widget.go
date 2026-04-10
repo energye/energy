@@ -83,3 +83,9 @@ func (m *Widget) GetStyleContext() IStyleContext {
 	r := gtk3.SysCall("gtk_widget_get_style_context", m.Instance())
 	return AsStyleContext(unsafe.Pointer(r))
 }
+
+func (m *Widget) IsContainer() bool {
+	containerGType := GTypeFromName("GtkContainer")
+	widgetGType := GTypeFormInstance(m.Instance())
+	return GTypeIsA(widgetGType, containerGType)
+}

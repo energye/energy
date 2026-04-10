@@ -69,6 +69,19 @@ func GSignalConnectData(object uintptr, detailedSignal string, cHandler uintptr,
 	return 0
 }
 
+func GTypeFromName(name string) uintptr {
+	return gobject2_0.SysCall("g_type_from_name", CStr(name))
+}
+
+func GTypeIsA(type_id, is_a_type uintptr) bool {
+	r := gobject2_0.SysCall("g_type_is_a", type_id, is_a_type)
+	return ToGoBool(r)
+}
+
+func GTypeFormInstance(widget uintptr) uintptr {
+	return gobject2_0.SysCall("g_type_from_instance", widget)
+}
+
 var gobject2_0 *linux.DnyLibrary
 
 func init() {
@@ -77,6 +90,9 @@ func init() {
 		imports.NewTable("g_object_ref", 0),
 		imports.NewTable("g_object_unref", 0),
 		imports.NewTable("g_signal_connect_data", 0),
+		imports.NewTable("g_type_from_name", 0),
+		imports.NewTable("g_type_is_a", 0),
+		imports.NewTable("g_type_from_instance", 0),
 	}
 	gobject2_0.SetLibClose()
 	gobject2_0.MapperIndex()
