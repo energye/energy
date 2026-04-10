@@ -18,7 +18,8 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/linux/gtk3"
-	gtk3Types "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"github.com/energye/energy/v3/pkgs/linux/webkit2gtk"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
@@ -46,12 +47,12 @@ type TWebview struct {
 	//anchors                 types.TSet
 	//bounds                  types.TRect
 	oldBounds               types.TRect
-	gtkScrolledWindow       gtk3Types.IScrolledWindow
-	gtkCssProvider          gtk3Types.ICssProvider
+	gtkScrolledWindow       IScrolledWindow
+	gtkCssProvider          ICssProvider
 	window                  window.ILinuxWindow
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
-	gtkWebview              *TGtkWebview
+	gtkWebview              IWebkit2
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
 	onBrowserAfterCreated   lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
@@ -75,6 +76,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.gtkScrolledWindow.GetStyleContext().AddClass("webview-box")
 
 	m.browser = wv.NewWebview(owner)
+	m.gtkWebview = webkit2gtk.AsWebkit2(unsafe.Pointer(m.browser.WebView()))
 	if gWk2Context == nil {
 		gWk2Context = wv.WebContext.Default()
 	}
@@ -178,13 +180,13 @@ func (m *TWebview) UpdateBrowserOptions() {
 	//m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_DROP, targets, gtk3.ACTION_COPY)
 	//target.Free()
 
-	m.SetBackgroundColor(options.BackgroundColor)
+	m.gtkWebview.SetBackgroundColor(options.BackgroundColor)
 	if options.WebviewTransparent {
 		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
 		webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
 		if m.gtkCssProvider == nil {
 			m.gtkCssProvider = gtk3.NewCssProvider()
-			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, gtk3Types.STYLE_PROVIDER_PRIORITY_USER)
+			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, STYLE_PROVIDER_PRIORITY_USER)
 			m.gtkCssProvider.Unref()
 		}
 		var err error
@@ -277,6 +279,87 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	//if *canClose && m.isMainWindow {
 	//	os.Exit(0)
 	//}
+}
+
+func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
+	if m.window == nil {
+		m.window = iWindow.(window.ILinuxWindow)
+	}
+	m.isAddWindowSubview = true
+	var (
+		webviewBounds = m.BoundsRect()
+		x, y, w, h    = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+	)
+
+	windowLayout := m.window.GTKWindowLayout()
+
+	m.gtkScrolledWindow.SetSizeRequest(int(w), int(h))
+	m.gtkScrolledWindow.Add(m.gtkWebview)
+
+	windowLayout.Add(m.gtkScrolledWindow)
+	windowLayout.Move(m.gtkScrolledWindow, int(x), int(y))
+
+}
+
+func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
+	m.SetBounds(x, y, width, height)
+	m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
+	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
+}
+
+func (m *TWebview) UpdateBounds() {
+	if m.isAddWindowSubview {
+		allocation := m.window.GTKWindowScrolledWindow().GetAllocation()
+		swx := int32(allocation.GetX())
+		swy := int32(allocation.GetY())
+		var (
+			webviewAlign     = m.Align()
+			webviewAnchors   = m.Anchors()
+			windowBoundsRect = m.window.BoundsRect()
+			webviewBounds    = m.BoundsRect()
+			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+		)
+		// 真实的客户区大小, 当有菜单栏时
+		windowBoundsRect.SetSize(windowBoundsRect.Width()-swx, windowBoundsRect.Height()-swy)
+
+		switch webviewAlign {
+		case types.AlNone, types.AlCustom:
+			x, y, w, h = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
+		case types.AlClient:
+			x, y, w, h = 0, 0, windowBoundsRect.Width(), windowBoundsRect.Height()
+		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
+			switch webviewAlign {
+			case types.AlLeft:
+				x, y, w, h = 0, 0, webviewBounds.Width(), windowBoundsRect.Height()
+			case types.AlTop:
+				x, y, w, h = 0, 0, windowBoundsRect.Width(), webviewBounds.Height()
+			case types.AlRight:
+				x, y, w, h = webviewBounds.Left, 0, webviewBounds.Width()+(windowBoundsRect.Width()-webviewBounds.Width()), windowBoundsRect.Height()
+			case types.AlBottom:
+				x, y, w, h = 0, windowBoundsRect.Height()-webviewBounds.Height(), windowBoundsRect.Width(), webviewBounds.Height()
+			}
+		}
+		switch webviewAlign {
+		case types.AlNone, types.AlCustom:
+			//akLeft := webviewAnchors.In(types.AkLeft)
+			//akTop := webviewAnchors.In(types.AkTop)
+			akRight := webviewAnchors.In(types.AkRight)
+			akBottom := webviewAnchors.In(types.AkBottom)
+			//fmt.Println("webviewAlign:", webviewAlign, "webviewAnchors:", webviewAnchors, "akRight:", akRight, "akBottom:", akBottom)
+			if akRight {
+				if ow := m.oldBounds.Width(); ow > 0 {
+					w += windowBoundsRect.Width() - ow
+				}
+			}
+			if akBottom {
+				if oh := m.oldBounds.Height(); oh > 0 {
+					h += windowBoundsRect.Height() - oh
+				}
+			}
+		}
+		m.UpdateWebviewBounds(x, y, w, h)
+		m.oldBounds = windowBoundsRect
+	}
 }
 
 // SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
@@ -620,10 +703,9 @@ func (m *TWebview) initDefaultEvent() {
 }
 
 func (m *TWebview) initDefaultDragEvent() {
-	m.mustGtkWebview()
 	var (
 		targetURIList, targetPlain = "text/uri-list", "text/plain"
-		isDragTarget               = func(context gtk3Types.IDragContext, targets ...string) (bool, TDragType) {
+		isDragTarget               = func(context IDragContext, targets ...string) (bool, TDragType) {
 			targetList := context.ListTargets()
 			for i := uint(0); i < targetList.Length(); i++ {
 				data := targetList.NthDataRaw(i)
@@ -648,7 +730,7 @@ func (m *TWebview) initDefaultDragEvent() {
 	)
 
 	// 持续触发
-	m.gtkWebview.SetOnDragMotion(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, time uint, userData gtk3Types.GPointer) bool {
+	m.gtkWebview.SetOnDragMotion(func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool {
 		//println("SetOnDragMotion:", isContinue)
 		//if isHandle {
 		//	return false
@@ -669,18 +751,18 @@ func (m *TWebview) initDefaultDragEvent() {
 		if !isURIList { // TODO
 			return false
 		}
-		ctx.Status(gtk3Types.ACTION_COPY, time)
+		ctx.Status(ACTION_COPY, time)
 		return false
 	})
-	m.gtkWebview.SetOnDragLeave(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, time uint, userData gtk3Types.GPointer) {
+	m.gtkWebview.SetOnDragLeave(func(sender PGtkWidget, context PDragContext, time uint, userData GPointer) {
 		//println("SetOnDragLeave")
 		// leave
 		if m.onDragLeave != nil {
 			m.onDragLeave()
 		}
 	})
-	m.gtkWebview.SetOnDragDataReceived(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, data gtk3Types.PSelectionData,
-		info uint, time uint, userData gtk3Types.GPointer) {
+	m.gtkWebview.SetOnDragDataReceived(func(sender PGtkWidget, context PDragContext, x, y int, data PSelectionData,
+		info uint, time uint, userData GPointer) {
 		//println("SetOnDragDataReceived:", isContinue)
 		if isDragOver {
 			ctx := gtk3.AsDragContext(unsafe.Pointer(context))
@@ -710,7 +792,7 @@ func (m *TWebview) initDefaultDragEvent() {
 			}
 		}
 	})
-	m.gtkWebview.SetOnDragDrop(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, time uint, userData gtk3Types.GPointer) bool {
+	m.gtkWebview.SetOnDragDrop(func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool {
 		widget := gtk3.AsWidget(unsafe.Pointer(sender))
 		ctx := gtk3.AsDragContext(unsafe.Pointer(context))
 		//println("SetOnDragDrop:", isContinue)

@@ -11,6 +11,7 @@
 package types
 
 import (
+	"github.com/energye/lcl/types/colors"
 	"unsafe"
 )
 
@@ -230,4 +231,16 @@ type IEntry interface {
 	SetOnCommit(fn TTextCommitEvent) ISignalHandlerID
 	SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID
 	SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID
+}
+
+type IWebkit2 interface {
+	IWidget
+	SetBackgroundColor(color *colors.TARGB)
+	SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID
+	SetOnDragDrop(fn TDragDropEvent) ISignalHandlerID
+	SetOnDragMotion(fn TDragMotionEvent) ISignalHandlerID
+	SetOnDragLeave(fn TDragLeaveEvent) ISignalHandlerID
+	SetOnDragDataDelete(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnDragBegin(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
 }
