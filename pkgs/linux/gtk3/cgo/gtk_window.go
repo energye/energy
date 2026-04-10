@@ -5,6 +5,7 @@ package cgo
 import "C"
 import (
 	"errors"
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -569,14 +570,20 @@ func (v *Window) BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp ui
 	C.gtk_window_begin_move_drag(v.native(), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
 }
 
-func (v *Window) SetOnConfigure(fn TConfigureEvent) *SignalHandler {
-	return registerAction(v, EsnConfigureEvent, MakeConfigureEvent(fn))
+func (v *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnConfigureEvent, "c_trampoline_2_void",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Window) SetOnMap(fn TMapEvent) *SignalHandler {
-	return registerAction(v, EsnMapEvent, MakeMapEvent(fn))
+func (v *Window) SetOnMap(fn TMapEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnMapEvent, "c_trampoline_2_void",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Window) SetOnDraw(fn TDrawEvent) *SignalHandler {
-	return registerAction(v, EsnDrawEvent, MakeDrawEvent(fn))
+func (v *Window) SetOnDraw(fn TDrawEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnDrawEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }

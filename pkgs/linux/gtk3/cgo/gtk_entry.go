@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -431,18 +432,26 @@ func (v *Entry) GetCurrentIconDragSource() int {
 	return int(c)
 }
 
-func (v *Entry) SetOnChanged(fn TTextChangedEvent) *SignalHandler {
-	return registerAction(v, EsnChanged, MakeTextChangedEvent(fn))
+func (v *Entry) SetOnChanged(fn TTextChangedEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnChanged, "c_trampoline_2_void",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Entry) SetOnCommit(fn TTextCommitEvent) *SignalHandler {
-	return registerAction(v, EsnActivate, MakeTextCommitEvent(fn))
+func (v *Entry) SetOnCommit(fn TTextCommitEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnActivate, "c_trampoline_2_void",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Entry) SetOnKeyPress(fn TTextKeyEvent) *SignalHandler {
-	return registerAction(v, EsnKeyPressEvent, MakeTextKeyEvent(fn))
+func (v *Entry) SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnKeyPressEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Entry) SetOnKeyRelease(fn TTextKeyEvent) *SignalHandler {
-	return registerAction(v, EsnKeyReleaseEvent, MakeTextKeyEvent(fn))
+func (v *Entry) SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnKeyReleaseEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }

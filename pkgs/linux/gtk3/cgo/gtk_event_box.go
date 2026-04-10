@@ -8,6 +8,8 @@ package cgo
 */
 import "C"
 import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
 
@@ -71,14 +73,20 @@ func (v *EventBox) GetVisibleWindow() bool {
 	return GoBool(c)
 }
 
-func (v *EventBox) SetOnClick(fn TButtonPressEvent) *SignalHandler {
-	return registerAction(v, EsnButtonPressEvent, MakeButtonPressEvent(fn))
+func (v *EventBox) SetOnClick(fn TButtonPressEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnButtonPressEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *EventBox) SetOnLeave(fn TLeaveEnterNotifyEvent) *SignalHandler {
-	return registerAction(v, EsnLeaveNotifyEvent, MakeLeaveEnterNotifyEvent(fn))
+func (v *EventBox) SetOnLeave(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnLeaveNotifyEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *EventBox) SetOnEnter(fn TLeaveEnterNotifyEvent) *SignalHandler {
-	return registerAction(v, EsnEnterNotifyEvent, MakeLeaveEnterNotifyEvent(fn))
+func (v *EventBox) SetOnEnter(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnEnterNotifyEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }

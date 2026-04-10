@@ -8,6 +8,7 @@ package cgo
 */
 import "C"
 import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -147,22 +148,20 @@ func (v *Button) GetEventWindow() (*Window, error) {
 	return w, nil
 }
 
-func (v *Button) SetOnLeave(fn TLeaveEnterNotifyEvent) *SignalHandler {
-	return registerAction(v, EsnLeaveNotifyEvent, MakeLeaveEnterNotifyEvent(fn))
+func (v *Button) SetOnLeave(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnLeaveNotifyEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Button) SetOnEnter(fn TLeaveEnterNotifyEvent) *SignalHandler {
-	return registerAction(v, EsnEnterNotifyEvent, MakeLeaveEnterNotifyEvent(fn))
+func (v *Button) SetOnEnter(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnEnterNotifyEvent, "c_trampoline_3_gboolean",
+		fn, nil)
+	return signalHandlerID
 }
 
-func (v *Button) SetOnClick(fn TNotifyEvent) *SignalHandler {
-	return registerAction(v, EsnClicked, MakeNotifyEvent(fn))
-	//C.g_signal_connect_data(
-	//	C.gpointer(v.native()),      // 目标控件
-	//	C.CString("clicked"),        // 事件名
-	//	C.GCallback(C.c_on_clicked), // C 回调函数
-	//	C.gpointer(userData),        // 传递给回调的数据（此处无需）
-	//	nil,                         // 销毁数据的函数（此处无需）
-	//	0,                           // 连接标志（默认 0）
-	//)
+func (v *Button) SetOnClick(fn TNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnClicked, "c_trampoline_2_void",
+		fn, nil)
+	return signalHandlerID
 }

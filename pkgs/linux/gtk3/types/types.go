@@ -26,8 +26,18 @@ type GUInt16 = uint16
 type GUInt8 = uint8
 type GULong = uint
 type PGDouble = uintptr
+type GPointer = uintptr
 type PGdkDevice = uintptr
 type PGtkWidget = uintptr
+type PEventKey = uintptr
+type PEventButton = uintptr
+type PEventCrossing = uintptr
+type PEventConfigure = uintptr
+type PContext = uintptr
+type PDragContext = uintptr
+type PSelectionData = uintptr
+
+// const
 
 type StyleProviderPriority = uint
 

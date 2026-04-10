@@ -10,7 +10,13 @@
 
 package types
 
-import "unsafe"
+import (
+	"unsafe"
+)
+
+type ISignalHandlerID interface {
+	Disconnect()
+}
 
 type IObject interface {
 	Instance() uintptr
@@ -94,6 +100,9 @@ type IWindow interface {
 	Unfullscreen()
 	SetTitle(title string)
 	GetTitle() string
+	SetOnMap(fn TMapEvent) ISignalHandlerID
+	SetOnDraw(fn TDrawEvent) ISignalHandlerID
+	SetOnConfigure(fn TConfigureEvent) ISignalHandlerID
 }
 
 type IMenuShell interface {
@@ -216,4 +225,8 @@ type IEntry interface {
 	SetText(text string)
 	GetText() string
 	GetTextLength() uint16
+	SetOnChanged(fn TTextChangedEvent) ISignalHandlerID
+	SetOnCommit(fn TTextCommitEvent) ISignalHandlerID
+	SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID
+	SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID
 }
