@@ -52,12 +52,12 @@ const (
 type DragAction = uint
 
 const (
-	GDK_ACTION_DEFAULT DragAction = 1 << 0 // 1
-	GDK_ACTION_COPY    DragAction = 1 << 1 // 2
-	GDK_ACTION_MOVE    DragAction = 1 << 2 // 4
-	GDK_ACTION_LINK    DragAction = 1 << 3 // 8
-	GDK_ACTION_PRIVATE DragAction = 1 << 4 // 16
-	GDK_ACTION_ASK     DragAction = 1 << 5 // 32
+	ACTION_DEFAULT DragAction = 1 << 0 // 1
+	ACTION_COPY    DragAction = 1 << 1 // 2
+	ACTION_MOVE    DragAction = 1 << 2 // 4
+	ACTION_LINK    DragAction = 1 << 3 // 8
+	ACTION_PRIVATE DragAction = 1 << 4 // 16
+	ACTION_ASK     DragAction = 1 << 5 // 32
 )
 
 type TAtom = uintptr

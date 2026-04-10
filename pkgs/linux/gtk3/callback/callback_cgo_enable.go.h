@@ -167,7 +167,7 @@ static const TrampolineMap trampoline_table[] = {
     {"c_trampoline_3_gboolean",                             (GCallback)c_trampoline_3_gboolean},
     {"c_trampoline_4_gboolean",                             (GCallback)c_trampoline_4_gboolean},
     {"c_trampoline_8_void_drag_data_received",              (GCallback)c_trampoline_8_void_drag_data_received},
-    {"c_trampoline_6_void_drag_drop_motion",                (GCallback)c_trampoline_6_void_drag_drop_motion},
+    {"c_trampoline_6_gboolean_drag_drop_motion",            (GCallback)c_trampoline_6_void_drag_drop_motion},
     {"c_trampoline_4_void_drag_leave",                      (GCallback)c_trampoline_4_void_drag_leave},
 };
 

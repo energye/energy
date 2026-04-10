@@ -26,9 +26,9 @@ func (v Atom) Name() string {
 }
 
 // GdkAtomIntern is a wrapper around gdk_atom_intern
-func GdkAtomIntern(atomName string, onlyIfExists bool) Atom {
+func GdkAtomIntern(atomName string, onlyIfExists bool) types.TAtom {
 	cstr := C.CString(atomName)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gdk_atom_intern((*C.gchar)(cstr), CBool(onlyIfExists))
-	return Atom(uintptr(unsafe.Pointer(c)))
+	return types.TAtom(uintptr(unsafe.Pointer(c)))
 }

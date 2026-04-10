@@ -44,6 +44,7 @@ type IWidget interface {
 	SetSizeRequest(width, height int)
 	GetSizeRequest() (width, height int)
 	GetStyleContext() IStyleContext
+	DragGetData(context IDragContext, target TAtom, time uint)
 	IsContainer() bool
 }
 

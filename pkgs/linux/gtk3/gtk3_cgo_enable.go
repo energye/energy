@@ -85,7 +85,7 @@ func NewEntry() IEntry {
 	return cgo.NewEntry()
 }
 
-func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
+func GdkAtomIntern(atomName string, onlyIfExists bool) TAtom {
 	return cgo.GdkAtomIntern(atomName, onlyIfExists)
 }
 

@@ -30,6 +30,7 @@ void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdou
 import "C"
 import (
 	"github.com/energye/energy/v3/pkgs/linux/gtk3"
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	gtk3Types "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/types"
@@ -162,30 +163,44 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
 	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }
 
-func (m *TGtkWebview) SetOnDragDataReceived(fn gtk3.TDragDataReceivedEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDataReceivedEvent, gtk3.MakeDragDataReceivedEvent(fn))
+func (m *TGtkWebview) SetOnDragDataReceived(fn gtk3Types.TDragDataReceivedEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragDataReceivedEvent,
+		"c_trampoline_8_void_drag_data_received", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragDrop(fn gtk3.TDragDropEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDropEvent, gtk3.MakeDragDropEvent(fn))
+func (m *TGtkWebview) SetOnDragDrop(fn gtk3Types.TDragDropEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragDropEvent,
+		"c_trampoline_6_gboolean_drag_drop_motion", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragMotion(fn gtk3.TDragMotionEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragMotionEvent, gtk3.MakeDragMotionEvent(fn))
+func (m *TGtkWebview) SetOnDragMotion(fn gtk3Types.TDragMotionEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragMotionEvent,
+		"c_trampoline_6_gboolean_drag_drop_motion", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragLeave(fn gtk3.TDragLeaveEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragLeaveEvent, gtk3.MakeDragLeaveEvent(fn))
+func (m *TGtkWebview) SetOnDragLeave(fn gtk3Types.TDragLeaveEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragLeaveEvent,
+		"c_trampoline_4_void", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragDataDelete(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragDataDeleteEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragDataDelete(fn gtk3Types.TDragDataDeleteOrBeginOrEndEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragDataDeleteEvent,
+		"c_trampoline_3_void", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragBegin(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragBeginEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragBegin(fn gtk3Types.TDragDataDeleteOrBeginOrEndEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragBeginEvent,
+		"c_trampoline_3_void", fn, nil)
+	return signalHandlerID
 }
 
-func (m *TGtkWebview) SetOnDragEnd(fn gtk3.TDragDataDeleteOrBeginOrEndEvent) *gtk3.SignalHandler {
-	return gtk3.RegisterAction(m.wsWebview, gtk3.EsnDragEndEvent, gtk3.MakeDragDataDeleteOrBeginOrEndEvent(fn))
+func (m *TGtkWebview) SetOnDragEnd(fn gtk3Types.TDragDataDeleteOrBeginOrEndEvent) gtk3Types.ISignalHandlerID {
+	signalHandlerID := callback.Connect(unsafe.Pointer(m.wsWebview.Instance()), gtk3Types.EsnDragEndEvent,
+		"c_trampoline_3_void", fn, nil)
+	return signalHandlerID
 }

@@ -35,6 +35,7 @@ const (
 )
 
 // 信号事件类型
+// Note: 参数和返回值除了基础类型，其它所有都用指针(uintptr)表示
 
 type TNotifyEvent func(sender PGtkWidget, userData GPointer)
 type TTextChangedEvent func(sender PGtkWidget, userData GPointer)
@@ -48,8 +49,8 @@ type TDrawEvent func(sender PGtkWidget, cr PContext, userData GPointer) bool
 
 // type drag event
 
-type TDragDataReceivedEvent func(sender PGtkWidget, context PDragContext, x, y int, data PSelectionData, info uint, time uint)
-type TDragDropEvent func(sender PGtkWidget, context PDragContext, x, y int, time uint) bool
-type TDragMotionEvent func(sender PGtkWidget, context PDragContext, x, y int, time uint) bool
-type TDragLeaveEvent func(sender PGtkWidget, context PDragContext, time uint)
-type TDragDataDeleteOrBeginOrEndEvent func(sender PGtkWidget, context PDragContext)
+type TDragDataReceivedEvent func(sender PGtkWidget, context PDragContext, x, y int, data PSelectionData, info uint, time uint, userData GPointer)
+type TDragDropEvent func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool
+type TDragMotionEvent func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool
+type TDragLeaveEvent func(sender PGtkWidget, context PDragContext, time uint, userData GPointer)
+type TDragDataDeleteOrBeginOrEndEvent func(sender PGtkWidget, context PDragContext, userData GPointer)

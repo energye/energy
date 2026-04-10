@@ -623,11 +623,11 @@ func (m *TWebview) initDefaultDragEvent() {
 	m.mustGtkWebview()
 	var (
 		targetURIList, targetPlain = "text/uri-list", "text/plain"
-		isDragTarget               = func(context *gtk3.DragContext, targets ...string) (bool, TDragType) {
+		isDragTarget               = func(context gtk3Types.IDragContext, targets ...string) (bool, TDragType) {
 			targetList := context.ListTargets()
 			for i := uint(0); i < targetList.Length(); i++ {
 				data := targetList.NthDataRaw(i)
-				name := gtk3.ToAtom(data).Name()
+				name := gtk3.AsAtom(data).Name()
 				for _, target := range targets {
 					if name == target {
 						var dataType TDragType
@@ -648,12 +648,13 @@ func (m *TWebview) initDefaultDragEvent() {
 	)
 
 	// 持续触发
-	m.gtkWebview.SetOnDragMotion(func(sender gtk3Types.IWidget, context *gtk3.DragContext, x, y int, time uint) bool {
+	m.gtkWebview.SetOnDragMotion(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, time uint, userData gtk3Types.GPointer) bool {
 		//println("SetOnDragMotion:", isContinue)
 		//if isHandle {
 		//	return false
 		//}
-		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
+		ctx := gtk3.AsDragContext(unsafe.Pointer(context))
+		isURIList, dataType := isDragTarget(ctx, targetURIList, targetPlain)
 		if !isDragEnter {
 			isDragEnter = true
 			//isHandle = false
@@ -668,27 +669,30 @@ func (m *TWebview) initDefaultDragEvent() {
 		if !isURIList { // TODO
 			return false
 		}
-		context.Status(gtk3.ACTION_COPY, time)
+		ctx.Status(gtk3Types.ACTION_COPY, time)
 		return false
 	})
-	m.gtkWebview.SetOnDragLeave(func(sender *gtk3.Widget, context *gtk3.DragContext, time uint) {
+	m.gtkWebview.SetOnDragLeave(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, time uint, userData gtk3Types.GPointer) {
 		//println("SetOnDragLeave")
 		// leave
 		if m.onDragLeave != nil {
 			m.onDragLeave()
 		}
 	})
-	m.gtkWebview.SetOnDragDataReceived(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, data *gtk3.SelectionData, info uint, time uint) {
+	m.gtkWebview.SetOnDragDataReceived(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, data gtk3Types.PSelectionData,
+		info uint, time uint, userData gtk3Types.GPointer) {
 		//println("SetOnDragDataReceived:", isContinue)
 		if isDragOver {
+			ctx := gtk3.AsDragContext(unsafe.Pointer(context))
+			selectionData := gtk3.AsSelectionData(unsafe.Pointer(data))
 			isDragOver = false
 			isDragEnter = false
 			//isHandle = false
-			isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
+			isURIList, dataType := isDragTarget(ctx, targetURIList, targetPlain)
 			if info != 2 && info != 1 || !isURIList {
 				return
 			}
-			dataLen := data.GetLength()
+			dataLen := selectionData.GetLength()
 			if dataLen == 0 {
 				//context.Finish(false, false, time)
 				return
@@ -696,9 +700,9 @@ func (m *TWebview) initDefaultDragEvent() {
 			if m.onDragOver != nil {
 				dragData := &TDragData{Type: dataType}
 				if info == 2 {
-					dragData.Filenames = data.GetURIs()
+					dragData.Filenames = selectionData.GetURIs()
 				} else if info == 1 {
-					dragData.Data = data.GetData()
+					dragData.Data = selectionData.GetData()
 				}
 				// over
 				m.onDragOver(dragData, int32(x), int32(y))
@@ -706,12 +710,14 @@ func (m *TWebview) initDefaultDragEvent() {
 			}
 		}
 	})
-	m.gtkWebview.SetOnDragDrop(func(sender *gtk3.Widget, context *gtk3.DragContext, x, y int, time uint) bool {
+	m.gtkWebview.SetOnDragDrop(func(sender gtk3Types.PGtkWidget, context gtk3Types.PDragContext, x, y int, time uint, userData gtk3Types.GPointer) bool {
+		widget := gtk3.AsWidget(unsafe.Pointer(sender))
+		ctx := gtk3.AsDragContext(unsafe.Pointer(context))
 		//println("SetOnDragDrop:", isContinue)
 		//if !isContinue {
 		//	return false
 		//}
-		isURIList, dataType := isDragTarget(context, targetURIList, targetPlain)
+		isURIList, dataType := isDragTarget(ctx, targetURIList, targetPlain)
 		if isURIList {
 			targetName := ""
 			if dataType == DragTypeFile {
@@ -721,7 +727,7 @@ func (m *TWebview) initDefaultDragEvent() {
 			}
 			isDragOver = true
 			target := gtk3.GdkAtomIntern(targetName, false)
-			sender.DragGetData(context, target, time)
+			widget.DragGetData(ctx, target, time)
 			//return !isHandle
 		}
 		return false
