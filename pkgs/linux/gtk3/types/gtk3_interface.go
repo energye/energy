@@ -38,6 +38,7 @@ type IWidget interface {
 	SetSizeRequest(width, height int)
 	GetSizeRequest() (width, height int)
 	GetStyleContext() IStyleContext
+	IsContainer() bool
 }
 
 type IContainer interface {
