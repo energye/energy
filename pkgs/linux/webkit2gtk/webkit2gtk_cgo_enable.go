@@ -13,7 +13,7 @@
 package webkit2gtk
 
 import (
-	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/types"
 	"github.com/energye/energy/v3/pkgs/linux/webkit2gtk/cgo"
 	"unsafe"
 )

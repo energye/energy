@@ -1,9 +1,9 @@
 package cgo
 
 import "C"
-import "unsafe"
 import (
-	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/types"
+	"unsafe"
 )
 
 /*

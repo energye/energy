@@ -18,7 +18,7 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/linux/gtk3"
-	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/types"
 	"github.com/energye/energy/v3/pkgs/linux/webkit2gtk"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"

@@ -14,9 +14,9 @@ package nocgo
 
 import (
 	"github.com/energye/energy/v3/pkgs/linux"
-	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
+	"github.com/energye/energy/v3/pkgs/linux/callback"
 	"github.com/energye/energy/v3/pkgs/linux/gtk3/nocgo"
-	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	. "github.com/energye/energy/v3/pkgs/linux/types"
 	"github.com/energye/lcl/api/imports"
 	"github.com/energye/lcl/types/colors"
 	"unsafe"

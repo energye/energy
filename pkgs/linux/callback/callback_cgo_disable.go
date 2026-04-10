@@ -15,7 +15,7 @@ package callback
 import (
 	"github.com/ebitengine/purego"
 	"github.com/energye/energy/v3/pkgs/linux"
-	"github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"github.com/energye/energy/v3/pkgs/linux/types"
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/api/imports"
 )

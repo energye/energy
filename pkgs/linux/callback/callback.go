@@ -10,7 +10,9 @@
 
 package callback
 
-import "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+import (
+	"github.com/energye/energy/v3/pkgs/linux/types"
+)
 
 type SignalHandlerID struct {
 	Widget    types.PGtkWidget
