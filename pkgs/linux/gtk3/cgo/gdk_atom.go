@@ -4,13 +4,15 @@ package cgo
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"
-import "unsafe"
-import "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+import (
+	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
+	"unsafe"
+)
 
 // Atom is a representation of GDK's GdkAtom.
-type Atom types.TAtom
+type Atom TAtom
 
-func AsAtom(v unsafe.Pointer) Atom {
+func AsAtom(v unsafe.Pointer) IAtom {
 	return Atom(v)
 }
 
@@ -25,10 +27,14 @@ func (v Atom) Name() string {
 	return C.GoString((*C.char)(c))
 }
 
+func (m Atom) Atom() TAtom {
+	return TAtom(m)
+}
+
 // GdkAtomIntern is a wrapper around gdk_atom_intern
-func GdkAtomIntern(atomName string, onlyIfExists bool) types.TAtom {
+func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 	cstr := C.CString(atomName)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gdk_atom_intern((*C.gchar)(cstr), CBool(onlyIfExists))
-	return types.TAtom(uintptr(unsafe.Pointer(c)))
+	return Atom(unsafe.Pointer(c))
 }
