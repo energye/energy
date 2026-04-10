@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -67,4 +68,19 @@ func (m *Window) SetTitle(title string) {
 func (m *Window) GetTitle() string {
 	r := gtk3.SysCall("gtk_window_get_title", m.Instance())
 	return GoStr(r)
+}
+
+func (m *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnConfigureEvent, fn, 0)
+	return signalHandlerID
+}
+
+func (m *Window) SetOnMap(fn TMapEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnMapEvent, fn, 0)
+	return signalHandlerID
+}
+
+func (m *Window) SetOnDraw(fn TDrawEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnDrawEvent, fn, 0)
+	return signalHandlerID
 }

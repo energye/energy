@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/pkgs/linux/gtk3/callback"
 	. "github.com/energye/energy/v3/pkgs/linux/gtk3/types"
 	"unsafe"
 )
@@ -50,4 +51,25 @@ func (m *Entry) GetText() string {
 func (m *Entry) GetTextLength() uint16 {
 	c := gtk3.SysCall("gtk_entry_get_text_length", m.Instance())
 	return uint16(c)
+}
+
+func (m *Entry) SetOnChanged(fn TTextChangedEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnChanged, fn, 0)
+	return signalHandlerID
+}
+
+func (m *Entry) SetOnCommit(fn TTextCommitEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnActivate, fn, 0)
+	return signalHandlerID
+}
+
+func (m *Entry) SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnKeyPressEvent,
+		fn, 0)
+	return signalHandlerID
+}
+
+func (m *Entry) SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnKeyReleaseEvent, fn, 0)
+	return signalHandlerID
 }
