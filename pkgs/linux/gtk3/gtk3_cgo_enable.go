@@ -65,8 +65,8 @@ func AsEntry(ptr unsafe.Pointer) IEntry {
 	return cgo.AsEntry(ptr)
 }
 
-func AsKeyEvent(p unsafe.Pointer) IEventKey {
-	return cgo.AsKeyEvent(p)
+func AsEventKey(p unsafe.Pointer) IEventKey {
+	return cgo.AsEventKey(p)
 }
 
 func AsContext(ptr unsafe.Pointer) IContext {

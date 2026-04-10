@@ -65,8 +65,8 @@ func AsEntry(ptr unsafe.Pointer) IEntry {
 	return nocgo.AsEntry(ptr)
 }
 
-func AsKeyEvent(p unsafe.Pointer) IEventKey {
-	return nocgo.AsKeyEvent(p)
+func AsEventKey(p unsafe.Pointer) IEventKey {
+	return nocgo.AsEventKey(p)
 }
 
 func AsContext(ptr unsafe.Pointer) IContext {

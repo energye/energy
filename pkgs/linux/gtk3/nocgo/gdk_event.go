@@ -60,7 +60,7 @@ type EventKey struct {
 	ek *GdkEventKey
 }
 
-func AsKeyEvent(p unsafe.Pointer) IEventKey {
+func AsEventKey(p unsafe.Pointer) IEventKey {
 	if p == nil {
 		return nil
 	}

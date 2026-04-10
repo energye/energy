@@ -54,7 +54,7 @@ func NewEventKey() *EventKey {
 	return &EventKey{&ev}
 }
 
-func AsKeyEvent(p unsafe.Pointer) *EventKey {
+func AsEventKey(p unsafe.Pointer) *EventKey {
 	return &EventKey{Event: &Event{GdkEvent: (*C.GdkEvent)(p)}}
 }
 
