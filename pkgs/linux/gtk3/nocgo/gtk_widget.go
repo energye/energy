@@ -85,7 +85,7 @@ func (m *Widget) GetStyleContext() IStyleContext {
 }
 
 func (m *Widget) IsContainer() bool {
-	containerGType := GTypeFromName("GtkContainer")
+	containerGType := GTypeFromName(CStr("GtkContainer"))
 	widgetGType := GTypeFormInstance(m.Instance())
 	return GTypeIsA(widgetGType, containerGType)
 }
