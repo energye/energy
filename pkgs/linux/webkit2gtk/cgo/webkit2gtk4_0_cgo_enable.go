@@ -57,7 +57,7 @@ func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
 	cG := C.gdouble(float64(color.G) / 255.0)
 	cB := C.gdouble(float64(color.B) / 255.0)
 	cA := C.gdouble(float64(color.A) / 255.0)
-	C.WebkitSetBackgroundColor(unsafe.Pointer(m.Instance()), cR, cG, cB, cA)
+	C.WebkitSetBackgroundColor((*C.WebKitWebView)(unsafe.Pointer(m.Instance())), cR, cG, cB, cA)
 }
 
 func (m *Webkit2) SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID {
