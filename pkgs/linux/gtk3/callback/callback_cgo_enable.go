@@ -21,10 +21,10 @@ package callback
 
 
 static void remove_signal_handler(GtkWidget* widget, gulong handler_id) {
-  	g_print("尝试移除信号处理器: handler_id=%lu, widget=%p\n", handler_id, widget);
+  	g_print("Attempting to remove signal handler: handler_id=%lu, widget=%p\n", handler_id, widget);
     if (handler_id > 0 && widget != NULL) {
         g_signal_handler_disconnect(widget, handler_id);
-        g_print("移除信号处理器成功: handler_id=%lu\n", handler_id);
+        g_print("Successfully removed signal handler: handler_id=%lu\n", handler_id);
     }
 }
 */
@@ -37,6 +37,12 @@ import (
 	"unsafe"
 )
 
+// ReturnType 支持的返回值类型
+// 仅支持
+// RET_VOID: 无返回
+// RET_GBOOLEAN: bool
+// RET_GINT: int
+// RET_POINTER: uintptr
 type ReturnType int
 
 const (
@@ -68,17 +74,19 @@ func (m *SignalHandlerID) Disconnect() {
 	Disconnect(m.Widget, m.HandlerID, m.Id)
 }
 
-// Connect 注册信号
+// Connect Registering signal
 func Connect(instance unsafe.Pointer, signalName, trampolineName string, fn any, userData unsafe.Pointer) *SignalHandlerID {
 	signalMgr.mu.Lock()
 	callbackFn := compileCallback(fn)
 	id := signalMgr.nextID
-	signalMgr.handlers[id] = callbackFn
-	signalMgr.nextID++
-	signalMgr.mu.Unlock()
 	if userData == nil {
+		signalMgr.nextID++
 		userData = unsafe.Pointer(uintptr(id))
+	} else {
+		id = uint64(uintptr(userData))
 	}
+	signalMgr.handlers[id] = callbackFn
+	signalMgr.mu.Unlock()
 
 	cSignalName := C.CString(signalName)
 	defer C.free(unsafe.Pointer(cSignalName))
@@ -122,8 +130,10 @@ func go_signal_handler_generic(call *C.SignalCall) {
 		return
 	}
 	args := make([]reflect.Value, int(call.nargs))
+	typ := handler.method.Type()
 	for i := 0; i < int(call.nargs); i++ {
-		args[i] = reflect.ValueOf(uintptr(call.args[i]))
+		argTyp := typ.In(i)
+		args[i] = reflect.ValueOf(uintptr(call.args[i])).Convert(argTyp)
 	}
 	// call method
 	result := handler.method.Call(args)
