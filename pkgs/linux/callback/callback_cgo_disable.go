@@ -20,13 +20,16 @@ import (
 	"github.com/energye/lcl/api/imports"
 )
 
-var (
-	gSignalConnect           func(object, name, handler, data, destroyData, flags uintptr) uintptr
-	gSignalHandlerDisconnect func(widget, handlerId uintptr)
-)
-
 func (m *SignalHandlerID) Disconnect() {
-	gSignalHandlerDisconnect(m.Widget, uintptr(m.HandlerID))
+	GSignalHandlerDisconnect(m.Widget, uintptr(m.HandlerID))
+}
+
+func GSignalConnectData(object, name, handler, data, destroyData, flags uintptr) uintptr {
+	return gobject2_0.SysCall("g_signal_connect_data", object, name, handler, data, destroyData, flags)
+}
+
+func GSignalHandlerDisconnect(widget, handlerId uintptr) {
+	gobject2_0.SysCall("g_signal_handler_disconnect", widget, handlerId)
 }
 
 var gobject2_0 *linux.DnyLibrary
@@ -39,13 +42,11 @@ func init() {
 	}
 	gobject2_0.SetLibClose()
 	gobject2_0.MapperIndex()
-	purego.RegisterLibFunc(&gSignalConnect, uintptr(gobject2_0.Dll), "g_signal_connect_data")
-	purego.RegisterLibFunc(&gSignalHandlerDisconnect, uintptr(gobject2_0.Dll), "g_signal_handler_disconnect")
 }
 
 func Connect(widget uintptr, signalName string, fn any, userData uintptr) *SignalHandlerID {
 	fnPtr := purego.NewCallback(fn)
-	handlerID := gSignalConnect(widget, api.PasStr(signalName), fnPtr, userData, 0, 0)
+	handlerID := GSignalConnectData(widget, api.PasStr(signalName), fnPtr, userData, 0, 0)
 	return &SignalHandlerID{
 		Widget:    widget,
 		HandlerID: types.GULong(handlerID),
