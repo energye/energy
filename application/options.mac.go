@@ -10,23 +10,8 @@
 
 package application
 
-type AppearanceName string
-
-const (
-	// NSAppearanceNameAqua - 标准浅色系统外观
-	NSAppearanceNameAqua AppearanceName = "NSAppearanceNameAqua"
-	// NSAppearanceNameDarkAqua - 标准深色系统外观
-	NSAppearanceNameDarkAqua AppearanceName = "NSAppearanceNameDarkAqua"
-	// NSAppearanceNameVibrantLight - 浅色生动外观
-	NSAppearanceNameVibrantLight AppearanceName = "NSAppearanceNameVibrantLight"
-	// NSAppearanceNameAccessibilityHighContrastAqua - 标准浅色系统外观的高对比度版本
-	NSAppearanceNameAccessibilityHighContrastAqua AppearanceName = "NSAppearanceNameAccessibilityHighContrastAqua"
-	// NSAppearanceNameAccessibilityHighContrastDarkAqua - 标准深色系统外观的高对比度版本
-	NSAppearanceNameAccessibilityHighContrastDarkAqua AppearanceName = "NSAppearanceNameAccessibilityHighContrastDarkAqua"
-	// NSAppearanceNameAccessibilityHighContrastVibrantLight - 浅色生动外观的高对比度版本
-	NSAppearanceNameAccessibilityHighContrastVibrantLight AppearanceName = "NSAppearanceNameAccessibilityHighContrastVibrantLight"
-	// NSAppearanceNameAccessibilityHighContrastVibrantDark - 深色生动外观的高对比度版本
-	NSAppearanceNameAccessibilityHighContrastVibrantDark AppearanceName = "NSAppearanceNameAccessibilityHighContrastVibrantDark"
+import (
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 )
 
 type ToolBar struct {
