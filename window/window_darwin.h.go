@@ -31,7 +31,7 @@ func (m *TWindow) SetWindowTransparent() {
 // SwitchFrostedMaterial 切换窗口的磨砂材质外观
 // 该方法会根据指定的外观名称来更改窗口的磨砂视图材质效果
 func (m *TWindow) SwitchFrostedMaterial(appearanceName AppearanceName) {
-	m.nsWindow.SwitchFrostedMaterial(m.nsFrostedView, string(appearanceName))
+	m.nsWindow.SwitchFrostedMaterial(string(appearanceName))
 }
 
 // SetWindowRadius 设置窗口圆角半径
