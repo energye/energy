@@ -12,38 +12,26 @@
 
 package window
 
-/*
-#cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
-#cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
-
-#import "Cocoa/Cocoa.h"
-#import <WebKit/WebKit.h>
-*/
-import "C"
 import (
-	"fmt"
-	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/pkgs/cocoa"
+	"github.com/energye/energy/v3/pkgs/darwin/cocoa"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
+	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
 
-func (m *TWindow) DragWindow() {
-	cocoa.DragWindow(m.NSInstance())
-}
-
 func (m *TWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
-	cocoa.SetWindowBackgroundColor(m.NSInstance(), red, green, blue, alpha)
+	m.nsWindow.SetBackgroundColor(red, green, blue, alpha)
 }
 
 // SetWindowTransparent 设置窗口为透明效果
 func (m *TWindow) SetWindowTransparent() {
-	m.nsFrostedView = cocoa.SetWindowTransparent(m.NSWindowInstance())
+	m.nsFrostedView = m.nsWindow.SetTransparent()
 }
 
 // SwitchFrostedMaterial 切换窗口的磨砂材质外观
 // 该方法会根据指定的外观名称来更改窗口的磨砂视图材质效果
-func (m *TWindow) SwitchFrostedMaterial(appearanceName application.AppearanceName) {
-	cocoa.WindowSwitchFrostedMaterial(m.nsFrostedView, m.NSWindowInstance(), string(appearanceName))
+func (m *TWindow) SwitchFrostedMaterial(appearanceName AppearanceName) {
+	m.nsWindow.SwitchFrostedMaterial(m.nsFrostedView, string(appearanceName))
 }
 
 // SetWindowRadius 设置窗口圆角半径
@@ -52,7 +40,7 @@ func (m *TWindow) SetWindowRadius() {
 	if m.options != nil {
 		if m.options.Frameless {
 			if m.options.MacOS.WindowRadius > 0.0 {
-				cocoa.SetWindowRadius(m.NSInstance(), m.options.MacOS.WindowRadius)
+				m.nsWindow.SetRadius(m.options.MacOS.WindowRadius)
 			}
 		}
 	}
@@ -62,19 +50,19 @@ func (m *TWindow) SetWindowRadius() {
 // 该方法根据应用程序选项设置窗口样式掩码、标题栏透明度、可见性等属性
 func (m *TWindow) TitleBar() {
 	if m.options != nil {
-		nsWindow := m.NSWindow()
+		nsWindow := lcl.PlatformWindow(m.Instance())
 		mask := nsWindow.StyleMask()
 		if m.options.DisableSystemMenu {
-			mask ^= C.NSWindowStyleMaskClosable
+			mask ^= NSWindowStyleMaskClosable
 		}
 		if m.options.DisableMinimize {
-			mask ^= C.NSWindowStyleMaskMiniaturizable
+			mask ^= NSWindowStyleMaskMiniaturizable
 		}
 		if m.options.DisableResize || m.options.DisableMaximize {
-			mask ^= C.NSWindowStyleMaskResizable
+			mask ^= NSWindowStyleMaskResizable
 		}
 		if m.options.MacOS.FullSizeContent {
-			mask |= C.NSWindowStyleMaskFullSizeContentView
+			mask |= NSWindowStyleMaskFullSizeContentView
 		}
 		nsWindow.SetStyleMask(mask)
 		nsWindow.SetTitleBarAppearsTransparent(m.options.MacOS.TitleTransparent)
@@ -83,7 +71,7 @@ func (m *TWindow) TitleBar() {
 		}
 		toolBar := m.options.MacOS.ToolBar
 		if toolBar != nil {
-			cocoa.NewToolBar(m.NSInstance(), m.nsDelegate, cocoa.ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
+			cocoa.NewToolBar(m.nsWindow, m.nsDelegate, ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
 		}
 	}
 }
@@ -92,25 +80,21 @@ func (m *TWindow) TitleBar() {
 func (m *TWindow) Frameless() {
 	if m.options != nil {
 		if m.options.Frameless {
-			nsWindow := m.NSWindow()
+			nsWindow := lcl.PlatformWindow(m.Instance())
 			mask := nsWindow.StyleMask()
-			mask ^= C.NSWindowStyleMaskTitled
+			mask ^= NSWindowStyleMaskTitled
 			nsWindow.SetStyleMask(mask)
 		}
 	}
 }
 
-func (m *TWindow) ContentViewFrame() types.TRect {
-	return cocoa.WindowContentViewFrame(m.NSInstance())
-}
-
 func (m *TWindow) _InitEvent() {
-	nsWindow := m.NSInstance()
-	windowResizeEventId := fmt.Sprintf("%d_%v", cocoa.TWindowEventDidResize, nsWindow)
-	cocoa.RegisterEvent(windowResizeEventId, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		//for _, fn := range m.onWindowResizeList {
-		//	fn(m)
-		//}
-		return nil
-	}))
+	//nsWindow := m.NSInstance()
+	//windowResizeEventId := fmt.Sprintf("%d_%v", cocoa.TWindowEventDidResize, nsWindow)
+	//cocoa.RegisterEvent(windowResizeEventId, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+	//	//for _, fn := range m.onWindowResizeList {
+	//	//	fn(m)
+	//	//}
+	//	return nil
+	//}))
 }

@@ -12,60 +12,51 @@
 
 package window
 
-/*
-#cgo darwin CFLAGS: -DDARWIN -x objective-c
-#cgo darwin LDFLAGS: -framework Cocoa
-
-*/
-import "C"
-
 import (
-	"github.com/energye/energy/v3/pkgs/cocoa"
+	"github.com/energye/energy/v3/pkgs/darwin/cocoa"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"unsafe"
 )
 
-const (
-	NSWindowStyleMaskBorderless     = 0 // 窗口没有标题栏和按钮
-	NSWindowStyleMaskTitled         = 1 // 窗口具有标题栏
-	NSWindowStyleMaskClosable       = 2 // 窗口具有关闭按钮
-	NSWindowStyleMaskMiniaturizable = 4 // 窗口可以被最小化
-	NSWindowStyleMaskResizable      = 8 // 窗口可以调整大小
-)
-
 type IDarwinWindow interface {
 	IWindow
-	NSInstance() unsafe.Pointer
-	NSWindow() lcl.NSWindow
-	DragWindow()
-	ContentViewFrame() types.TRect
+	//NSInstance() unsafe.Pointer
+	NSWindow() INSWindow
+	//DragWindow()
+	//ContentViewFrame() types.TRect
 }
 
 type TWindow struct {
 	TEnergyWindow
-	nsFrostedView unsafe.Pointer
-	nsDelegate    unsafe.Pointer
+	nsFrostedView INSVisualEffectView
+	nsDelegate    INSWindowDelegate
+	nsWindow      INSWindow
 }
 
-func (m *TWindow) NSWindowInstance() unsafe.Pointer {
-	return unsafe.Pointer(lcl.PlatformHandle(m.Handle()))
-}
+//func (m *TWindow) NSWindowInstance() unsafe.Pointer {
+//	return unsafe.Pointer(lcl.PlatformHandle(m.Handle()))
+//}
 
-func (m *TWindow) NSInstance() unsafe.Pointer {
-	return unsafe.Pointer(m.NSWindow())
-}
+//func (m *TWindow) NSInstance() unsafe.Pointer {
+//	return unsafe.Pointer(m.NSWindow())
+//}
 
-func (m *TWindow) NSWindow() lcl.NSWindow {
-	return lcl.PlatformWindow(m.Instance())
-}
+//func (m *TWindow) NSWindow() lcl.NSWindow {
+//	return lcl.PlatformWindow(m.Instance())
+//}
 
+func (m *TWindow) NSWindow() INSWindow {
+	return m.nsWindow
+}
 func (m *TWindow) CreateParams(params *types.TCreateParams) {
 }
 
 // InternalBeforeFormCreate 在表单创建之前执行的内部初始化方法
 // 该方法在 TWindow 实例化过程中被调用
 func (m *TWindow) InternalBeforeFormCreate() {
+	m.nsWindow = cocoa.AsNSWindow(unsafe.Pointer(lcl.PlatformWindow(m.Instance())))
 }
 
 func (m *TWindow) _BeforeFormShow() {
@@ -87,8 +78,7 @@ func (m *TWindow) UpdateWindowOption() {
 		m.SetCaption(m.options.Caption)
 		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 		if m.options.MacOS.UseWindowDelegate {
-			m.nsDelegate = cocoa.CreateWindowDelegate(m.NSInstance())
-			m._InitEvent()
+			m.nsDelegate = cocoa.NewWindowDelegate(m.nsWindow)
 		}
 		if m.options.WindowTransparent {
 			m.SetWindowTransparent()
@@ -110,12 +100,12 @@ func (m *TWindow) SetWindowState(value types.TWindowState) {
 	m.windowsState = value
 	switch value {
 	case types.WsMaximized:
-		cocoa.WindowExitMinimized(m.NSInstance())
-		cocoa.WindowMaximize(m.NSInstance())
+		m.nsWindow.ExitMinimized()
+		m.nsWindow.Maximize()
 	case types.WsNormal:
-		cocoa.WindowRestore(m.NSInstance())
+		m.nsWindow.Restore()
 	case types.WsMinimized:
-		cocoa.WindowMinimized(m.NSInstance())
+		m.nsWindow.Minimized()
 	}
 }
 
@@ -129,7 +119,7 @@ func (m *TWindow) FullScreen() {
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
 		m.SetWindowState(types.WsFullScreen)
-		cocoa.WindowEnterFullScreen(m.NSInstance())
+		m.nsWindow.EnterFullScreen()
 	})
 }
 
@@ -137,7 +127,7 @@ func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			m.SetWindowState(types.WsNormal)
-			cocoa.WindowExitFullScreen(m.NSInstance())
+			m.nsWindow.ExitFullScreen()
 		})
 	}
 }
