@@ -32,6 +32,7 @@ void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha);
 void DragWindow(void* nsWindow);
 NSVisualEffectView* SetWindowTransparent(void* nsWindow);
 void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAppearance);
+void UpdateFrostedViewBounds(void* nsFrostedView, void* nsWindow);
 
 @interface TWindowDelegate : NSObject <NSWindowDelegate, NSToolbarDelegate>
     @property (assign) NSWindow *window;

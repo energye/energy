@@ -47,7 +47,7 @@ type INSWindow interface {
 	SetBackgroundColor(r, g, b, alpha uint8)
 	SetRadius(radius float32)
 	SetTransparent() INSVisualEffectView
-	SwitchFrostedMaterial(frostedView INSVisualEffectView, appearanceName string)
+	SwitchFrostedMaterial(appearanceName string)
 	AddSubview(view INSView, x, y, width, height float32)
 	ContentViewFrame() (rect types.TRect)
 }

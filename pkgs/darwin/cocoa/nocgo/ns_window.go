@@ -182,8 +182,8 @@ func (m *NSWindow) SetTransparent() INSVisualEffectView {
 }
 
 // SwitchFrostedMaterial 切换窗口磨砂材质外观
-func (m *NSWindow) SwitchFrostedMaterial(frostedView INSVisualEffectView, appearanceName string) {
-	if m == nil || frostedView == nil || frostedView.Instance() == 0 {
+func (m *NSWindow) SwitchFrostedMaterial(appearanceName string) {
+	if m == nil || m.frostedView == nil || m.frostedView.Instance() == 0 {
 		return
 	}
 	nsWindow := objc.ID(m.Instance())

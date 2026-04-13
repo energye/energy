@@ -123,10 +123,12 @@
         TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
+            context->arguments = CreateGoArguments(1, @(options));
             result = self._callback(context);
             if(result){
                 int resultOptions = GetIntFromGoArguments(result, 0);
-                NSLog(@"willUseFullScreenPresentationOptions %d %d",  result->Count, resultOptions);
+                options = resultOptions;
+//                NSLog(@"[DEBUG] willUseFullScreenPresentationOptions %d %d",  result->Count, resultOptions);
                 for (int i = 0; i < result->Count; i++) {
                     //
                 }
@@ -332,6 +334,22 @@ void SwitchFrostedMaterial(void* nsFrostedView, void* nsWindow, const char *nsAp
         NSAppearance *nsAppearanceName = [NSAppearance appearanceNamed:appearance];
         [window setAppearance:nsAppearanceName];
     }
+}
+
+void UpdateFrostedViewBounds(void* nsFrostedView, void* nsWindow) {
+	NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"UpdateFrostedViewBounds window nil");
+        return;
+    }
+	NSVisualEffectView* frostedView = (NSVisualEffectView*)nsFrostedView;
+    if (!frostedView) {
+        NSLog(@"UpdateFrostedViewBounds frostedView nil");
+        return;
+    }
+	NSView* contentView = window.contentView;
+    CGRect bounds = contentView.bounds;
+    frostedView.frame = bounds;
 }
 
 void WindowAddSubview(void* nsWindow, void* nsView, float x, float y, float width, float height) {

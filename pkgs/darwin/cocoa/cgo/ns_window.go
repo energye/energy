@@ -20,6 +20,7 @@ package cgo
 */
 import "C"
 import (
+	"fmt"
 	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"github.com/energye/lcl/types"
 	"unsafe"
@@ -27,6 +28,7 @@ import (
 
 type NSWindow struct {
 	NSResponder
+	frostedView INSVisualEffectView
 }
 
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
@@ -35,7 +37,38 @@ func AsNSWindow(ptr unsafe.Pointer) INSWindow {
 	}
 	m := new(NSWindow)
 	m.SetInstance(ptr)
+	m.RegisterEvents()
 	return m
+}
+
+func (m *NSWindow) RegisterEvents() {
+	nsWindow := unsafe.Pointer(m.Instance())
+	windowResizeEventId := fmt.Sprintf("%d_%v", TWindowEventDidResize, nsWindow)
+	RegisterEvent(windowResizeEventId, MakeNotifyEvent(func(identifier string, owner Pointer, sender Pointer) *GoArguments {
+		m.doWindowDidResie()
+		return nil
+	}))
+	windowEnterFullScreenEventId := fmt.Sprintf("%d_%v", TWindowEventEnterFullScreen, nsWindow)
+	RegisterEvent(windowEnterFullScreenEventId, MakeNotifyEvent(func(identifier string, owner Pointer, sender Pointer) *GoArguments {
+		m.doWindowWillEnterFullScreen()
+		return nil
+	}))
+	windowExitFullScreenEventId := fmt.Sprintf("%d_%v", TWindowEventExitFullScreen, nsWindow)
+	RegisterEvent(windowExitFullScreenEventId, MakeNotifyEvent(func(identifier string, owner Pointer, sender Pointer) *GoArguments {
+		m.doWindowDidExitFullScreen()
+		return nil
+	}))
+	windowWillUseFullScreenPresentationOptionsEventId := fmt.Sprintf("%d_%v", TWindowEventWillUseFullScreenPresentationOptions, nsWindow)
+	RegisterEvent(windowWillUseFullScreenPresentationOptionsEventId, MakeDelegateEvent(func(arguments *OCGoArguments, owner Pointer, sender Pointer) *GoArguments {
+		defaultOptions := NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen
+		if arguments != nil {
+			defaultOptions = NSApplicationPresentationOptions(arguments.GetInt(0))
+		}
+		defaultOptions = m.doWindowWillUseFullScreenPresentationOptions(defaultOptions)
+		result := new(GoArguments)
+		result.Add(defaultOptions)
+		return result
+	}))
 }
 
 func (m *NSWindow) Restore() {
@@ -102,12 +135,17 @@ func (m *NSWindow) SetRadius(value float32) {
 }
 
 func (m *NSWindow) SetTransparent() INSVisualEffectView {
+	if m.frostedView != nil {
+		return m.frostedView
+	}
 	frostedView := C.SetWindowTransparent(unsafe.Pointer(m.Instance()))
-	return AsNSVisualEffectView(unsafe.Pointer(frostedView))
+	nsFrostedView := AsNSVisualEffectView(unsafe.Pointer(frostedView))
+	m.frostedView = nsFrostedView
+	return nsFrostedView
 }
 
-func (m *NSWindow) SwitchFrostedMaterial(frostedView INSVisualEffectView, appearanceName string) {
-	C.SwitchFrostedMaterial(unsafe.Pointer(frostedView.Instance()), unsafe.Pointer(m.Instance()), C.CString(appearanceName))
+func (m *NSWindow) SwitchFrostedMaterial(appearanceName string) {
+	C.SwitchFrostedMaterial(unsafe.Pointer(m.frostedView.Instance()), unsafe.Pointer(m.Instance()), C.CString(appearanceName))
 }
 
 func (m *NSWindow) AddSubview(view INSView, x, y, width, height float32) {
@@ -123,8 +161,14 @@ func (m *NSWindow) ContentViewFrame() (rect types.TRect) {
 	return
 }
 
-func (m *NSWindow) doWindowDidResie() {
+func (m *NSWindow) UpdateFrostedViewBounds() {
+	if m.frostedView != nil && m.frostedView.Instance() != 0 {
+		C.UpdateFrostedViewBounds(unsafe.Pointer(m.frostedView.Instance()), unsafe.Pointer(m.Instance()))
+	}
+}
 
+func (m *NSWindow) doWindowDidResie() {
+	m.UpdateFrostedViewBounds()
 }
 
 func (m *NSWindow) doWindowWillEnterFullScreen() {
