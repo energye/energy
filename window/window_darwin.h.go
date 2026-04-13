@@ -89,12 +89,10 @@ func (m *TWindow) Frameless() {
 }
 
 func (m *TWindow) _InitEvent() {
-	//nsWindow := m.NSInstance()
-	//windowResizeEventId := fmt.Sprintf("%d_%v", cocoa.TWindowEventDidResize, nsWindow)
-	//cocoa.RegisterEvent(windowResizeEventId, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-	//	//for _, fn := range m.onWindowResizeList {
-	//	//	fn(m)
-	//	//}
-	//	return nil
-	//}))
+	//nsWindow := m.NSWindow().Instance()
+	//windowResizeEventId := fmt.Sprintf("%d_%v", TWindowEventDidResize, nsWindow)
+	//cgo.RegisterEvent(windowResizeEventId,
+	//	cgo.MakeNotifyEvent(func(identifier string, owner cgo.Pointer, sender cgo.Pointer) *cgo.GoArguments {
+	//		return nil
+	//	}))
 }
