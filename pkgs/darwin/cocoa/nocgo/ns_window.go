@@ -19,6 +19,7 @@ import (
 
 type NSWindow struct {
 	NSResponder
+	frostedView INSVisualEffectView
 }
 
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
@@ -150,6 +151,9 @@ func (m *NSWindow) SetTransparent() INSVisualEffectView {
 	if m == nil {
 		return nil
 	}
+	if m.frostedView != nil {
+		return m.frostedView
+	}
 
 	nsWindow := objc.ID(m.Instance())
 	contentView := nsWindow.Send(objc.RegisterName("contentView"))
@@ -160,12 +164,20 @@ func (m *NSWindow) SetTransparent() INSVisualEffectView {
 	bounds := objc.Send[CGRect](contentView, objc.RegisterName("bounds"))
 
 	frostedView := NewNSVisualEffectView(bounds)
-	frostedView.SetAutoresizingMask(NSViewWidthSizable | NSViewHeightSizable)
+	m.frostedView = frostedView
+
+	frostedID := objc.ID(frostedView.Instance())
+	frostedID.Send(objc.RegisterName("setTranslatesAutoresizingMaskIntoConstraints:"), true)
+
+	mask := NSViewWidthSizable | NSViewHeightSizable
+	frostedView.SetAutoresizingMask(mask)
+
 	frostedView.SetBlendingMode(NSVisualEffectBlendingModeBehindWindow)
 	frostedView.SetState(NSVisualEffectStateActive)
 
-	contentView.Send(objc.RegisterName("addSubview:positioned:relativeTo:"),
-		frostedView, NSWindowBelow, 0)
+	sel := objc.RegisterName("addSubview:positioned:relativeTo:")
+	contentView.Send(sel, frostedView.Instance(), NSWindowBelow, objc.ID(0))
+
 	return frostedView
 }
 
@@ -175,11 +187,13 @@ func (m *NSWindow) SwitchFrostedMaterial(frostedView INSVisualEffectView, appear
 		return
 	}
 	nsWindow := objc.ID(m.Instance())
+	nsAppearance := objc.ID(objc.GetClass("NSString")).
+		Send(objc.RegisterName("stringWithUTF8String:"), appearanceName)
 	nsAppearanceClass := objc.GetClass("NSAppearance")
 	// 创建 NSAppearance 对象
-	appearance := objc.ID(nsAppearanceClass).Send(objc.RegisterName("appearanceNamed:"), appearanceName)
+	appearance := objc.ID(nsAppearanceClass).Send(objc.RegisterName("appearanceNamed:"),
+		nsAppearance)
 	if appearance != 0 {
-		// 设置窗口外观
 		nsWindow.Send(objc.RegisterName("setAppearance:"), appearance)
 	}
 }
@@ -251,7 +265,16 @@ func (m *NSWindow) ContentViewFrame() (rect types.TRect) {
 }
 
 func (m *NSWindow) doWindowDidResie() {
-
+	if m.frostedView != nil && m.frostedView.Instance() != 0 {
+		nsWindow := objc.ID(m.Instance())
+		contentView := nsWindow.Send(objc.RegisterName("contentView"))
+		if contentView == 0 {
+			return
+		}
+		newBounds := objc.Send[CGRect](contentView, objc.RegisterName("bounds"))
+		frostedID := objc.ID(m.frostedView.Instance())
+		frostedID.Send(objc.RegisterName("setFrame:"), newBounds)
+	}
 }
 
 func (m *NSWindow) doWindowWillEnterFullScreen() {

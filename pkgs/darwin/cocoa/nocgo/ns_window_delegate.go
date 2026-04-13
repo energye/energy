@@ -14,6 +14,7 @@ import (
 	"github.com/ebitengine/purego/objc"
 	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"reflect"
+	"runtime"
 	"unsafe"
 )
 
@@ -55,16 +56,19 @@ func NewWindowDelegate(window INSWindow) INSWindowDelegate {
 	delegate := objc.ID(windowDelegateClass).Send(objc.RegisterName("new"))
 
 	// 设置 window 属性
-	delegate.Send(objc.RegisterName("setWindow:"), window.Instance())
+	nsWindow := window.(*NSWindow)
+	delegate.Send(objc.RegisterName("setWindow:"), uintptr(unsafe.Pointer(nsWindow)))
 
 	// 设置为窗口的 delegate
-	nsWindow := objc.ID(window.Instance())
-	nsWindow.Send(objc.RegisterName("setDelegate:"), delegate)
+	nsWindowID := objc.ID(window.Instance())
+	nsWindowID.Send(objc.RegisterName("setDelegate:"), delegate)
 
 	return AsNSWindowDelegate(unsafe.Pointer(delegate))
 }
 
 func init() {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	initSelectors()
 	registerWindowDelegateClass()
 }
@@ -123,8 +127,8 @@ func windowDidResize(self objc.ID, _cmd objc.SEL, notification objc.ID) {
 	if windowID == 0 {
 		return
 	}
-	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
-	(nsWindow.(*NSWindow)).doWindowDidResie()
+	nsWindow := (*NSWindow)(unsafe.Pointer(windowID))
+	nsWindow.doWindowDidResie()
 }
 
 // windowWillEnterFullScreen 处理即将进入全屏
@@ -133,8 +137,8 @@ func windowWillEnterFullScreen(self objc.ID, _cmd objc.SEL, notification objc.ID
 	if windowID == 0 {
 		return
 	}
-	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
-	(nsWindow.(*NSWindow)).doWindowWillEnterFullScreen()
+	nsWindow := (*NSWindow)(unsafe.Pointer(windowID))
+	nsWindow.doWindowWillEnterFullScreen()
 }
 
 // windowDidExitFullScreen 处理退出全屏
@@ -143,8 +147,8 @@ func windowDidExitFullScreen(self objc.ID, _cmd objc.SEL, notification objc.ID) 
 	if windowID == 0 {
 		return
 	}
-	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
-	(nsWindow.(*NSWindow)).doWindowDidExitFullScreen()
+	nsWindow := (*NSWindow)(unsafe.Pointer(windowID))
+	nsWindow.doWindowDidExitFullScreen()
 }
 
 // windowWillUseFullScreenPresentationOptions 处理全屏选项
@@ -154,7 +158,7 @@ func windowWillUseFullScreenPresentationOptions(self objc.ID, _cmd objc.SEL,
 	if windowID == 0 {
 		return options
 	}
-	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
-	options = (nsWindow.(*NSWindow)).doWindowWillUseFullScreenPresentationOptions(options)
+	nsWindow := (*NSWindow)(unsafe.Pointer(windowID))
+	options = nsWindow.doWindowWillUseFullScreenPresentationOptions(options)
 	return options
 }
