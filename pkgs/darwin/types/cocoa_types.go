@@ -55,6 +55,14 @@ const (
 	NSWindowAbove NSWindowOrderingMode = 1
 )
 
+type NSApplicationActivationPolicy = int
+
+const (
+	NSApplicationActivationPolicyRegular    NSApplicationActivationPolicy = 0
+	NSApplicationActivationPolicyAccessory  NSApplicationActivationPolicy = 1
+	NSApplicationActivationPolicyProhibited NSApplicationActivationPolicy = 2
+)
+
 type NSApplicationPresentationOptions = int
 
 const (

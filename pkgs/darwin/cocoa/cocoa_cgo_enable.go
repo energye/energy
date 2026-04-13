@@ -8,6 +8,8 @@ import (
 	"unsafe"
 )
 
+var NSApp = cgo.AsNSApp()
+
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
 	return cgo.AsNSWindow(ptr)
 }

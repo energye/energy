@@ -8,6 +8,8 @@ import (
 	"unsafe"
 )
 
+var NSApp = nocgo.AsNSApp()
+
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
 	return nocgo.AsNSWindow(ptr)
 }

@@ -10,7 +10,10 @@
 
 package types
 
-import "github.com/energye/lcl/types"
+import (
+	"github.com/energye/lcl/types"
+	"unsafe"
+)
 
 type INSObject interface {
 	Instance() uintptr
@@ -54,4 +57,18 @@ type INSWindow interface {
 
 type INSWindowDelegate interface {
 	INSObject
+}
+
+type INSApp interface {
+	AppDockHide()
+	AppDockShow()
+	AppSetPresentationOptions(options NSApplicationPresentationOptions)
+	AppSetMainMenu(nsMenu unsafe.Pointer)
+	AppGetActivationPolicy() int
+	AppGetPresentationOptions() NSApplicationPresentationOptions
+	AppActivate()
+	AppDeactivate()
+	AppHide()
+	AppUnHide()
+	AppTerminate()
 }
