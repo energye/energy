@@ -23,13 +23,13 @@ const (
 type NSAutoresizingMaskOptions = int
 
 const (
-	NSViewNotSizable    NSAutoresizingMaskOptions = 0x00
-	NSViewMinXMargin    NSAutoresizingMaskOptions = 0x01
-	NSViewWidthSizable  NSAutoresizingMaskOptions = 0x02
-	NSViewMaxXMargin    NSAutoresizingMaskOptions = 0x04
-	NSViewMinYMargin    NSAutoresizingMaskOptions = 0x08
-	NSViewHeightSizable NSAutoresizingMaskOptions = 0x10
-	NSViewMaxYMargin    NSAutoresizingMaskOptions = 0x20
+	NSViewNotSizable    NSAutoresizingMaskOptions = 0
+	NSViewMinXMargin    NSAutoresizingMaskOptions = 1
+	NSViewWidthSizable  NSAutoresizingMaskOptions = 2
+	NSViewMaxXMargin    NSAutoresizingMaskOptions = 4
+	NSViewMinYMargin    NSAutoresizingMaskOptions = 8
+	NSViewHeightSizable NSAutoresizingMaskOptions = 16
+	NSViewMaxYMargin    NSAutoresizingMaskOptions = 32
 )
 
 type NSVisualEffectBlendingMode = int
