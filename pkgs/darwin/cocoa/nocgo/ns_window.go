@@ -12,7 +12,7 @@ package nocgo
 
 import (
 	"github.com/ebitengine/purego/objc"
-	. "github.com/energye/energy/v3/pkgs/cocoa/types"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"github.com/energye/lcl/types"
 	"unsafe"
 )
@@ -21,7 +21,7 @@ type NSWindow struct {
 	NSResponder
 }
 
-func AsNSWindow(ptr unsafe.Pointer) *NSWindow {
+func AsNSWindow(ptr unsafe.Pointer) INSWindow {
 	if ptr == nil {
 		return nil
 	}
@@ -146,7 +146,7 @@ func (m *NSWindow) SetRadius(radius float32) {
 
 // SetTransparent 设置窗口透明（磨砂效果）
 // 返回 frostedView
-func (m *NSWindow) SetTransparent() *NSVisualEffectView {
+func (m *NSWindow) SetTransparent() INSVisualEffectView {
 	if m == nil {
 		return nil
 	}
@@ -170,7 +170,7 @@ func (m *NSWindow) SetTransparent() *NSVisualEffectView {
 }
 
 // SwitchFrostedMaterial 切换窗口磨砂材质外观
-func (m *NSWindow) SwitchFrostedMaterial(frostedView *NSVisualEffectView, appearanceName string) {
+func (m *NSWindow) SwitchFrostedMaterial(frostedView INSVisualEffectView, appearanceName string) {
 	if m == nil || frostedView == nil || frostedView.Instance() == 0 {
 		return
 	}
@@ -185,7 +185,7 @@ func (m *NSWindow) SwitchFrostedMaterial(frostedView *NSVisualEffectView, appear
 }
 
 // AddSubview 添加子视图到窗口
-func (m *NSWindow) AddSubview(view *NSView, x, y, width, height float32) {
+func (m *NSWindow) AddSubview(view INSView, x, y, width, height float32) {
 	if m == nil || view == nil {
 		return
 	}
@@ -196,7 +196,7 @@ func (m *NSWindow) AddSubview(view *NSView, x, y, width, height float32) {
 		return
 	}
 
-	nsView := view.Self()
+	nsView := objc.ID(view.Instance())
 
 	// 添加到 contentView
 	contentView.Send(objc.RegisterName("addSubview:"), nsView)

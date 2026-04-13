@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package cocoa
+package cgo
 
 /*
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
@@ -19,6 +19,7 @@ package cocoa
 */
 import "C"
 import (
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"strconv"
 	"unsafe"
 )

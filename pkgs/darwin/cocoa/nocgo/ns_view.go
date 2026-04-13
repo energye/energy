@@ -8,9 +8,22 @@
 //
 //----------------------------------------
 
-package cocoa
+package nocgo
 
-// ToolbarConfiguration 的Go包装
-type ToolbarConfiguration struct {
-	ShowSeparator bool
+import (
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
+	"unsafe"
+)
+
+type NSView struct {
+	NSResponder
+}
+
+func AsNSView(ptr unsafe.Pointer) INSView {
+	if ptr == nil {
+		return nil
+	}
+	m := new(NSView)
+	m.SetInstance(ptr)
+	return m
 }

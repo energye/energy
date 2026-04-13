@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package cocoa
+package cgo
 
 import (
 	"sync"

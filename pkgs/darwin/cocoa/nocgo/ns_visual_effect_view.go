@@ -12,7 +12,7 @@ package nocgo
 
 import (
 	"github.com/ebitengine/purego/objc"
-	. "github.com/energye/energy/v3/pkgs/cocoa/types"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"unsafe"
 )
 
@@ -20,7 +20,7 @@ type NSVisualEffectView struct {
 	NSView
 }
 
-func AsNSVisualEffectView(ptr unsafe.Pointer) *NSVisualEffectView {
+func AsNSVisualEffectView(ptr unsafe.Pointer) INSVisualEffectView {
 	if ptr == nil {
 		return nil
 	}
@@ -29,7 +29,7 @@ func AsNSVisualEffectView(ptr unsafe.Pointer) *NSVisualEffectView {
 	return m
 }
 
-func NewNSVisualEffectView(bounds CGRect) *NSVisualEffectView {
+func NewNSVisualEffectView(bounds CGRect) INSVisualEffectView {
 	visualEffectClass := objc.GetClass("NSVisualEffectView")
 	frostedView := objc.ID(visualEffectClass).Send(objc.RegisterName("alloc"))
 	frostedView = frostedView.Send(objc.RegisterName("initWithFrame:"), bounds)
@@ -37,13 +37,13 @@ func NewNSVisualEffectView(bounds CGRect) *NSVisualEffectView {
 }
 
 func (m *NSVisualEffectView) SetAutoresizingMask(mask NSAutoresizingMaskOptions) {
-	m.Self().Send(objc.RegisterName("setAutoresizingMask:"), mask)
+	objc.ID(m.Instance()).Send(objc.RegisterName("setAutoresizingMask:"), mask)
 }
 
 func (m *NSVisualEffectView) SetBlendingMode(mode NSVisualEffectBlendingMode) {
-	m.Self().Send(objc.RegisterName("setBlendingMode:"), mode)
+	objc.ID(m.Instance()).Send(objc.RegisterName("setBlendingMode:"), mode)
 }
 
 func (m *NSVisualEffectView) SetState(state NSVisualEffectState) {
-	m.Self().Send(objc.RegisterName("setState:"), state)
+	objc.ID(m.Instance()).Send(objc.RegisterName("setState:"), state)
 }

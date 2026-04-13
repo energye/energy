@@ -8,15 +8,18 @@
 //
 //----------------------------------------
 
-package nocgo
+package cgo
 
 import (
-	"github.com/ebitengine/purego/objc"
 	"unsafe"
 )
 
 type NSObject struct {
 	instance unsafe.Pointer
+}
+
+type NSResponder struct {
+	NSObject
 }
 
 func (m *NSObject) Instance() uintptr {
@@ -25,8 +28,4 @@ func (m *NSObject) Instance() uintptr {
 
 func (m *NSObject) SetInstance(ptr unsafe.Pointer) {
 	m.instance = ptr
-}
-
-func (m *NSObject) Self() objc.ID {
-	return objc.ID(m.instance)
 }

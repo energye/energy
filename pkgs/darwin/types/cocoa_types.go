@@ -10,6 +10,16 @@
 
 package types
 
+// TWindowEvent CGO 窗口事件, 在 cocoa.h 同步配置
+type TWindowEvent = int
+
+const (
+	TWindowEventEnterFullScreen                      TWindowEvent = 10000
+	TWindowEventExitFullScreen                       TWindowEvent = 10001
+	TWindowEventWillUseFullScreenPresentationOptions TWindowEvent = 10002
+	TWindowEventDidResize                            TWindowEvent = 10003
+)
+
 type NSAutoresizingMaskOptions = int
 
 const (
@@ -59,6 +69,36 @@ const (
 	NSApplicationPresentationDisableSessionTermination NSApplicationPresentationOptions = 0x00000080
 	NSApplicationPresentationFullScreen                NSApplicationPresentationOptions = 0x00000400
 	NSApplicationPresentationAutoHideToolbar           NSApplicationPresentationOptions = 0x00000800
+)
+
+type NSWindowStyleMask = uint
+
+const (
+	NSWindowStyleMaskBorderless          NSWindowStyleMask = 0
+	NSWindowStyleMaskTitled              NSWindowStyleMask = 1 << 0
+	NSWindowStyleMaskClosable            NSWindowStyleMask = 1 << 1
+	NSWindowStyleMaskMiniaturizable      NSWindowStyleMask = 1 << 2
+	NSWindowStyleMaskResizable           NSWindowStyleMask = 1 << 3
+	NSWindowStyleMaskFullSizeContentView NSWindowStyleMask = 1 << 15
+)
+
+type AppearanceName string
+
+const (
+	// NSAppearanceNameAqua - 标准浅色系统外观
+	NSAppearanceNameAqua AppearanceName = "NSAppearanceNameAqua"
+	// NSAppearanceNameDarkAqua - 标准深色系统外观
+	NSAppearanceNameDarkAqua AppearanceName = "NSAppearanceNameDarkAqua"
+	// NSAppearanceNameVibrantLight - 浅色生动外观
+	NSAppearanceNameVibrantLight AppearanceName = "NSAppearanceNameVibrantLight"
+	// NSAppearanceNameAccessibilityHighContrastAqua - 标准浅色系统外观的高对比度版本
+	NSAppearanceNameAccessibilityHighContrastAqua AppearanceName = "NSAppearanceNameAccessibilityHighContrastAqua"
+	// NSAppearanceNameAccessibilityHighContrastDarkAqua - 标准深色系统外观的高对比度版本
+	NSAppearanceNameAccessibilityHighContrastDarkAqua AppearanceName = "NSAppearanceNameAccessibilityHighContrastDarkAqua"
+	// NSAppearanceNameAccessibilityHighContrastVibrantLight - 浅色生动外观的高对比度版本
+	NSAppearanceNameAccessibilityHighContrastVibrantLight AppearanceName = "NSAppearanceNameAccessibilityHighContrastVibrantLight"
+	// NSAppearanceNameAccessibilityHighContrastVibrantDark - 深色生动外观的高对比度版本
+	NSAppearanceNameAccessibilityHighContrastVibrantDark AppearanceName = "NSAppearanceNameAccessibilityHighContrastVibrantDark"
 )
 
 type CGRect struct {

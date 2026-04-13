@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package cocoa
+package cgo
 
 /*
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c

@@ -12,7 +12,7 @@ package nocgo
 
 import (
 	"github.com/ebitengine/purego/objc"
-	. "github.com/energye/energy/v3/pkgs/cocoa/types"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 	"reflect"
 	"unsafe"
 )
@@ -29,7 +29,7 @@ type NSWindowDelegate struct {
 	NSObject
 }
 
-func AsNSWindowDelegate(ptr unsafe.Pointer) *NSWindowDelegate {
+func AsNSWindowDelegate(ptr unsafe.Pointer) INSWindowDelegate {
 	if ptr == nil {
 		return nil
 	}
@@ -47,16 +47,15 @@ func AsNSWindowDelegate(ptr unsafe.Pointer) *NSWindowDelegate {
 // 返回值:
 //   - unsafe.Pointer: 指向创建的 Objective-C Delegate 实例的指针。
 //     调用者应保存此指针，以便在窗口销毁时调用 DestroyWindowDelegate 进行清理。
-func NewWindowDelegate(window *NSWindow) *NSWindowDelegate {
+func NewWindowDelegate(window INSWindow) INSWindowDelegate {
 	if window == nil {
 		return nil
 	}
 	// 创建 windowDelegate 实例
 	delegate := objc.ID(windowDelegateClass).Send(objc.RegisterName("new"))
 
-	// 设置 windowPtr 属性
-	windowPtr := uintptr(unsafe.Pointer(window))
-	delegate.Send(objc.RegisterName("setWindowPtr:"), objc.ID(windowPtr))
+	// 设置 window 属性
+	delegate.Send(objc.RegisterName("setWindow:"), window.Instance())
 
 	// 设置为窗口的 delegate
 	nsWindow := objc.ID(window.Instance())
@@ -88,7 +87,7 @@ func registerWindowDelegateClass() {
 		[]*objc.Protocol{protoWindowDelegate, protoToolbarDelegate},
 		[]objc.FieldDef{
 			{
-				Name:      "windowPtr",
+				Name:      "window",
 				Type:      reflect.TypeOf(uintptr(0)),
 				Attribute: objc.ReadWrite,
 			},
@@ -120,42 +119,42 @@ func registerWindowDelegateClass() {
 
 // windowDidResize 处理窗口调整大小事件
 func windowDidResize(self objc.ID, _cmd objc.SEL, notification objc.ID) {
-	windowPtr := self.Send(objc.RegisterName("windowPtr"))
-	if windowPtr == 0 {
+	windowID := self.Send(objc.RegisterName("window"))
+	if windowID == 0 {
 		return
 	}
-	window := (*NSWindow)(unsafe.Pointer(uintptr(windowPtr)))
-	window.doWindowDidResie()
+	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
+	(nsWindow.(*NSWindow)).doWindowDidResie()
 }
 
 // windowWillEnterFullScreen 处理即将进入全屏
 func windowWillEnterFullScreen(self objc.ID, _cmd objc.SEL, notification objc.ID) {
-	windowPtr := self.Send(objc.RegisterName("windowPtr"))
-	if windowPtr == 0 {
+	windowID := self.Send(objc.RegisterName("window"))
+	if windowID == 0 {
 		return
 	}
-	window := (*NSWindow)(unsafe.Pointer(uintptr(windowPtr)))
-	window.doWindowWillEnterFullScreen()
+	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
+	(nsWindow.(*NSWindow)).doWindowWillEnterFullScreen()
 }
 
 // windowDidExitFullScreen 处理退出全屏
 func windowDidExitFullScreen(self objc.ID, _cmd objc.SEL, notification objc.ID) {
-	windowPtr := self.Send(objc.RegisterName("windowPtr"))
-	if windowPtr == 0 {
+	windowID := self.Send(objc.RegisterName("window"))
+	if windowID == 0 {
 		return
 	}
-	window := (*NSWindow)(unsafe.Pointer(uintptr(windowPtr)))
-	window.doWindowDidExitFullScreen()
+	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
+	(nsWindow.(*NSWindow)).doWindowDidExitFullScreen()
 }
 
 // windowWillUseFullScreenPresentationOptions 处理全屏选项
 func windowWillUseFullScreenPresentationOptions(self objc.ID, _cmd objc.SEL,
 	window objc.ID, options NSApplicationPresentationOptions) NSApplicationPresentationOptions {
-	windowPtr := self.Send(objc.RegisterName("windowPtr"))
-	if windowPtr == 0 {
+	windowID := self.Send(objc.RegisterName("window"))
+	if windowID == 0 {
 		return options
 	}
-	nsWindow := (*NSWindow)(unsafe.Pointer(uintptr(windowPtr)))
-	options = nsWindow.doWindowWillUseFullScreenPresentationOptions(options)
+	nsWindow := AsNSWindow(unsafe.Pointer(windowID))
+	options = (nsWindow.(*NSWindow)).doWindowWillUseFullScreenPresentationOptions(options)
 	return options
 }

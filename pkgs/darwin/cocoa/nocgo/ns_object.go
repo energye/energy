@@ -10,17 +10,18 @@
 
 package nocgo
 
-import "unsafe"
+import (
+	"unsafe"
+)
 
-type NSView struct {
-	NSResponder
+type NSObject struct {
+	instance unsafe.Pointer
 }
 
-func AsNSView(ptr unsafe.Pointer) *NSView {
-	if ptr == nil {
-		return nil
-	}
-	m := new(NSView)
-	m.SetInstance(ptr)
-	return m
+func (m *NSObject) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
+func (m *NSObject) SetInstance(ptr unsafe.Pointer) {
+	m.instance = ptr
 }

@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package cocoa
+package cgo
 
 /*
 #cgo darwin CFLAGS: -DDARWIN -x objective-c

@@ -12,7 +12,7 @@ package nocgo
 
 import (
 	"github.com/ebitengine/purego/objc"
-	. "github.com/energye/energy/v3/pkgs/cocoa/types"
+	. "github.com/energye/energy/v3/pkgs/darwin/types"
 )
 
 type NSToolBar struct {
@@ -25,7 +25,7 @@ type NSToolBar struct {
 //   - window: 目标 NSWindow 对象
 //   - delegate: 工具栏代理对象（通常与窗口代理相同），负责提供工具栏项
 //   - config: 工具栏配置选项
-func NewToolBar(window *NSWindow, delegate *NSWindowDelegate, config ToolbarConfiguration) {
+func NewToolBar(window INSWindow, delegate INSWindowDelegate, config ToolbarConfiguration) {
 	if window == nil {
 		return
 	}
@@ -44,7 +44,7 @@ func NewToolBar(window *NSWindow, delegate *NSWindowDelegate, config ToolbarConf
 
 	// 设置代理
 	if delegate != nil {
-		toolbar.Send(objc.RegisterName("setDelegate:"), delegate.Self())
+		toolbar.Send(objc.RegisterName("setDelegate:"), objc.ID(delegate.Instance()))
 	}
 
 	// 将工具栏设置到窗口
