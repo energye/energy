@@ -60,15 +60,15 @@ type INSWindowDelegate interface {
 }
 
 type INSApp interface {
-	AppDockHide()
-	AppDockShow()
-	AppSetPresentationOptions(options NSApplicationPresentationOptions)
-	AppSetMainMenu(nsMenu unsafe.Pointer)
-	AppGetActivationPolicy() int
-	AppGetPresentationOptions() NSApplicationPresentationOptions
-	AppActivate()
-	AppDeactivate()
-	AppHide()
-	AppUnHide()
-	AppTerminate()
+	DockHide()
+	DockShow()
+	SetPresentationOptions(options NSApplicationPresentationOptions)
+	SetMainMenu(nsMenu unsafe.Pointer)
+	GetActivationPolicy() int
+	GetPresentationOptions() NSApplicationPresentationOptions
+	Activate()
+	Deactivate()
+	Hide()
+	UnHide()
+	Terminate()
 }
