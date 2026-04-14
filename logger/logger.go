@@ -169,6 +169,9 @@ func (l *Logger) ErrorF(msg string, fields ...Field) {
 }
 
 func (l *Logger) logAny(level Level, msg string, args ...any) {
+	if l == nil || l.closed.Load() {
+		return
+	}
 	if int32(level) < l.level.Load() {
 		return
 	}
@@ -199,6 +202,9 @@ func (l *Logger) logAny(level Level, msg string, args ...any) {
 }
 
 func (l *Logger) logFields(level Level, msg string, fields ...Field) {
+	if l == nil || l.closed.Load() {
+		return
+	}
 	if int32(level) < l.level.Load() {
 		return
 	}
