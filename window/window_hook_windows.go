@@ -13,7 +13,7 @@
 package window
 
 import (
-	"github.com/energye/energy/v3/pkgs/win32"
+	"github.com/energye/energy/v3/platform/win32"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"

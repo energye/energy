@@ -13,8 +13,8 @@
 package window
 
 import (
-	"github.com/energye/energy/v3/pkgs/darwin/cocoa"
-	. "github.com/energye/energy/v3/pkgs/darwin/types"
+	"github.com/energye/energy/v3/platform/darwin/cocoa"
+	. "github.com/energye/energy/v3/platform/darwin/types"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )

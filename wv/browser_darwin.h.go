@@ -21,7 +21,7 @@ package wv
 */
 import "C"
 import (
-	"github.com/energye/energy/v3/pkgs/cocoa"
+	"github.com/energye/energy/v3/platform/cocoa"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -67,7 +67,7 @@ func (m *TWebview) AddWindowSubviewWebview(iWindow window.IWindow) {
 		webviewBounds = m.BoundsRect()
 		x, y, w, h    = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 	)
-
+	m.window.NSWindow().AddSubview(webview, x, y, w, h)
 	cocoa.WindowAddSubview(nsWindow, webview, x, y, w, h)
 }
 

@@ -16,9 +16,9 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/pkgs/cocoa"
-	"github.com/energye/energy/v3/pkgs/mime"
+	"github.com/energye/energy/v3/platform/cocoa"
 	"github.com/energye/energy/v3/window"
+	"github.com/energye/energy/v3/wv/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
@@ -353,7 +353,7 @@ func (m *TWebview) initDefaultEvent() {
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					if currentWindow := getWindow(); currentWindow != nil {
-						currentWindow.DragWindow()
+						currentWindow.NSWindow().Drag()
 						handle = true
 					}
 				case ipc.MT_DRAG_RESIZE:

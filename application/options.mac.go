@@ -11,7 +11,7 @@
 package application
 
 import (
-	. "github.com/energye/energy/v3/pkgs/darwin/types"
+	. "github.com/energye/energy/v3/platform/darwin/types"
 )
 
 type ToolBar struct {
