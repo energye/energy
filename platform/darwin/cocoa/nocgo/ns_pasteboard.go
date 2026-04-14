@@ -49,10 +49,8 @@ func (m *NSPasteboard) Types() NSTypes {
 	for i := uintptr(0); i < uintptr(count); i++ {
 		typeObj := types.Send(objc.RegisterName("objectAtIndex:"), i)
 		if typeObj != 0 {
-			typeStr := typeObj.Send(objc.RegisterName("UTF8String"))
-			if typeStr != 0 {
-				result = append(result, goStringFromPtr(uintptr(typeStr)))
-			}
+			typeStr := NSStringToGoString(typeObj)
+			result = append(result, typeStr)
 		}
 	}
 	return result
@@ -96,15 +94,21 @@ func readFilesAndURLs(data *PasteboardData, pasteboard objc.ID) {
 
 		isFileURL := url.Send(objc.RegisterName("isFileURL"))
 		if isFileURL != 0 {
-			fileSystemPath := url.Send(objc.RegisterName("fileSystemRepresentation"))
-			if fileSystemPath != 0 {
-				pathStr := goStringFromPtr(uintptr(fileSystemPath))
+			// const char* fileSystemPathChar = xxx
+			fileSystemPathChar := url.Send(objc.RegisterName("fileSystemRepresentation"))
+			if fileSystemPathChar != 0 {
+				// NSString
+				fileSystemPath := objc.ID(objc.GetClass("NSString")).Send(
+					objc.RegisterName("stringWithUTF8String:"),
+					fileSystemPathChar,
+				)
+				pathStr := NSStringToGoString(fileSystemPath)
 				data.FilePaths = append(data.FilePaths, pathStr)
 			}
 		} else {
 			absoluteString := url.Send(objc.RegisterName("absoluteString"))
 			if absoluteString != 0 {
-				urlStr := goStringFromObjcString(absoluteString)
+				urlStr := NSStringToGoString(absoluteString)
 				data.WebURLs = append(data.WebURLs, urlStr)
 			}
 		}
@@ -132,7 +136,7 @@ func readTexts(data *PasteboardData, pasteboard objc.ID) {
 	for i := uintptr(0); i < uintptr(count); i++ {
 		text := texts.Send(objc.RegisterName("objectAtIndex:"), i)
 		if text != 0 {
-			textStr := goStringFromObjcString(text)
+			textStr := NSStringToGoString(text)
 			data.Texts = append(data.Texts, textStr)
 		}
 	}
@@ -148,7 +152,6 @@ func readImageData(data *PasteboardData, pasteboard objc.ID) {
 		objc.RegisterName("stringWithUTF8String:"),
 		"public.png",
 	)
-
 	imageData := pasteboard.Send(objc.RegisterName("dataForType:"), publicPNG)
 	if imageData == 0 {
 		tiffType := objc.ID(objc.GetClass("NSString")).Send(
@@ -157,37 +160,7 @@ func readImageData(data *PasteboardData, pasteboard objc.ID) {
 		)
 		imageData = pasteboard.Send(objc.RegisterName("dataForType:"), tiffType)
 	}
-
 	if imageData != 0 {
-		length := imageData.Send(objc.RegisterName("length"))
-		bytes := imageData.Send(objc.RegisterName("bytes"))
-		if bytes != 0 && length != 0 {
-			data.ImageData = goBytesFromPtr(uintptr(bytes), uintptr(length))
-		}
+		data.ImageData = NSDataToGoBytes(imageData)
 	}
-}
-
-func goStringFromPtr(ptr uintptr) string {
-	if ptr == 0 {
-		return ""
-	}
-	return *(*string)(unsafe.Pointer(&ptr))
-}
-
-func goStringFromObjcString(objcStr objc.ID) string {
-	if objcStr == 0 {
-		return ""
-	}
-	utf8Ptr := objcStr.Send(objc.RegisterName("UTF8String"))
-	if utf8Ptr == 0 {
-		return ""
-	}
-	return goStringFromPtr(uintptr(utf8Ptr))
-}
-
-func goBytesFromPtr(ptr uintptr, length uintptr) []byte {
-	if ptr == 0 || length == 0 {
-		return nil
-	}
-	return unsafe.Slice((*byte)(unsafe.Pointer(ptr)), length)
 }

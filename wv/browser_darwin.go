@@ -578,6 +578,7 @@ func (m *TWebview) contextMenu(x, y int32) {
 func (m *TWebview) initDefaultDragEvent() {
 	leave := false
 	m.browser.SetOnDraggingEntered(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
+		//println("[DEBUG] OnDraggingEntered")
 		if m.onDragEnter == nil {
 			return NSDragOperationNone
 		}
@@ -602,6 +603,7 @@ func (m *TWebview) initDefaultDragEvent() {
 		return NSDragOperationNone
 	})
 	m.browser.SetOnDraggingUpdated(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
+		//println("[DEBUG] OnDraggingUpdated")
 		if m.onDragLeave == nil {
 			return NSDragOperationNone
 		}
@@ -630,6 +632,7 @@ func (m *TWebview) initDefaultDragEvent() {
 		return true
 	})
 	m.browser.SetOnPerformDragOperation(func(sender wv.NSDraggingInfoProtocol) bool {
+		//println("[DEBUG] OnPerformDragOperation")
 		if m.onDragOver == nil {
 			return false
 		}

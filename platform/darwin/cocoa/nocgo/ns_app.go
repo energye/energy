@@ -119,3 +119,19 @@ func (m *NSApp) Terminate() {
 	nsApp := objc.ID(nsAppClass).Send(objc.RegisterName("sharedApplication"))
 	nsApp.Send(objc.RegisterName("terminate:"), nil)
 }
+
+func NSStringToGoString(nsString objc.ID) string {
+	typeStr := nsString.Send(objc.RegisterName("UTF8String"))
+	utf8Length := nsString.Send(objc.RegisterName("lengthOfBytesUsingEncoding:"), 4)
+	value := unsafe.String((*byte)(unsafe.Pointer(typeStr)), uintptr(utf8Length))
+	return value
+}
+
+func NSDataToGoBytes(nsData objc.ID) []byte {
+	length := nsData.Send(objc.RegisterName("length"))
+	bytes := nsData.Send(objc.RegisterName("bytes"))
+	if bytes != 0 && length != 0 {
+		return unsafe.Slice((*byte)(unsafe.Pointer(bytes)), length)
+	}
+	return nil
+}
