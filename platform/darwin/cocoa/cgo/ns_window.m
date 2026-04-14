@@ -285,12 +285,12 @@ void DragWindow(void* nsWindow) {
         NSLog(@"DragWindow currentMouseEvent is nil");
         return;
     }
-    if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        NSLog(@"DragWindow currentMouseEvent not left down");
-        return;
-    }
-    //NSWindow* window = (NSWindow*)nsWindow;
-	NSWindow* window = [currentMouseEvent window];
+//    if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
+//        NSLog(@"DragWindow currentMouseEvent not left down");
+//        return;
+//    }
+    NSWindow* window = (NSWindow*)nsWindow;
+//	NSWindow* window = [currentMouseEvent window];
  	//NSWindow *window = [NSApp keyWindow];
     if (!window) {
         NSLog(@"DragWindow window is nil");

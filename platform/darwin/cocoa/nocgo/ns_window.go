@@ -96,11 +96,12 @@ func (m *NSWindow) Drag() {
 	if currentEvent == 0 {
 		return
 	}
-	eventType := currentEvent.Send(objc.RegisterName("type"))
-	const NSEventTypeLeftMouseDown = 1
-	if eventType != NSEventTypeLeftMouseDown {
-		return
-	}
+	//eventType := currentEvent.Send(objc.RegisterName("type"))
+	//const NSEventTypeLeftMouseDown = 1
+	//if eventType != NSEventTypeLeftMouseDown {
+	//	println("DragWindow currentMouseEvent not left down")
+	//	return
+	//}
 	nsWindowID.Send(objc.RegisterName("performWindowDragWithEvent:"), currentEvent)
 }
 
