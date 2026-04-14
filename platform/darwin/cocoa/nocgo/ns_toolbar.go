@@ -31,9 +31,11 @@ func NewToolBar(window INSWindow, delegate INSWindowDelegate, config ToolbarConf
 	}
 	nsWindow := objc.ID(window.Instance())
 
+	nsIdentifier := objc.ID(objc.GetClass("NSString")).
+		Send(objc.RegisterName("stringWithUTF8String:"), "ENERGY.ToolBar")
 	toolbarClass := objc.GetClass("NSToolbar")
 	toolbar := objc.ID(toolbarClass).Send(objc.RegisterName("alloc"))
-	toolbar = toolbar.Send(objc.RegisterName("initWithIdentifier:"), "ENERGY.ToolBar")
+	toolbar = toolbar.Send(objc.RegisterName("initWithIdentifier:"), nsIdentifier)
 
 	// 设置是否显示基线分隔符
 	showSep := uintptr(0)
