@@ -8,6 +8,16 @@
 //
 //----------------------------------------
 
-package types
+//go:build cgo
 
-type TOnEvaluateScriptCallbackEvent func(result string, err string)
+package webkit2
+
+import (
+	. "github.com/energye/energy/v3/platform/darwin/types"
+	"github.com/energye/energy/v3/platform/darwin/webkit2/cgo"
+	"unsafe"
+)
+
+func AsWkWebView(ptr unsafe.Pointer) IWkWebView {
+	return cgo.AsWkWebView(ptr)
+}

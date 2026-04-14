@@ -109,6 +109,19 @@ const (
 	NSAppearanceNameAccessibilityHighContrastVibrantDark AppearanceName = "NSAppearanceNameAccessibilityHighContrastVibrantDark"
 )
 
+type NSDragOperation = int32
+
+const (
+	NSDragOperationNone    NSDragOperation = 0
+	NSDragOperationCopy    NSDragOperation = 1
+	NSDragOperationLink    NSDragOperation = 2
+	NSDragOperationGeneric NSDragOperation = 4
+	NSDragOperationPrivate NSDragOperation = 8
+	NSDragOperationMove    NSDragOperation = 16
+	NSDragOperationDelete  NSDragOperation = 32
+	NSDragOperationEvery   NSDragOperation = ^NSDragOperation(0)
+)
+
 type CGRect struct {
 	X      float64
 	Y      float64
@@ -116,7 +129,31 @@ type CGRect struct {
 	Height float64
 }
 
+type CGPoint struct {
+	X float64
+	Y float64
+}
+
 // ToolbarConfiguration 工具栏配置选项
 type ToolbarConfiguration struct {
 	ShowSeparator bool // 是否显示基线分隔符
+}
+
+type PasteboardData struct {
+	FilePaths  []string
+	WebURLs    []string
+	Texts      []string
+	PlainTexts string
+	ImageData  []byte
+}
+
+type NSTypes []string
+
+func (m NSTypes) In(s string) bool {
+	for _, v := range m {
+		if v == s {
+			return true
+		}
+	}
+	return false
 }

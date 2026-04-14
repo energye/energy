@@ -2,7 +2,7 @@
 #import <WebKit/WebKit.h>
 #import <objc/message.h>
 #import <Foundation/Foundation.h>
-#import "browser_darwin.h"
+#import "wk_webview.h"
 
 
 // 设置webview透明属性

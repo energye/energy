@@ -12,47 +12,11 @@
 
 package wv
 
-/*
-#cgo darwin CFLAGS: -DDARWIN -x objective-c
-#cgo darwin LDFLAGS: -framework Cocoa
-
-#include "browser_darwin.h"
-
-*/
-import "C"
 import (
-	"github.com/energye/energy/v3/platform/cocoa"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
-	"unsafe"
 )
-
-//export evaluateScriptCallback
-func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
-	var (
-		result, err string
-		callbackID  int
-	)
-	callbackID = int(cCallbackID)
-	if resC != nil {
-		result = C.GoString(resC)
-	}
-	if errC != nil {
-		err = C.GoString(errC)
-	}
-	if callback, ok := gEvaluateScriptEventCallback.Load(callbackID); ok {
-		gEvaluateScriptEventCallback.Delete(callbackID)
-		callback.(TOnEvaluateScriptCallbackEvent)(result, err)
-	}
-}
-
-func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
-	handle := unsafe.Pointer(m.browser.Data())
-	isTransparent = !isTransparent
-	v := _BoolToCInt(isTransparent)
-	C.SetWebviewTransparent(handle, v)
-}
 
 // AddWindowSubviewWebview 将webview作为子视图添加到窗口中
 func (m *TWebview) AddWindowSubviewWebview(iWindow window.IWindow) {
@@ -62,13 +26,10 @@ func (m *TWebview) AddWindowSubviewWebview(iWindow window.IWindow) {
 	m.nsWindow = lcl.PlatformWindow(iWindow.Instance())
 	m.isAddNSWindowSubview = true
 	var (
-		nsWindow      = unsafe.Pointer(m.nsWindow)
-		webview       = unsafe.Pointer(m.browser.Data())
 		webviewBounds = m.BoundsRect()
 		x, y, w, h    = float32(webviewBounds.Left), float32(webviewBounds.Top), float32(webviewBounds.Width()), float32(webviewBounds.Height())
 	)
-	m.window.NSWindow().AddSubview(webview, x, y, w, h)
-	cocoa.WindowAddSubview(nsWindow, webview, x, y, w, h)
+	m.window.NSWindow().AddSubview(m.wkWebView, x, y, w, h)
 }
 
 // UpdateBounds 更新WebView的边界矩形
@@ -130,81 +91,11 @@ func (m *TWebview) UpdateBounds() {
 // 同时通过C语言接口更新原生WebView的显示区域
 func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	m.SetBounds(int32(x), int32(y), int32(width), int32(height))
-	nsWindow := unsafe.Pointer(m.nsWindow)
-	webview := unsafe.Pointer(m.browser.Data())
-	C.UpdateWebviewBounds(nsWindow, webview, C.float(x), C.float(y), C.float(width), C.float(height))
-	//println("UpdateWebviewBounds:", int(x), int(y), int(width), int(height))
-}
-
-// BecomeFirstResponder 使webview成为第一响应者，获取焦点并准备接收用户输入
-// 该方法将当前webview设置为活动状态，使其能够响应键盘事件和其他用户交互
-func (m *TWebview) BecomeFirstResponder() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewBecomeFirstResponder(webview)
-}
-
-func (m *TWebview) Undo() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewUndo(webview)
-}
-
-func (m *TWebview) Redo() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewRedo(webview)
-}
-
-func (m *TWebview) Cut() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewCut(webview)
-}
-
-func (m *TWebview) Copy() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewCopy(webview)
-}
-
-func (m *TWebview) Paste() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewPaste(webview)
-}
-
-func (m *TWebview) SelectAll() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewSelectAll(webview)
+	m.wkWebView.UpdateBounds(m.window.NSWindow(), x, y, width, height)
 }
 
 func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
-	if script == "" || callback == nil {
-		return
-	}
-	webview := unsafe.Pointer(m.browser.Data())
-	cScript := C.CString(script)
-	defer C.free(unsafe.Pointer(cScript))
-	eventID := gNextEvaluateScriptEventID()
-	cEventID := C.int(eventID)
-	cCallback := (C.CGoEvaluateScriptCallback)(C.evaluateScriptCallback)
-	gEvaluateScriptEventCallback.Store(eventID, callback)
-	C.WebViewEvaluateScriptCallback(webview, cEventID, cScript, cCallback)
-}
-
-// _WebViewRegisterPerformKeyMethod 注册WebView执行键盘方法的功能
-// 该方法将当前浏览器实例与底层C库的键盘方法执行功能进行绑定
-func (m *TWebview) _WebViewRegisterPerformKeyEquivalentMethod() {
-	webview := unsafe.Pointer(m.browser.Data())
-	C.WebViewRegisterPerformKeyEquivalentMethod(webview)
-}
-
-func (m *TWebview) ConvertPoint(inPoint types.TPoint) (point types.TPoint) {
-	webview := unsafe.Pointer(m.browser.Data())
-	outPoint := C.ConvertPoint(webview, C.float(inPoint.X), C.float(inPoint.Y))
-	point.X = int32(outPoint.x)
-	point.Y = int32(outPoint.y)
-	return
-}
-
-func _BoolToCInt(value bool) C.int {
-	if value {
-		return C.int(1)
-	}
-	return C.int(0)
+	m.wkWebView.ExecuteScriptCallback(script, func(result string, err string) {
+		callback(result, err)
+	})
 }

@@ -72,3 +72,29 @@ type INSApp interface {
 	UnHide()
 	Terminate()
 }
+
+type IWkWebView interface {
+	INSView
+	SetWebviewTransparent(isTransparent bool)
+	UpdateBounds(window INSWindow, x, y, width, height float32)
+	BecomeFirstResponder()
+	Undo()
+	Redo()
+	Cut()
+	Copy()
+	Paste()
+	SelectAll()
+	RegisterPerformKeyEquivalentMethod()
+	ConvertPoint(inPoint types.TPoint) (point types.TPoint)
+	ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent)
+}
+
+type INSPasteboard interface {
+	Types() NSTypes
+	PasteboardData() *PasteboardData
+}
+
+type INSDraggingInfo interface {
+	DraggingPasteboard() INSPasteboard
+	DraggingLocation() (point types.TPoint)
+}

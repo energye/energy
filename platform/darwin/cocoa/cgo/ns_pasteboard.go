@@ -118,32 +118,22 @@ const char* PasteboardTypes(void* nsPasteboard) {
 import "C"
 import (
 	"encoding/json"
+	. "github.com/energye/energy/v3/platform/darwin/types"
 	"unsafe"
 )
 
-type TNSPasteboard struct {
+type NSPasteboard struct {
 	data unsafe.Pointer
 }
 
-type NSTypes []string
-
-func (m NSTypes) In(s string) bool {
-	for _, v := range m {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
-
-func WrapNSPasteboard(data uintptr) *TNSPasteboard {
-	if data == 0 {
+func WrapNSPasteboard(data unsafe.Pointer) INSPasteboard {
+	if data == nil {
 		return nil
 	}
-	return &TNSPasteboard{data: unsafe.Pointer(data)}
+	return &NSPasteboard{data: data}
 }
 
-func (m *TNSPasteboard) Types() NSTypes {
+func (m *NSPasteboard) Types() NSTypes {
 	if m.data == nil {
 		return nil
 	}
@@ -159,15 +149,7 @@ func (m *TNSPasteboard) Types() NSTypes {
 	return result
 }
 
-type PasteboardData struct {
-	FilePaths  []string
-	WebURLs    []string
-	Texts      []string
-	PlainTexts string
-	ImageData  []byte
-}
-
-func (m *TNSPasteboard) PasteboardData() *PasteboardData {
+func (m *NSPasteboard) PasteboardData() *PasteboardData {
 	if m.data == nil {
 		return nil
 	}

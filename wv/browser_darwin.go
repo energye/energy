@@ -16,7 +16,9 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/platform/cocoa"
+	"github.com/energye/energy/v3/platform/darwin/cocoa"
+	. "github.com/energye/energy/v3/platform/darwin/types"
+	"github.com/energye/energy/v3/platform/darwin/webkit2"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/energy/v3/wv/mime"
 	"github.com/energye/lcl/lcl"
@@ -33,10 +35,6 @@ var (
 	frameCorner = frameWidth + frameHeight
 )
 
-type _TNSWebview struct {
-	nsWebview wvTypes.WKWebView
-}
-
 type TWebview struct {
 	lcl.ICustomPanel
 	TEnergyWebview
@@ -51,6 +49,7 @@ type TWebview struct {
 	isAddNSWindowSubview    bool
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
+	wkWebView               IWkWebView
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
 	onBrowserAfterCreated   lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
@@ -117,9 +116,12 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	frame := types.TRect{}
 	frame.SetWidth(m.Width())
 	frame.SetHeight(m.Height())
+	// 1. 初始化 webview, 在此创建 WKWebView
 	m.browser.InitWithFrameConfiguration(frame, configuration.Data())
 	m.browser.SetNavigationDelegate(navigationDelegate.Data())
 	m.browser.SetUIDelegate(uiDelegate.Data())
+	// 2. 获取 WKWebView
+	m.wkWebView = webkit2.AsWkWebView(unsafe.Pointer(m.browser.Data()))
 
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
@@ -156,10 +158,9 @@ func (m *TWebview) UpdateBrowserOptions() {
 	if options.DefaultURL != "" {
 		m.browser.LoadURL(options.DefaultURL)
 	}
-
-	m.SetWebviewTransparent(options.WebviewTransparent)
-	m.BecomeFirstResponder()
-	m._WebViewRegisterPerformKeyEquivalentMethod()
+	m.wkWebView.SetWebviewTransparent(options.WebviewTransparent)
+	m.wkWebView.BecomeFirstResponder()
+	m.wkWebView.RegisterPerformKeyEquivalentMethod()
 }
 
 // SetParent 设置浏览器窗口的父控件
@@ -579,9 +580,9 @@ func (m *TWebview) initDefaultDragEvent() {
 	leave := false
 	m.browser.SetOnDraggingEntered(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
 		if m.onDragEnter == nil {
-			return cocoa.NSDragOperationNone
+			return NSDragOperationNone
 		}
-		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragInfo := cocoa.WrapNSDraggingInfo(unsafe.Pointer(sender))
 		dragPasteboard := dragInfo.DraggingPasteboard()
 		nsTypes := dragPasteboard.Types()
 		isPlainText := nsTypes.In("public.utf8-plain-text")
@@ -594,18 +595,18 @@ func (m *TWebview) initDefaultDragEvent() {
 			} else if isFilename {
 				type_ = DragTypeFile
 			}
-			point := m.ConvertPoint(dragInfo.DraggingLocation())
+			point := m.wkWebView.ConvertPoint(dragInfo.DraggingLocation())
 			m.onDragEnter(type_, point.X, point.Y)
 			*handle = true
-			return cocoa.NSDragOperationCopy
+			return NSDragOperationCopy
 		}
-		return cocoa.NSDragOperationNone
+		return NSDragOperationNone
 	})
 	m.browser.SetOnDraggingUpdated(func(sender wv.NSDraggingInfoProtocol, handle *bool) int32 {
 		if m.onDragLeave == nil {
-			return cocoa.NSDragOperationNone
+			return NSDragOperationNone
 		}
-		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragInfo := cocoa.WrapNSDraggingInfo(unsafe.Pointer(sender))
 		dragPasteboard := dragInfo.DraggingPasteboard()
 		nsTypes := dragPasteboard.Types()
 		isPlainText := nsTypes.In("public.utf8-plain-text")
@@ -616,9 +617,9 @@ func (m *TWebview) initDefaultDragEvent() {
 				m.onDragLeave()
 			}
 			*handle = true
-			return cocoa.NSDragOperationCopy
+			return NSDragOperationCopy
 		}
-		return cocoa.NSDragOperationNone
+		return NSDragOperationNone
 	})
 	//m.browser.SetOnDraggingEnded(func(sender wv.NSDraggingInfoProtocol, handle *bool) {
 	//	println("SetOnDraggingEnded")
@@ -633,13 +634,13 @@ func (m *TWebview) initDefaultDragEvent() {
 		if m.onDragOver == nil {
 			return false
 		}
-		dragInfo := cocoa.WrapNSDraggingInfo(sender)
+		dragInfo := cocoa.WrapNSDraggingInfo(unsafe.Pointer(sender))
 		dragPasteboard := dragInfo.DraggingPasteboard()
 		nsTypes := dragPasteboard.Types()
 		isPlainText := nsTypes.In("public.utf8-plain-text")
 		isFilename := nsTypes.In("public.file-url")
 		if isPlainText || isFilename {
-			point := m.ConvertPoint(dragInfo.DraggingLocation())
+			point := m.wkWebView.ConvertPoint(dragInfo.DraggingLocation())
 			data := dragPasteboard.PasteboardData()
 			type_ := DragTypeNo
 			var (

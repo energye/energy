@@ -25,3 +25,11 @@ func NewWindowDelegate(window INSWindow) INSWindowDelegate {
 func NewToolBar(window INSWindow, delegate INSWindowDelegate, config ToolbarConfiguration) {
 	cgo.NewToolBar(window, delegate, config)
 }
+
+func WrapNSDraggingInfo(data unsafe.Pointer) INSDraggingInfo {
+	return cgo.WrapNSDraggingInfo(data)
+}
+
+func WrapNSPasteboard(data unsafe.Pointer) INSPasteboard {
+	return cgo.WrapNSPasteboard(data)
+}
