@@ -15,7 +15,7 @@ package wv
 import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/darwin/cocoa"
 	. "github.com/energye/energy/v3/platform/darwin/types"
 	"github.com/energye/energy/v3/platform/darwin/webkit2"
