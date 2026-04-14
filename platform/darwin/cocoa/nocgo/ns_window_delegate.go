@@ -158,7 +158,9 @@ func windowWillUseFullScreenPresentationOptions(self objc.ID, _cmd objc.SEL,
 	if windowID == 0 {
 		return options
 	}
+	options = NSApplicationPresentationAutoHideToolbar | NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen
 	nsWindow := (*NSWindow)(unsafe.Pointer(windowID))
 	options = nsWindow.doWindowWillUseFullScreenPresentationOptions(options)
+	//println("[DEBUG] WindowWillUseFullScreenPresentationOptions options:", options)
 	return options
 }

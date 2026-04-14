@@ -180,5 +180,6 @@ func (m *NSWindow) doWindowDidExitFullScreen() {
 }
 
 func (m *NSWindow) doWindowWillUseFullScreenPresentationOptions(options NSApplicationPresentationOptions) NSApplicationPresentationOptions {
+	//println("[DEBUG] WindowWillUseFullScreenPresentationOptions options:", options)
 	return options
 }
