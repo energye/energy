@@ -16,6 +16,7 @@ import (
 	"github.com/energye/lcl/lcl"
 )
 
+// Run Launch application
 func Run(forms ...lcl.IEngForm) {
 	if gApplication != nil {
 		gApplication.Start()

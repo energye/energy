@@ -70,7 +70,8 @@ func (m *TWindow) TitleBar() {
 			nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
 		}
 		toolBar := m.options.MacOS.ToolBar
-		if toolBar != nil {
+		if toolBar != nil && !m.options.Frameless {
+			// 无边框窗口不支持工具栏
 			cocoa.NewToolBar(m.nsWindow, m.nsDelegate, ToolbarConfiguration{ShowSeparator: toolBar.ShowSeparator})
 		}
 	}
