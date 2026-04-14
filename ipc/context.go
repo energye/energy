@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package callback
+package ipc
 
 // IContext
 //

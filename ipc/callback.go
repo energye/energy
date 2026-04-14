@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package callback
+package ipc
 
 // EventCallback IPC context callback
 type EventCallback = func(context IContext)

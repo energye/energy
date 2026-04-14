@@ -14,29 +14,24 @@
 
 package ipc
 
-import (
-	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/ipc/callback"
-)
-
 type OptionsEvent struct {
 	BrowserId uint32
 	Name      string
 	Data      any
-	Callback  callback.EventCallback
+	Callback  EventCallback
 }
 
 // On
 //
 //	IPC GO Listening for events
-func On(name string, fn callback.EventCallback) {
-	ipc.On(name, fn)
+func On(name string, fn EventCallback) {
+	on(name, fn)
 }
 
 // RemoveOn
 // IPC GO Remove listening events
 func RemoveOn(name string) {
-	ipc.RemoveOn(name)
+	removeOn(name)
 }
 
 // Emit
@@ -47,7 +42,7 @@ func Emit(name string, arguments ...any) {
 	if name == "" {
 		return
 	}
-	ipc.Emit(0, name, arguments...)
+	emit(0, name, arguments...)
 }
 
 // EmitOptions
@@ -58,5 +53,5 @@ func EmitOptions(options *OptionsEvent) {
 	if options == nil || options.Name == "" {
 		return
 	}
-	ipc.Emit(options.BrowserId, options.Name, options.Data, options.Callback)
+	emit(options.BrowserId, options.Name, options.Data, options.Callback)
 }

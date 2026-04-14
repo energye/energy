@@ -13,7 +13,6 @@ package ipc
 import (
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v3/ipc/callback"
 	"reflect"
 	"strconv"
 )
@@ -80,7 +79,7 @@ func BindEventPrefix(prefix string, obj any) {
 			}
 			return result
 		}
-		On(eventName, func(context callback.IContext) {
+		On(eventName, func(context IContext) {
 			var err error
 			result := handler(context.Data().([]any), &err)
 			if err != nil {

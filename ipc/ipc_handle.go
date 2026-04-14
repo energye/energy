@@ -8,10 +8,13 @@
 //
 // ----------------------------------------
 
+// IPC - Based on pkgs IPC, CEF Internal implementation
+// event listeners
+// event triggered
+
 package ipc
 
 import (
-	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
 
@@ -40,8 +43,8 @@ type MessageReceivedDelegate struct {
 }
 
 type ipcListener struct {
-	onCallbacks   map[string]callback.ICallback
-	emitCallbacks map[uint32]callback.ICallback
+	onCallbacks   map[string]ICallback
+	emitCallbacks map[uint32]ICallback
 }
 
 // NewMessageReceivedDelegate create MessageReceivedDelegate
@@ -73,7 +76,7 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMess
 // go ipc.emit - callback function
 func (m *MessageReceivedDelegate) handlerGOEMITCallback(browserId uint32, message *ProcessMessage) {
 	if callbackFunc, ok := listener.emitCallbacks[message.Id]; ok {
-		ctx := callback.NewContext(browserId, message.Data)
+		ctx := NewContext(browserId, message.Data)
 		callbackFunc.Invoke(ctx)
 	}
 }
@@ -85,7 +88,7 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(browserId uint32, message *Proce
 	listenerLock.Unlock()
 	var result any
 	if ok {
-		ctx := callback.NewContext(browserId, message.Data)
+		ctx := NewContext(browserId, message.Data)
 		// call ipc.on callback function
 		result = fn.Invoke(ctx)
 	}
@@ -108,8 +111,8 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(browserId uint32, message *Proce
 
 func init() {
 	listener = &ipcListener{
-		onCallbacks:   make(map[string]callback.ICallback),
-		emitCallbacks: make(map[uint32]callback.ICallback),
+		onCallbacks:   make(map[string]ICallback),
+		emitCallbacks: make(map[uint32]ICallback),
 	}
 	processMessage = make(map[uint32]IProcessMessage)
 }
@@ -146,20 +149,18 @@ func GetProcessMessage(browserId uint32) IProcessMessage {
 // createCallback
 //
 //	Create and return a callback function
-func createCallback(fn any) callback.ICallback {
+func createCallback(fn any) ICallback {
 	switch fn.(type) {
-	case callback.EventCallback:
-		return callback.New(fn.(callback.EventCallback))
+	case EventCallback:
+		return New(fn.(EventCallback))
 	}
 	return nil
 }
 
 // On
 //
-//	Add listening event
-//	callback function
-//	  1. context 2.argument list
-func On(name string, fn callback.EventCallback) {
+//	IPC GO Listening for events
+func on(name string, fn EventCallback) {
 	if listener == nil || name == "" || fn == nil {
 		return
 	}
@@ -172,7 +173,7 @@ func On(name string, fn callback.EventCallback) {
 
 // RemoveOn
 // IPC GO Remove listening events
-func RemoveOn(name string) {
+func removeOn(name string) {
 	listenerLock.Lock()
 	delete(listener.onCallbacks, name)
 	listenerLock.Unlock()
@@ -183,7 +184,7 @@ func RemoveOn(name string) {
 //	windowId: target window, default 0 = mainWindow, otherwise, it must be a valid window identifier
 //	name: emit message name
 //	arguments: emit message data
-func Emit(browserId uint32, name string, arguments ...any) {
+func emit(browserId uint32, name string, arguments ...any) {
 	if browserId == 0 {
 		browserId = defaultBrowserId // default main browser window id
 	}
@@ -196,9 +197,9 @@ func Emit(browserId uint32, name string, arguments ...any) {
 			// Check if the last parameter is a callback function
 			callbackFunction := arguments[len(arguments)-1]
 			switch callbackFunction.(type) {
-			case callback.EventCallback:
+			case EventCallback:
 				executionID = NextExecutionID()
-				listener.emitCallbacks[executionID] = callback.New(callbackFunction.(callback.EventCallback))
+				listener.emitCallbacks[executionID] = New(callbackFunction.(EventCallback))
 				arguments = arguments[:len(arguments)-1]
 			}
 		}
