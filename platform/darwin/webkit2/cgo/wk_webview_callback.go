@@ -47,11 +47,11 @@ func evaluateScriptCallback(cCallbackID C.int, resC *C.char, errC *C.char) {
 	}
 	if callback, ok := gEvaluateScriptEventCallback.Load(callbackID); ok {
 		gEvaluateScriptEventCallback.Delete(callbackID)
-		callback.(TOnEvaluateScriptCallbackEvent)(result, err)
+		callback.(TEvaluateScriptCallbackEvent)(result, err)
 	}
 }
 
-func (m *WkWebView) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
+func (m *WkWebView) ExecuteScriptCallback(script string, callback TEvaluateScriptCallbackEvent) {
 	if script == "" || callback == nil {
 		return
 	}
@@ -61,10 +61,10 @@ func (m *WkWebView) ExecuteScriptCallback(script string, callback TOnEvaluateScr
 	eventID := gNextEvaluateScriptEventID()
 	cEventID := C.int(eventID)
 	cCallback := (C.CGoEvaluateScriptCallback)(C.evaluateScriptCallback)
-	var goCallback TOnEvaluateScriptCallbackEvent
-	goCallback = func(result string, err string) {
+	var goTmpCallback TEvaluateScriptCallbackEvent
+	goTmpCallback = func(result string, err string) {
 		callback(result, err)
 	}
-	gEvaluateScriptEventCallback.Store(eventID, goCallback)
+	gEvaluateScriptEventCallback.Store(eventID, goTmpCallback)
 	C.WebViewEvaluateScriptCallback(webview, cEventID, cScript, cCallback)
 }

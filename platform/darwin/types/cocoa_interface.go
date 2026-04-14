@@ -86,7 +86,7 @@ type IWkWebView interface {
 	SelectAll()
 	RegisterPerformKeyEquivalentMethod()
 	ConvertPoint(inPoint types.TPoint) (point types.TPoint)
-	ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent)
+	ExecuteScriptCallback(script string, callback TEvaluateScriptCallbackEvent)
 }
 
 type INSPasteboard interface {

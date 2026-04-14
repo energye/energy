@@ -14,7 +14,6 @@ package wv
 
 import (
 	"github.com/energye/energy/v3/window"
-	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
 
@@ -23,7 +22,6 @@ func (m *TWebview) AddWindowSubviewWebview(iWindow window.IWindow) {
 	if m.window == nil {
 		m.window = iWindow.(window.IDarwinWindow)
 	}
-	m.nsWindow = lcl.PlatformWindow(iWindow.Instance())
 	m.isAddNSWindowSubview = true
 	var (
 		webviewBounds = m.BoundsRect()

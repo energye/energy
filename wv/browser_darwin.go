@@ -44,7 +44,6 @@ type TWebview struct {
 	resizeHT                string
 	menu                    lcl.IPopupMenu
 	window                  window.IDarwinWindow
-	nsWindow                lcl.NSWindow
 	oldBounds               types.TRect
 	isAddNSWindowSubview    bool
 	windowParent            wv.IWkWebviewParent

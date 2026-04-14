@@ -10,4 +10,4 @@
 
 package types
 
-type TOnEvaluateScriptCallbackEvent func(result string, err string)
+type TEvaluateScriptCallbackEvent func(result string, err string)
