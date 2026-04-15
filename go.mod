@@ -8,7 +8,8 @@ require (
 )
 
 require (
-	github.com/energye/cef v1.0.2
-	github.com/energye/lcl v1.0.2
-	github.com/energye/wv v1.0.2
+	github.com/ebitengine/purego v0.10.0
+	github.com/energye/cef v1.0.3
+	github.com/energye/lcl v1.0.3
+	github.com/energye/wv v1.0.4
 )

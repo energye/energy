@@ -16,7 +16,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/win32"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/energy/v3/wv/mime"

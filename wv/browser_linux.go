@@ -16,7 +16,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/linux/gtk3"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/energy/v3/platform/linux/webkit2gtk"
