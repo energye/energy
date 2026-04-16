@@ -22,6 +22,7 @@ func GoOpenURLsCallback(cURLs *C.char) {
 	fmt.Println("打开文件:", urls)
 }
 
+// InitAppDelegate 初始化 macOS 应用程序代理
 func InitAppDelegate() {
 	C.InitAppDelegate()
 }

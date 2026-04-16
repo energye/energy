@@ -26,7 +26,8 @@ static id oldDelegate = nil;
 
 - (BOOL)application:(NSApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray<id<NSUserActivityRestoring>> * _Nullable))restorationHandler {
+  restorationHandler:(void (^)(NSArray<id<NSUserActivityRestoring>> * _Nullable))restorationHandler {
+    NSLog(@"AppDelegate activityType = %@", userActivity.activityType);
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         NSURL *url = userActivity.webpageURL;
         if (url) {
@@ -37,13 +38,11 @@ continueUserActivity:(NSUserActivity *)userActivity
         }
     }
     if (oldDelegate &&
-        [oldDelegate respondsToSelector:
-            @selector(application:continueUserActivity:restorationHandler:)]) {
+        [oldDelegate respondsToSelector: @selector(application:continueUserActivity:restorationHandler:)]) {
         return (BOOL)[oldDelegate application:application
                          continueUserActivity:userActivity
                            restorationHandler:restorationHandler];
     }
-
     return YES;
 }
 
