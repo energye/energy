@@ -11,3 +11,6 @@
 package types
 
 type TEvaluateScriptCallbackEvent func(result string, err string)
+
+type TOpenURLsEvent func(urls []string)
+type TUniversalLinkEvent func(link string)

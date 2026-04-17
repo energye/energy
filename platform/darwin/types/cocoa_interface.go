@@ -72,6 +72,8 @@ type INSApp interface {
 	UnHide()
 	Terminate()
 	InitAppDelegate()
+	SetOnOpenURLs(fn TOpenURLsEvent)
+	SetOnUniversalLink(fn TUniversalLinkEvent)
 }
 
 type IWkWebView interface {

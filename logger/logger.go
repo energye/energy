@@ -264,7 +264,7 @@ func appendCaller(b []byte, file string, line int) []byte {
 }
 
 func appendArgs(b []byte, args ...any) []byte {
-	b = append(b, " |"...)
+	b = append(b, " "...)
 	if len(args)%2 == 0 && len(args) >= 2 {
 		if _, ok := args[0].(string); ok {
 			return appendKeyValuePairs(b, args...)

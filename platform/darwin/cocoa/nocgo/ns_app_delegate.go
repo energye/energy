@@ -11,8 +11,8 @@
 package nocgo
 
 import (
-	"encoding/json"
 	"github.com/ebitengine/purego/objc"
+	. "github.com/energye/energy/v3/platform/darwin/types"
 	"reflect"
 	"unsafe"
 )
@@ -104,8 +104,7 @@ func applicationOpenURLs(self objc.ID, _cmd objc.SEL, application objc.ID, urls 
 			goString := NSStringToGoString(absoluteString)
 			items = append(items, goString)
 		}
-		jsonData, _ := json.Marshal(items)
-		app.doOpenURLs(string(jsonData))
+		app.doOpenURLs(items)
 	}
 
 	if originalDelegate != 0 {
@@ -128,10 +127,8 @@ func applicationContinueUserActivity(self objc.ID, _cmd objc.SEL,
 			webpageURL := userActivity.Send(objc.RegisterName("webpageURL"))
 			if webpageURL != 0 {
 				absoluteString := webpageURL.Send(objc.RegisterName("absoluteString"))
-				goString := NSStringToGoString(absoluteString)
-				items := []string{goString}
-				jsonData, _ := json.Marshal(items)
-				app.doUniversalLink(string(jsonData))
+				data := NSStringToGoString(absoluteString)
+				app.doUniversalLink(data)
 			}
 		}
 	}
@@ -211,4 +208,12 @@ func getClassName(obj objc.ID) string {
 	class := obj.Send(sel_class)
 	className := class.Send(objc.RegisterName("className"))
 	return NSStringToGoString(className)
+}
+
+func (m *NSApp) SetOnOpenURLs(fn TOpenURLsEvent) {
+	m.onOpenURLs = fn
+}
+
+func (m *NSApp) SetOnUniversalLink(fn TUniversalLinkEvent) {
+	m.onUniversalLink = fn
 }

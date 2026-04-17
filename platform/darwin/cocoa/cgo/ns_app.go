@@ -73,14 +73,15 @@ void AppTerminate() {
 */
 import "C"
 import (
-	"fmt"
+	"encoding/json"
 	. "github.com/energye/energy/v3/platform/darwin/types"
-	"os"
 	"unsafe"
 )
 
 type NSApp struct {
 	initializationAppDelegate bool
+	onOpenURLs                TOpenURLsEvent
+	onUniversalLink           TUniversalLinkEvent
 }
 
 func AsNSApp() INSApp {
@@ -177,27 +178,15 @@ func (m *NSApp) Terminate() {
 }
 
 func (m *NSApp) doOpenURLs(urls string) {
-	fmt.Println("打开文件:", urls)
-	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	_, err = f.WriteString("doOpenURLs: " + urls + "\n")
-	if err != nil {
-		panic(err)
+	if m.onOpenURLs != nil {
+		var items []string
+		_ = json.Unmarshal([]byte(urls), &items)
+		m.onOpenURLs(items)
 	}
 }
 
 func (m *NSApp) doUniversalLink(universalLink string) {
-	fmt.Println("打开文件:", universalLink)
-	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	_, err = f.WriteString("doUniversalLink: " + universalLink + "\n")
-	if err != nil {
-		panic(err)
+	if m.onUniversalLink != nil {
+		m.onUniversalLink(universalLink)
 	}
 }

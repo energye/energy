@@ -19,6 +19,9 @@ package cgo
 void InitAppDelegate(void);
 */
 import "C"
+import (
+	. "github.com/energye/energy/v3/platform/darwin/types"
+)
 
 //export doOnAppDelegateCallback
 func doOnAppDelegateCallback(cContext *C.TCallbackContext) {
@@ -33,4 +36,12 @@ func (m *NSApp) InitAppDelegate() {
 	}
 	m.initializationAppDelegate = true
 	C.InitAppDelegate()
+}
+
+func (m *NSApp) SetOnOpenURLs(fn TOpenURLsEvent) {
+	m.onOpenURLs = fn
+}
+
+func (m *NSApp) SetOnUniversalLink(fn TUniversalLinkEvent) {
+	m.onUniversalLink = fn
 }
