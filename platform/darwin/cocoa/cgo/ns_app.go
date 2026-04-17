@@ -73,14 +73,38 @@ void AppTerminate() {
 */
 import "C"
 import (
+	"fmt"
 	. "github.com/energye/energy/v3/platform/darwin/types"
+	"os"
 	"unsafe"
 )
 
-type NSApp struct{}
+type NSApp struct {
+	initializationAppDelegate bool
+}
 
 func AsNSApp() INSApp {
-	return &NSApp{}
+	m := &NSApp{}
+	m.registerEvents()
+	return m
+}
+
+func (m *NSApp) registerEvents() {
+	println("[DEBUG] registerEvents")
+	RegisterEvent("openURLs", &TCallback{cb: func(ctx *TCallbackContext) *GoArguments {
+		if ctx.Arguments != nil {
+			urls := ctx.Arguments.GetString(0)
+			m.doOpenURLs(urls)
+		}
+		return nil
+	}})
+	RegisterEvent("universalLink", &TCallback{cb: func(ctx *TCallbackContext) *GoArguments {
+		if ctx.Arguments != nil {
+			universalLink := ctx.Arguments.GetString(0)
+			m.doUniversalLink(universalLink)
+		}
+		return nil
+	}})
 }
 
 // SetPresentationOptions 设置应用的全屏展示选项
@@ -150,4 +174,30 @@ func (m *NSApp) UnHide() {
 // Terminate 终止应用
 func (m *NSApp) Terminate() {
 	C.AppTerminate()
+}
+
+func (m *NSApp) doOpenURLs(urls string) {
+	fmt.Println("打开文件:", urls)
+	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, err = f.WriteString("doOpenURLs: " + urls + "\n")
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (m *NSApp) doUniversalLink(universalLink string) {
+	fmt.Println("打开文件:", universalLink)
+	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, err = f.WriteString("doUniversalLink: " + universalLink + "\n")
+	if err != nil {
+		panic(err)
+	}
 }

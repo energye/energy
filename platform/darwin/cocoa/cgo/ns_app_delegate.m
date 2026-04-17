@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import "cocoa.h"
 #include "ns_app_delegate.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
@@ -14,7 +15,14 @@
     }
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:items options:0 error:nil];
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    GoOpenURLsCallback((char *)[json UTF8String]);
+
+    TCallbackContext *context = CreateCallbackContext(@"openURLs", @"", -1, nil, nil);
+    @try{
+        context->arguments = CreateGoArguments(1, json);
+        doOnAppDelegateCallback(context);
+    } @finally {
+        FreeCallbackContext(context);
+    }
 
     if (self.originalDelegate &&
         [self.originalDelegate respondsToSelector:@selector(application:openURLs:)]) {
@@ -32,7 +40,14 @@ continueUserActivity:(NSUserActivity *)userActivity
             NSArray *items = @[[url absoluteString]];
             NSData *jsonData =  [NSJSONSerialization dataWithJSONObject:items options:0 error:nil];
             NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            GoOpenURLsCallback((char *)[json UTF8String]);
+
+            TCallbackContext *context = CreateCallbackContext(@"universalLink", @"", -1, nil, nil);
+            @try{
+                context->arguments = CreateGoArguments(1, json);
+                doOnAppDelegateCallback(context);
+            } @finally {
+                FreeCallbackContext(context);
+            }
         }
     }
     if (self.originalDelegate &&

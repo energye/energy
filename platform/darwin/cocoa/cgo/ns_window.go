@@ -37,11 +37,11 @@ func AsNSWindow(ptr unsafe.Pointer) INSWindow {
 	}
 	m := new(NSWindow)
 	m.SetInstance(ptr)
-	m.RegisterEvents()
+	m.registerEvents()
 	return m
 }
 
-func (m *NSWindow) RegisterEvents() {
+func (m *NSWindow) registerEvents() {
 	nsWindow := unsafe.Pointer(m.Instance())
 	windowResizeEventId := fmt.Sprintf("%d_%v", TWindowEventDidResize, nsWindow)
 	RegisterEvent(windowResizeEventId, MakeNotifyEvent(func(identifier string, owner Pointer, sender Pointer) *GoArguments {

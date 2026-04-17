@@ -83,6 +83,21 @@ type TCallbackContext struct {
 	Arguments  *OCGoArguments // 参数
 }
 
+func CCallbackContextToGo(cContext *C.TCallbackContext) *TCallbackContext {
+	ctx := &TCallbackContext{
+		Identifier: C.GoString(cContext.identifier),
+		Value:      C.GoString(cContext.value),
+		Index:      int(cContext.index),
+		Owner:      cContext.owner,
+		Sender:     cContext.sender,
+	}
+	cArguments := cContext.arguments
+	if cArguments != nil {
+		ctx.Arguments = &OCGoArguments{arguments: Pointer(cArguments), count: int(cArguments.Count)}
+	}
+	return ctx
+}
+
 func ToolbarConfigurationToOC(config ToolbarConfiguration) C.ToolbarConfiguration {
 	cConfig := C.ToolbarConfiguration{
 		ShowSeparator: _BoolToCInt(config.ShowSeparator),

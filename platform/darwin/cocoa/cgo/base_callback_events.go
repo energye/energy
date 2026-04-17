@@ -62,3 +62,16 @@ func RegisterEvent(identifier string, fn *TCallback) {
 	defer eventLock.Unlock()
 	eventList[identifier] = fn
 }
+
+func doDispatchEvent(ctx *TCallbackContext) *GoArguments {
+	eventId := ctx.Identifier
+	cb := eventList[eventId]
+	if cb == nil {
+		return nil
+	}
+	if result := cb.cb(ctx); result != nil {
+		return result
+	} else {
+		return nil
+	}
+}
