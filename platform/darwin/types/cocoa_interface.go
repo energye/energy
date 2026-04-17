@@ -71,6 +71,7 @@ type INSApp interface {
 	Hide()
 	UnHide()
 	Terminate()
+	InitAppDelegate()
 }
 
 type IWkWebView interface {

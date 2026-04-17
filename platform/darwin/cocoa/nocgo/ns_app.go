@@ -11,12 +11,16 @@
 package nocgo
 
 import (
+	"fmt"
 	"github.com/ebitengine/purego/objc"
 	. "github.com/energye/energy/v3/platform/darwin/types"
+	"os"
 	"unsafe"
 )
 
-type NSApp struct{}
+type NSApp struct {
+	initializationAppDelegate bool
+}
 
 func AsNSApp() INSApp {
 	return &NSApp{}
@@ -118,6 +122,32 @@ func (m *NSApp) Terminate() {
 	nsAppClass := objc.GetClass("NSApplication")
 	nsApp := objc.ID(nsAppClass).Send(objc.RegisterName("sharedApplication"))
 	nsApp.Send(objc.RegisterName("terminate:"), nil)
+}
+
+func (m *NSApp) doOpenURLs(urls string) {
+	fmt.Println("打开文件:", urls)
+	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, err = f.WriteString("doOpenURLs: " + urls + "\n")
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (m *NSApp) doUniversalLink(universalLink string) {
+	fmt.Println("打开文件:", universalLink)
+	f, err := os.OpenFile("/Users/yanghy/app/workspace/build/test.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, err = f.WriteString("doUniversalLink: " + universalLink + "\n")
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NSStringToGoString(nsString objc.ID) string {
