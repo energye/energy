@@ -1,10 +1,8 @@
 #import <Cocoa/Cocoa.h>
-
-extern void GoOpenURLsCallback(char* path);
-
-static id oldDelegate = nil;
+#include "ns_app_delegate.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
+@property (nonatomic, strong) id<NSApplicationDelegate> originalDelegate;
 @end
 
 @implementation AppDelegate
@@ -18,16 +16,16 @@ static id oldDelegate = nil;
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     GoOpenURLsCallback((char *)[json UTF8String]);
 
-    if (oldDelegate &&
-        [oldDelegate respondsToSelector:@selector(application:openURLs:)]) {
-        [oldDelegate application:application openURLs:urls];
+    if (self.originalDelegate &&
+        [self.originalDelegate respondsToSelector:@selector(application:openURLs:)]) {
+        [self.originalDelegate application:application openURLs:urls];
     }
 }
 
 - (BOOL)application:(NSApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
   restorationHandler:(void (^)(NSArray<id<NSUserActivityRestoring>> * _Nullable))restorationHandler {
-    NSLog(@"AppDelegate activityType = %@", userActivity.activityType);
+//    NSLog(@"AppDelegate activityType = %@", userActivity.activityType);
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         NSURL *url = userActivity.webpageURL;
         if (url) {
@@ -37,9 +35,9 @@ continueUserActivity:(NSUserActivity *)userActivity
             GoOpenURLsCallback((char *)[json UTF8String]);
         }
     }
-    if (oldDelegate &&
-        [oldDelegate respondsToSelector: @selector(application:continueUserActivity:restorationHandler:)]) {
-        return (BOOL)[oldDelegate application:application
+    if (self.originalDelegate &&
+        [self.originalDelegate respondsToSelector: @selector(application:continueUserActivity:restorationHandler:)]) {
+        return (BOOL)[self.originalDelegate application:application
                          continueUserActivity:userActivity
                            restorationHandler:restorationHandler];
     }
@@ -48,8 +46,8 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (id)forwardingTargetForSelector:(SEL)aSelector {
     //NSLog(@"AppDelegate forwardingTargetForSelector: %@", NSStringFromSelector(aSelector));
-    if (oldDelegate && [oldDelegate respondsToSelector:aSelector]) {
-        return oldDelegate;
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:aSelector]) {
+        return self.originalDelegate;
     }
     return [super forwardingTargetForSelector:aSelector];
 }
@@ -57,16 +55,18 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (BOOL)respondsToSelector:(SEL)aSelector {
     //NSLog(@"AppDelegate respondsToSelector: %@", NSStringFromSelector(aSelector));
     if ([super respondsToSelector:aSelector]) return YES;
-    if (oldDelegate && [oldDelegate respondsToSelector:aSelector]) return YES;
+    if (self.originalDelegate && [self.originalDelegate respondsToSelector:aSelector]) return YES;
     return NO;
 }
 
 @end
 
-void InitAppDelegate(void) {
-    oldDelegate = [NSApp delegate];
-    //NSLog(@"old delegate class = %@", NSStringFromClass([oldDelegate class]));
+void InitAppDelegate(void) {;
+    NSApplication *app = [NSApplication sharedApplication];
+    if (app.delegate == nil) return;
     AppDelegate *delegate = [AppDelegate new];
+    delegate.originalDelegate = app.delegate;
+    NSLog(@"old delegate class = %@", NSStringFromClass([delegate.originalDelegate class]));
     [NSApp setDelegate:delegate];
-    //NSLog(@"new delegate class = %@", NSStringFromClass([[NSApp delegate] class]));
+    NSLog(@"new delegate class = %@", NSStringFromClass([[NSApp delegate] class]));
 }
