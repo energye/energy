@@ -19,7 +19,7 @@ bool checkBundleIdentifier(void) {
 
 #pragma mark - External Callbacks
 
-extern void captureResult(int channelID, bool success, const char* error);
+extern void onCallbackResult(int channelID, bool success, const char* error);
 extern void didReceiveNotificationResponse(const char *jsonPayload, const char* error);
 
 #pragma mark - Notification Center Delegate
@@ -120,12 +120,12 @@ bool initializeNotificationCenter(void) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = g_notificationDelegate;
 
-        NSLog(@"[Energy] Notification center delegate initialized");
+        NSLog(@"[ENERGY] Notification center delegate initialized");
     });
 
     if (!g_notificationDelegate) {
         success = NO;
-        NSLog(@"[Energy] Failed to initialize notification delegate");
+        NSLog(@"[ENERGY] Failed to initialize notification delegate");
     }
 
     return success;
@@ -135,7 +135,7 @@ bool initializeNotificationCenter(void) {
 
 void requestNotificationAuthorization(int channelID) {
     if (!initializeNotificationCenter()) {
-        captureResult(channelID, false, "Failed to initialize notification center");
+        onCallbackResult(channelID, false, "requestNotificationAuthorization.initializeNotificationCenter: Failed to initialize the notification center");
         return;
     }
 
@@ -149,27 +149,27 @@ void requestNotificationAuthorization(int channelID) {
         if (error) {
             NSString *errorMsg = [NSString stringWithFormat:@"Authorization failed: %@",
                                   error.localizedDescription];
-            captureResult(channelID, false, [errorMsg UTF8String]);
-            NSLog(@"[Energy] Notification authorization error: %@", error);
+            onCallbackResult(channelID, false, [errorMsg UTF8String]);
+            NSLog(@"[ENERGY] Notification authorization error: %@", error);
         } else {
-            captureResult(channelID, granted, NULL);
-            NSLog(@"[Energy] Notification authorization %@", granted ? @"granted" : @"denied");
+            onCallbackResult(channelID, granted, NULL);
+            NSLog(@"[ENERGY] Notification authorization %@", granted ? @"granted" : @"denied");
         }
     }];
 }
 
 void checkNotificationAuthorization(int channelID) {
     if (!initializeNotificationCenter()) {
-        captureResult(channelID, false, "Failed to initialize notification center");
+        onCallbackResult(channelID, false, "checkNotificationAuthorization.initializeNotificationCenter: Failed to initialize the notification center");
         return;
     }
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings *settings) {
         BOOL authorized = (settings.authorizationStatus == UNAuthorizationStatusAuthorized);
-        captureResult(channelID, authorized, NULL);
+        onCallbackResult(channelID, authorized, NULL);
 
-        NSLog(@"[Energy] Notification status: %ld", (long)settings.authorizationStatus);
+        NSLog(@"[ENERGY] Notification status: %ld", (long)settings.authorizationStatus);
     }];
 }
 
@@ -224,7 +224,7 @@ void sendNotification(int channelID,
                       const char *data_json) {
 
     if (!initializeNotificationCenter()) {
-        captureResult(channelID, false, "Notification center not initialized");
+        onCallbackResult(channelID, false, "sendNotification.initializeNotificationCenter: Failed to initialize the notification center");
         return;
     }
 
@@ -235,7 +235,7 @@ void sendNotification(int channelID,
     if (contentError) {
         NSString *errorMsg = [NSString stringWithFormat:@"Content creation failed: %@",
                               contentError.localizedDescription];
-        captureResult(channelID, false, [errorMsg UTF8String]);
+        onCallbackResult(channelID, false, [errorMsg UTF8String]);
         return;
     }
 
@@ -252,11 +252,11 @@ void sendNotification(int channelID,
         if (error) {
             NSString *errorMsg = [NSString stringWithFormat:@"Send failed: %@",
                                   error.localizedDescription];
-            captureResult(channelID, false, [errorMsg UTF8String]);
-            NSLog(@"[Energy] Notification send error: %@", error);
+            onCallbackResult(channelID, false, [errorMsg UTF8String]);
+            NSLog(@"[ENERGY] Notification send error: %@", error);
         } else {
-            captureResult(channelID, true, NULL);
-            NSLog(@"[Energy] Notification sent: %@", requestID);
+            onCallbackResult(channelID, true, NULL);
+            NSLog(@"[ENERGY] Notification sent: %@", requestID);
         }
     }];
 }
@@ -270,7 +270,7 @@ void sendNotificationWithActions(int channelID,
                                  const char *data_json) {
 
     if (!initializeNotificationCenter()) {
-        captureResult(channelID, false, "Notification center not initialized");
+        onCallbackResult(channelID, false, "sendNotificationWithActions.initializeNotificationCenter: Failed to initialize the notification center");
         return;
     }
 
@@ -281,7 +281,7 @@ void sendNotificationWithActions(int channelID,
     if (contentError) {
         NSString *errorMsg = [NSString stringWithFormat:@"Content creation failed: %@",
                               contentError.localizedDescription];
-        captureResult(channelID, false, [errorMsg UTF8String]);
+        onCallbackResult(channelID, false, [errorMsg UTF8String]);
         return;
     }
 
@@ -302,10 +302,10 @@ void sendNotificationWithActions(int channelID,
         if (error) {
             NSString *errorMsg = [NSString stringWithFormat:@"Send with actions failed: %@",
                                   error.localizedDescription];
-            captureResult(channelID, false, [errorMsg UTF8String]);
+            onCallbackResult(channelID, false, [errorMsg UTF8String]);
         } else {
-            captureResult(channelID, true, NULL);
-            NSLog(@"[Energy] Notification with actions sent: %@", requestID);
+            onCallbackResult(channelID, true, NULL);
+            NSLog(@"[ENERGY] Notification with actions sent: %@", requestID);
         }
     }];
 }
@@ -320,7 +320,7 @@ void registerNotificationCategory(int channelID,
                                   const char *replyButtonTitle) {
 
     if (!initializeNotificationCenter()) {
-        captureResult(channelID, false, "Notification center not initialized");
+        onCallbackResult(channelID, false, "registerNotificationCategory.initializeNotificationCenter: Failed to initialize the notification center");
         return;
     }
 
@@ -341,7 +341,7 @@ void registerNotificationCategory(int channelID,
         if (parseError) {
             NSString *errorMsg = [NSString stringWithFormat:@"Actions parse failed: %@",
                                   parseError.localizedDescription];
-            captureResult(channelID, false, [errorMsg UTF8String]);
+            onCallbackResult(channelID, false, [errorMsg UTF8String]);
             return;
         }
 
@@ -402,8 +402,8 @@ void registerNotificationCategory(int channelID,
         [updated addObject:category];
         [center setNotificationCategories:updated];
 
-        captureResult(channelID, true, NULL);
-        NSLog(@"[Energy] Category registered: %@", categoryID);
+        onCallbackResult(channelID, true, NULL);
+        NSLog(@"[ENERGY] Category registered: %@", categoryID);
     }];
 }
 
@@ -425,11 +425,11 @@ void removeNotificationCategory(int channelID, const char *categoryId) {
 
         if (found) {
             [center setNotificationCategories:updated];
-            captureResult(channelID, true, NULL);
-            NSLog(@"[Energy] Category removed: %@", categoryID);
+            onCallbackResult(channelID, true, NULL);
+            NSLog(@"[ENERGY] Category removed: %@", categoryID);
         } else {
             NSString *errorMsg = [NSString stringWithFormat:@"Category not found: %@", categoryID];
-            captureResult(channelID, false, [errorMsg UTF8String]);
+            onCallbackResult(channelID, false, [errorMsg UTF8String]);
         }
     }];
 }
@@ -439,7 +439,7 @@ void removeNotificationCategory(int channelID, const char *categoryId) {
 void removeAllPendingNotifications(void) {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center removeAllPendingNotificationRequests];
-    NSLog(@"[Energy] All pending notifications cleared");
+    NSLog(@"[ENERGY] All pending notifications cleared");
 }
 
 void removePendingNotification(const char *identifier) {
@@ -448,13 +448,13 @@ void removePendingNotification(const char *identifier) {
     NSString *requestID = [NSString stringWithUTF8String:identifier];
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center removePendingNotificationRequestsWithIdentifiers:@[requestID]];
-    NSLog(@"[Energy] Pending notification removed: %@", requestID);
+    NSLog(@"[ENERGY] Pending notification removed: %@", requestID);
 }
 
 void removeAllDeliveredNotifications(void) {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center removeAllDeliveredNotifications];
-    NSLog(@"[Energy] All delivered notifications cleared");
+    NSLog(@"[ENERGY] All delivered notifications cleared");
 }
 
 void removeDeliveredNotification(const char *identifier) {
@@ -463,5 +463,5 @@ void removeDeliveredNotification(const char *identifier) {
     NSString *requestID = [NSString stringWithUTF8String:identifier];
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center removeDeliveredNotificationsWithIdentifiers:@[requestID]];
-    NSLog(@"[Energy] Delivered notification removed: %@", requestID);
+    NSLog(@"[ENERGY] Delivered notification removed: %@", requestID);
 }

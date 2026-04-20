@@ -1,9 +1,8 @@
-//go:build darwin && !ios
-
-#ifndef NOTIFICATIONS_DARWIN_H
-#define NOTIFICATIONS_DARWIN_H
-
 #import <Foundation/Foundation.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool isNotificationAvailable(void);
 bool checkBundleIdentifier(void);
@@ -19,4 +18,6 @@ void removePendingNotification(const char *identifier);
 void removeAllDeliveredNotifications(void);
 void removeDeliveredNotification(const char *identifier);
 
-#endif /* NOTIFICATIONS_DARWIN_H */
+#ifdef __cplusplus
+}
+#endif

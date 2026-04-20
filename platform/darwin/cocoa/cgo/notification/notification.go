@@ -36,8 +36,8 @@ var (
 // Apple system constants
 const (
 	appleDefaultActionID = "com.apple.UNNotificationDefaultActionIdentifier"
-	authorizationTimeout = 180 * time.Second // 3 minutes for user interaction
-	operationTimeout     = 5 * time.Second   // Standard operation timeout
+	authorizationTimeout = 180 * time.Second
+	operationTimeout     = 5 * time.Second
 )
 
 type Notification struct {
@@ -55,7 +55,7 @@ type callbackResult struct {
 	err error
 }
 
-// New 创建通知服务
+// New 创建通知
 func New() INotification {
 	once.Do(func() {
 		gNotification = &Notification{
@@ -75,19 +75,15 @@ func (m *Notification) Initialize() error {
 	if m.isInitialized {
 		return nil
 	}
-
 	if !bool(C.isNotificationAvailable()) {
 		return fmt.Errorf("notifications unavailable: requires macOS 10.15 or later")
 	}
-
 	if !bool(C.checkBundleIdentifier()) {
 		return fmt.Errorf("missing bundle identifier: package app as .app bundle with Info.plist")
 	}
-
 	if !bool(C.initializeNotificationCenter()) {
 		return fmt.Errorf("failed to initialize notification delegate")
 	}
-
 	m.isInitialized = true
 	return nil
 }
@@ -350,14 +346,8 @@ func (m *Notification) RemoveNotification(_ string) error {
 	return nil
 }
 
-// ----------------------------------------------------------------------------
-// CGO Callback Handlers
-// ----------------------------------------------------------------------------
-
-// captureResult receives async operation results from Objective-C
-//
-//export captureResult
-func captureResult(channelID C.int, success C.bool, errorMsg *C.char) {
+//export onCallbackResult
+func onCallbackResult(channelID C.int, success C.bool, errorMsg *C.char) {
 	if gNotification == nil {
 		return
 	}
@@ -376,27 +366,19 @@ func captureResult(channelID C.int, success C.bool, errorMsg *C.char) {
 	close(ch)
 }
 
-// didReceiveNotificationResponse handles user interactions with notifications
-//
 //export didReceiveNotificationResponse
 func didReceiveNotificationResponse(jsonPayload *C.char, errStr *C.char) {
 	result := Result{}
-
-	// Handle error case
 	if errStr != nil {
 		result.Error = fmt.Errorf("response error: %s", C.GoString(errStr))
 		dispatchResult(result)
 		return
 	}
-
-	// Validate payload
 	if jsonPayload == nil {
 		result.Error = fmt.Errorf("nil response payload")
 		dispatchResult(result)
 		return
 	}
-
-	// Parse JSON response
 	payload := C.GoString(jsonPayload)
 	var response Response
 	if parseErr := json.Unmarshal([]byte(payload), &response); parseErr != nil {
@@ -404,8 +386,6 @@ func didReceiveNotificationResponse(jsonPayload *C.char, errStr *C.char) {
 		dispatchResult(result)
 		return
 	}
-
-	// Normalize action identifier
 	if response.ActionIdentifier == appleDefaultActionID {
 		response.ActionIdentifier = DefaultActionIdentifier
 	}
@@ -425,13 +405,10 @@ func dispatchResult(result Result) {
 func (m *Notification) allocateChannel() (int, chan callbackResult) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	id := m.nextID
 	m.nextID++
-
 	ch := make(chan callbackResult, 1)
 	m.callbackChannels[id] = ch
-
 	return id, ch
 }
 
@@ -439,7 +416,6 @@ func (m *Notification) allocateChannel() (int, chan callbackResult) {
 func (m *Notification) GetChannel(id int) (chan callbackResult, bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	ch, exists := m.callbackChannels[id]
 	if exists {
 		delete(m.callbackChannels, id)
@@ -451,7 +427,6 @@ func (m *Notification) GetChannel(id int) (chan callbackResult, bool) {
 func (m *Notification) releaseChannel(id int) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	if ch, exists := m.callbackChannels[id]; exists {
 		delete(m.callbackChannels, id)
 		close(ch)
