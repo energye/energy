@@ -265,11 +265,6 @@ func appendCaller(b []byte, file string, line int) []byte {
 
 func appendArgs(b []byte, args ...any) []byte {
 	b = append(b, " "...)
-	if len(args)%2 == 0 && len(args) >= 2 {
-		if _, ok := args[0].(string); ok {
-			return appendKeyValuePairs(b, args...)
-		}
-	}
 	for i, arg := range args {
 		if i > 0 {
 			b = append(b, ' ')
@@ -312,6 +307,8 @@ func appendValue(b []byte, v any) []byte {
 		return strconv.AppendInt(b, val, 10)
 	case uint:
 		return strconv.AppendUint(b, uint64(val), 10)
+	case uintptr:
+		return strconv.AppendUint(b, uint64(val), 10)
 	case uint8:
 		return strconv.AppendUint(b, uint64(val), 10)
 	case uint16:
@@ -349,7 +346,6 @@ func appendField(b []byte, f Field) []byte {
 }
 
 func appendQuoted(b []byte, s string) []byte {
-	b = append(b, '"')
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if c == '"' || c == '\\' {
@@ -369,7 +365,7 @@ func appendQuoted(b []byte, s string) []byte {
 		}
 		b = append(b, c)
 	}
-	return append(b, '"')
+	return b
 }
 
 func toString(v any) string {
