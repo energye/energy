@@ -78,6 +78,12 @@ func (m *TWebview) UpdateBounds() {
 					h += float32(windowBounds.Height() - oh)
 				}
 			}
+		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
+			//akLeft := webviewAnchors.In(types.AkLeft)
+			//akTop := webviewAnchors.In(types.AkTop)
+			//akRight := webviewAnchors.In(types.AkRight)
+			//akBottom := webviewAnchors.In(types.AkBottom)
+
 		}
 		m.UpdateWebviewBounds(x, y, w, h)
 		m.oldBounds = windowBounds
