@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -21,48 +22,26 @@ const (
 	ErrorLevel
 )
 
-type Field struct {
-	Key  string
-	Kind byte
-	S    string
-	I    int64
-	F    float64
-	B    bool
-	A    any
-}
-
-func String(k, v string) Field { return Field{Key: k, Kind: 's', S: v} }
-
-func Int(k string, v int) Field { return Field{Key: k, Kind: 'i', I: int64(v)} }
-
-func Int64(k string, v int64) Field { return Field{Key: k, Kind: 'i', I: v} }
-
-func Float64(k string, v float64) Field { return Field{Key: k, Kind: 'f', F: v} }
-
-func Bool(k string, v bool) Field { return Field{Key: k, Kind: 'b', B: v} }
-
-func Any(k string, v any) Field { return Field{Key: k, Kind: 'a', A: v} }
-
-func Err(err error) Field {
-	if err == nil {
-		return String("error", "")
-	}
-	return String("error", err.Error())
-}
-
 type Config struct {
-	Level  Level
-	Output io.Writer
-	Caller bool
+	Level      Level
+	Output     io.Writer
+	Caller     bool
+	BufferSize int // 默认 65536
+	BatchSize  int // 默认 256
 }
 
 type Logger struct {
 	out    io.Writer
 	level  atomic.Int32
 	caller bool
-	ch     chan []byte
-	wg     sync.WaitGroup
-	pool   sync.Pool
+
+	ch        chan *[]byte
+	batchSize int
+
+	wg   sync.WaitGroup
+	pool sync.Pool
+	mu   sync.Mutex
+
 	closed atomic.Bool
 }
 
@@ -72,7 +51,26 @@ func New(c Config) *Logger {
 	if c.Output == nil {
 		c.Output = os.Stdout
 	}
-	l := &Logger{out: c.Output, caller: c.Caller, ch: make(chan []byte, 1024), pool: sync.Pool{New: func() any { b := make([]byte, 0, 512); return &b }}}
+	if c.BufferSize <= 0 {
+		c.BufferSize = 65536
+	}
+	if c.BatchSize <= 0 {
+		c.BatchSize = 256
+	}
+
+	l := &Logger{
+		out:       c.Output,
+		caller:    c.Caller,
+		ch:        make(chan *[]byte, c.BufferSize),
+		batchSize: c.BatchSize,
+		pool: sync.Pool{
+			New: func() any {
+				b := make([]byte, 0, 512)
+				return &b
+			},
+		},
+	}
+
 	l.level.Store(int32(c.Level))
 	l.wg.Add(1)
 	go l.writer()
@@ -80,19 +78,26 @@ func New(c Config) *Logger {
 }
 
 func init() {
-	def.Store(New(Config{Level: InfoLevel, Output: os.Stdout}))
+	def.Store(New(Config{
+		Level:  InfoLevel,
+		Output: os.Stdout,
+	}))
 }
 
 func SetDefault(l *Logger) {
-	def.Store(l)
+	if l != nil {
+		def.Store(l)
+	}
 }
 
 func L() *Logger {
 	return def.Load()
 }
+
 func (l *Logger) SetLevel(v Level) {
 	l.level.Store(int32(v))
 }
+
 func (l *Logger) Close() {
 	if !l.closed.CompareAndSwap(false, true) {
 		return
@@ -103,137 +108,102 @@ func (l *Logger) Close() {
 
 func (l *Logger) writer() {
 	defer l.wg.Done()
-	for b := range l.ch {
-		_, _ = l.out.Write(b)
-		p := &b
-		*p = (*p)[:0]
-		l.pool.Put(p)
+
+	for bp := range l.ch {
+		l.writeOne(bp)
+
+		// 批量清空积压日志，保持顺序
+		for i := 0; i < l.batchSize; i++ {
+			select {
+			case bp2, ok := <-l.ch:
+				if !ok {
+					return
+				}
+				l.writeOne(bp2)
+			default:
+				goto NEXT
+			}
+		}
+	NEXT:
 	}
 }
 
-func Debug(msg string, args ...any) {
-	L().logAny(DebugLevel, msg, args...)
-}
-func Info(msg string, args ...any) {
-	L().logAny(InfoLevel, msg, args...)
-}
-func Warn(msg string, args ...any) {
-	L().logAny(WarnLevel, msg, args...)
-}
-func Error(msg string, args ...any) {
-	L().logAny(ErrorLevel, msg, args...)
-}
-func DebugF(msg string, fields ...Field) {
-	L().logFields(DebugLevel, msg, fields...)
-}
-func InfoF(msg string, fields ...Field) {
-	L().logFields(InfoLevel, msg, fields...)
-}
-func WarnF(msg string, fields ...Field) {
-	L().logFields(WarnLevel, msg, fields...)
-}
-func ErrorF(msg string, fields ...Field) {
-	L().logFields(ErrorLevel, msg, fields...)
+func (l *Logger) writeOne(bp *[]byte) {
+	b := *bp
+
+	l.mu.Lock()
+	writeFull(l.out, b)
+	l.mu.Unlock()
+
+	*bp = b[:0]
+	l.pool.Put(bp)
 }
 
-func (l *Logger) Debug(msg string, args ...any) {
-	l.logAny(DebugLevel, msg, args...)
+func writeFull(w io.Writer, b []byte) {
+	for len(b) > 0 {
+		n, err := w.Write(b)
+		if err != nil {
+			return
+		}
+		b = b[n:]
+	}
 }
 
-func (l *Logger) Info(msg string, args ...any) {
-	l.logAny(InfoLevel, msg, args...)
-}
+func Debug(msg string, args ...any) { L().log(DebugLevel, msg, args...) }
+func Info(msg string, args ...any)  { L().log(InfoLevel, msg, args...) }
+func Warn(msg string, args ...any)  { L().log(WarnLevel, msg, args...) }
+func Error(msg string, args ...any) { L().log(ErrorLevel, msg, args...) }
 
-func (l *Logger) Warn(msg string, args ...any) {
-	l.logAny(WarnLevel, msg, args...)
-}
+func (l *Logger) Debug(msg string, args ...any) { l.log(DebugLevel, msg, args...) }
+func (l *Logger) Info(msg string, args ...any)  { l.log(InfoLevel, msg, args...) }
+func (l *Logger) Warn(msg string, args ...any)  { l.log(WarnLevel, msg, args...) }
+func (l *Logger) Error(msg string, args ...any) { l.log(ErrorLevel, msg, args...) }
 
-func (l *Logger) Error(msg string, args ...any) {
-	l.logAny(ErrorLevel, msg, args...)
-}
-
-func (l *Logger) DebugF(msg string, fields ...Field) {
-	l.logFields(DebugLevel, msg, fields...)
-}
-
-func (l *Logger) InfoF(msg string, fields ...Field) {
-	l.logFields(InfoLevel, msg, fields...)
-}
-
-func (l *Logger) WarnF(msg string, fields ...Field) {
-	l.logFields(WarnLevel, msg, fields...)
-}
-
-func (l *Logger) ErrorF(msg string, fields ...Field) {
-	l.logFields(ErrorLevel, msg, fields...)
-}
-
-func (l *Logger) logAny(level Level, msg string, args ...any) {
+func (l *Logger) log(level Level, msg string, args ...any) {
 	if l == nil || l.closed.Load() {
 		return
 	}
 	if int32(level) < l.level.Load() {
 		return
 	}
+
 	bp := l.pool.Get().(*[]byte)
 	b := (*bp)[:0]
-	b = append(b, '[')
-	b = appendLevel(b, level)
-	b = append(b, "] "...)
-	b = time.Now().AppendFormat(b, timeFmt)
-	b = append(b, ' ')
-	if l.caller {
-		_, file, line, _ := runtime.Caller(2)
-		b = appendCaller(b, file, line)
-	}
-	b = appendQuoted(b, msg)
+
+	b = appendHeader(b, level, l.caller, 3)
+	b = append(b, msg...)
+
 	if len(args) > 0 {
-		b = appendArgs(b, args...)
+		b = append(b, ' ')
+		for i, a := range args {
+			if i > 0 {
+				b = append(b, ' ')
+			}
+			b = appendValue(b, a)
+		}
 	}
 
 	b = append(b, '\n')
-	select {
-	case l.ch <- b:
-	default:
-		_, _ = l.out.Write(b)
-		*bp = (*bp)[:0]
-		l.pool.Put(bp)
-	}
+	*bp = b
+
+	// GUI程序推荐：统一异步队列，顺序稳定
+	l.ch <- bp
 }
 
-func (l *Logger) logFields(level Level, msg string, fields ...Field) {
-	if l == nil || l.closed.Load() {
-		return
-	}
-	if int32(level) < l.level.Load() {
-		return
-	}
-	bp := l.pool.Get().(*[]byte)
-	b := (*bp)[:0]
+func appendHeader(b []byte, lv Level, caller bool, skip int) []byte {
 	b = append(b, '[')
-	b = appendLevel(b, level)
+	b = appendLevel(b, lv)
 	b = append(b, "] "...)
 	b = time.Now().AppendFormat(b, timeFmt)
 	b = append(b, ' ')
-	if l.caller {
-		_, file, line, _ := runtime.Caller(2)
-		b = appendCaller(b, file, line)
+
+	if caller {
+		_, file, line, ok := runtime.Caller(skip)
+		if ok {
+			b = appendCaller(b, file, line)
+		}
 	}
-	b = appendQuoted(b, msg)
-	for _, f := range fields {
-		b = append(b, ' ')
-		b = append(b, f.Key...)
-		b = append(b, '=')
-		b = appendField(b, f)
-	}
-	b = append(b, '\n')
-	select {
-	case l.ch <- b:
-	default:
-		_, _ = l.out.Write(b)
-		*bp = (*bp)[:0]
-		l.pool.Put(bp)
-	}
+	return b
 }
 
 func appendLevel(b []byte, lv Level) []byte {
@@ -263,133 +233,41 @@ func appendCaller(b []byte, file string, line int) []byte {
 	return b
 }
 
-func appendArgs(b []byte, args ...any) []byte {
-	b = append(b, " "...)
-	for i, arg := range args {
-		if i > 0 {
-			b = append(b, ' ')
-		}
-		b = appendValue(b, arg)
-	}
-	return b
-}
-
-func appendKeyValuePairs(b []byte, args ...any) []byte {
-	for i := 0; i < len(args); i += 2 {
-		if i > 0 {
-			b = append(b, ' ')
-		}
-
-		key, _ := args[i].(string)
-		b = append(b, key...)
-		b = append(b, '=')
-		b = appendValue(b, args[i+1])
-	}
-	return b
-}
-
 func appendValue(b []byte, v any) []byte {
-	if v == nil {
+	switch x := v.(type) {
+	case nil:
 		return append(b, "null"...)
-	}
-	switch val := v.(type) {
 	case string:
-		return appendQuoted(b, val)
+		return append(b, x...)
 	case int:
-		return strconv.AppendInt(b, int64(val), 10)
+		return strconv.AppendInt(b, int64(x), 10)
 	case int8:
-		return strconv.AppendInt(b, int64(val), 10)
+		return strconv.AppendInt(b, int64(x), 10)
 	case int16:
-		return strconv.AppendInt(b, int64(val), 10)
+		return strconv.AppendInt(b, int64(x), 10)
 	case int32:
-		return strconv.AppendInt(b, int64(val), 10)
+		return strconv.AppendInt(b, int64(x), 10)
 	case int64:
-		return strconv.AppendInt(b, val, 10)
+		return strconv.AppendInt(b, x, 10)
 	case uint:
-		return strconv.AppendUint(b, uint64(val), 10)
-	case uintptr:
-		return strconv.AppendUint(b, uint64(val), 10)
+		return strconv.AppendUint(b, uint64(x), 10)
 	case uint8:
-		return strconv.AppendUint(b, uint64(val), 10)
+		return strconv.AppendUint(b, uint64(x), 10)
 	case uint16:
-		return strconv.AppendUint(b, uint64(val), 10)
+		return strconv.AppendUint(b, uint64(x), 10)
 	case uint32:
-		return strconv.AppendUint(b, uint64(val), 10)
+		return strconv.AppendUint(b, uint64(x), 10)
 	case uint64:
-		return strconv.AppendUint(b, val, 10)
+		return strconv.AppendUint(b, x, 10)
 	case float32:
-		return strconv.AppendFloat(b, float64(val), 'f', -1, 32)
+		return strconv.AppendFloat(b, float64(x), 'f', -1, 32)
 	case float64:
-		return strconv.AppendFloat(b, val, 'f', -1, 64)
+		return strconv.AppendFloat(b, x, 'f', -1, 64)
 	case bool:
-		return strconv.AppendBool(b, val)
+		return strconv.AppendBool(b, x)
 	case error:
-		return appendQuoted(b, val.Error())
+		return append(b, x.Error()...)
 	default:
-		return appendQuoted(b, simpleToString(val))
+		return append(b, fmt.Sprintf("%v", x)...)
 	}
-}
-
-func appendField(b []byte, f Field) []byte {
-	switch f.Kind {
-	case 's':
-		return appendQuoted(b, f.S)
-	case 'i':
-		return strconv.AppendInt(b, f.I, 10)
-	case 'f':
-		return strconv.AppendFloat(b, f.F, 'f', -1, 64)
-	case 'b':
-		return strconv.AppendBool(b, f.B)
-	default:
-		return appendQuoted(b, toString(f.A))
-	}
-}
-
-func appendQuoted(b []byte, s string) []byte {
-	for i := 0; i < len(s); i++ {
-		c := s[i]
-		if c == '"' || c == '\\' {
-			b = append(b, '\\')
-		}
-		if c == '\n' {
-			b = append(b, '\\', 'n')
-			continue
-		}
-		if c == '\r' {
-			b = append(b, '\\', 'r')
-			continue
-		}
-		if c == '\t' {
-			b = append(b, '\\', 't')
-			continue
-		}
-		b = append(b, c)
-	}
-	return b
-}
-
-func toString(v any) string {
-	if v == nil {
-		return "null"
-	}
-	if s, ok := v.(string); ok {
-		return s
-	}
-	if e, ok := v.(error); ok {
-		return e.Error()
-	}
-	return "?"
-}
-
-func simpleToString(v any) string {
-	if v == nil {
-		return "null"
-	}
-	if s, ok := v.(string); ok {
-		return s
-	}
-	if e, ok := v.(error); ok {
-		return e.Error()
-	}
-	return "?"
 }
