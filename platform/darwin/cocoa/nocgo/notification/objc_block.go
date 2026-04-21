@@ -42,6 +42,12 @@ type blockLayout struct {
 	descriptor *blockDescriptor
 }
 
+// BlockInvoke 调用 Objective-C Block 对象
+// 通过解析 Block 内部布局获取 invoke 函数指针，并使用 purego 执行系统调用
+//
+// 参数:
+//   - block: 要调用的 Objective-C Block 对象
+//   - args: 传递给 Block 的可变参数列表（不包含 block 自身）
 func BlockInvoke(block objc.Block, args ...uintptr) (uintptr, error) {
 	layout := (*blockLayout)(unsafe.Pointer(block))
 	if layout == nil || layout.invoke == 0 {
