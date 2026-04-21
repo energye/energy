@@ -143,6 +143,10 @@ func NSStringToGoString(nsString objc.ID) string {
 	return value
 }
 
+func GoStringToNSString(str string) objc.ID {
+	return objc.ID(objc.GetClass("NSString")).Send(objc.RegisterName("stringWithUTF8String:"), str)
+}
+
 func NSDataToGoBytes(nsData objc.ID) []byte {
 	length := nsData.Send(objc.RegisterName("length"))
 	bytes := nsData.Send(objc.RegisterName("bytes"))
