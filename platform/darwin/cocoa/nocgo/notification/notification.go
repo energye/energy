@@ -13,6 +13,7 @@ package notification
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/ebitengine/purego/objc"
 	. "github.com/energye/energy/v3/platform/notification/types"
@@ -58,9 +59,7 @@ func New() INotification {
 			nextID:           0,
 		}
 		if err := gNotification.Initialize(); err != nil {
-			Error("Notification service initialization warning:", err.Error())
-		} else {
-			Debug("Notification service initialized")
+			println("Notification service initialization warning:", err.Error())
 		}
 	})
 	return gNotification
@@ -115,7 +114,7 @@ func userNotificationCenterWillPresentNotificationWithCompletionHandler(self obj
 		options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound
 	}
 	if _, err := BlockInvoke(completionHandler, options); err != nil {
-		Error("Failed to invoke presentNotification completionHandler:", err)
+		println("Failed to invoke presentNotification completionHandler:", err.Error())
 	}
 }
 
@@ -130,9 +129,8 @@ func userNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(s
 	} else {
 		didReceiveNotificationResponse(string(jsonBytes), "")
 	}
-
 	if _, err := BlockInvoke(completionHandler); err != nil {
-		Error("Failed to invoke didReceive completionHandler:", err)
+		println("Failed to invoke didReceive completionHandler:", err.Error())
 	}
 }
 
@@ -301,18 +299,18 @@ func (m *Notification) Initialize() error {
 	}
 
 	if !available(10, 15) {
-		Debug("notifications unavailable: requires macOS 10.15 or later")
-		return fmt.Errorf("notifications unavailable: requires macOS 10.15 or later")
+		//Debug("notifications unavailable: requires macOS 10.15 or later")
+		return errors.New("notifications unavailable: requires macOS 10.15 or later")
 	}
 
 	if !checkBundleIdentifier() {
-		Debug("missing bundle identifier: package app as .app bundle with Info.plist")
-		return fmt.Errorf("missing bundle identifier: package app as .app bundle with Info.plist")
+		//Debug("missing bundle identifier: package app as .app bundle with Info.plist")
+		return errors.New("missing bundle identifier: package app as .app bundle with Info.plist")
 	}
 
 	if !initializeNotificationCenter() {
-		Debug("failed to initialize notification delegate")
-		return fmt.Errorf("failed to initialize notification delegate")
+		//Debug("failed to initialize notification delegate")
+		return errors.New("failed to initialize notification delegate")
 	}
 
 	m.isInitialized = true
@@ -333,7 +331,7 @@ func checkBundleIdentifier() bool {
 	nsBundleClass := objc.GetClass("NSBundle")
 	mainBundle := objc.ID(nsBundleClass).Send(objc.RegisterName("mainBundle"))
 	bundleID := mainBundle.Send(objc.RegisterName("bundleIdentifier"))
-	Debug("bundle identifier:", getStringFromObjC(bundleID))
+	//Debug("bundle identifier:", getStringFromObjC(bundleID))
 	return bundleID != 0 && getStringFromObjC(bundleID) != ""
 }
 
@@ -364,7 +362,7 @@ func (m *Notification) RequestNotificationAuthorization() (bool, error) {
 
 	select {
 	case result := <-ch:
-		Debug("RequestNotificationAuthorization OK:", result.ok, "err:", result.err)
+		//Debug("RequestNotificationAuthorization OK:", result.ok, "err:", result.err)
 		return result.ok, result.err
 	case <-ctx.Done():
 		return false, fmt.Errorf("authorization request timeout: %w", ctx.Err())
@@ -399,7 +397,7 @@ func createAuthorizationCompletionBlock(channelID int) objc.Block {
 			localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
 			errMsg = getStringFromObjC(localizedDescription)
 		}
-		Debug("AuthorizationCompletionBlock", "channelID:", channelID, "granted:", granted, "errMsg:", errMsg)
+		// Debug("AuthorizationCompletionBlock", "channelID:", channelID, "granted:", granted, "errMsg:", errMsg)
 		onCallbackResult(channelID, granted, errMsg)
 	})
 	return block
@@ -416,7 +414,7 @@ func (m *Notification) CheckNotificationAuthorization() (bool, error) {
 
 	select {
 	case result := <-ch:
-		Debug("CheckNotificationAuthorization OK:", result.ok, "err:", result.err)
+		// Debug("CheckNotificationAuthorization OK:", result.ok, "err:", result.err)
 		return result.ok, result.err
 	case <-ctx.Done():
 		return false, fmt.Errorf("authorization check timeout: %w", ctx.Err())
@@ -474,7 +472,7 @@ func onCallbackResult(channelID int, success bool, errMsg string) {
 }
 
 func (m *Notification) SendNotification(opts Options) error {
-	Debug("SendNotification:", opts)
+	// Debug("SendNotification:", opts)
 	if err := validateNotificationOptions(opts); err != nil {
 		return err
 	}
@@ -501,7 +499,7 @@ func (m *Notification) SendNotification(opts Options) error {
 }
 
 func sendNotification(channelID int, opts Options) {
-	Debug("sendNotification", "channelID:", channelID, "opts:", opts)
+	// Debug("sendNotification", "channelID:", channelID, "opts:", opts)
 	if !initializeNotificationCenter() {
 		onCallbackResult(channelID, false, "sendNotification.initializeNotificationCenter: Failed to initialize the notification center")
 		return
@@ -518,21 +516,21 @@ func sendNotification(channelID int, opts Options) {
 
 	requestClass := objc.GetClass("UNNotificationRequest")
 	cOptionID := GoStringToNSString(opts.ID)
-	Debug("sendNotification", "cOptionID:", cOptionID)
+	// Debug("sendNotification", "cOptionID:", cOptionID)
 	request := objc.ID(requestClass).Send(objc.RegisterName("requestWithIdentifier:content:trigger:"),
 		cOptionID, cContent, 0)
 
 	completionBlock := createSendCompletionBlock(channelID, opts.ID)
 	defer completionBlock.Release()
-	Debug("sendNotification", "completionBlock:", completionBlock)
+	// Debug("sendNotification", "completionBlock:", completionBlock)
 
 	center.Send(objc.RegisterName("addNotificationRequest:withCompletionHandler:"),
 		request, completionBlock)
-	Debug("sendNotification", "end")
+	// Debug("sendNotification", "end")
 }
 
 func buildNotificationContent(title, subtitle, body string, data map[string]interface{}) (objc.ID, error) {
-	Debug("buildNotificationContent", "title:", title, "subtitle:", subtitle, "body:", body, "data:", data)
+	// Debug("buildNotificationContent", "title:", title, "subtitle:", subtitle, "body:", body, "data:", data)
 	contentClass := objc.GetClass("UNMutableNotificationContent")
 	content := objc.ID(contentClass).Send(objc.RegisterName("new"))
 
@@ -599,7 +597,7 @@ func convertGoMapToNSDictionary(data map[string]interface{}) objc.ID {
 
 func createSendCompletionBlock(channelID int, identifier string) objc.Block {
 	block := objc.NewBlock(func(self objc.Block, errorPtr unsafe.Pointer) {
-		Debug("SendCompletionBlock", "self:", self, "error:", uintptr(errorPtr))
+		// Debug("SendCompletionBlock", "self:", self, "error:", uintptr(errorPtr))
 		if errorPtr != nil {
 			errorObj := objc.ID(errorPtr)
 			localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
