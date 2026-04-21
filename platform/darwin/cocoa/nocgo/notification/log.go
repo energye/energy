@@ -8,56 +8,62 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 )
 
 var (
-	myLogger *logger.Logger
-	LogPath  string
+	myLogger  *logger.Logger
+	loggerOne sync.Once
 )
 
-func init() {
-	getLogFilePath := func() string {
-		homeDir, _ := os.UserHomeDir()
-		bundleId := pack.Info.Id
-		if runtime.GOOS == "darwin" && bundleId != "" {
-			logDir := filepath.Join(homeDir, "Library", "Logs", bundleId)
-			_ = os.MkdirAll(logDir, 0700)
-			return filepath.Join(logDir, "notification.log")
+func mustInit() {
+	loggerOne.Do(func() {
+		getLogFilePath := func() string {
+			homeDir, _ := os.UserHomeDir()
+			bundleId := pack.Info.Id
+			if runtime.GOOS == "darwin" && bundleId != "" {
+				logDir := filepath.Join(homeDir, "Library", "Logs", bundleId)
+				_ = os.MkdirAll(logDir, 0700)
+				return filepath.Join(logDir, "notification.log")
+			} else {
+				return filepath.Join(homeDir, ".energy", "notification.log")
+			}
+		}
+		file, err := os.OpenFile(getLogFilePath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			myLogger = logger.New(logger.Config{Level: logger.DebugLevel, Output: os.Stdout})
 		} else {
-			return filepath.Join(homeDir, ".energy", "notification.log")
+			multiWriter := io.MultiWriter(os.Stdout, file)
+			myLogger = logger.New(logger.Config{
+				Level:  logger.DebugLevel,
+				Output: multiWriter,
+			})
 		}
-	}
-	LogPath = getLogFilePath()
-	file, err := os.OpenFile(LogPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		myLogger = logger.New(logger.Config{Level: logger.DebugLevel, Output: os.Stdout})
-	} else {
-		multiWriter := io.MultiWriter(os.Stdout, file)
-		myLogger = logger.New(logger.Config{
-			Level:  logger.DebugLevel,
-			Output: multiWriter,
+		api.SetOnReleaseCallback(func() {
+			if file != nil {
+				_ = file.Close()
+			}
+			myLogger.Close()
 		})
-	}
-	api.SetOnReleaseCallback(func() {
-		if file != nil {
-			_ = file.Close()
-		}
-		myLogger.Close()
 	})
 }
 
 func Debug(v ...any) {
+	mustInit()
 	myLogger.Debug("-", v...)
 }
 
 func Info(v ...any) {
+	mustInit()
 	myLogger.Info("-", v...)
 }
 
 func Warn(v ...any) {
+	mustInit()
 	myLogger.Warn("-", v...)
 }
 
 func Error(v ...any) {
+	mustInit()
 	myLogger.Error("-", v...)
 }

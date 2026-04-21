@@ -79,7 +79,6 @@ func initSelectors() {
 func registerNotificationDelegateClass() {
 	var err error
 	protoUNUserNotificationCenterDelegate := objc.GetProtocol("UNUserNotificationCenterDelegate")
-
 	notificationDelegateClass, err = objc.RegisterClass(
 		"EnergyNotificationDelegate",
 		objc.GetClass("NSObject"),
@@ -102,8 +101,8 @@ func registerNotificationDelegateClass() {
 	}
 }
 
-func userNotificationCenterWillPresentNotificationWithCompletionHandler(self objc.ID, _cmd objc.SEL, center objc.ID,
-	notification objc.ID, completionHandler objc.Block) {
+func userNotificationCenterWillPresentNotificationWithCompletionHandler(self objc.ID, _cmd objc.SEL,
+	center objc.ID, notification objc.ID, completionHandler objc.Block) {
 	var options uintptr
 	if available(11, 0) {
 		const UNNotificationPresentationOptionList = 1 << 2
@@ -115,14 +114,15 @@ func userNotificationCenterWillPresentNotificationWithCompletionHandler(self obj
 		const UNNotificationPresentationOptionSound = 1 << 1
 		options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound
 	}
-
-	completionHandler.Invoke(options)
+	if _, err := BlockInvoke(completionHandler, options); err != nil {
+		Error("Failed to invoke presentNotification completionHandler:", err)
+	}
 }
 
-func userNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(self objc.ID, _cmd objc.SEL, center objc.ID,
-	response objc.ID, completionHandler unsafe.Pointer) {
-	payload := buildNotificationResponsePayload(response)
+func userNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(self objc.ID, _cmd objc.SEL,
+	center objc.ID, response objc.ID, completionHandler objc.Block) {
 
+	payload := buildNotificationResponsePayload(response)
 	jsonBytes, err := json.Marshal(payload)
 	if err != nil {
 		errorMsg := fmt.Sprintf("JSON serialization failed: %s", err.Error())
@@ -131,8 +131,9 @@ func userNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(s
 		didReceiveNotificationResponse(string(jsonBytes), "")
 	}
 
-	handler := objc.Block(completionHandler)
-	handler.Invoke()
+	if _, err := BlockInvoke(completionHandler); err != nil {
+		Error("Failed to invoke didReceive completionHandler:", err)
+	}
 }
 
 func buildNotificationResponsePayload(response objc.ID) map[string]interface{} {
@@ -300,7 +301,7 @@ func (m *Notification) Initialize() error {
 	}
 
 	if !available(10, 15) {
-		myLogger.Debug("notifications unavailable: requires macOS 10.15 or later")
+		Debug("notifications unavailable: requires macOS 10.15 or later")
 		return fmt.Errorf("notifications unavailable: requires macOS 10.15 or later")
 	}
 
@@ -391,17 +392,16 @@ func requestNotificationAuthorization(channelID int) {
 }
 
 func createAuthorizationCompletionBlock(channelID int) objc.Block {
-	block := objc.NewBlock(
-		func(self objc.Block, granted bool, errorPtr unsafe.Pointer) {
-			var errMsg string
-			if errorPtr != nil {
-				errorObj := objc.ID(errorPtr)
-				localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
-				errMsg = getStringFromObjC(localizedDescription)
-			}
-			onCallbackResult(channelID, granted, errMsg)
-		},
-	)
+	block := objc.NewBlock(func(self objc.Block, granted bool, errorPtr unsafe.Pointer) {
+		var errMsg string
+		if errorPtr != nil {
+			errorObj := objc.ID(errorPtr)
+			localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
+			errMsg = getStringFromObjC(localizedDescription)
+		}
+		Debug("AuthorizationCompletionBlock", "channelID:", channelID, "granted:", granted, "errMsg:", errMsg)
+		onCallbackResult(channelID, granted, errMsg)
+	})
 	return block
 }
 
@@ -523,9 +523,11 @@ func sendNotification(channelID int, opts Options) {
 		cOptionID, cContent, 0)
 
 	completionBlock := createSendCompletionBlock(channelID, opts.ID)
-	//defer completionBlock.Release()
+	defer completionBlock.Release()
+	Debug("sendNotification", "completionBlock:", completionBlock)
 
-	center.Send(objc.RegisterName("addNotificationRequest:withCompletionHandler:"), request, completionBlock)
+	center.Send(objc.RegisterName("addNotificationRequest:withCompletionHandler:"),
+		request, completionBlock)
 	Debug("sendNotification", "end")
 }
 
@@ -596,18 +598,17 @@ func convertGoMapToNSDictionary(data map[string]interface{}) objc.ID {
 }
 
 func createSendCompletionBlock(channelID int, identifier string) objc.Block {
-	block := objc.NewBlock(
-		func(self objc.Block, errorPtr unsafe.Pointer) {
-			if errorPtr != nil {
-				errorObj := objc.ID(errorPtr)
-				localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
-				errMsg := getStringFromObjC(localizedDescription)
-				onCallbackResult(channelID, false, fmt.Sprintf("Send failed: %s", errMsg))
-			} else {
-				onCallbackResult(channelID, true, "")
-			}
-		},
-	)
+	block := objc.NewBlock(func(self objc.Block, errorPtr unsafe.Pointer) {
+		Debug("SendCompletionBlock", "self:", self, "error:", uintptr(errorPtr))
+		if errorPtr != nil {
+			errorObj := objc.ID(errorPtr)
+			localizedDescription := errorObj.Send(objc.RegisterName("localizedDescription"))
+			errMsg := getStringFromObjC(localizedDescription)
+			onCallbackResult(channelID, false, fmt.Sprintf("Send failed: %s", errMsg))
+		} else {
+			onCallbackResult(channelID, true, "")
+		}
+	})
 	return block
 }
 
