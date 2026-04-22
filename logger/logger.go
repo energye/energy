@@ -196,8 +196,12 @@ func (l *Logger) log(level Level, msg string, args ...any) {
 	b = append(b, '\n')
 	*bp = b
 
-	// GUI程序推荐：统一异步队列，顺序稳定
-	l.ch <- bp
+	select {
+	case l.ch <- bp:
+	default:
+		*bp = (*bp)[:0]
+		l.pool.Put(bp)
+	}
 }
 
 func appendHeader(b []byte, lv Level, caller bool, skip int) []byte {
