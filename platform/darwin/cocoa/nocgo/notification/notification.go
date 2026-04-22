@@ -683,6 +683,17 @@ func registerNotificationCategory(channelID int, category Category) {
 	center.Send(objc.RegisterName("getNotificationCategoriesWithCompletionHandler:"), completionBlock)
 }
 
+// buildNotificationActions 构建通知交互动作数组
+// 根据配置生成普通按钮动作或文本输入动作，用于通知类别的注册
+//
+// 参数:
+//   - actions: 预定义的动作列表，包含动作 ID、标题及样式选项
+//   - hasReplyField: 是否启用文本回复字段
+//   - replyPlaceholder: 文本输入框的占位符提示文字
+//   - replyButtonTitle: 回复按钮的显示标题
+//
+// 返回值:
+//   - objc.ID: 包含所有配置动作的 NSMutableArray 对象
 func buildNotificationActions(actions []Action, hasReplyField bool, replyPlaceholder, replyButtonTitle string) objc.ID {
 	actionsArray := objc.ID(objc.GetClass("NSMutableArray")).Send(objc.RegisterName("array"))
 
@@ -701,7 +712,7 @@ func buildNotificationActions(actions []Action, hasReplyField bool, replyPlaceho
 			cActionID, cActionTitle, opts)
 		actionsArray.Send(objc.RegisterName("addObject:"), newAction)
 	}
-
+	// 如果启用了文本回复功能，则创建文本输入动作并添加到数
 	if hasReplyField && replyPlaceholder != "" && replyButtonTitle != "" {
 		textInputClass := objc.GetClass("UNTextInputNotificationAction")
 		const UNNotificationActionOptionNone = 0
@@ -712,6 +723,7 @@ func buildNotificationActions(actions []Action, hasReplyField bool, replyPlaceho
 			cActionWithIdentifier, cReplyButtonTitle, UNNotificationActionOptionNone, cReplyButtonTitle, cReplyPlaceholder)
 		actionsArray.Send(objc.RegisterName("addObject:"), textInputAction)
 	} else {
+		// 否则遍历添加普通的按钮动作
 		actionClass := objc.GetClass("UNNotificationAction")
 		for _, action := range actions {
 			var opts uintptr
