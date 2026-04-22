@@ -88,12 +88,3 @@ func (m *TWindow) Frameless() {
 		}
 	}
 }
-
-func (m *TWindow) _InitEvent() {
-	//nsWindow := m.NSWindow().Instance()
-	//windowResizeEventId := fmt.Sprintf("%d_%v", TWindowEventDidResize, nsWindow)
-	//cgo.RegisterEvent(windowResizeEventId,
-	//	cgo.MakeNotifyEvent(func(identifier string, owner cgo.Pointer, sender cgo.Pointer) *cgo.GoArguments {
-	//		return nil
-	//	}))
-}
