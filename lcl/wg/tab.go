@@ -14,10 +14,10 @@
 package wg
 
 import (
+	"github.com/energye/energy/v3/lcl/wg/assets"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
-	"github.com/energye/widget/assets"
 	"strconv"
 	"time"
 )
