@@ -152,12 +152,13 @@ func (m *TWebview) UpdateBrowserOptions() {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
-
-	options := m.window.Options()
-	if options.DefaultURL != "" {
-		m.browser.LoadURL(options.DefaultURL)
+	if m.window != nil {
+		options := m.window.Options()
+		if options.DefaultURL != "" {
+			m.browser.LoadURL(options.DefaultURL)
+		}
+		m.wkWebView.SetWebviewTransparent(options.WebviewTransparent)
 	}
-	m.wkWebView.SetWebviewTransparent(options.WebviewTransparent)
 	m.wkWebView.BecomeFirstResponder()
 	m.wkWebView.RegisterPerformKeyEquivalentMethod()
 }
@@ -177,7 +178,7 @@ func (m *TWebview) SetParent(owner lcl.IWinControl) {
 
 // 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
-	if m.isCreated || m.window == nil {
+	if m.isCreated {
 		return
 	}
 	m.isCreated = true

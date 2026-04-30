@@ -95,12 +95,12 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
+		window.AddOnWindowStateChange(m.doOnWindowStateChange)
+		window.AddOnWindowResize(m.doOnWindowResize)
+		window.AddOnWindowShow(m.doOnWindowShow)
+		window.AddOnWindowClose(m.doOnWindowClose)
+		window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 	}
-	window.AddOnWindowStateChange(m.doOnWindowStateChange)
-	window.AddOnWindowResize(m.doOnWindowResize)
-	window.AddOnWindowShow(m.doOnWindowShow)
-	window.AddOnWindowClose(m.doOnWindowClose)
-	window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
 
 // UpdateBrowserOptions 更新浏览器配置
@@ -110,17 +110,19 @@ func (m *TWebview) UpdateBrowserOptions() {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
-	// 2 设置浏览器配置
-	options := m.window.Options()
-	if options.DefaultURL != "" {
-		m.SetDefaultURL(options.DefaultURL)
-		//m.LoadURL(options.DefaultURL)
-	}
+	if m.window != nil {
+		// 2 设置浏览器配置
+		options := m.window.Options()
+		if options.DefaultURL != "" {
+			m.SetDefaultURL(options.DefaultURL)
+			//m.LoadURL(options.DefaultURL)
+		}
 
-	if options.BackgroundColor != nil {
-		r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
-		color := colors.TColor(colors.RGB(r, g, b))
-		m.SetColor(color)
+		if options.BackgroundColor != nil {
+			r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
+			color := colors.TColor(colors.RGB(r, g, b))
+			m.SetColor(color)
+		}
 	}
 }
 
@@ -152,7 +154,7 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 // CreateBrowser 创建浏览器实例
 // 该方法负责初始化webview浏览器，确保只创建一次，并在应用程序初始化完成后创建浏览器窗口
 func (m *TWebview) CreateBrowser() {
-	if m.created || m.window == nil {
+	if m.created {
 		return
 	}
 	m.created = true
@@ -285,7 +287,7 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 			if color.A > 0 && color.A < 255 {
 				color.A = 255
 			}
-			if m.window.Options().WebviewTransparent {
+			if m.window != nil && m.window.Options().WebviewTransparent {
 				color.A = 0
 			}
 			newColor := types.TColor(color.ARGB())
@@ -332,7 +334,7 @@ func (m *TWebview) initDefaultEvent() {
 		menuItemClear := func(menuItems wv.ICoreWebView2ContextMenuItemCollection) {
 			menuItems.RemoveAllMenuItems()
 		}
-		if m.window.Options().DisableContextMenu {
+		if m.window != nil && m.window.Options().DisableContextMenu {
 			menuItemClear(menuItemCollection)
 			return
 		}
@@ -405,7 +407,9 @@ func (m *TWebview) initDefaultEvent() {
 		args.SetHandled(handle)
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
-		m.SetDefaultBackgroundColor(m.window.Options().BackgroundColor)
+		if m.window != nil {
+			m.SetDefaultBackgroundColor(m.window.Options().BackgroundColor)
+		}
 		m.windowParent.UpdateSize()
 		// local load
 		if m.LocalLoadResource() != nil {
@@ -416,7 +420,9 @@ func (m *TWebview) initDefaultEvent() {
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos
-		settings.SetAreDevToolsEnabled(!m.window.Options().DisableDevTools)
+		if m.window != nil {
+			settings.SetAreDevToolsEnabled(!m.window.Options().DisableDevTools)
+		}
 		if m.onBrowserAfterCreated != nil {
 			m.onBrowserAfterCreated(sender)
 		}

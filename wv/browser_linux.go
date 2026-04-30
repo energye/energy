@@ -123,7 +123,7 @@ func (m *TWebview) SetParent(owner lcl.IWinControl) {
 
 // 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
-	if m.isCreated || m.window == nil {
+	if m.isCreated {
 		return
 	}
 	m.isCreated = true
@@ -143,12 +143,12 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 		if m.window.BrowserId() == 0 {
 			m.window.SetBrowserId(m.browserId)
 		}
+		iWindow.AddOnWindowStateChange(m.doOnWindowStateChange)
+		iWindow.AddOnWindowResize(m.doOnWindowResize)
+		iWindow.AddOnWindowShow(m.doOnWindowShow)
+		iWindow.AddOnWindowClose(m.doOnWindowClose)
+		iWindow.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 	}
-	iWindow.AddOnWindowStateChange(m.doOnWindowStateChange)
-	iWindow.AddOnWindowResize(m.doOnWindowResize)
-	iWindow.AddOnWindowShow(m.doOnWindowShow)
-	iWindow.AddOnWindowClose(m.doOnWindowClose)
-	iWindow.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
 }
 
 // UpdateBrowserOptions 更新浏览器配置
@@ -173,31 +173,31 @@ func (m *TWebview) UpdateBrowserOptions() {
 			gWk2Context.RegisterURIScheme(m.localLoad.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
 		}
 	}
-	options := m.window.Options()
 
-	//target := gtk3.NewTargetEntry("text/uri-list", 0, 2)
-	//targets := []gtk3.TargetEntry{*target}
-	//m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_DROP, targets, gtk3.ACTION_COPY)
-	//target.Free()
-
-	m.gtkWebview.SetBackgroundColor(options.BackgroundColor)
-	if options.WebviewTransparent {
-		r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
-		webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
-		if m.gtkCssProvider == nil {
-			m.gtkCssProvider = gtk3.NewCssProvider()
-			m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, STYLE_PROVIDER_PRIORITY_USER)
-			m.gtkCssProvider.Unref()
+	if m.window != nil {
+		options := m.window.Options()
+		//target := gtk3.NewTargetEntry("text/uri-list", 0, 2)
+		//targets := []gtk3.TargetEntry{*target}
+		//m.getGtkWebview().DragDestSet(gtk3.DEST_DEFAULT_DROP, targets, gtk3.ACTION_COPY)
+		//target.Free()
+		m.gtkWebview.SetBackgroundColor(options.BackgroundColor)
+		if options.WebviewTransparent {
+			r, g, b, a := options.BackgroundColor.R, options.BackgroundColor.G, options.BackgroundColor.B, options.BackgroundColor.A
+			webviewCss := fmt.Sprintf(".webview-box {background-color: rgba(%d, %d, %d, %1.1f);}", r, g, b, float64(a)/255.0)
+			if m.gtkCssProvider == nil {
+				m.gtkCssProvider = gtk3.NewCssProvider()
+				m.gtkScrolledWindow.GetStyleContext().AddProvider(m.gtkCssProvider, STYLE_PROVIDER_PRIORITY_USER)
+				m.gtkCssProvider.Unref()
+			}
+			var err error
+			err = m.gtkCssProvider.LoadFromData(webviewCss)
+			if err != nil {
+				//println("CssProvider.LoadFromData:", err.Error())
+			}
 		}
-		var err error
-		err = m.gtkCssProvider.LoadFromData(webviewCss)
-		if err != nil {
-			//println("CssProvider.LoadFromData:", err.Error())
+		if options.DefaultURL != "" {
+			m.SetDefaultURL(options.DefaultURL)
 		}
-	}
-
-	if options.DefaultURL != "" {
-		m.SetDefaultURL(options.DefaultURL)
 	}
 }
 
@@ -303,7 +303,9 @@ func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
 
 func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
 	m.SetBounds(x, y, width, height)
-	m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
+	if m.window != nil {
+		m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
+	}
 	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
 }
 
@@ -436,7 +438,7 @@ func (m *TWebview) initDefaultEvent() {
 			}
 			menuItems.RemoveAll()
 		}
-		if m.window.Options().DisableContextMenu {
+		if m.window != nil && m.window.Options().DisableContextMenu {
 			menuItemClear(rootContextMenu)
 			return true
 		}
@@ -551,7 +553,9 @@ func (m *TWebview) initDefaultEvent() {
 			}
 			lcl.RunOnMainThreadAsync(func(id uint32) {
 				m.browser.Free()
-				m.window.Close()
+				if m.window != nil {
+					m.window.Close()
+				}
 			})
 		}
 	})
@@ -650,7 +654,7 @@ func (m *TWebview) initDefaultEvent() {
 		windowBr               types.TRect
 	)
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		if m.window.Options().Frameless {
+		if m.window != nil && m.window.Options().Frameless {
 			if !isDown {
 				br := m.BoundsRect()
 				w, h := br.Width(), br.Height()
@@ -683,7 +687,7 @@ func (m *TWebview) initDefaultEvent() {
 		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		if m.window.Options().Frameless {
+		if m.window != nil && m.window.Options().Frameless {
 			isDown = true
 			if mouseCursor != types.CrDefault && m.window != nil {
 				pos := lcl.Mouse.CursorPos()
@@ -695,7 +699,7 @@ func (m *TWebview) initDefaultEvent() {
 		return false
 	})
 	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		if m.window.Options().Frameless {
+		if m.window != nil && m.window.Options().Frameless {
 			isDown = false
 		}
 		return false
