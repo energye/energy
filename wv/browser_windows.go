@@ -133,16 +133,9 @@ func (m *TWebview) SetParent(window lcl.IWinControl) {
 	m.windowParent.SetParent(m.IPanel)
 }
 
-// SetColor 设置浏览器组件的背景颜色, 需要在设置了 Parent 之后有效
 func (m *TWebview) SetColor(color colors.TColor) {
 	m.IPanel.SetColor(color)
 	m.windowParent.SetColor(color)
-	if m.windowParent.Parent() != nil {
-		r := colors.Red(color)
-		g := colors.Green(color)
-		b := colors.Blue(color)
-		win32.SetBackgroundColor(m.windowParent.Handle(), r, g, b)
-	}
 }
 
 func (m *TWebview) ExecuteScript(script string) {
