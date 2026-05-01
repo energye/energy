@@ -241,8 +241,13 @@ func (m *TWebview) LoadURL(url string) {
 }
 
 // Browser 返回TWebview实例关联的浏览器对象
-func (m *TWebview) Browser() wv.IWkWebview {
+func (m *TWebview) Browser() IBrowser {
 	return m.browser
+}
+
+// WindowParent 获取TWebview实例关联的窗口父对象
+func (m *TWebview) WindowParent() IWindowParent {
+	return m.windowParent
 }
 
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {

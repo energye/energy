@@ -40,6 +40,12 @@ func getNextBrowserID() uint32 {
 	return globalBrowserID
 }
 
+type IWindowParent interface {
+}
+
+type IBrowser interface {
+}
+
 type IWebview interface {
 	lcl.ICustomPanel
 	// SetWindow 设置webview的窗口实例，并初始化相关回调函数
@@ -53,6 +59,8 @@ type IWebview interface {
 	SetParent(window lcl.IWinControl)
 	CreateBrowser()
 	BrowserId() uint32
+	WindowParent() IWindowParent
+	Browser() IBrowser
 	SendMessage(payload []byte)
 	Close()
 	SetDefaultURL(url string)
