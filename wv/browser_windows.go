@@ -215,6 +215,10 @@ func (m *TWebview) Browser() wv.IWVBrowser {
 	return m.browser
 }
 
+func (m *TWebview) WindowParent() wv.IWVWindowParent {
+	return m.windowParent
+}
+
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
 }
 
