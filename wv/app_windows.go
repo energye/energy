@@ -80,6 +80,8 @@ func NewApplication() *Application {
 		localAppDataDir := appLocalAppData()
 		if pack.IsDev {
 			localAppDataDir = filepath.Join(localAppDataDir, "ENERGY.DEV")
+			fileName := strings.TrimSuffix(exec.Name, filepath.Ext(exec.Name))
+			localAppDataDir = filepath.Join(localAppDataDir, fileName)
 		} else {
 			if pack.Info.Id != "" {
 				localAppDataDir = filepath.Join(localAppDataDir, pack.Info.Id)
