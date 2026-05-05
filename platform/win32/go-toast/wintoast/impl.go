@@ -21,7 +21,6 @@
 package wintoast
 
 import (
-	"reflect"
 	"syscall"
 	"unsafe"
 
@@ -73,11 +72,10 @@ type (
 	extra careful, though.
 */
 
-var pinnedObjects = make(map[unsafe.Pointer]struct{})
+var pinnedObjects []any
 
 func Pin(obj any) {
-	ptr := unsafe.Pointer(reflect.ValueOf(obj).Pointer())
-	pinnedObjects[ptr] = struct{}{}
+	pinnedObjects = append(pinnedObjects, obj)
 }
 
 func init() {
