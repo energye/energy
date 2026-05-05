@@ -5,7 +5,7 @@ package wintoast
 import (
 	"unsafe"
 
-	"github.com/go-ole/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
 	"golang.org/x/sys/windows"
 )
 

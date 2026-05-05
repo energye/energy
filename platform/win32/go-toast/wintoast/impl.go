@@ -21,11 +21,11 @@
 package wintoast
 
 import (
-	"runtime"
+	"reflect"
 	"syscall"
 	"unsafe"
 
-	"github.com/go-ole/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
 	"golang.org/x/sys/windows"
 )
 
@@ -73,13 +73,18 @@ type (
 	extra careful, though.
 */
 
-var pinner runtime.Pinner
+var pinnedObjects = make(map[unsafe.Pointer]struct{})
+
+func Pin(obj any) {
+	ptr := unsafe.Pointer(reflect.ValueOf(obj).Pointer())
+	pinnedObjects[ptr] = struct{}{}
+}
 
 func init() {
-	pinner.Pin(ClassFactory)
-	pinner.Pin(ClassFactory.VTable)
-	pinner.Pin(NotificationActivationCallback)
-	pinner.Pin(NotificationActivationCallback.VTable)
+	Pin(ClassFactory)
+	Pin(ClassFactory.VTable)
+	Pin(NotificationActivationCallback)
+	Pin(NotificationActivationCallback.VTable)
 }
 
 // Static implementations for the IClassFactory.

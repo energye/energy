@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"git.sr.ht/~jackmordaunt/go-toast/v2"
+	"github.com/energye/energy/v3/platform/win32/go-toast"
 )
 
 func main() {

@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/go-ole/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
 )
 
 const (

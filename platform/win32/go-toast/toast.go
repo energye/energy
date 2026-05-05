@@ -14,8 +14,8 @@ package toast
 import (
 	"bytes"
 
-	"git.sr.ht/~jackmordaunt/go-toast/v2/tmpl"
-	"git.sr.ht/~jackmordaunt/go-toast/v2/wintoast"
+	"github.com/energye/energy/v3/platform/win32/go-toast/tmpl"
+	"github.com/energye/energy/v3/platform/win32/go-toast/wintoast"
 )
 
 // Notification

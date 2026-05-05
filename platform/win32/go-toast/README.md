@@ -1,5 +1,7 @@
 # go-toast
 
+## git.sr.ht/~jackmordaunt/go-toast/v2
+
 This package implements Windows toast notifications using the Windows Runtime COM API. 
 
 The XML schema used to describe such notifications is here: 

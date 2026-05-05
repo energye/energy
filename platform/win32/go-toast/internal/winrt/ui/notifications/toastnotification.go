@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"unsafe"
 
-	"git.sr.ht/~jackmordaunt/go-toast/v2/internal/winrt/data/xml/dom"
-	"github.com/go-ole/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-toast/internal/winrt/data/xml/dom"
 )
 
 const SignatureToastNotification string = "rc(Windows.UI.Notifications.ToastNotification;{997e2675-059e-4e60-8b06-1760917c8b80})"
