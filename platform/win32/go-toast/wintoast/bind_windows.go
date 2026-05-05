@@ -92,7 +92,7 @@ func pushCOM(appID, xml string) (err error) {
 		return err
 	}
 
-	if err := registerClassFactory(ClassFactory); err != nil {
+	if err := RegisterClassFactory(ClassFactory); err != nil {
 		return fmt.Errorf("registering class factory: %w", err)
 	}
 

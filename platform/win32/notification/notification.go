@@ -13,7 +13,7 @@ import (
 
 	"encoding/json"
 
-	wintoast "git.sr.ht/~jackmordaunt/go-toast/v2/wintoast"
+	wintoast "github.com/energye/energy/v3/platform/win32/go-toast/wintoast"
 	"github.com/google/uuid"
 	"golang.org/x/sys/windows/registry"
 )
@@ -54,9 +54,6 @@ func New() *NotificationService {
 
 	return NotificationService_
 }
-
-//go:linkname registerFactoryInternal git.sr.ht/~jackmordaunt/go-toast/v2/wintoast.registerClassFactory
-func registerFactoryInternal(factory *wintoast.IClassFactory) error
 
 // Startup is called when the service is loaded
 // Sets an activation callback to emit an event when notifications are interacted with.
@@ -134,7 +131,7 @@ func (wn *windowsNotifier) Startup(ctx context.Context, options application.Serv
 	})
 
 	// Register the class factory for the toast activator
-	if err := registerFactoryInternal(wintoast.ClassFactory); err != nil {
+	if err := wintoast.RegisterClassFactory(wintoast.ClassFactory); err != nil {
 		return fmt.Errorf("CoRegisterClassObject failed: %w", err)
 	}
 

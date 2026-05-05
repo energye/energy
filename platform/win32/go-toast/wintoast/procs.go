@@ -16,9 +16,9 @@ var (
 	procRegisterClassObject = modcombase.NewProc("CoRegisterClassObject")
 )
 
-// registerClassFactory teaches the Windows Runtime about our factory that can allocate
+// RegisterClassFactory teaches the Windows Runtime about our factory that can allocate
 // instances of our ActivationCallback.
-func registerClassFactory(factory *IClassFactory) error {
+func RegisterClassFactory(factory *IClassFactory) error {
 	// cookie is used as a handle to this class. It is used when calling CoRevokeClassObject
 	// which unregisters the class. We don't need it until we plan to revoke this registration
 	// for some reason.
