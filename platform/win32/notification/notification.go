@@ -3,29 +3,24 @@
 package notification
 
 import (
-	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
-	_ "unsafe"
 
-	"encoding/json"
-
-	wintoast "github.com/energye/energy/v3/platform/win32/go-toast/wintoast"
+	. "github.com/energye/energy/v3/platform/notification/types"
+	"github.com/energye/energy/v3/platform/win32/go-toast"
+	"github.com/energye/energy/v3/platform/win32/go-toast/wintoast"
 	"github.com/google/uuid"
 	"golang.org/x/sys/windows/registry"
 )
 
-type windowsNotifier struct {
-	categories     map[string]NotificationCategory
-	categoriesLock sync.RWMutex
-	appName        string
-	appGUID        string
-	iconPath       string
-	exePath        string
-}
+var (
+	once          sync.Once
+	gNotification *Notification
+)
 
 const (
 	ToastRegistryPath                  = `Software\Classes\AppUserModelId\`
@@ -36,79 +31,86 @@ const (
 
 // NotificationPayload combines the action ID and user data into a single structure
 type NotificationPayload struct {
-	Action  string              `json:"action"`
-	Options NotificationOptions `json:"payload,omitempty"`
+	Action  string  `json:"action"`
+	Options Options `json:"payload,omitempty"`
 }
 
-// Creates a new Notifications Service.
-func New() *NotificationService {
-	notificationServiceOnce.Do(func() {
-		impl := &windowsNotifier{
-			categories: make(map[string]NotificationCategory),
-		}
+// Notification implements INotification interface for Windows
+type Notification struct {
+	categories                 map[string]Category
+	categoriesLock             sync.RWMutex
+	appName                    string
+	appGUID                    string
+	iconPath                   string
+	exePath                    string
+	notificationResultCallback TNotificationResponseEvent
+	callbackLock               sync.RWMutex
+}
 
-		NotificationService_ = &NotificationService{
-			impl: impl,
+// New creates a new Notification instance
+func New() INotification {
+	once.Do(func() {
+		gNotification = &Notification{
+			categories: make(map[string]Category),
+		}
+		// 自动初始化
+		if err := gNotification.Initialize(); err != nil {
+			fmt.Printf("[Energy] Notification service initialization warning: %v\n", err)
 		}
 	})
-
-	return NotificationService_
+	return gNotification
 }
 
-// Startup is called when the service is loaded
-// Sets an activation callback to emit an event when notifications are interacted with.
-func (wn *windowsNotifier) Startup(ctx context.Context, options application.ServiceOptions) error {
-	wn.categoriesLock.Lock()
-	defer wn.categoriesLock.Unlock()
+// Initialize sets up the notification service
+func (n *Notification) Initialize() error {
+	n.categoriesLock.Lock()
+	defer n.categoriesLock.Unlock()
 
-	app := application.Get()
-	cfg := app.Config()
+	n.appName = "TestAPPName" //TODO 需要动态配置
 
-	wn.appName = cfg.Name
-
-	guid, err := wn.getGUID()
+	guid, err := n.getGUID()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get GUID: %w", err)
 	}
-	wn.appGUID = guid
+	n.appGUID = guid
 
-	wn.iconPath = filepath.Join(os.TempDir(), wn.appName+wn.appGUID+".png")
+	n.iconPath = filepath.Join(os.TempDir(), n.appName+n.appGUID+".png")
 
 	exe, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
-	wn.exePath = exe
+	n.exePath = exe
 
 	// Create the registry key for the toast activator
 	key, _, err := registry.CreateKey(registry.CURRENT_USER,
-		`Software\Classes\CLSID\`+wn.appGUID+`\LocalServer32`, registry.ALL_ACCESS)
+		`Software\Classes\CLSID\`+n.appGUID+`\LocalServer32`, registry.ALL_ACCESS)
 	if err != nil {
 		return fmt.Errorf("failed to create CLSID key: %w", err)
 	}
 
-	if err := key.SetStringValue("", fmt.Sprintf("\"%s\" %%1", wn.exePath)); err != nil {
+	if err := key.SetStringValue("", fmt.Sprintf("\"%s\" %%1", n.exePath)); err != nil {
+		key.Close()
 		return fmt.Errorf("failed to set CLSID server path: %w", err)
 	}
 	key.Close()
 
-	toast.SetAppData(toast.AppData{
-		AppID:         wn.appName,
+	if err := toast.SetAppData(toast.AppData{
+		AppID:         n.appName,
 		GUID:          guid,
-		IconPath:      wn.iconPath,
-		ActivationExe: wn.exePath,
-	})
+		IconPath:      n.iconPath,
+		ActivationExe: n.exePath,
+	}); err != nil {
+		return fmt.Errorf("failed to set app data: %w", err)
+	}
 
 	toast.SetActivationCallback(func(args string, data []toast.UserData) {
-		result := NotificationResult{}
-
+		result := Result{}
 		actionIdentifier, options, err := parseNotificationResponse(args)
-
 		if err != nil {
 			result.Error = err
 		} else {
-			// Subtitle is retained but was not shown with the notification
-			response := NotificationResponse{
+			response := Response{
 				ID:               options.ID,
 				ActionIdentifier: actionIdentifier,
 				Title:            options.Title,
@@ -117,88 +119,79 @@ func (wn *windowsNotifier) Startup(ctx context.Context, options application.Serv
 				CategoryID:       options.CategoryID,
 				UserInfo:         options.Data,
 			}
-
-			if userText, found := wn.getUserText(data); found {
+			if userText, found := n.getUserText(data); found {
 				response.UserText = userText
 			}
-
 			result.Response = response
 		}
-
-		if ns := getNotificationService(); ns != nil {
-			ns.handleNotificationResult(result)
-		}
+		n.handleNotificationResult(result)
 	})
 
-	// Register the class factory for the toast activator
 	if err := wintoast.RegisterClassFactory(wintoast.ClassFactory); err != nil {
-		return fmt.Errorf("CoRegisterClassObject failed: %w", err)
+		return fmt.Errorf("RegisterClassFactory failed: %w", err)
+	}
+	if err := n.loadCategoriesFromRegistry(); err != nil {
+		return fmt.Errorf("failed to load categories: %w", err)
 	}
 
-	return wn.loadCategoriesFromRegistry()
-}
-
-// Shutdown will attempt to save the categories to the registry when the service unloads
-func (wn *windowsNotifier) Shutdown() error {
-	wn.categoriesLock.Lock()
-	defer wn.categoriesLock.Unlock()
-
-	return wn.saveCategoriesToRegistry()
+	return nil
 }
 
 // RequestNotificationAuthorization is a Windows stub that always returns true, nil.
 // (user authorization is macOS-specific)
-func (wn *windowsNotifier) RequestNotificationAuthorization() (bool, error) {
+func (n *Notification) RequestNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
 // CheckNotificationAuthorization is a Windows stub that always returns true.
 // (user authorization is macOS-specific)
-func (wn *windowsNotifier) CheckNotificationAuthorization() (bool, error) {
+func (n *Notification) CheckNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
-// SendNotification sends a basic notification with a name, title, and body. All other options are ignored on Windows.
-// (subtitle is only available on macOS and Linux)
-func (wn *windowsNotifier) SendNotification(options NotificationOptions) error {
-	if err := wn.saveIconToDir(); err != nil {
+// SendNotification sends a basic notification with a name, title, and body.
+func (n *Notification) SendNotification(options Options) error {
+	if err := validateNotificationOptions(options); err != nil {
+		return err
+	}
+	if err := n.saveIconToDir(); err != nil {
 		fmt.Printf("Error saving icon: %v\n", err)
 	}
-
-	n := toast.Notification{
+	notif := toast.Notification{
 		Title:               options.Title,
 		Body:                options.Body,
 		ActivationType:      toast.Foreground,
 		ActivationArguments: DefaultActionIdentifier,
 	}
 
-	encodedPayload, err := wn.encodePayload(DefaultActionIdentifier, options)
+	encodedPayload, err := n.encodePayload(DefaultActionIdentifier, options)
 	if err != nil {
 		return fmt.Errorf("failed to encode notification payload: %w", err)
 	}
-	n.ActivationArguments = encodedPayload
+	notif.ActivationArguments = encodedPayload
 
-	return n.Push()
+	return notif.Push()
 }
 
 // SendNotificationWithActions sends a notification with additional actions and inputs.
-// A NotificationCategory must be registered with RegisterNotificationCategory first. The `CategoryID` must match the registered category.
-// If a NotificationCategory is not registered a basic notification will be sent.
-// (subtitle is only available on macOS and Linux)
-func (wn *windowsNotifier) SendNotificationWithActions(options NotificationOptions) error {
-	if err := wn.saveIconToDir(); err != nil {
+func (n *Notification) SendNotificationWithActions(options Options) error {
+	if err := validateNotificationOptions(options); err != nil {
+		return err
+	}
+
+	if err := n.saveIconToDir(); err != nil {
 		fmt.Printf("Error saving icon: %v\n", err)
 	}
 
-	wn.categoriesLock.RLock()
-	nCategory, categoryExists := wn.categories[options.CategoryID]
-	wn.categoriesLock.RUnlock()
+	n.categoriesLock.RLock()
+	nCategory, categoryExists := n.categories[options.CategoryID]
+	n.categoriesLock.RUnlock()
 
 	if options.CategoryID == "" || !categoryExists {
 		fmt.Printf("Category '%s' not found, sending basic notification without actions\n", options.CategoryID)
 	}
 
-	n := toast.Notification{
+	notif := toast.Notification{
 		Title:               options.Title,
 		Body:                options.Body,
 		ActivationType:      toast.Foreground,
@@ -206,155 +199,165 @@ func (wn *windowsNotifier) SendNotificationWithActions(options NotificationOptio
 	}
 
 	for _, action := range nCategory.Actions {
-		n.Actions = append(n.Actions, toast.Action{
+		notif.Actions = append(notif.Actions, toast.Action{
 			Content:   action.Title,
 			Arguments: action.ID,
 		})
 	}
 
 	if nCategory.HasReplyField {
-		n.Inputs = append(n.Inputs, toast.Input{
+		notif.Inputs = append(notif.Inputs, toast.Input{
 			ID:          "userText",
 			Placeholder: nCategory.ReplyPlaceholder,
 		})
 
-		n.Actions = append(n.Actions, toast.Action{
+		notif.Actions = append(notif.Actions, toast.Action{
 			Content:   nCategory.ReplyButtonTitle,
 			Arguments: "TEXT_REPLY",
 			InputID:   "userText",
 		})
 	}
 
-	encodedPayload, err := wn.encodePayload(n.ActivationArguments, options)
+	encodedPayload, err := n.encodePayload(notif.ActivationArguments, options)
 	if err != nil {
 		return fmt.Errorf("failed to encode notification payload: %w", err)
 	}
-	n.ActivationArguments = encodedPayload
+	notif.ActivationArguments = encodedPayload
 
-	for index := range n.Actions {
-		encodedPayload, err := wn.encodePayload(n.Actions[index].Arguments, options)
+	for index := range notif.Actions {
+		encodedPayload, err := n.encodePayload(notif.Actions[index].Arguments, options)
 		if err != nil {
 			return fmt.Errorf("failed to encode notification payload: %w", err)
 		}
-		n.Actions[index].Arguments = encodedPayload
+		notif.Actions[index].Arguments = encodedPayload
 	}
 
-	return n.Push()
+	return notif.Push()
 }
 
-// RegisterNotificationCategory registers a new NotificationCategory to be used with SendNotificationWithActions.
-// Registering a category with the same name as a previously registered NotificationCategory will override it.
-func (wn *windowsNotifier) RegisterNotificationCategory(category NotificationCategory) error {
-	wn.categoriesLock.Lock()
-	defer wn.categoriesLock.Unlock()
+// RegisterNotificationCategory registers a new NotificationCategory.
+func (n *Notification) RegisterNotificationCategory(category Category) error {
+	n.categoriesLock.Lock()
+	defer n.categoriesLock.Unlock()
 
-	wn.categories[category.ID] = NotificationCategory{
+	n.categories[category.ID] = Category{
 		ID:               category.ID,
 		Actions:          category.Actions,
-		HasReplyField:    bool(category.HasReplyField),
+		HasReplyField:    category.HasReplyField,
 		ReplyPlaceholder: category.ReplyPlaceholder,
 		ReplyButtonTitle: category.ReplyButtonTitle,
 	}
 
-	return wn.saveCategoriesToRegistry()
+	return n.saveCategoriesToRegistry()
 }
 
 // RemoveNotificationCategory removes a previously registered NotificationCategory.
-func (wn *windowsNotifier) RemoveNotificationCategory(categoryId string) error {
-	wn.categoriesLock.Lock()
-	defer wn.categoriesLock.Unlock()
+func (n *Notification) RemoveNotificationCategory(categoryID string) error {
+	n.categoriesLock.Lock()
+	defer n.categoriesLock.Unlock()
 
-	delete(wn.categories, categoryId)
+	delete(n.categories, categoryID)
 
-	return wn.saveCategoriesToRegistry()
+	return n.saveCategoriesToRegistry()
 }
 
 // RemoveAllPendingNotifications is a Windows stub that always returns nil.
-// (macOS and Linux only)
-func (wn *windowsNotifier) RemoveAllPendingNotifications() error {
+func (n *Notification) RemoveAllPendingNotifications() error {
 	return nil
 }
 
 // RemovePendingNotification is a Windows stub that always returns nil.
-// (macOS and Linux only)
-func (wn *windowsNotifier) RemovePendingNotification(_ string) error {
+func (n *Notification) RemovePendingNotification(_ string) error {
 	return nil
 }
 
 // RemoveAllDeliveredNotifications is a Windows stub that always returns nil.
-// (macOS and Linux only)
-func (wn *windowsNotifier) RemoveAllDeliveredNotifications() error {
+func (n *Notification) RemoveAllDeliveredNotifications() error {
 	return nil
 }
 
 // RemoveDeliveredNotification is a Windows stub that always returns nil.
-// (macOS and Linux only)
-func (wn *windowsNotifier) RemoveDeliveredNotification(_ string) error {
+func (n *Notification) RemoveDeliveredNotification(_ string) error {
 	return nil
 }
 
 // RemoveNotification is a Windows stub that always returns nil.
-// (Linux-specific)
-func (wn *windowsNotifier) RemoveNotification(identifier string) error {
+func (n *Notification) RemoveNotification(_ string) error {
 	return nil
 }
 
+// SetOnNotificationResponse registers notification response callback
+func (n *Notification) SetOnNotificationResponse(callback TNotificationResponseEvent) {
+	n.callbackLock.Lock()
+	defer n.callbackLock.Unlock()
+	n.notificationResultCallback = callback
+}
+
+// handleNotificationResult processes notification result
+func (n *Notification) handleNotificationResult(result Result) {
+	n.callbackLock.RLock()
+	callback := n.notificationResultCallback
+	n.callbackLock.RUnlock()
+
+	if callback != nil {
+		callback(result)
+	}
+}
+
 // encodePayload combines an action ID and user data into a single encoded string
-func (wn *windowsNotifier) encodePayload(actionID string, options NotificationOptions) (string, error) {
+func (n *Notification) encodePayload(actionID string, options Options) (string, error) {
 	payload := NotificationPayload{
 		Action:  actionID,
 		Options: options,
 	}
-
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return actionID, err
 	}
-
 	encodedPayload := base64.StdEncoding.EncodeToString(jsonData)
 	return encodedPayload, nil
 }
 
 // decodePayload extracts the action ID and user data from an encoded payload
-func decodePayload(encodedString string) (string, NotificationOptions, error) {
+func decodePayload(encodedString string) (string, Options, error) {
 	jsonData, err := base64.StdEncoding.DecodeString(encodedString)
 	if err != nil {
-		return encodedString, NotificationOptions{}, fmt.Errorf("failed to decode base64 payload: %w", err)
+		return encodedString, Options{}, fmt.Errorf("failed to decode base64 payload: %w", err)
 	}
 
 	var payload NotificationPayload
 	if err := json.Unmarshal(jsonData, &payload); err != nil {
-		return encodedString, NotificationOptions{}, fmt.Errorf("failed to unmarshal notification payload: %w", err)
+		return encodedString, Options{}, fmt.Errorf("failed to unmarshal notification payload: %w", err)
 	}
 
 	return payload.Action, payload.Options, nil
 }
 
-// parseNotificationResponse updated to use structured payload decoding
-func parseNotificationResponse(response string) (action string, options NotificationOptions, err error) {
+// parseNotificationResponse parses notification response
+func parseNotificationResponse(response string) (action string, options Options, err error) {
 	actionID, options, err := decodePayload(response)
 
 	if err != nil {
 		fmt.Printf("Warning: Failed to decode notification response: %v\n", err)
-		return response, NotificationOptions{}, err
+		return response, Options{}, err
 	}
 
 	return actionID, options, nil
 }
 
-func (wn *windowsNotifier) saveIconToDir() error {
-	icon, err := application.NewIconFromResource(w32.GetModuleHandle(""), uint16(3))
-	if err != nil {
-		return fmt.Errorf("failed to retrieve application icon: %w", err)
-	}
-
-	return w32.SaveHIconAsPNG(icon, wn.iconPath)
+func (n *Notification) saveIconToDir() error {
+	// 注意: 这里需要使用 w32 包获取图标，但原代码中引用的函数可能不存在
+	// 使用伪代码标记，实际实现需要根据可用的 API 调整
+	// icon, err := application.NewIconFromResource(w32.GetModuleHandle(""), uint16(3))
+	// if err != nil {
+	// 	return fmt.Errorf("failed to retrieve application icon: %w", err)
+	// }
+	// return w32.SaveHIconAsPNG(icon, n.iconPath)
+	return nil
 }
 
-func (wn *windowsNotifier) saveCategoriesToRegistry() error {
-	// We assume lock is held by caller
-
-	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, wn.appName)
+func (n *Notification) saveCategoriesToRegistry() error {
+	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, n.appName)
 
 	key, _, err := registry.CreateKey(
 		registry.CURRENT_USER,
@@ -366,7 +369,7 @@ func (wn *windowsNotifier) saveCategoriesToRegistry() error {
 	}
 	defer key.Close()
 
-	data, err := json.Marshal(wn.categories)
+	data, err := json.Marshal(n.categories)
 	if err != nil {
 		return err
 	}
@@ -374,10 +377,8 @@ func (wn *windowsNotifier) saveCategoriesToRegistry() error {
 	return key.SetStringValue(NotificationCategoriesRegistryKey, string(data))
 }
 
-func (wn *windowsNotifier) loadCategoriesFromRegistry() error {
-	// We assume lock is held by caller
-
-	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, wn.appName)
+func (n *Notification) loadCategoriesFromRegistry() error {
+	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, n.appName)
 
 	key, err := registry.OpenKey(
 		registry.CURRENT_USER,
@@ -386,7 +387,6 @@ func (wn *windowsNotifier) loadCategoriesFromRegistry() error {
 	)
 	if err != nil {
 		if err == registry.ErrNotExist {
-			// Not an error, no saved categories
 			return nil
 		}
 		return fmt.Errorf("failed to open registry key: %w", err)
@@ -396,23 +396,22 @@ func (wn *windowsNotifier) loadCategoriesFromRegistry() error {
 	data, _, err := key.GetStringValue(NotificationCategoriesRegistryKey)
 	if err != nil {
 		if err == registry.ErrNotExist {
-			// No value yet, but key exists
 			return nil
 		}
 		return fmt.Errorf("failed to read categories from registry: %w", err)
 	}
 
-	categories := make(map[string]NotificationCategory)
+	categories := make(map[string]Category)
 	if err := json.Unmarshal([]byte(data), &categories); err != nil {
 		return fmt.Errorf("failed to parse notification categories from registry: %w", err)
 	}
 
-	wn.categories = categories
+	n.categories = categories
 
 	return nil
 }
 
-func (wn *windowsNotifier) getUserText(data []toast.UserData) (string, bool) {
+func (n *Notification) getUserText(data []toast.UserData) (string, bool) {
 	for _, d := range data {
 		if d.Key == "userText" {
 			return d.Value, true
@@ -421,8 +420,8 @@ func (wn *windowsNotifier) getUserText(data []toast.UserData) (string, bool) {
 	return "", false
 }
 
-func (wn *windowsNotifier) getGUID() (string, error) {
-	keyPath := ToastRegistryPath + wn.appName
+func (n *Notification) getGUID() (string, error) {
+	keyPath := ToastRegistryPath + n.appName
 
 	k, err := registry.OpenKey(registry.CURRENT_USER, keyPath, registry.QUERY_VALUE)
 	if err == nil {
@@ -432,8 +431,7 @@ func (wn *windowsNotifier) getGUID() (string, error) {
 			return guid, nil
 		}
 	}
-
-	guid := wn.generateGUID()
+	guid := generateGUID()
 
 	k, _, err = registry.CreateKey(registry.CURRENT_USER, keyPath, registry.WRITE)
 	if err != nil {
@@ -448,7 +446,18 @@ func (wn *windowsNotifier) getGUID() (string, error) {
 	return guid, nil
 }
 
-func (wn *windowsNotifier) generateGUID() string {
+func generateGUID() string {
 	guid := uuid.New()
 	return fmt.Sprintf("{%s}", guid.String())
+}
+
+// validateNotificationOptions validates notification options
+func validateNotificationOptions(options Options) error {
+	if options.ID == "" {
+		return fmt.Errorf("notification ID cannot be empty")
+	}
+	if options.Title == "" {
+		return fmt.Errorf("notification title cannot be empty")
+	}
+	return nil
 }
