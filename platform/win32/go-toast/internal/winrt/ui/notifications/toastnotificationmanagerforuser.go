@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	ole "github.com/energye/energy/v3/platform/win32/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
 )
 
 const SignatureToastNotificationManagerForUser string = "rc(Windows.UI.Notifications.ToastNotificationManagerForUser;{79ab57f6-43fe-487b-8a7f-99567200ae94})"
