@@ -8,6 +8,8 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
+	"sync"
 	"sync/atomic"
 	"syscall"
 	"unsafe"
@@ -61,36 +63,99 @@ func buildPowershell(xml string, w io.Writer) error {
 // HRESULT E_NOINTERFACE
 const errNoInterface = 0x80004002
 
+// RPC_E_CHANGED_MODE is returned when COM has already been initialized with a different threading model.
+const rpcChangedMode = 0x80010106
+
 var comDisabled atomic.Bool
 
-func pushCOM(appID, xml string) (err error) {
-	if comDisabled.Load() {
-		return nil
+// mtaThread manages a dedicated MTA thread for COM operations
+type mtaThread struct {
+	once    sync.Once
+	ready   chan struct{}
+	taskCh  chan comTask
+	initErr error
+}
+
+type comTask struct {
+	fn    func() error
+	errCh chan error
+}
+
+var mta = &mtaThread{
+	ready:  make(chan struct{}),
+	taskCh: make(chan comTask),
+}
+
+// startMTAThread starts a dedicated MTA thread for COM operations
+func (m *mtaThread) start() error {
+	m.once.Do(func() {
+		go func() {
+			// Lock this goroutine to an OS thread
+			runtime.LockOSThread()
+			defer runtime.UnlockOSThread()
+
+			// Initialize MTA mode COM on this thread
+			if err := ole.CoInitializeEx(0, ole.COINIT_MULTITHREADED); err != nil {
+				m.initErr = fmt.Errorf("MTA CoInitializeEx: %w", err)
+				close(m.ready)
+				return
+			}
+			defer ole.CoUninitialize()
+
+			close(m.ready)
+
+			// Process COM tasks on this thread
+			for task := range m.taskCh {
+				task.errCh <- task.fn()
+			}
+		}()
+
+		// Wait for MTA thread to be ready
+		<-m.ready
+	})
+
+	return m.initErr
+}
+
+// execute runs a function on the MTA thread
+func (m *mtaThread) execute(fn func() error) error {
+	if err := m.start(); err != nil {
+		return err
 	}
 
-	defer func() {
-		// On Windows 7 WinRT interfaces can be stubbed out, and fail to produce
-		// error values. This leads to a panic when trying to use the interface.
-		// This recover transforms such panics back into an error value for the
-		// caller.
-		//
-		// If the error is "interface not supported" we will permanently disable
-		// this API henceforth.
-		if v := recover(); v != nil {
-			if verr, ok := v.(error); ok {
-				err = verr
-			}
-			if oleErr, ok := v.(*ole.OleError); ok {
-				if oleErr.Code() == errNoInterface {
-					comDisabled.Store(true)
-				}
-			}
-		}
-	}()
+	task := comTask{
+		fn:    fn,
+		errCh: make(chan error, 1),
+	}
+	m.taskCh <- task
+	return <-task.errCh
+}
 
+func pushCOM(appID, xml string) (err error) {
+	// Try direct initialization first
 	if err := initialize(); err != nil {
 		return err
 	}
+
+	if comDisabled.Load() {
+		// If COM was initialized with different model, use MTA thread
+		return pushCOMOnMTAThread(appID, xml)
+	}
+
+	return pushCOMDirect(appID, xml)
+}
+
+func pushCOMDirect(appID, xml string) (err error) {
+	defer func() {
+		if v := recover(); v != nil {
+			comDisabled.Store(true)
+			if verr, ok := v.(error); ok {
+				err = verr
+			} else {
+				err = fmt.Errorf("COM panic: %v", v)
+			}
+		}
+	}()
 
 	if err := RegisterClassFactory(ClassFactory); err != nil {
 		return fmt.Errorf("registering class factory: %w", err)
@@ -100,7 +165,6 @@ func pushCOM(appID, xml string) (err error) {
 	if err != nil {
 		return fmt.Errorf("dom.NewXmlDocument(): %w", err)
 	}
-
 	defer doc.Release()
 
 	if err := doc.LoadXml(xml); err != nil {
@@ -111,21 +175,18 @@ func pushCOM(appID, xml string) (err error) {
 	if err != nil {
 		return fmt.Errorf("notifications.GetDefault(): %w", err)
 	}
-
 	defer manager.Release()
 
 	notifier, err := manager.CreateToastNotifierWithId(appID)
 	if err != nil {
 		return fmt.Errorf("manager.CreateToastNotifier(%q): %w", appID, err)
 	}
-
 	defer notifier.Release()
 
 	toast, err := notifications.CreateToastNotification(doc)
 	if err != nil {
 		return fmt.Errorf("notifications.CreateToastNotification(doc): %w", err)
 	}
-
 	defer toast.Release()
 
 	if err := notifier.Show(toast); err != nil {
@@ -133,6 +194,13 @@ func pushCOM(appID, xml string) (err error) {
 	}
 
 	return nil
+}
+
+func pushCOMOnMTAThread(appID, xml string) error {
+	return mta.execute(func() error {
+		// MTA Thread
+		return pushCOMDirect(appID, xml)
+	})
 }
 
 func setAppData(data AppData) (err error) {
@@ -177,6 +245,12 @@ var initialized atomic.Bool
 func initialize() (err error) {
 	if initialized.CompareAndSwap(false, true) {
 		if err := ole.RoInitialize(1); err != nil {
+			// If COM was already initialized with a different threading model (e.g., by Lazarus LCL),
+			// we set comDisabled to trigger MTA thread fallback in pushCOM.
+			if oleErr, ok := err.(*ole.OleError); ok && oleErr.Code() == rpcChangedMode {
+				comDisabled.Store(true)
+				return nil
+			}
 			return fmt.Errorf("RoInitialize: %w", err)
 		}
 	}
