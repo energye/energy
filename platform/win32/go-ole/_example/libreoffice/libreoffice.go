@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 /*
@@ -38,8 +39,8 @@ import (
 	"fmt"
 	"log"
 
-	ole "github.com/go-ole/go-ole"
-	"github.com/go-ole/go-ole/oleutil"
+	"github.com/energye/energy/v3/platform/win32/go-ole"
+	"github.com/energye/energy/v3/platform/win32/go-ole/oleutil"
 )
 
 func checkError(err error, msg string) {
