@@ -62,9 +62,12 @@ type INotification interface {
 	// 初始化
 	Initialize() error
 
-	// 核心通知方法
+	// RequestNotificationAuthorization user authorization for MacOS
 	RequestNotificationAuthorization() (bool, error)
+	// CheckNotificationAuthorization user authorization for MacOS
 	CheckNotificationAuthorization() (bool, error)
+
+	// 通知方法
 	SendNotification(options Options) error
 	SendNotificationWithActions(options Options) error
 

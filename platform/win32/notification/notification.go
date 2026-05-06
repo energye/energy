@@ -73,7 +73,6 @@ func (n *Notification) Initialize() error {
 		return fmt.Errorf("failed to get GUID: %w", err)
 	}
 	n.appGUID = guid
-
 	n.iconPath = filepath.Join(os.TempDir(), n.appName+n.appGUID+".png")
 
 	exe, err := os.Executable()
@@ -82,9 +81,7 @@ func (n *Notification) Initialize() error {
 	}
 	n.exePath = exe
 
-	// Create the registry key for the toast activator
-	key, _, err := registry.CreateKey(registry.CURRENT_USER,
-		`Software\Classes\CLSID\`+n.appGUID+`\LocalServer32`, registry.ALL_ACCESS)
+	key, _, err := registry.CreateKey(registry.CURRENT_USER, `Software\Classes\CLSID\`+n.appGUID+`\LocalServer32`, registry.ALL_ACCESS)
 	if err != nil {
 		return fmt.Errorf("failed to create CLSID key: %w", err)
 	}
@@ -137,15 +134,15 @@ func (n *Notification) Initialize() error {
 	return nil
 }
 
-// RequestNotificationAuthorization is a Windows stub that always returns true, nil.
-// (user authorization is macOS-specific)
+// RequestNotificationAuthorization Always return success
 func (n *Notification) RequestNotificationAuthorization() (bool, error) {
+	// no impl
 	return true, nil
 }
 
-// CheckNotificationAuthorization is a Windows stub that always returns true.
-// (user authorization is macOS-specific)
+// CheckNotificationAuthorization Always return success
 func (n *Notification) CheckNotificationAuthorization() (bool, error) {
+	// no impl
 	return true, nil
 }
 
@@ -225,11 +222,11 @@ func (n *Notification) SendNotificationWithActions(options Options) error {
 	notif.ActivationArguments = encodedPayload
 
 	for index := range notif.Actions {
-		encodedPayload, err := n.encodePayload(notif.Actions[index].Arguments, options)
+		tempPayload, err := n.encodePayload(notif.Actions[index].Arguments, options)
 		if err != nil {
 			return fmt.Errorf("failed to encode notification payload: %w", err)
 		}
-		notif.Actions[index].Arguments = encodedPayload
+		notif.Actions[index].Arguments = tempPayload
 	}
 
 	return notif.Push()
@@ -255,34 +252,37 @@ func (n *Notification) RegisterNotificationCategory(category Category) error {
 func (n *Notification) RemoveNotificationCategory(categoryID string) error {
 	n.categoriesLock.Lock()
 	defer n.categoriesLock.Unlock()
-
 	delete(n.categories, categoryID)
-
 	return n.saveCategoriesToRegistry()
 }
 
-// RemoveAllPendingNotifications is a Windows stub that always returns nil.
+// RemoveAllPendingNotifications Always return nil
 func (n *Notification) RemoveAllPendingNotifications() error {
+	// no impl
 	return nil
 }
 
-// RemovePendingNotification is a Windows stub that always returns nil.
+// RemovePendingNotification  Always return nil
 func (n *Notification) RemovePendingNotification(_ string) error {
+	// no impl
 	return nil
 }
 
-// RemoveAllDeliveredNotifications is a Windows stub that always returns nil.
+// RemoveAllDeliveredNotifications Always return nil
 func (n *Notification) RemoveAllDeliveredNotifications() error {
+	// no impl
 	return nil
 }
 
-// RemoveDeliveredNotification is a Windows stub that always returns nil.
+// RemoveDeliveredNotification Always return nil
 func (n *Notification) RemoveDeliveredNotification(_ string) error {
+	// no impl
 	return nil
 }
 
-// RemoveNotification is a Windows stub that always returns nil.
+// RemoveNotification Always return nil
 func (n *Notification) RemoveNotification(_ string) error {
+	// no impl
 	return nil
 }
 
@@ -353,6 +353,7 @@ func (n *Notification) saveIconToDir() error {
 	// 	return fmt.Errorf("failed to retrieve application icon: %w", err)
 	// }
 	// return w32.SaveHIconAsPNG(icon, n.iconPath)
+	// TODO 待实现
 	return nil
 }
 
@@ -447,7 +448,7 @@ func (n *Notification) getGUID() (string, error) {
 }
 
 func generateGUID() string {
-	guid := uuid.New()
+	guid := uuid.New() // TODO 待检查是否替换
 	return fmt.Sprintf("{%s}", guid.String())
 }
 
