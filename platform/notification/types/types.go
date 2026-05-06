@@ -78,8 +78,7 @@ type INotification interface {
 	RemoveAllDeliveredNotifications() error
 	RemoveDeliveredNotification(identifier string) error
 	RemoveNotification(identifier string) error
-}
 
-type INotificationDarwin interface {
+	// 通知响应事件
 	SetOnNotificationResponse(callback TNotificationResponseEvent)
 }
