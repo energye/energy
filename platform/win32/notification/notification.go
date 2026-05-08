@@ -5,16 +5,18 @@ package notification
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-	"sync"
-
+	"github.com/energye/energy/v3/application/pack"
 	. "github.com/energye/energy/v3/platform/notification/types"
 	"github.com/energye/energy/v3/platform/win32/go-toast"
 	"github.com/energye/energy/v3/platform/win32/go-toast/wintoast"
+	"github.com/energye/lcl/lcl"
 	"github.com/google/uuid"
 	"golang.org/x/sys/windows/registry"
+	"os"
+	"path/filepath"
+	"sync"
 )
 
 var (
@@ -65,15 +67,18 @@ func New() INotification {
 func (n *Notification) Initialize() error {
 	n.categoriesLock.Lock()
 	defer n.categoriesLock.Unlock()
-
-	n.appName = "TestAPPName" //TODO 需要动态配置
+	name := pack.Info.Name
+	if name == "" {
+		name = "ENERGY APP"
+	}
+	n.appName = name
 
 	guid, err := n.getGUID()
 	if err != nil {
 		return fmt.Errorf("failed to get GUID: %w", err)
 	}
 	n.appGUID = guid
-	n.iconPath = filepath.Join(os.TempDir(), n.appName+n.appGUID+".png")
+	n.iconPath = filepath.Join(os.TempDir(), fmt.Sprintf("%s%s.png", n.appName, n.appGUID))
 
 	exe, err := os.Executable()
 	if err != nil {
@@ -306,10 +311,7 @@ func (n *Notification) handleNotificationResult(result Result) {
 
 // encodePayload combines an action ID and user data into a single encoded string
 func (n *Notification) encodePayload(actionID string, options Options) (string, error) {
-	payload := NotificationPayload{
-		Action:  actionID,
-		Options: options,
-	}
+	payload := NotificationPayload{Action: actionID, Options: options}
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return actionID, err
@@ -346,30 +348,21 @@ func parseNotificationResponse(response string) (action string, options Options,
 }
 
 func (n *Notification) saveIconToDir() error {
-	// 注意: 这里需要使用 w32 包获取图标，但原代码中引用的函数可能不存在
-	// 使用伪代码标记，实际实现需要根据可用的 API 调整
-	// icon, err := application.NewIconFromResource(w32.GetModuleHandle(""), uint16(3))
-	// if err != nil {
-	// 	return fmt.Errorf("failed to retrieve application icon: %w", err)
-	// }
-	// return w32.SaveHIconAsPNG(icon, n.iconPath)
-	// TODO 待实现
+	icon := lcl.Application.Icon()
+	if icon == nil || !icon.IsValid() {
+		return errors.New("application icon not configured")
+	}
+	icon.SaveToFile(n.iconPath)
 	return nil
 }
 
 func (n *Notification) saveCategoriesToRegistry() error {
 	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, n.appName)
-
-	key, _, err := registry.CreateKey(
-		registry.CURRENT_USER,
-		registryPath,
-		registry.ALL_ACCESS,
-	)
+	key, _, err := registry.CreateKey(registry.CURRENT_USER, registryPath, registry.ALL_ACCESS)
 	if err != nil {
 		return err
 	}
 	defer key.Close()
-
 	data, err := json.Marshal(n.categories)
 	if err != nil {
 		return err
@@ -381,11 +374,7 @@ func (n *Notification) saveCategoriesToRegistry() error {
 func (n *Notification) loadCategoriesFromRegistry() error {
 	registryPath := fmt.Sprintf(NotificationCategoriesRegistryPath, n.appName)
 
-	key, err := registry.OpenKey(
-		registry.CURRENT_USER,
-		registryPath,
-		registry.QUERY_VALUE,
-	)
+	key, err := registry.OpenKey(registry.CURRENT_USER, registryPath, registry.QUERY_VALUE)
 	if err != nil {
 		if err == registry.ErrNotExist {
 			return nil
@@ -448,7 +437,7 @@ func (n *Notification) getGUID() (string, error) {
 }
 
 func generateGUID() string {
-	guid := uuid.New() // TODO 待检查是否替换
+	guid := uuid.New()
 	return fmt.Sprintf("{%s}", guid.String())
 }
 
