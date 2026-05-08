@@ -348,6 +348,9 @@ func parseNotificationResponse(response string) (action string, options Options,
 }
 
 func (n *Notification) saveIconToDir() error {
+	if lcl.Application == nil {
+		return errors.New("application icon not init")
+	}
 	icon := lcl.Application.Icon()
 	if icon == nil || !icon.IsValid() {
 		return errors.New("application icon not configured")
