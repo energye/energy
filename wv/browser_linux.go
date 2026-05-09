@@ -247,7 +247,7 @@ func (m *TWebview) Browser() IBrowser {
 
 // WindowParent 获取TWebview实例关联的窗口父对象
 func (m *TWebview) WindowParent() IWindowParent {
-	return m.windowParent
+	return m
 }
 
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
