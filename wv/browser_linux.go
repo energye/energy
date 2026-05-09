@@ -245,6 +245,10 @@ func (m *TWebview) Browser() IBrowser {
 	return m.browser
 }
 
+func (m *TWebview) GtkWebview() IWebkit2 {
+	return m.gtkWebview
+}
+
 // WindowParent 获取TWebview实例关联的窗口父对象
 func (m *TWebview) WindowParent() IWindowParent {
 	return m
