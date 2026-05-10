@@ -216,7 +216,8 @@ func (m *TWebview) SendMessage(payload []byte) {
 }
 
 func (m *TWebview) evalExecuteEventJS(js []byte) string {
-	evalJS := "if (typeof window.energy !== 'undefined' && typeof window.energy.__executeEvent === 'function') {window.energy.__executeEvent('" + string(js) + "');}"
+	jsString := string(js)
+	evalJS := "if (typeof window.energy !== 'undefined' && typeof window.energy.__executeEvent === 'function') {window.energy.__executeEvent(" + jsString + ");}"
 	return evalJS
 }
 

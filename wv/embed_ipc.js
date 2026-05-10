@@ -208,11 +208,13 @@
          * @private
          */
         __executeEvent(messageData) {
-            try {
-                this.notifyListeners(JSON.parse(messageData));
-            } catch (e) {
-                throw new Error(e + ' ' + messageData);
+            let data;
+            if (typeof messageData === 'string') {
+                data = JSON.parse(messageData);
+            } else if (typeof messageData === 'object' && messageData !== null) {
+                data = messageData;
             }
+            this.notifyListeners(data);
         };
 
         /**
