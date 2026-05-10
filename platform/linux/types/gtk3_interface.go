@@ -236,6 +236,7 @@ type IEntry interface {
 
 type IWebkit2 interface {
 	IWidget
+	OpenDevTools()
 	SetBackgroundColor(color *colors.TARGB)
 	SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID
 	SetOnDragDrop(fn TDragDropEvent) ISignalHandlerID

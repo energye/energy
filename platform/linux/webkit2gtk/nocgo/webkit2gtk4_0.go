@@ -35,6 +35,21 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 	return m
 }
 
+func (m *Webkit2) OpenDevTools() {
+	settings := webkit2gtk4_0.SysCallResult("webkit_web_view_get_settings", m.Instance())
+	if settings == 0 {
+		return
+	}
+	enable := webkit2gtk4_0.SysCallResult("webkit_settings_get_enable_developer_extras", settings)
+	if enable == 0 {
+		return
+	}
+	inspector := webkit2gtk4_0.SysCallResult("webkit_web_view_get_inspector", m.Instance())
+	if inspector == 0 {
+		return
+	}
+	webkit2gtk4_0.SysCall("webkit_web_inspector_show", inspector)
+}
 func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
 	if color == nil {
 		return
@@ -99,6 +114,11 @@ func init() {
 	}
 	webkit2gtk4_0.Table = []*imports.Table{
 		imports.NewTable("webkit_web_view_set_background_color", 0),
+		imports.NewTable("webkit_web_view_get_settings", 0),
+		imports.NewTable("webkit_settings_get_enable_developer_extras", 0),
+		//imports.NewTable("webkit_settings_set_enable_developer_extras", 0),
+		imports.NewTable("webkit_web_view_get_inspector", 0),
+		imports.NewTable("webkit_web_inspector_show", 0),
 	}
 	webkit2gtk4_0.SetLibClose()
 	webkit2gtk4_0.MapperIndex()

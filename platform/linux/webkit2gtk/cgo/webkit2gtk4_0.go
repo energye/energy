@@ -26,6 +26,20 @@ void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdou
     }
 }
 
+void WebkitOpenDevTools(WebKitWebView *webview) {
+    if (!webview || !WEBKIT_IS_WEB_VIEW(webview)) return;
+
+    WebKitSettings *settings = webkit_web_view_get_settings(webview);
+
+    if (!webkit_settings_get_enable_developer_extras(settings)) {
+        return;
+    }
+
+    WebKitWebInspector *inspector = webkit_web_view_get_inspector(webview);
+    webkit_web_inspector_show(inspector);
+}
+
+
 */
 import "C"
 import (
@@ -47,6 +61,11 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 	m := new(Webkit2)
 	m.Object = cgo.ToGoObject(ptr)
 	return m
+}
+
+func (m *Webkit2) OpenDevTools() {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(m.Instance()))
+	C.WebkitOpenDevTools(webview)
 }
 
 func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
