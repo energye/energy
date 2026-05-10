@@ -17,6 +17,7 @@ import (
 
 // sudo apt install -y libwebkit2gtk-4.0-37 libjavascriptcoregtk-4.0-18
 
+// GTK >= 3.24.24 and Glib2.0 >= 2.66
 const (
 	Libgtk3       = "libgtk-3.so.0"
 	Libgdk3       = "libgdk-3.so.0"
@@ -26,18 +27,28 @@ const (
 	Libcairo      = "libcairo.so.2"
 	Libpango1_0   = "libpango-1.0.so.0"
 )
+
+// webkit2gtk 4.0
+// dev: sudo apt install libwebkit2gtk-4.0-dev
 const (
 	Libwebkit2gtk4_0_37        = "libwebkit2gtk-4.0.so.37"
 	Libwebkit2gtk4_0           = "libwebkit2gtk-4.0.so"
 	Libjavascriptcoregtk4_0    = "libjavascriptcoregtk-4.0.so"
 	Libjavascriptcoregtk4_0_18 = "libjavascriptcoregtk-4.0.so.18"
 	Libjavascriptcoregtk4_0_0  = "libjavascriptcoregtk-4.0.so.0"
+	Libsoup2_4_1               = "libsoup-2.4.so.1"
+	Libsoup2_4                 = "libsoup-2.4.so"
 )
+
+// webkit2gtk 4.1
+// dev: sudo apt install libwebkit2gtk-4.1-dev
 const (
 	Libwebkit2gtk4_1_0        = "libwebkit2gtk-4.1.so.0"
 	Libwebkit2gtk4_1          = "libwebkit2gtk-4.1.so"
-	Libjavascriptcoregtk4_1   = "libjavascriptcoregtk-4.1.so"
 	Libjavascriptcoregtk4_1_0 = "libjavascriptcoregtk-4.1.so.0"
+	Libjavascriptcoregtk4_1   = "libjavascriptcoregtk-4.1.so"
+	Libsoup3_0_0              = "libsoup-3.0.so.0"
+	Libsoup3_0                = "libsoup-3.0.so"
 )
 
 type DnyLibrary struct {
