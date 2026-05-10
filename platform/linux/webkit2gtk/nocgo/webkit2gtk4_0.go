@@ -36,15 +36,15 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 }
 
 func (m *Webkit2) OpenDevTools() {
-	settings := webkit2gtk4_0.SysCallResult("webkit_web_view_get_settings", m.Instance())
+	settings := webkit2gtk4_0.SysCall("webkit_web_view_get_settings", m.Instance())
 	if settings == 0 {
 		return
 	}
-	enable := webkit2gtk4_0.SysCallResult("webkit_settings_get_enable_developer_extras", settings)
+	enable := webkit2gtk4_0.SysCall("webkit_settings_get_enable_developer_extras", settings)
 	if enable == 0 {
 		return
 	}
-	inspector := webkit2gtk4_0.SysCallResult("webkit_web_view_get_inspector", m.Instance())
+	inspector := webkit2gtk4_0.SysCall("webkit_web_view_get_inspector", m.Instance())
 	if inspector == 0 {
 		return
 	}
@@ -105,7 +105,8 @@ func (m *Webkit2) SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandl
 var webkit2gtk4_0 *linux.DnyLibrary
 
 func init() {
-	tmpLibs := []string{linux.Libwebkit2gtk4_0, linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0_0}
+	tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
+	//tmpLibs := []string{linux.Libwebkit2gtk4_1_0, linux.Libwebkit2gtk4_0_37}
 	for _, lib := range tmpLibs {
 		webkit2gtk4_0 = linux.LibLoad(lib)
 		if webkit2gtk4_0 != nil {
