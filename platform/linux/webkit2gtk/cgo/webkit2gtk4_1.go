@@ -8,12 +8,12 @@
 //
 //----------------------------------------
 
-//go:build cgo && !webkit2_4_1
+//go:build cgo && webkit2_4_1
 
 package cgo
 
 /*
-#cgo pkg-config: webkit2gtk-4.0
+#cgo pkg-config: webkit2gtk-4.1
 
 #include <webkit2/webkit2.h>
 #include "webkit2gtk4_x.go.h"
