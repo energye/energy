@@ -49,9 +49,9 @@ func (m *Application) SetOnCustomSchemes(fn TApplicationOnCustomSchemesEvent) {
 func NewWKLoader() wv.IWkLoader {
 	if gGlobalWkLoader == nil {
 		gGlobalWkLoader = wv.NewLoader(nil)
-		// 通过 Webkit2Ver 动态控制使用 webkit2gtk 4.0 或 4.1
-		// 默认 4.0
-		// 当使用非 cgo 优先尝试从 4.1 开始尝试
+		// 通过 webkit2gtk.Webkit2Ver() 动态控制使用 webkit2gtk 4.0 或 4.1
+		// 当使用非 nocgo 优先尝试从 4.1 开始尝试
+		// 如果使用 cgo 需要使用条件编译 webkit2_4_1 选择 4.1, 默认 4.0
 		if webkit2gtk.Webkit2Ver() == wvTypes.Wkv4_1 {
 			gGlobalWkLoader.SetLoaderWebKit2DllPath(platformLinux.Libwebkit2gtk4_1_0)
 			gGlobalWkLoader.SetLoaderJavascriptCoreDllPath(platformLinux.Libjavascriptcoregtk4_1_0)
