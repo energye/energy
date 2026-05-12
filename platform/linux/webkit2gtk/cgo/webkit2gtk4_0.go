@@ -47,8 +47,11 @@ import (
 	"github.com/energye/energy/v3/platform/linux/gtk3/cgo"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/lcl/types/colors"
+	wvTypes "github.com/energye/wv/types/linux"
 	"unsafe"
 )
+
+const Wkv = wvTypes.Wkv4_0
 
 type Webkit2 struct {
 	cgo.Widget

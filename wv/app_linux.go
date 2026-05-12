@@ -14,9 +14,12 @@ package wv
 
 import (
 	"github.com/energye/energy/v3/application"
+	platformLinux "github.com/energye/energy/v3/platform/linux"
+	"github.com/energye/energy/v3/platform/linux/webkit2gtk"
 	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	wv "github.com/energye/wv/linux"
+	wvTypes "github.com/energye/wv/types/linux"
 )
 
 var (
@@ -46,6 +49,15 @@ func (m *Application) SetOnCustomSchemes(fn TApplicationOnCustomSchemesEvent) {
 func NewWKLoader() wv.IWkLoader {
 	if gGlobalWkLoader == nil {
 		gGlobalWkLoader = wv.NewLoader(nil)
+		// 通过 Webkit2Ver 动态控制使用 webkit2gtk 4.0 或 4.1
+		// 默认 4.0
+		// 当使用非 cgo 优先尝试从 4.1 开始尝试
+		if webkit2gtk.Webkit2Ver() == wvTypes.Wkv4_1 {
+			gGlobalWkLoader.SetLoaderWebKit2DllPath(platformLinux.Libwebkit2gtk4_1_0)
+			gGlobalWkLoader.SetLoaderJavascriptCoreDllPath(platformLinux.Libjavascriptcoregtk4_1_0)
+			gGlobalWkLoader.SetLoaderSoupDllPath(platformLinux.Libsoup3_0_0)
+			gGlobalWkLoader.SetWebkit2Version(wvTypes.Wkv4_1)
+		}
 	}
 	return gGlobalWkLoader
 }

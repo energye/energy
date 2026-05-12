@@ -17,6 +17,7 @@ import (
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/lcl/api/imports"
 	"github.com/energye/lcl/types/colors"
+	wvTypes "github.com/energye/wv/types/linux"
 	"unsafe"
 )
 
@@ -107,7 +108,10 @@ func (m *Webkit2) SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandl
 	return signalHandlerID
 }
 
-var webkit2gtk4_x *linux.DnyLibrary
+var (
+	webkit2gtk4_x *linux.DnyLibrary
+	Wkv           = wvTypes.Wkv4_0
+)
 
 func init() {
 	//tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
@@ -115,6 +119,12 @@ func init() {
 	for _, lib := range tmpLibs {
 		webkit2gtk4_x = linux.LibLoad(lib)
 		if webkit2gtk4_x != nil {
+			switch lib {
+			case linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0:
+				Wkv = wvTypes.Wkv4_0
+			case linux.Libwebkit2gtk4_1_0:
+				Wkv = wvTypes.Wkv4_1
+			}
 			break
 		}
 	}
