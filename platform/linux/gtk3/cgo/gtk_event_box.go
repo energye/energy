@@ -74,19 +74,19 @@ func (v *EventBox) GetVisibleWindow() bool {
 }
 
 func (v *EventBox) SetOnClick(fn TButtonPressEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnButtonPressEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnButtonPressEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *EventBox) SetOnLeave(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnLeaveNotifyEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnLeaveNotifyEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *EventBox) SetOnEnter(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnEnterNotifyEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnEnterNotifyEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }

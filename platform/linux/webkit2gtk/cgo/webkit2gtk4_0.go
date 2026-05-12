@@ -80,43 +80,43 @@ func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
 }
 
 func (m *Webkit2) SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragDataReceivedEvent,
-		"c_trampoline_8_void_drag_data_received", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataReceivedEvent,
+		callback.C_trampoline_8_void_drag_data_received, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragDrop(fn TDragDropEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragDropEvent,
-		"c_trampoline_6_gboolean_drag_drop_motion", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDropEvent,
+		callback.C_trampoline_6_gboolean_drag_drop_motion, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragMotion(fn TDragMotionEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragMotionEvent,
-		"c_trampoline_6_gboolean_drag_drop_motion", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragMotionEvent,
+		callback.C_trampoline_6_gboolean_drag_drop_motion, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragLeave(fn TDragLeaveEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragLeaveEvent,
-		"c_trampoline_4_void", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragLeaveEvent,
+		callback.C_trampoline_4_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragDataDelete(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragDataDeleteEvent,
-		"c_trampoline_3_void", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataDeleteEvent,
+		callback.C_trampoline_3_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragBegin(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragBeginEvent,
-		"c_trampoline_3_void", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragBeginEvent,
+		callback.C_trampoline_3_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(m.Instance()), EsnDragEndEvent,
-		"c_trampoline_3_void", fn, nil)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragEndEvent,
+		callback.C_trampoline_3_void, fn, 0)
 	return signalHandlerID
 }

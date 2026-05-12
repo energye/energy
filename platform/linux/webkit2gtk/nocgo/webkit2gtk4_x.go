@@ -8,8 +8,6 @@
 //
 //----------------------------------------
 
-//go:build !cgo
-
 package nocgo
 
 import (
@@ -36,19 +34,19 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 }
 
 func (m *Webkit2) OpenDevTools() {
-	settings := webkit2gtk4_0.SysCall("webkit_web_view_get_settings", m.Instance())
+	settings := webkit2gtk4_x.SysCall("webkit_web_view_get_settings", m.Instance())
 	if settings == 0 {
 		return
 	}
-	enable := webkit2gtk4_0.SysCall("webkit_settings_get_enable_developer_extras", settings)
+	enable := webkit2gtk4_x.SysCall("webkit_settings_get_enable_developer_extras", settings)
 	if enable == 0 {
 		return
 	}
-	inspector := webkit2gtk4_0.SysCall("webkit_web_view_get_inspector", m.Instance())
+	inspector := webkit2gtk4_x.SysCall("webkit_web_view_get_inspector", m.Instance())
 	if inspector == 0 {
 		return
 	}
-	webkit2gtk4_0.SysCall("webkit_web_inspector_show", inspector)
+	webkit2gtk4_x.SysCall("webkit_web_inspector_show", inspector)
 }
 func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
 	if color == nil {
@@ -64,56 +62,63 @@ func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
 		Blue:  cB,
 		Alpha: cA,
 	}
-	webkit2gtk4_0.SysCall("webkit_web_view_set_background_color", m.Instance(), uintptr(unsafe.Pointer(&rgba)))
+	webkit2gtk4_x.SysCall("webkit_web_view_set_background_color", m.Instance(), uintptr(unsafe.Pointer(&rgba)))
 }
 
 func (m *Webkit2) SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataReceivedEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataReceivedEvent,
+		callback.C_trampoline_8_void_drag_data_received, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragDrop(fn TDragDropEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragDropEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDropEvent,
+		callback.C_trampoline_6_gboolean_drag_drop_motion, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragMotion(fn TDragMotionEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragMotionEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragMotionEvent,
+		callback.C_trampoline_6_gboolean_drag_drop_motion, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragLeave(fn TDragLeaveEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragLeaveEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragLeaveEvent,
+		callback.C_trampoline_4_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragDataDelete(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataDeleteEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragDataDeleteEvent,
+		callback.C_trampoline_3_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragBegin(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragBeginEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragBeginEvent,
+		callback.C_trampoline_4_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Webkit2) SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDragEndEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDragEndEvent,
+		callback.C_trampoline_4_void, fn, 0)
 	return signalHandlerID
 }
 
-var webkit2gtk4_0 *linux.DnyLibrary
+var webkit2gtk4_x *linux.DnyLibrary
 
 func init() {
-	tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
-	//tmpLibs := []string{linux.Libwebkit2gtk4_1_0, linux.Libwebkit2gtk4_0_37}
+	//tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
+	tmpLibs := []string{linux.Libwebkit2gtk4_1_0, linux.Libwebkit2gtk4_0_37}
 	for _, lib := range tmpLibs {
-		webkit2gtk4_0 = linux.LibLoad(lib)
-		if webkit2gtk4_0 != nil {
+		webkit2gtk4_x = linux.LibLoad(lib)
+		if webkit2gtk4_x != nil {
 			break
 		}
 	}
-	webkit2gtk4_0.Table = []*imports.Table{
+	webkit2gtk4_x.Table = []*imports.Table{
 		imports.NewTable("webkit_web_view_set_background_color", 0),
 		imports.NewTable("webkit_web_view_get_settings", 0),
 		imports.NewTable("webkit_settings_get_enable_developer_extras", 0),
@@ -121,6 +126,6 @@ func init() {
 		imports.NewTable("webkit_web_view_get_inspector", 0),
 		imports.NewTable("webkit_web_inspector_show", 0),
 	}
-	webkit2gtk4_0.SetLibClose()
-	webkit2gtk4_0.MapperIndex()
+	webkit2gtk4_x.SetLibClose()
+	webkit2gtk4_x.MapperIndex()
 }

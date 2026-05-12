@@ -54,22 +54,22 @@ func (m *Entry) GetTextLength() uint16 {
 }
 
 func (m *Entry) SetOnChanged(fn TTextChangedEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnChanged, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Entry) SetOnCommit(fn TTextCommitEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnActivate, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnActivate, callback.C_trampoline_2_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Entry) SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnKeyPressEvent,
+	signalHandlerID := callback.Connect(m.Instance(), EsnKeyPressEvent, callback.C_trampoline_3_gboolean,
 		fn, 0)
 	return signalHandlerID
 }
 
 func (m *Entry) SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnKeyReleaseEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnKeyReleaseEvent, callback.C_trampoline_3_gboolean, fn, 0)
 	return signalHandlerID
 }

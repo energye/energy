@@ -571,19 +571,19 @@ func (v *Window) BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp ui
 }
 
 func (v *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnConfigureEvent, "c_trampoline_2_void",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnConfigureEvent, callback.C_trampoline_2_void,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Window) SetOnMap(fn TMapEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnMapEvent, "c_trampoline_2_void",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnMapEvent, callback.C_trampoline_2_void,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Window) SetOnDraw(fn TDrawEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnDrawEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnDrawEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }

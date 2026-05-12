@@ -149,19 +149,19 @@ func (v *Button) GetEventWindow() (*Window, error) {
 }
 
 func (v *Button) SetOnLeave(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnLeaveNotifyEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnLeaveNotifyEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Button) SetOnEnter(fn TLeaveEnterNotifyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnEnterNotifyEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnEnterNotifyEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Button) SetOnClick(fn TNotifyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnClicked, "c_trampoline_2_void",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnClicked, callback.C_trampoline_2_void,
+		fn, 0)
 	return signalHandlerID
 }

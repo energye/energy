@@ -75,15 +75,15 @@ func (m *SignalHandlerID) Disconnect() {
 }
 
 // Connect Registering signal
-func Connect(instance unsafe.Pointer, signalName, trampolineName string, fn any, userData unsafe.Pointer) *SignalHandlerID {
+func Connect(instance uintptr, signalName, trampolineName string, fn any, userData uintptr) *SignalHandlerID {
 	signalMgr.mu.Lock()
 	callbackFn := compileCallback(fn)
 	id := signalMgr.nextID
-	if userData == nil {
+	if userData == 0 {
 		signalMgr.nextID++
-		userData = unsafe.Pointer(uintptr(id))
+		userData = uintptr(id)
 	} else {
-		id = uint64(uintptr(userData))
+		id = uint64(userData)
 	}
 	signalMgr.handlers[id] = callbackFn
 	signalMgr.mu.Unlock()
@@ -99,9 +99,11 @@ func Connect(instance unsafe.Pointer, signalName, trampolineName string, fn any,
 		panic("No trampoline for given nArgs")
 	}
 
-	handlerID := C.go_g_signal_connect(C.gpointer(instance), cSignalName, cTrampoline, C.gpointer(userData))
+	cInstance := unsafe.Pointer(instance)
+	cUserData := unsafe.Pointer(userData)
+	handlerID := C.go_g_signal_connect(C.gpointer(cInstance), cSignalName, cTrampoline, C.gpointer(cUserData))
 	return &SignalHandlerID{
-		Widget:    types.PGtkWidget(instance),
+		Widget:    instance,
 		HandlerID: types.GULong(handlerID),
 		Id:        id,
 	}

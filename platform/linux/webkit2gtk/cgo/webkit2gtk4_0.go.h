@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdouble b, gdouble a);
+void WebkitOpenDevTools(WebKitWebView *webview);
 
 #ifdef __cplusplus
 }

@@ -44,7 +44,7 @@ func init() {
 	gobject2_0.MapperIndex()
 }
 
-func Connect(widget uintptr, signalName string, fn any, userData uintptr) *SignalHandlerID {
+func Connect(widget uintptr, signalName, _ string, fn any, userData uintptr) *SignalHandlerID {
 	fnPtr := purego.NewCallback(fn)
 	handlerID := GSignalConnectData(widget, api.PasStr(signalName), fnPtr, userData, 0, 0)
 	return &SignalHandlerID{

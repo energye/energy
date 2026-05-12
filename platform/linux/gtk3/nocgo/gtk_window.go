@@ -71,16 +71,16 @@ func (m *Window) GetTitle() string {
 }
 
 func (m *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnConfigureEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnConfigureEvent, callback.C_trampoline_2_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Window) SetOnMap(fn TMapEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnMapEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnMapEvent, callback.C_trampoline_2_void, fn, 0)
 	return signalHandlerID
 }
 
 func (m *Window) SetOnDraw(fn TDrawEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(m.Instance(), EsnDrawEvent, fn, 0)
+	signalHandlerID := callback.Connect(m.Instance(), EsnDrawEvent, callback.C_trampoline_3_gboolean, fn, 0)
 	return signalHandlerID
 }

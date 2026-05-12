@@ -433,25 +433,25 @@ func (v *Entry) GetCurrentIconDragSource() int {
 }
 
 func (v *Entry) SetOnChanged(fn TTextChangedEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnChanged, "c_trampoline_2_void",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnChanged, callback.C_trampoline_2_void,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Entry) SetOnCommit(fn TTextCommitEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnActivate, "c_trampoline_2_void",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnActivate, callback.C_trampoline_2_void,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Entry) SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnKeyPressEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnKeyPressEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
 
 func (v *Entry) SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(unsafe.Pointer(v.Instance()), EsnKeyReleaseEvent, "c_trampoline_3_gboolean",
-		fn, nil)
+	signalHandlerID := callback.Connect(v.Instance(), EsnKeyReleaseEvent, callback.C_trampoline_3_gboolean,
+		fn, 0)
 	return signalHandlerID
 }
