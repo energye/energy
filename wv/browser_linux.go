@@ -327,7 +327,7 @@ func (m *TWebview) UpdateBounds() {
 		var (
 			webviewAlign     = m.Align()
 			webviewAnchors   = m.Anchors()
-			windowBoundsRect = m.window.BoundsRect()
+			windowBoundsRect = m.window.ClientRect()
 			webviewBounds    = m.BoundsRect()
 			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
 		)
@@ -368,6 +368,12 @@ func (m *TWebview) UpdateBounds() {
 					h += windowBoundsRect.Height() - oh
 				}
 			}
+		}
+		if w > windowBoundsRect.Width() {
+			w = windowBoundsRect.Width()
+		}
+		if h > windowBoundsRect.Height() {
+			h = windowBoundsRect.Height()
 		}
 		m.UpdateWebviewBounds(x, y, w, h)
 		m.oldBounds = windowBoundsRect
