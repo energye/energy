@@ -38,15 +38,11 @@ var (
 type TWebview struct {
 	wv.IWkWebviewParent
 	TEnergyWebview
-	browserId          uint32
-	isClose            bool
-	isCreated          bool
-	resizeHT           string
-	isAddWindowSubview bool
-	//align                   types.TAlign
-	//anchors                 types.TSet
-	//bounds                  types.TRect
-	oldBounds               types.TRect
+	browserId               uint32
+	isClose                 bool
+	isCreated               bool
+	resizeHT                string
+	isAddWindowSubview      bool
 	gtkScrolledWindow       IScrolledWindow
 	gtkCssProvider          ICssProvider
 	window                  window.ILinuxWindow
@@ -107,20 +103,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
-// SetParent 设置浏览器窗口的父控件
-// 该方法会同时设置内部面板的父控件和窗口父控件的引用
-func (m *TWebview) SetParent(owner lcl.IWinControl) {
-	if form, okForm := owner.(window.IWindow); okForm {
-		//m.IWkWebviewParent.SetVisible(false)
-		// webview 直接添加到窗口
-		m.AddWindowWebview(form)
-	} else {
-		// webview 添加到容器组件
-		m.IWkWebviewParent.SetParent(owner)
-	}
-	//m.IWkWebviewParent.SetParent(owner)
-}
-
 // 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
 	if m.isCreated {
@@ -128,13 +110,12 @@ func (m *TWebview) CreateBrowser() {
 	}
 	m.isCreated = true
 	m.UpdateBrowserOptions()
-	if !m.isAddWindowSubview {
-		m.SetWebview(m.browser)
-	}
+	m.SetWebview(m.browser)
 	m.browser.CreateBrowser()
 	if m.onBrowserAfterCreated != nil {
 		m.onBrowserAfterCreated(m.browser)
 	}
+	m.NotifyUpdateSize()
 }
 
 func (m *TWebview) SetWindow(iWindow window.IWindow) {
@@ -255,12 +236,9 @@ func (m *TWebview) WindowParent() IWindowParent {
 	return m
 }
 
-func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {
-}
+func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {}
 
-func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
-	m.UpdateBounds()
-}
+func (m *TWebview) doOnWindowResize(sender lcl.IObject) {}
 
 // doOnWindowShow 是窗口显示事件的回调函数
 // 当窗口显示时触发此函数，用于创建浏览器实例
@@ -269,7 +247,6 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 		return
 	}
 	m.CreateBrowser()
-	m.UpdateBounds()
 }
 
 // doOnWindowClose 处理窗口关闭事件的回调函数
@@ -291,93 +268,12 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	//}
 }
 
-func (m *TWebview) AddWindowWebview(iWindow window.IWindow) {
-	if m.window == nil {
-		m.window = iWindow.(window.ILinuxWindow)
-	}
-	m.isAddWindowSubview = true
-	var (
-		webviewBounds = m.BoundsRect()
-		x, y, w, h    = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
-	)
-
-	windowLayout := m.window.GTKWindowLayout()
-
-	m.gtkScrolledWindow.SetSizeRequest(int(w), int(h))
-	m.gtkScrolledWindow.Add(m.gtkWebview)
-
-	windowLayout.Add(m.gtkScrolledWindow)
-	windowLayout.Move(m.gtkScrolledWindow, int(x), int(y))
-
-}
-
-func (m *TWebview) UpdateWebviewBounds(x, y, width, height int32) {
-	m.SetBounds(x, y, width, height)
-	if m.window != nil {
-		m.window.GTKWindowLayout().Move(m.gtkScrolledWindow, int(x), int(y))
-	}
-	m.gtkScrolledWindow.SetSizeRequest(int(width), int(height))
-}
-
-func (m *TWebview) UpdateBounds() {
-	if m.isAddWindowSubview {
-		allocation := m.window.GTKWindowScrolledWindow().GetAllocation()
-		swx := int32(allocation.GetX())
-		swy := int32(allocation.GetY())
-		var (
-			webviewAlign     = m.Align()
-			webviewAnchors   = m.Anchors()
-			windowBoundsRect = m.window.ClientRect()
-			webviewBounds    = m.BoundsRect()
-			x, y, w, h       = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
-		)
-		// 真实的客户区大小, 当有菜单栏时
-		windowBoundsRect.SetSize(windowBoundsRect.Width()-swx, windowBoundsRect.Height()-swy)
-
-		switch webviewAlign {
-		case types.AlNone, types.AlCustom:
-			x, y, w, h = webviewBounds.Left, webviewBounds.Top, webviewBounds.Width(), webviewBounds.Height()
-		case types.AlClient:
-			x, y, w, h = 0, 0, windowBoundsRect.Width(), windowBoundsRect.Height()
-		case types.AlLeft, types.AlTop, types.AlRight, types.AlBottom:
-			switch webviewAlign {
-			case types.AlLeft:
-				x, y, w, h = 0, 0, webviewBounds.Width(), windowBoundsRect.Height()
-			case types.AlTop:
-				x, y, w, h = 0, 0, windowBoundsRect.Width(), webviewBounds.Height()
-			case types.AlRight:
-				x, y, w, h = webviewBounds.Left, 0, webviewBounds.Width()+(windowBoundsRect.Width()-webviewBounds.Width()), windowBoundsRect.Height()
-			case types.AlBottom:
-				x, y, w, h = 0, windowBoundsRect.Height()-webviewBounds.Height(), windowBoundsRect.Width(), webviewBounds.Height()
-			}
-		}
-		switch webviewAlign {
-		case types.AlNone, types.AlCustom:
-			//akLeft := webviewAnchors.In(types.AkLeft)
-			//akTop := webviewAnchors.In(types.AkTop)
-			akRight := webviewAnchors.In(types.AkRight)
-			akBottom := webviewAnchors.In(types.AkBottom)
-			//fmt.Println("webviewAlign:", webviewAlign, "webviewAnchors:", webviewAnchors, "akRight:", akRight, "akBottom:", akBottom)
-			if akRight {
-				if ow := m.oldBounds.Width(); ow > 0 {
-					w += windowBoundsRect.Width() - ow
-				}
-			}
-			if akBottom {
-				if oh := m.oldBounds.Height(); oh > 0 {
-					h += windowBoundsRect.Height() - oh
-				}
-			}
-		}
-		if w > windowBoundsRect.Width() {
-			w = windowBoundsRect.Width()
-		}
-		if h > windowBoundsRect.Height() {
-			h = windowBoundsRect.Height()
-		}
-		m.UpdateWebviewBounds(x, y, w, h)
-		m.oldBounds = windowBoundsRect
-	}
+func (m *TWebview) NotifyUpdateSize() {
+	br := m.BoundsRect()
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		// call: ScrolledWindow.set_size_request(Width, Height)
+		m.IWkWebviewParent.UpdateSize(br.Width(), br.Height())
+	})
 }
 
 // SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
