@@ -248,10 +248,16 @@ type IWebkit2 interface {
 	SetOnFocusIn(fn TFocusInEvent) ISignalHandlerID
 	SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID
 	Undo()
+	CanUndo() bool
 	Redo()
+	CanRedo() bool
 	Cut()
+	CanCut() bool
 	Copy()
+	CanCopy() bool
 	Paste()
+	CanPaste() bool
 	Delete()
+	CanDelete() bool
 	SelectAll()
 }

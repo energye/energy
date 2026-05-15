@@ -119,28 +119,61 @@ func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
 	return signalHandlerID
 }
 
+func (m *Webkit2) GetEditorState() uintptr {
+	editorState := webkit2gtk4_x.SysCall("webkit_web_view_get_editor_state", m.Instance())
+	return editorState
+}
 func (m *Webkit2) Undo() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Undo"))
+}
+
+func (m *Webkit2) CanUndo() bool {
+	r := webkit2gtk4_x.SysCall("webkit_editor_state_is_undo_available", m.GetEditorState())
+	return api.GoBool(r)
 }
 
 func (m *Webkit2) Redo() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Redo"))
 }
 
+func (m *Webkit2) CanRedo() bool {
+	r := webkit2gtk4_x.SysCall("webkit_editor_state_is_redo_available", m.GetEditorState())
+	return api.GoBool(r)
+}
+
 func (m *Webkit2) Cut() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Cut"))
+}
+
+func (m *Webkit2) CanCut() bool {
+	r := webkit2gtk4_x.SysCall("webkit_editor_state_is_cut_available", m.GetEditorState())
+	return api.GoBool(r)
 }
 
 func (m *Webkit2) Copy() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Copy"))
 }
 
+func (m *Webkit2) CanCopy() bool {
+	r := webkit2gtk4_x.SysCall("webkit_editor_state_is_copy_available", m.GetEditorState())
+	return api.GoBool(r)
+}
+
 func (m *Webkit2) Paste() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Paste"))
 }
 
+func (m *Webkit2) CanPaste() bool {
+	r := webkit2gtk4_x.SysCall("webkit_editor_state_is_paste_available", m.GetEditorState())
+	return api.GoBool(r)
+}
+
 func (m *Webkit2) Delete() {
 	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Delete"))
+}
+
+func (m *Webkit2) CanDelete() bool {
+	return m.CanCut()
 }
 
 func (m *Webkit2) SelectAll() {
@@ -175,6 +208,12 @@ func init() {
 		imports.NewTable("webkit_web_view_get_inspector", 0),
 		imports.NewTable("webkit_web_inspector_show", 0),
 		imports.NewTable("webkit_web_view_execute_editing_command", 0),
+		imports.NewTable("webkit_web_view_get_editor_state", 0),
+		imports.NewTable("webkit_editor_state_is_undo_available", 0),
+		imports.NewTable("webkit_editor_state_is_redo_available", 0),
+		imports.NewTable("webkit_editor_state_is_cut_available", 0),
+		imports.NewTable("webkit_editor_state_is_copy_available", 0),
+		imports.NewTable("webkit_editor_state_is_paste_available", 0),
 	}
 	webkit2gtk4_x.SetLibClose()
 	webkit2gtk4_x.MapperIndex()
