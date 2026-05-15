@@ -108,6 +108,16 @@ func (m *Webkit2) SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandl
 	return signalHandlerID
 }
 
+func (m *Webkit2) SetOnFocusIn(fn TFocusInEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnFocusInEvent, callback.C_trampoline_3_gboolean, fn, 0)
+	return signalHandlerID
+}
+
+func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(m.Instance(), EsnFocusOutEvent, callback.C_trampoline_3_gboolean, fn, 0)
+	return signalHandlerID
+}
+
 var (
 	webkit2gtk4_x *linux.DnyLibrary
 	Wkv           = wvTypes.Wkv4_0

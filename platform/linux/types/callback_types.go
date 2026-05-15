@@ -32,6 +32,8 @@ const (
 	EsnDragDataDeleteEvent   EventSignalName = "drag-data-delete"
 	EsnDragBeginEvent        EventSignalName = "drag-begin"
 	EsnDragEndEvent          EventSignalName = "drag-end"
+	EsnFocusInEvent          EventSignalName = "focus-in-event"
+	EsnFocusOutEvent         EventSignalName = "focus-out-event"
 )
 
 // 信号事件类型
@@ -54,3 +56,6 @@ type TDragDropEvent func(sender PGtkWidget, context PDragContext, x, y int, time
 type TDragMotionEvent func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool
 type TDragLeaveEvent func(sender PGtkWidget, context PDragContext, time uint, userData GPointer)
 type TDragDataDeleteOrBeginOrEndEvent func(sender PGtkWidget, context PDragContext, userData GPointer)
+
+type TFocusInEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPointer) bool
+type TFocusOutEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPointer) bool

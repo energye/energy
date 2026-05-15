@@ -12,12 +12,14 @@ package types
 
 import (
 	"github.com/energye/lcl/types"
+	"unsafe"
 )
 
 type GDouble = float64
 type GBoolean = int32
 type PGdkWindow = uintptr
 type GInt8 = int8
+type GInt16 = int16
 type GUint32 = uint32
 type GUint = uint32
 type GInt = int32
@@ -37,11 +39,25 @@ type PContext = uintptr
 type PDragContext = uintptr
 type PSelectionData = uintptr
 
+// PGdkEventFocus = TGdkEventFocus
+type PGdkEventFocus uintptr
+
 type GdkRGBA struct {
 	Red   float64
 	Green float64
 	Blue  float64
 	Alpha float64
+}
+
+func (m *PGdkEventFocus) Get() *TGdkEventFocus {
+	return (*TGdkEventFocus)(unsafe.Pointer(m))
+}
+
+type TGdkEventFocus struct {
+	Type      TGdkEventType
+	Window    PGdkWindow
+	SendEvent GInt8
+	In        GInt16
 }
 
 // const

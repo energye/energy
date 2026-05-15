@@ -245,4 +245,6 @@ type IWebkit2 interface {
 	SetOnDragDataDelete(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
 	SetOnDragBegin(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
 	SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnFocusIn(fn TFocusInEvent) ISignalHandlerID
+	SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID
 }
