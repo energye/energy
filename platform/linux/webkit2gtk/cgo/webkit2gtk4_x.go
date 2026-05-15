@@ -71,3 +71,24 @@ func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
 	signalHandlerID := callback.Connect(m.Instance(), EsnFocusOutEvent, callback.C_trampoline_3_gboolean, fn, 0)
 	return signalHandlerID
 }
+
+func (m *Webkit2) Undo() {
+}
+
+func (m *Webkit2) Redo() {
+}
+
+func (m *Webkit2) Cut() {
+}
+
+func (m *Webkit2) Copy() {
+}
+
+func (m *Webkit2) Paste() {
+}
+
+func (m *Webkit2) Delete() {
+}
+
+func (m *Webkit2) SelectAll() {
+}

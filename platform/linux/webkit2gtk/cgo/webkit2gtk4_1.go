@@ -43,18 +43,12 @@ void WebkitOpenDevTools(WebKitWebView *webview) {
 */
 import "C"
 import (
-	"github.com/energye/energy/v3/platform/linux/gtk3/cgo"
-	. "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/lcl/types/colors"
 	wvTypes "github.com/energye/wv/types/linux"
 	"unsafe"
 )
 
 const Wkv = wvTypes.Wkv4_1
-
-type Webkit2 struct {
-	cgo.Widget
-}
 
 func (m *Webkit2) OpenDevTools() {
 	webview := (*C.WebKitWebView)(unsafe.Pointer(m.Instance()))

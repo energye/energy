@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v3/platform/linux/callback"
 	"github.com/energye/energy/v3/platform/linux/gtk3/nocgo"
 	. "github.com/energye/energy/v3/platform/linux/types"
+	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/api/imports"
 	"github.com/energye/lcl/types/colors"
 	wvTypes "github.com/energye/wv/types/linux"
@@ -118,6 +119,34 @@ func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
 	return signalHandlerID
 }
 
+func (m *Webkit2) Undo() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Undo"))
+}
+
+func (m *Webkit2) Redo() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Redo"))
+}
+
+func (m *Webkit2) Cut() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Cut"))
+}
+
+func (m *Webkit2) Copy() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Copy"))
+}
+
+func (m *Webkit2) Paste() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Paste"))
+}
+
+func (m *Webkit2) Delete() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("Delete"))
+}
+
+func (m *Webkit2) SelectAll() {
+	webkit2gtk4_x.SysCall("webkit_web_view_execute_editing_command", m.Instance(), api.PasStr("SelectAll"))
+}
+
 var (
 	webkit2gtk4_x *linux.DnyLibrary
 	Wkv           = wvTypes.Wkv4_0
@@ -145,6 +174,7 @@ func init() {
 		//imports.NewTable("webkit_settings_set_enable_developer_extras", 0),
 		imports.NewTable("webkit_web_view_get_inspector", 0),
 		imports.NewTable("webkit_web_inspector_show", 0),
+		imports.NewTable("webkit_web_view_execute_editing_command", 0),
 	}
 	webkit2gtk4_x.SetLibClose()
 	webkit2gtk4_x.MapperIndex()
