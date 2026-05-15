@@ -75,19 +75,43 @@ func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
 func (m *Webkit2) Undo() {
 }
 
+func (m *Webkit2) CanUndo() bool {
+	return false
+}
+
 func (m *Webkit2) Redo() {
+}
+
+func (m *Webkit2) CanRedo() bool {
+	return false
 }
 
 func (m *Webkit2) Cut() {
 }
 
+func (m *Webkit2) CanCut() bool {
+	return false
+}
+
 func (m *Webkit2) Copy() {
+}
+
+func (m *Webkit2) CanCopy() bool {
+	return false
 }
 
 func (m *Webkit2) Paste() {
 }
 
+func (m *Webkit2) CanPaste() bool {
+	return false
+}
+
 func (m *Webkit2) Delete() {
+}
+
+func (m *Webkit2) CanDelete() bool {
+	return false
 }
 
 func (m *Webkit2) SelectAll() {
