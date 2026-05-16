@@ -17,29 +17,6 @@ package cgo
 
 #include <webkit2/webkit2.h>
 #include "webkit2gtk4_x.go.h"
-
-void WebkitSetBackgroundColor(WebKitWebView *webview, gdouble r, gdouble g, gdouble b, gdouble a) {
-	if (webview != NULL && WEBKIT_IS_WEB_VIEW(webview))
-    {
-		GdkRGBA colour = {r, g, b, a};
-        webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(webview), &colour);
-    }
-}
-
-void WebkitOpenDevTools(WebKitWebView *webview) {
-    if (!webview || !WEBKIT_IS_WEB_VIEW(webview)) return;
-
-    WebKitSettings *settings = webkit_web_view_get_settings(webview);
-
-    if (!webkit_settings_get_enable_developer_extras(settings)) {
-        return;
-    }
-
-    WebKitWebInspector *inspector = webkit_web_view_get_inspector(webview);
-    webkit_web_inspector_show(inspector);
-}
-
-
 */
 import "C"
 import (
@@ -50,18 +27,99 @@ import (
 
 const Wkv = wvTypes.Wkv4_0
 
-func (m *Webkit2) OpenDevTools() {
-	webview := (*C.WebKitWebView)(unsafe.Pointer(m.Instance()))
+func WebkitOpenDevTools(instance uintptr) {
+	if instance == 0 {
+		return
+	}
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
 	C.WebkitOpenDevTools(webview)
 }
 
-func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
-	if color == nil {
+func WebkitSetBackgroundColor(instance uintptr, color *colors.TARGB) {
+	if instance == 0 || color == nil {
 		return
 	}
 	cR := C.gdouble(float64(color.R) / 255.0)
 	cG := C.gdouble(float64(color.G) / 255.0)
 	cB := C.gdouble(float64(color.B) / 255.0)
 	cA := C.gdouble(float64(color.A) / 255.0)
-	C.WebkitSetBackgroundColor((*C.WebKitWebView)(unsafe.Pointer(m.Instance())), cR, cG, cB, cA)
+	C.WebkitSetBackgroundColor((*C.WebKitWebView)(unsafe.Pointer(instance)), cR, cG, cB, cA)
+}
+
+func WebkitUndo(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Undo")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanUndo(instance uintptr) bool {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	return C.WebkitCanUndo(webview) != 0
+}
+
+func WebkitRedo(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Redo")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanRedo(instance uintptr) bool {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	return C.WebkitCanRedo(webview) != 0
+}
+
+func WebkitCut(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Cut")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanCut(instance uintptr) bool {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	return C.WebkitCanCut(webview) != 0
+}
+
+func WebkitCopy(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Copy")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanCopy(instance uintptr) bool {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	return C.WebkitCanCopy(webview) != 0
+}
+
+func WebkitPaste(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Paste")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanPaste(instance uintptr) bool {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	return C.WebkitCanPaste(webview) != 0
+}
+
+func WebkitDelete(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("Delete")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
+}
+
+func WebkitCanDelete(instance uintptr) bool {
+	return WebkitCanCut(instance)
+}
+
+func WebkitSelectAll(instance uintptr) {
+	webview := (*C.WebKitWebView)(unsafe.Pointer(instance))
+	command := C.CString("SelectAll")
+	defer C.free(unsafe.Pointer(command))
+	C.WebkitExecuteEditingCommand(webview, command)
 }

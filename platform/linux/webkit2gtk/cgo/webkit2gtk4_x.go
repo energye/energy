@@ -4,6 +4,7 @@ import (
 	"github.com/energye/energy/v3/platform/linux/callback"
 	"github.com/energye/energy/v3/platform/linux/gtk3/cgo"
 	. "github.com/energye/energy/v3/platform/linux/types"
+	"github.com/energye/lcl/types/colors"
 	"unsafe"
 )
 
@@ -18,6 +19,17 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 	m := new(Webkit2)
 	m.Object = cgo.ToGoObject(ptr)
 	return m
+}
+
+func (m *Webkit2) OpenDevTools() {
+	WebkitOpenDevTools(m.Instance())
+}
+
+func (m *Webkit2) SetBackgroundColor(color *colors.TARGB) {
+	if color == nil {
+		return
+	}
+	WebkitSetBackgroundColor(m.Instance(), color)
 }
 
 func (m *Webkit2) SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID {
@@ -73,46 +85,53 @@ func (m *Webkit2) SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID {
 }
 
 func (m *Webkit2) Undo() {
+	WebkitUndo(m.Instance())
 }
 
 func (m *Webkit2) CanUndo() bool {
-	return false
+	return WebkitCanUndo(m.Instance())
 }
 
 func (m *Webkit2) Redo() {
+	WebkitRedo(m.Instance())
 }
 
 func (m *Webkit2) CanRedo() bool {
-	return false
+	return WebkitCanRedo(m.Instance())
 }
 
 func (m *Webkit2) Cut() {
+	WebkitCut(m.Instance())
 }
 
 func (m *Webkit2) CanCut() bool {
-	return false
+	return WebkitCanCut(m.Instance())
 }
 
 func (m *Webkit2) Copy() {
+	WebkitCopy(m.Instance())
 }
 
 func (m *Webkit2) CanCopy() bool {
-	return false
+	return WebkitCanCopy(m.Instance())
 }
 
 func (m *Webkit2) Paste() {
+	WebkitPaste(m.Instance())
 }
 
 func (m *Webkit2) CanPaste() bool {
-	return false
+	return WebkitCanPaste(m.Instance())
 }
 
 func (m *Webkit2) Delete() {
+	WebkitDelete(m.Instance())
 }
 
 func (m *Webkit2) CanDelete() bool {
-	return false
+	return WebkitCanDelete(m.Instance())
 }
 
 func (m *Webkit2) SelectAll() {
+	WebkitSelectAll(m.Instance())
 }
