@@ -17,6 +17,7 @@ import (
 	"github.com/godbus/dbus/v5"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -27,9 +28,14 @@ type Notification struct {
 	notifications     map[uint32]*notificationData
 	notificationsLock sync.RWMutex
 	appName           string
+	iconPath          string
 	cancel            context.CancelFunc
 	callback          TNotificationResponseEvent
 	callbackLock      sync.RWMutex
+	initialized       bool
+	initLock          sync.Mutex
+	wg                sync.WaitGroup
+	signalCh          chan *dbus.Signal
 }
 
 type notificationData struct {
@@ -53,7 +59,7 @@ var (
 	gNotification INotification
 )
 
-// New creates a new Notification instance
+// New creates a new Notification instance (singleton)
 func New() INotification {
 	once.Do(func() {
 		impl := &Notification{
@@ -61,7 +67,6 @@ func New() INotification {
 			notifications: make(map[uint32]*notificationData),
 		}
 		gNotification = impl
-
 		if err := impl.Initialize(); err != nil {
 			fmt.Printf("[Energy] Notification service initialization warning: %v\n", err)
 		}
@@ -71,11 +76,18 @@ func New() INotification {
 
 // Initialize sets up the notification service
 func (m *Notification) Initialize() error {
+	m.initLock.Lock()
+	defer m.initLock.Unlock()
+
+	if m.initialized {
+		return nil
+	}
+
 	name := pack.Info.Name
 	if name == "" {
 		name = "ENERGY APP"
 	}
-	m.appName = name
+	m.appName = sanitizeAppName(name)
 
 	conn, err := dbus.ConnectSessionBus()
 	if err != nil {
@@ -87,33 +99,73 @@ func (m *Notification) Initialize() error {
 		fmt.Printf("Failed to load notification categories: %v\n", err)
 	}
 
-	var signalCtx context.Context
-	signalCtx, m.cancel = context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
+	m.cancel = cancel
 
-	if err := m.setupSignalHandling(signalCtx); err != nil {
+	if err := m.setupSignalHandling(ctx); err != nil {
+		_ = m.conn.Close()
+		m.conn = nil
 		return fmt.Errorf("failed to set up notification signal handling: %w", err)
 	}
 
+	m.initialized = true
 	return nil
 }
 
-// RequestNotificationAuthorization is a Linux stub that always returns true, nil.
-// (authorization is macOS-specific)
+// Close releases all resources held by the notification service.
+// It is safe to call Close multiple times.
+func (m *Notification) Close() error {
+	m.initLock.Lock()
+	defer m.initLock.Unlock()
+
+	if !m.initialized {
+		return nil
+	}
+
+	// 取消信号处理 goroutine
+	if m.cancel != nil {
+		m.cancel()
+	}
+
+	// 等待信号处理 goroutine 退出
+	m.wg.Wait()
+
+	// 关闭信号通道并移除 D-Bus 信号匹配
+	if m.signalCh != nil && m.conn != nil {
+		m.conn.RemoveSignal(m.signalCh)
+		close(m.signalCh)
+		m.signalCh = nil
+	}
+
+	// 关闭 D-Bus 连接
+	if m.conn != nil {
+		if err := m.conn.Close(); err != nil {
+			return fmt.Errorf("failed to close D-Bus connection: %w", err)
+		}
+		m.conn = nil
+	}
+
+	m.initialized = false
+	return nil
+}
+
 func (m *Notification) RequestNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
-// CheckNotificationAuthorization is a Linux stub that always returns true.
-// (authorization is macOS-specific)
 func (m *Notification) CheckNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
 // SendNotification sends a basic notification with a unique identifier, title, subtitle, and body.
 func (m *Notification) SendNotification(options Options) error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	if err := validateNotificationOptions(options); err != nil {
 		return err
 	}
+	iconPath := "" // "file://" + m.iconPath
 
 	hints := map[string]dbus.Variant{}
 
@@ -131,15 +183,18 @@ func (m *Notification) SendNotification(options Options) error {
 
 	hints["x-notification-id"] = dbus.MakeVariant(options.ID)
 
-	if options.Data != nil {
-		userData, err := json.Marshal(options.Data)
+	// 拷贝 Options.Data
+	dataCopy := copyUserData(options.Data)
+	if dataCopy != nil {
+		userData, err := json.Marshal(dataCopy)
 		if err == nil {
 			hints["x-user-data"] = dbus.MakeVariant(string(userData))
 		}
 	}
 
 	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
-	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0), "",
+	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0),
+		iconPath, // 图标
 		options.Title, body, actions, hints, int32(-1))
 
 	if call.Err != nil {
@@ -156,7 +211,7 @@ func (m *Notification) SendNotification(options Options) error {
 		Title:     options.Title,
 		Subtitle:  options.Subtitle,
 		Body:      options.Body,
-		Data:      options.Data,
+		Data:      dataCopy,
 		DBusID:    dbusID,
 		ActionMap: actionMap,
 	}
@@ -170,9 +225,13 @@ func (m *Notification) SendNotification(options Options) error {
 
 // SendNotificationWithActions sends a notification with additional actions.
 func (m *Notification) SendNotificationWithActions(options Options) error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	if err := validateNotificationOptions(options); err != nil {
 		return err
 	}
+	iconPath := "" // "file://" + m.iconPath
 
 	m.categoriesLock.RLock()
 	category, exists := m.categories[options.CategoryID]
@@ -205,15 +264,18 @@ func (m *Notification) SendNotificationWithActions(options Options) error {
 
 	hints["x-category-id"] = dbus.MakeVariant(options.CategoryID)
 
-	if options.Data != nil {
-		userData, err := json.Marshal(options.Data)
+	// 拷贝 Options.Data
+	dataCopy := copyUserData(options.Data)
+	if dataCopy != nil {
+		userData, err := json.Marshal(dataCopy)
 		if err == nil {
 			hints["x-user-data"] = dbus.MakeVariant(string(userData))
 		}
 	}
 
 	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
-	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0), "",
+	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0),
+		iconPath, // 图标
 		options.Title, body, actions, hints, int32(-1))
 
 	if call.Err != nil {
@@ -231,7 +293,7 @@ func (m *Notification) SendNotificationWithActions(options Options) error {
 		Subtitle:   options.Subtitle,
 		Body:       options.Body,
 		CategoryID: options.CategoryID,
-		Data:       options.Data,
+		Data:       dataCopy,
 		DBusID:     dbusID,
 		ActionMap:  actionMap,
 	}
@@ -245,6 +307,9 @@ func (m *Notification) SendNotificationWithActions(options Options) error {
 
 // RegisterNotificationCategory registers a new NotificationCategory to be used with SendNotificationWithActions.
 func (m *Notification) RegisterNotificationCategory(category Category) error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	m.categoriesLock.Lock()
 	defer m.categoriesLock.Unlock()
 
@@ -259,6 +324,9 @@ func (m *Notification) RegisterNotificationCategory(category Category) error {
 
 // RemoveNotificationCategory removes a previously registered NotificationCategory.
 func (m *Notification) RemoveNotificationCategory(categoryId string) error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	m.categoriesLock.Lock()
 	defer m.categoriesLock.Unlock()
 
@@ -273,6 +341,9 @@ func (m *Notification) RemoveNotificationCategory(categoryId string) error {
 
 // RemoveAllPendingNotifications attempts to remove all active notifications.
 func (m *Notification) RemoveAllPendingNotifications() error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	m.notificationsLock.Lock()
 	dbusIDs := make([]uint32, 0, len(m.notifications))
 	for id := range m.notifications {
@@ -280,15 +351,20 @@ func (m *Notification) RemoveAllPendingNotifications() error {
 	}
 	m.notificationsLock.Unlock()
 
+	var lastErr error
 	for _, id := range dbusIDs {
-		m.closeNotification(id)
+		if err := m.closeNotification(id); err != nil {
+			lastErr = err
+		}
 	}
-
-	return nil
+	return lastErr
 }
 
 // RemovePendingNotification removes a pending notification.
 func (m *Notification) RemovePendingNotification(identifier string) error {
+	if err := m.checkReady(); err != nil {
+		return err
+	}
 	var dbusID uint32
 	found := false
 
@@ -348,6 +424,10 @@ func (m *Notification) closeNotification(id uint32) error {
 	call := obj.Call(dbusNotificationInterface+".CloseNotification", 0, id)
 
 	if call.Err != nil {
+		// 即使调用失败，也从本地 map 中删除，避免残留
+		m.notificationsLock.Lock()
+		delete(m.notifications, id)
+		m.notificationsLock.Unlock()
 		return fmt.Errorf("failed to close notification: %w", call.Err)
 	}
 
@@ -381,8 +461,12 @@ func (m *Notification) saveCategories() error {
 
 	categoriesFile := filepath.Join(configDir, "notification-categories.json")
 
-	categoriesData, err := json.MarshalIndent(m.categories, "", "  ")
+	categoriesCopy := make(map[string]Category, len(m.categories))
+	for k, v := range m.categories {
+		categoriesCopy[k] = v
+	}
 
+	categoriesData, err := json.MarshalIndent(categoriesCopy, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal notification categories: %w", err)
 	}
@@ -428,17 +512,19 @@ func (m *Notification) loadCategories() error {
 func (m *Notification) setupSignalHandling(ctx context.Context) error {
 	if err := m.conn.AddMatchSignal(dbus.WithMatchInterface(dbusNotificationInterface),
 		dbus.WithMatchMember("ActionInvoked")); err != nil {
-		return err
+		return fmt.Errorf("add match for ActionInvoked: %w", err)
 	}
 
 	if err := m.conn.AddMatchSignal(dbus.WithMatchInterface(dbusNotificationInterface),
 		dbus.WithMatchMember("NotificationClosed")); err != nil {
-		return err
+		return fmt.Errorf("add match for NotificationClosed: %w", err)
 	}
 
 	c := make(chan *dbus.Signal, 10)
 	m.conn.Signal(c)
+	m.signalCh = c
 
+	m.wg.Add(1)
 	go m.handleSignals(ctx, c)
 
 	return nil
@@ -446,9 +532,14 @@ func (m *Notification) setupSignalHandling(ctx context.Context) error {
 
 // Handle incoming D-Bus signals.
 func (m *Notification) handleSignals(ctx context.Context, c chan *dbus.Signal) {
+	defer m.wg.Done()
 	for {
 		select {
 		case <-ctx.Done():
+			// 清理信号注册和通道
+			if m.conn != nil && c != nil {
+				m.conn.RemoveSignal(c)
+			}
 			return
 		case signal, ok := <-c:
 			if !ok {
@@ -519,6 +610,9 @@ func (m *Notification) handleActionInvoked(signal *dbus.Signal) {
 // 2 - dismissed by user (click on X)
 // 3 - closed by CloseNotification call
 // 4 - undefined/reserved
+//
+// 注意：根据常规 UX 预期，用户关闭通知（reason=2）不应触发默认动作，
+// 因此此处不再生成回调。如需此行为，请在上层通过超时或其他逻辑处理。
 func (m *Notification) handleNotificationClosed(signal *dbus.Signal) {
 	if len(signal.Body) < 2 {
 		return
@@ -529,39 +623,15 @@ func (m *Notification) handleNotificationClosed(signal *dbus.Signal) {
 		return
 	}
 
-	reason, ok := signal.Body[1].(uint32)
-	if !ok {
-		reason = 0
-	}
-
 	m.notificationsLock.Lock()
-	notification, exists := m.notifications[dbusID]
+	_, exists := m.notifications[dbusID]
 	if exists {
 		delete(m.notifications, dbusID)
 	}
 	m.notificationsLock.Unlock()
 
-	if !exists {
-		return
-	}
-
-	if reason == 2 {
-		response := Response{
-			ID:               notification.ID,
-			ActionIdentifier: DefaultActionIdentifier,
-			Title:            notification.Title,
-			Subtitle:         notification.Subtitle,
-			Body:             notification.Body,
-			CategoryID:       notification.CategoryID,
-			UserInfo:         notification.Data,
-		}
-
-		result := Result{
-			Response: response,
-		}
-
-		m.handleNotificationResult(result)
-	}
+	// 移除通知时不再触发任何业务回调
+	_ = exists
 }
 
 // validateNotificationOptions validates notification options
@@ -573,4 +643,50 @@ func validateNotificationOptions(options Options) error {
 		return fmt.Errorf("notification title cannot be empty")
 	}
 	return nil
+}
+
+// checkReady 检查服务是否已成功初始化
+func (m *Notification) checkReady() error {
+	if !m.initialized || m.conn == nil {
+		return fmt.Errorf("notification service not initialized or already closed")
+	}
+	return nil
+}
+
+// sanitizeAppName 清理应用名称中的非法字符，确保可安全用作目录名
+func sanitizeAppName(name string) string {
+	// 替换 Windows/Linux 文件名中常见的非法字符为下划线
+	replacer := strings.NewReplacer(
+		"/", "_",
+		"\\", "_",
+		":", "_",
+		"*", "_",
+		"?", "_",
+		"\"", "_",
+		"<", "_",
+		">", "_",
+		"|", "_",
+	)
+	return replacer.Replace(name)
+}
+
+func copyUserData(src map[string]interface{}) map[string]interface{} {
+	if src == nil {
+		return nil
+	}
+	dst := make(map[string]interface{}, len(src))
+	for k, v := range src {
+		bytes, err := json.Marshal(v)
+		if err != nil {
+			dst[k] = v
+			continue
+		}
+		var cloned interface{}
+		if err := json.Unmarshal(bytes, &cloned); err != nil {
+			dst[k] = v
+		} else {
+			dst[k] = cloned
+		}
+	}
+	return dst
 }
