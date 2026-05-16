@@ -84,6 +84,11 @@ func (m *Widget) GetStyleContext() IStyleContext {
 	return AsStyleContext(unsafe.Pointer(r))
 }
 
+// GrabFocus is a wrapper around gtk_widget_grab_focus().
+func (m *Widget) GrabFocus() {
+	gtk3.SysCall("gtk_widget_grab_focus", m.Instance())
+}
+
 func (m *Widget) DragGetData(context IDragContext, target IAtom, time uint) {
 	gtk3.SysCall("gtk_drag_get_data", m.Instance(), context.Instance(), uintptr(target.Atom()), uintptr(time))
 }
