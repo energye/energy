@@ -139,18 +139,8 @@ func (m *Notification) SendNotification(options Options) error {
 	}
 
 	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
-	call := obj.Call(
-		dbusNotificationInterface+".Notify",
-		0,
-		m.appName,
-		uint32(0),
-		"",
-		options.Title,
-		body,
-		actions,
-		hints,
-		int32(-1),
-	)
+	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0), "",
+		options.Title, body, actions, hints, int32(-1))
 
 	if call.Err != nil {
 		return fmt.Errorf("failed to send notification: %w", call.Err)
@@ -223,18 +213,8 @@ func (m *Notification) SendNotificationWithActions(options Options) error {
 	}
 
 	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
-	call := obj.Call(
-		dbusNotificationInterface+".Notify",
-		0,
-		m.appName,
-		uint32(0),
-		"",
-		options.Title,
-		body,
-		actions,
-		hints,
-		int32(-1),
-	)
+	call := obj.Call(dbusNotificationInterface+".Notify", 0, m.appName, uint32(0), "",
+		options.Title, body, actions, hints, int32(-1))
 
 	if call.Err != nil {
 		return fmt.Errorf("failed to send notification: %w", call.Err)
@@ -378,10 +358,6 @@ func (m *Notification) closeNotification(id uint32) error {
 	return nil
 }
 
-func getAppName() string {
-	return "ENERGY APP"
-}
-
 func (m *Notification) getConfigDir() (string, error) {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
@@ -405,9 +381,7 @@ func (m *Notification) saveCategories() error {
 
 	categoriesFile := filepath.Join(configDir, "notification-categories.json")
 
-	m.categoriesLock.RLock()
 	categoriesData, err := json.MarshalIndent(m.categories, "", "  ")
-	m.categoriesLock.RUnlock()
 
 	if err != nil {
 		return fmt.Errorf("failed to marshal notification categories: %w", err)
