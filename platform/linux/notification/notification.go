@@ -1,3 +1,9 @@
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+
 //go:build linux
 
 package notification
@@ -6,20 +12,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v3/application/pack"
+	. "github.com/energye/energy/v3/platform/notification/types"
 	"github.com/godbus/dbus/v5"
 	"os"
 	"path/filepath"
 	"sync"
 )
 
-type linuxNotifier struct {
+type Notification struct {
 	conn              *dbus.Conn
-	categories        map[string]NotificationCategory
+	categories        map[string]Category
 	categoriesLock    sync.RWMutex
 	notifications     map[uint32]*notificationData
 	notificationsLock sync.RWMutex
 	appName           string
 	cancel            context.CancelFunc
+	callback          TNotificationResponseEvent
+	callbackLock      sync.RWMutex
 }
 
 type notificationData struct {
@@ -38,76 +48,73 @@ const (
 	dbusNotificationPath      = "/org/freedesktop/Notifications"
 )
 
-// Creates a new Notifications Service.
-func New() *NotificationService {
-	notificationServiceOnce.Do(func() {
-		impl := &linuxNotifier{
-			categories:    make(map[string]NotificationCategory),
+var (
+	once          sync.Once
+	gNotification INotification
+)
+
+// New creates a new Notification instance
+func New() INotification {
+	once.Do(func() {
+		impl := &Notification{
+			categories:    make(map[string]Category),
 			notifications: make(map[uint32]*notificationData),
 		}
+		gNotification = impl
 
-		NotificationService_ = &NotificationService{
-			impl: impl,
+		if err := impl.Initialize(); err != nil {
+			fmt.Printf("[Energy] Notification service initialization warning: %v\n", err)
 		}
 	})
-
-	return NotificationService_
+	return gNotification
 }
 
-// Startup is called when the service is loaded.
-func (ln *linuxNotifier) Startup(ctx context.Context, options application.ServiceOptions) error {
-	ln.appName = application.Get().Config().Name
+// Initialize sets up the notification service
+func (m *Notification) Initialize() error {
+	name := pack.Info.Name
+	if name == "" {
+		name = "ENERGY APP"
+	}
+	m.appName = name
 
 	conn, err := dbus.ConnectSessionBus()
 	if err != nil {
 		return fmt.Errorf("failed to connect to session bus: %w", err)
 	}
-	ln.conn = conn
+	m.conn = conn
 
-	if err := ln.loadCategories(); err != nil {
+	if err := m.loadCategories(); err != nil {
 		fmt.Printf("Failed to load notification categories: %v\n", err)
 	}
 
 	var signalCtx context.Context
-	signalCtx, ln.cancel = context.WithCancel(context.Background())
+	signalCtx, m.cancel = context.WithCancel(context.Background())
 
-	if err := ln.setupSignalHandling(signalCtx); err != nil {
+	if err := m.setupSignalHandling(signalCtx); err != nil {
 		return fmt.Errorf("failed to set up notification signal handling: %w", err)
 	}
 
 	return nil
 }
 
-// Shutdown will save categories and close the D-Bus connection when the service unloads.
-func (ln *linuxNotifier) Shutdown() error {
-	if ln.cancel != nil {
-		ln.cancel()
-	}
-
-	if err := ln.saveCategories(); err != nil {
-		fmt.Printf("Failed to save notification categories: %v\n", err)
-	}
-
-	if ln.conn != nil {
-		return ln.conn.Close()
-	}
-	return nil
-}
-
 // RequestNotificationAuthorization is a Linux stub that always returns true, nil.
 // (authorization is macOS-specific)
-func (ln *linuxNotifier) RequestNotificationAuthorization() (bool, error) {
+func (m *Notification) RequestNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
 // CheckNotificationAuthorization is a Linux stub that always returns true.
 // (authorization is macOS-specific)
-func (ln *linuxNotifier) CheckNotificationAuthorization() (bool, error) {
+func (m *Notification) CheckNotificationAuthorization() (bool, error) {
 	return true, nil
 }
 
 // SendNotification sends a basic notification with a unique identifier, title, subtitle, and body.
-func (ln *linuxNotifier) SendNotification(options NotificationOptions) error {
+func (m *Notification) SendNotification(options Options) error {
+	if err := validateNotificationOptions(options); err != nil {
+		return err
+	}
+
 	hints := map[string]dbus.Variant{}
 
 	body := options.Body
@@ -131,14 +138,13 @@ func (ln *linuxNotifier) SendNotification(options NotificationOptions) error {
 		}
 	}
 
-	// Call the Notify method on the D-Bus interface
-	obj := ln.conn.Object(dbusNotificationInterface, dbusNotificationPath)
+	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
 	call := obj.Call(
 		dbusNotificationInterface+".Notify",
 		0,
-		ln.appName,
+		m.appName,
 		uint32(0),
-		"", // Icon
+		"",
 		options.Title,
 		body,
 		actions,
@@ -165,22 +171,25 @@ func (ln *linuxNotifier) SendNotification(options NotificationOptions) error {
 		ActionMap: actionMap,
 	}
 
-	ln.notificationsLock.Lock()
-	ln.notifications[dbusID] = notification
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Lock()
+	m.notifications[dbusID] = notification
+	m.notificationsLock.Unlock()
 
 	return nil
 }
 
 // SendNotificationWithActions sends a notification with additional actions.
-func (ln *linuxNotifier) SendNotificationWithActions(options NotificationOptions) error {
-	ln.categoriesLock.RLock()
-	category, exists := ln.categories[options.CategoryID]
-	ln.categoriesLock.RUnlock()
+func (m *Notification) SendNotificationWithActions(options Options) error {
+	if err := validateNotificationOptions(options); err != nil {
+		return err
+	}
+
+	m.categoriesLock.RLock()
+	category, exists := m.categories[options.CategoryID]
+	m.categoriesLock.RUnlock()
 
 	if options.CategoryID == "" || !exists {
-		// Fall back to basic notification
-		return ln.SendNotification(options)
+		return m.SendNotification(options)
 	}
 
 	body := options.Body
@@ -213,13 +222,13 @@ func (ln *linuxNotifier) SendNotificationWithActions(options NotificationOptions
 		}
 	}
 
-	obj := ln.conn.Object(dbusNotificationInterface, dbusNotificationPath)
+	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
 	call := obj.Call(
 		dbusNotificationInterface+".Notify",
 		0,
-		ln.appName,
+		m.appName,
 		uint32(0),
-		"", // Icon
+		"",
 		options.Title,
 		body,
 		actions,
@@ -247,20 +256,21 @@ func (ln *linuxNotifier) SendNotificationWithActions(options NotificationOptions
 		ActionMap:  actionMap,
 	}
 
-	ln.notificationsLock.Lock()
-	ln.notifications[dbusID] = notification
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Lock()
+	m.notifications[dbusID] = notification
+	m.notificationsLock.Unlock()
 
 	return nil
 }
 
 // RegisterNotificationCategory registers a new NotificationCategory to be used with SendNotificationWithActions.
-func (ln *linuxNotifier) RegisterNotificationCategory(category NotificationCategory) error {
-	ln.categoriesLock.Lock()
-	ln.categories[category.ID] = category
-	ln.categoriesLock.Unlock()
+func (m *Notification) RegisterNotificationCategory(category Category) error {
+	m.categoriesLock.Lock()
+	defer m.categoriesLock.Unlock()
 
-	if err := ln.saveCategories(); err != nil {
+	m.categories[category.ID] = category
+
+	if err := m.saveCategories(); err != nil {
 		fmt.Printf("Failed to save notification categories: %v\n", err)
 	}
 
@@ -268,12 +278,13 @@ func (ln *linuxNotifier) RegisterNotificationCategory(category NotificationCateg
 }
 
 // RemoveNotificationCategory removes a previously registered NotificationCategory.
-func (ln *linuxNotifier) RemoveNotificationCategory(categoryId string) error {
-	ln.categoriesLock.Lock()
-	delete(ln.categories, categoryId)
-	ln.categoriesLock.Unlock()
+func (m *Notification) RemoveNotificationCategory(categoryId string) error {
+	m.categoriesLock.Lock()
+	defer m.categoriesLock.Unlock()
 
-	if err := ln.saveCategories(); err != nil {
+	delete(m.categories, categoryId)
+
+	if err := m.saveCategories(); err != nil {
 		fmt.Printf("Failed to save notification categories: %v\n", err)
 	}
 
@@ -281,77 +292,103 @@ func (ln *linuxNotifier) RemoveNotificationCategory(categoryId string) error {
 }
 
 // RemoveAllPendingNotifications attempts to remove all active notifications.
-func (ln *linuxNotifier) RemoveAllPendingNotifications() error {
-	ln.notificationsLock.Lock()
-	dbusIDs := make([]uint32, 0, len(ln.notifications))
-	for id := range ln.notifications {
+func (m *Notification) RemoveAllPendingNotifications() error {
+	m.notificationsLock.Lock()
+	dbusIDs := make([]uint32, 0, len(m.notifications))
+	for id := range m.notifications {
 		dbusIDs = append(dbusIDs, id)
 	}
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Unlock()
 
 	for _, id := range dbusIDs {
-		ln.closeNotification(id)
+		m.closeNotification(id)
 	}
 
 	return nil
 }
 
 // RemovePendingNotification removes a pending notification.
-func (ln *linuxNotifier) RemovePendingNotification(identifier string) error {
+func (m *Notification) RemovePendingNotification(identifier string) error {
 	var dbusID uint32
 	found := false
 
-	ln.notificationsLock.Lock()
-	for id, notif := range ln.notifications {
+	m.notificationsLock.Lock()
+	for id, notif := range m.notifications {
 		if notif.ID == identifier {
 			dbusID = id
 			found = true
 			break
 		}
 	}
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Unlock()
 
 	if !found {
 		return nil
 	}
 
-	return ln.closeNotification(dbusID)
+	return m.closeNotification(dbusID)
 }
 
 // RemoveAllDeliveredNotifications functionally equivalent to RemoveAllPendingNotification on Linux.
-func (ln *linuxNotifier) RemoveAllDeliveredNotifications() error {
-	return ln.RemoveAllPendingNotifications()
+func (m *Notification) RemoveAllDeliveredNotifications() error {
+	return m.RemoveAllPendingNotifications()
 }
 
 // RemoveDeliveredNotification functionally equivalent RemovePendingNotification on Linux.
-func (ln *linuxNotifier) RemoveDeliveredNotification(identifier string) error {
-	return ln.RemovePendingNotification(identifier)
+func (m *Notification) RemoveDeliveredNotification(identifier string) error {
+	return m.RemovePendingNotification(identifier)
 }
 
 // RemoveNotification removes a notification by identifier.
-func (ln *linuxNotifier) RemoveNotification(identifier string) error {
-	return ln.RemovePendingNotification(identifier)
+func (m *Notification) RemoveNotification(identifier string) error {
+	return m.RemovePendingNotification(identifier)
+}
+
+// SetOnNotificationResponse registers notification response callback
+func (m *Notification) SetOnNotificationResponse(callback TNotificationResponseEvent) {
+	m.callbackLock.Lock()
+	defer m.callbackLock.Unlock()
+	m.callback = callback
+}
+
+// handleNotificationResult processes notification result
+func (m *Notification) handleNotificationResult(result Result) {
+	m.callbackLock.RLock()
+	callback := m.callback
+	m.callbackLock.RUnlock()
+
+	if callback != nil {
+		callback(result)
+	}
 }
 
 // Helper method to close a notification.
-func (ln *linuxNotifier) closeNotification(id uint32) error {
-	obj := ln.conn.Object(dbusNotificationInterface, dbusNotificationPath)
+func (m *Notification) closeNotification(id uint32) error {
+	obj := m.conn.Object(dbusNotificationInterface, dbusNotificationPath)
 	call := obj.Call(dbusNotificationInterface+".CloseNotification", 0, id)
 
 	if call.Err != nil {
 		return fmt.Errorf("failed to close notification: %w", call.Err)
 	}
 
+	m.notificationsLock.Lock()
+	delete(m.notifications, id)
+	m.notificationsLock.Unlock()
+
 	return nil
 }
 
-func (ln *linuxNotifier) getConfigDir() (string, error) {
+func getAppName() string {
+	return "ENERGY APP"
+}
+
+func (m *Notification) getConfigDir() (string, error) {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		return "", fmt.Errorf("failed to get user config directory: %w", err)
 	}
 
-	appConfigDir := filepath.Join(configDir, ln.appName)
+	appConfigDir := filepath.Join(configDir, m.appName)
 	if err := os.MkdirAll(appConfigDir, 0755); err != nil {
 		return "", fmt.Errorf("failed to create app config directory: %w", err)
 	}
@@ -360,32 +397,32 @@ func (ln *linuxNotifier) getConfigDir() (string, error) {
 }
 
 // Save notification categories.
-func (ln *linuxNotifier) saveCategories() error {
-	configDir, err := ln.getConfigDir()
+func (m *Notification) saveCategories() error {
+	configDir, err := m.getConfigDir()
 	if err != nil {
 		return err
 	}
 
 	categoriesFile := filepath.Join(configDir, "notification-categories.json")
 
-	ln.categoriesLock.RLock()
-	categoriesData, err := json.MarshalIndent(ln.categories, "", "  ")
-	ln.categoriesLock.RUnlock()
+	m.categoriesLock.RLock()
+	categoriesData, err := json.MarshalIndent(m.categories, "", "  ")
+	m.categoriesLock.RUnlock()
 
 	if err != nil {
 		return fmt.Errorf("failed to marshal notification categories: %w", err)
 	}
 
 	if err := os.WriteFile(categoriesFile, categoriesData, 0644); err != nil {
-		return fmt.Errorf("failed to write notification categories to disk: %w", err)
+		return fmt.Errorf("failed to write-notification categories to disk: %w", err)
 	}
 
 	return nil
 }
 
 // Load notification categories.
-func (ln *linuxNotifier) loadCategories() error {
-	configDir, err := ln.getConfigDir()
+func (m *Notification) loadCategories() error {
+	configDir, err := m.getConfigDir()
 	if err != nil {
 		return err
 	}
@@ -401,44 +438,40 @@ func (ln *linuxNotifier) loadCategories() error {
 		return fmt.Errorf("failed to read notification categories from disk: %w", err)
 	}
 
-	categories := make(map[string]NotificationCategory)
+	categories := make(map[string]Category)
 	if err := json.Unmarshal(categoriesData, &categories); err != nil {
 		return fmt.Errorf("failed to unmarshal notification categories: %w", err)
 	}
 
-	ln.categoriesLock.Lock()
-	ln.categories = categories
-	ln.categoriesLock.Unlock()
+	m.categoriesLock.Lock()
+	m.categories = categories
+	m.categoriesLock.Unlock()
 
 	return nil
 }
 
 // Setup signal handling for notification actions.
-func (ln *linuxNotifier) setupSignalHandling(ctx context.Context) error {
-	if err := ln.conn.AddMatchSignal(
-		dbus.WithMatchInterface(dbusNotificationInterface),
-		dbus.WithMatchMember("ActionInvoked"),
-	); err != nil {
+func (m *Notification) setupSignalHandling(ctx context.Context) error {
+	if err := m.conn.AddMatchSignal(dbus.WithMatchInterface(dbusNotificationInterface),
+		dbus.WithMatchMember("ActionInvoked")); err != nil {
 		return err
 	}
 
-	if err := ln.conn.AddMatchSignal(
-		dbus.WithMatchInterface(dbusNotificationInterface),
-		dbus.WithMatchMember("NotificationClosed"),
-	); err != nil {
+	if err := m.conn.AddMatchSignal(dbus.WithMatchInterface(dbusNotificationInterface),
+		dbus.WithMatchMember("NotificationClosed")); err != nil {
 		return err
 	}
 
 	c := make(chan *dbus.Signal, 10)
-	ln.conn.Signal(c)
+	m.conn.Signal(c)
 
-	go ln.handleSignals(ctx, c)
+	go m.handleSignals(ctx, c)
 
 	return nil
 }
 
 // Handle incoming D-Bus signals.
-func (ln *linuxNotifier) handleSignals(ctx context.Context, c chan *dbus.Signal) {
+func (m *Notification) handleSignals(ctx context.Context, c chan *dbus.Signal) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -447,19 +480,18 @@ func (ln *linuxNotifier) handleSignals(ctx context.Context, c chan *dbus.Signal)
 			if !ok {
 				return
 			}
-
 			switch signal.Name {
 			case dbusNotificationInterface + ".ActionInvoked":
-				ln.handleActionInvoked(signal)
+				m.handleActionInvoked(signal)
 			case dbusNotificationInterface + ".NotificationClosed":
-				ln.handleNotificationClosed(signal)
+				m.handleNotificationClosed(signal)
 			}
 		}
 	}
 }
 
 // Handle ActionInvoked signal.
-func (ln *linuxNotifier) handleActionInvoked(signal *dbus.Signal) {
+func (m *Notification) handleActionInvoked(signal *dbus.Signal) {
 	if len(signal.Body) < 2 {
 		return
 	}
@@ -474,12 +506,12 @@ func (ln *linuxNotifier) handleActionInvoked(signal *dbus.Signal) {
 		return
 	}
 
-	ln.notificationsLock.Lock()
-	notification, exists := ln.notifications[dbusID]
+	m.notificationsLock.Lock()
+	notification, exists := m.notifications[dbusID]
 	if exists {
-		delete(ln.notifications, dbusID)
+		delete(m.notifications, dbusID)
 	}
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Unlock()
 
 	if !exists {
 		return
@@ -490,7 +522,7 @@ func (ln *linuxNotifier) handleActionInvoked(signal *dbus.Signal) {
 		appActionID = actionID
 	}
 
-	response := NotificationResponse{
+	response := Response{
 		ID:               notification.ID,
 		ActionIdentifier: appActionID,
 		Title:            notification.Title,
@@ -500,13 +532,11 @@ func (ln *linuxNotifier) handleActionInvoked(signal *dbus.Signal) {
 		UserInfo:         notification.Data,
 	}
 
-	result := NotificationResult{
+	result := Result{
 		Response: response,
 	}
 
-	if ns := getNotificationService(); ns != nil {
-		ns.handleNotificationResult(result)
-	}
+	m.handleNotificationResult(result)
 }
 
 // Handle NotificationClosed signal.
@@ -515,7 +545,7 @@ func (ln *linuxNotifier) handleActionInvoked(signal *dbus.Signal) {
 // 2 - dismissed by user (click on X)
 // 3 - closed by CloseNotification call
 // 4 - undefined/reserved
-func (ln *linuxNotifier) handleNotificationClosed(signal *dbus.Signal) {
+func (m *Notification) handleNotificationClosed(signal *dbus.Signal) {
 	if len(signal.Body) < 2 {
 		return
 	}
@@ -527,22 +557,22 @@ func (ln *linuxNotifier) handleNotificationClosed(signal *dbus.Signal) {
 
 	reason, ok := signal.Body[1].(uint32)
 	if !ok {
-		reason = 0 // Unknown reason
+		reason = 0
 	}
 
-	ln.notificationsLock.Lock()
-	notification, exists := ln.notifications[dbusID]
+	m.notificationsLock.Lock()
+	notification, exists := m.notifications[dbusID]
 	if exists {
-		delete(ln.notifications, dbusID)
+		delete(m.notifications, dbusID)
 	}
-	ln.notificationsLock.Unlock()
+	m.notificationsLock.Unlock()
 
 	if !exists {
 		return
 	}
 
 	if reason == 2 {
-		response := NotificationResponse{
+		response := Response{
 			ID:               notification.ID,
 			ActionIdentifier: DefaultActionIdentifier,
 			Title:            notification.Title,
@@ -552,12 +582,21 @@ func (ln *linuxNotifier) handleNotificationClosed(signal *dbus.Signal) {
 			UserInfo:         notification.Data,
 		}
 
-		result := NotificationResult{
+		result := Result{
 			Response: response,
 		}
 
-		if ns := getNotificationService(); ns != nil {
-			ns.handleNotificationResult(result)
-		}
+		m.handleNotificationResult(result)
 	}
+}
+
+// validateNotificationOptions validates notification options
+func validateNotificationOptions(options Options) error {
+	if options.ID == "" {
+		return fmt.Errorf("notification ID cannot be empty")
+	}
+	if options.Title == "" {
+		return fmt.Errorf("notification title cannot be empty")
+	}
+	return nil
 }
