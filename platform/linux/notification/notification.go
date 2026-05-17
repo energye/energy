@@ -673,7 +673,7 @@ func (m *Notification) saveIconToDir() error {
 	if tool.IsExist(m.iconPath) {
 		return nil
 	}
-	res, err := emfs.GetProvider("energy-application-icon")
+	res, err := emfs.GetProvider("embed")
 	if err != nil {
 		return err
 	}
