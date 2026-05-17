@@ -9,20 +9,6 @@ import (
 	"unsafe"
 )
 
-// WindowEdge is a representation of GDK's GdkWindowEdge
-type WindowEdge int
-
-const (
-	WINDOW_EDGE_NORTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_WEST
-	WINDOW_EDGE_NORTH      WindowEdge = C.GDK_WINDOW_EDGE_NORTH
-	WINDOW_EDGE_NORTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_EAST
-	WINDOW_EDGE_WEST       WindowEdge = C.GDK_WINDOW_EDGE_WEST
-	WINDOW_EDGE_EAST       WindowEdge = C.GDK_WINDOW_EDGE_EAST
-	WINDOW_EDGE_SOUTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_WEST
-	WINDOW_EDGE_SOUTH      WindowEdge = C.GDK_WINDOW_EDGE_SOUTH
-	WINDOW_EDGE_SOUTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_EAST
-)
-
 const CURRENT_TIME = C.GDK_CURRENT_TIME
 
 // RGBA To create a GdkRGBA you have to use NewRGBA function.

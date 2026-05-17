@@ -33,6 +33,8 @@ func init() {
 		imports.NewTable("gtk_window_unfullscreen", 0),
 		imports.NewTable("gtk_window_set_title", 0),
 		imports.NewTable("gtk_window_get_title", 0),
+		imports.NewTable("gtk_window_begin_resize_drag", 0),
+		imports.NewTable("gtk_window_begin_move_drag", 0),
 		// container
 		imports.NewTable("gtk_container_add", 0),
 		imports.NewTable("gtk_container_remove", 0),

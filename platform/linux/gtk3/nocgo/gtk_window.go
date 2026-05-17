@@ -70,6 +70,16 @@ func (m *Window) GetTitle() string {
 	return GoStr(r)
 }
 
+// BeginResizeDrag is a wrapper around gtk_window_begin_resize_drag().
+func (m *Window) BeginResizeDrag(edge WindowEdge, button ButtonType, rootX, rootY int, timestamp uint32) {
+	gtk3.SysCall("gtk_window_begin_resize_drag", m.Instance(), uintptr(edge), uintptr(button), uintptr(rootX), uintptr(rootY), uintptr(timestamp))
+}
+
+// BeginMoveDrag is a wrapper around gtk_window_begin_move_drag().
+func (m *Window) BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp uint32) {
+	gtk3.SysCall("gtk_window_begin_resize_drag", m.Instance(), uintptr(button), uintptr(rootX), uintptr(rootY), uintptr(timestamp))
+}
+
 func (m *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
 	signalHandlerID := callback.Connect(m.Instance(), EsnConfigureEvent, callback.C_trampoline_2_void, fn, 0)
 	return signalHandlerID

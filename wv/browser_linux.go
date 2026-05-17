@@ -561,37 +561,28 @@ func (m *TWebview) initDefaultEvent() {
 			mouseCursor = value
 			lcl.Screen.SetCursor(value)
 		}
-		isDown                 bool
-		mouseDownX, mouseDownY int32
-		windowBr               types.TRect
 	)
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		if m.window != nil && m.window.Options().Frameless {
-			if !isDown {
-				br := m.BoundsRect()
-				w, h := br.Width(), br.Height()
-				x, y := event.X, event.Y
-				if (w-x) < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
-					setCursor(types.CrSizeSE, "se-resize")
-				} else if x < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
-					setCursor(types.CrSizeSW, "sw-resize")
-				} else if x < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
-					setCursor(types.CrSizeNW, "nw-resize")
-				} else if (w-x) < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
-					setCursor(types.CrSizeNE, "ne-resize")
-				} else if x < frameWidth {
-					setCursor(types.CrSizeW, "w-resize")
-				} else if y < frameHeight {
-					setCursor(types.CrSizeN, "n-resize")
-				} else if (h - y) < frameHeight {
-					setCursor(types.CrSizeS, "s-resize")
-				} else if (w - x) < frameWidth {
-					setCursor(types.CrSizeE, "e-resize")
-				} else {
-					setCursor(types.CrDefault, "")
-				}
-			} else if isDown && mouseCursor != types.CrDefault {
-				return m.resize(isDown, windowBr, mouseDownX, mouseDownY)
+			br := m.BoundsRect()
+			w, h := br.Width(), br.Height()
+			x, y := event.X, event.Y
+			if (w-x) < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeSE, "se-resize")
+			} else if x < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeSW, "sw-resize")
+			} else if x < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeNW, "nw-resize")
+			} else if (w-x) < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeNE, "ne-resize")
+			} else if x < frameWidth {
+				setCursor(types.CrSizeW, "w-resize")
+			} else if y < frameHeight {
+				setCursor(types.CrSizeN, "n-resize")
+			} else if (h - y) < frameHeight {
+				setCursor(types.CrSizeS, "s-resize")
+			} else if (w - x) < frameWidth {
+				setCursor(types.CrSizeE, "e-resize")
 			} else {
 				setCursor(types.CrDefault, "")
 			}
@@ -600,22 +591,18 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		if m.window != nil && m.window.Options().Frameless {
-			isDown = true
 			if mouseCursor != types.CrDefault && m.window != nil {
-				pos := lcl.Mouse.CursorPos()
-				mouseDownX, mouseDownY = pos.X, pos.Y
-				windowBr = m.window.BoundsRect()
+				m.beginResize(event.XRoot, event.YRoot, event.Time)
 				return true
 			}
 		}
 		return false
 	})
-	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		if m.window != nil && m.window.Options().Frameless {
-			isDown = false
-		}
-		return false
-	})
+	//m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
+	//	if m.window != nil && m.window.Options().Frameless {
+	//	}
+	//	return false
+	//})
 }
 
 func (m *TWebview) initDefaultDragEvent() {
@@ -730,53 +717,4 @@ func (m *TWebview) initDefaultDragEvent() {
 		}
 		return false
 	})
-}
-
-func (m *TWebview) resize(isDown bool, windowBr types.TRect, mouseDownX, mouseDownY int32) bool {
-	if !isDown || m.resizeHT == "" || m.window == nil {
-		return false
-	}
-	currentX := windowBr.Left
-	currentY := windowBr.Top
-	currentW := windowBr.Width()
-	currentH := windowBr.Height()
-
-	pos := lcl.Mouse.CursorPos()
-	mouseMoveX, mouseMoveY := pos.X, pos.Y
-	dx := mouseMoveX - mouseDownX
-	dy := mouseMoveY - mouseDownY
-
-	newX, newY := currentX, currentY
-	newW, newH := currentW, currentH
-
-	switch m.resizeHT {
-	case "se-resize": // 右下角
-		newW = currentW + dx
-		newH = currentH + dy
-	case "sw-resize": // 左下角
-		newW = currentW - dx
-		newH = currentH + dy
-		newX = currentX + dx
-	case "nw-resize": // 左上角
-		newW = currentW - dx
-		newH = currentH - dy
-		newX = currentX + dx
-		newY = currentY + dy
-	case "ne-resize": // 右上角
-		newW = currentW + dx
-		newH = currentH - dy
-		newY = currentY + dy
-	case "w-resize": // 左
-		newW = currentW - dx
-		newX = currentX + dx
-	case "n-resize": // 上
-		newH = currentH - dy
-		newY = currentY + dy
-	case "s-resize": // 下
-		newH = currentH + dy
-	case "e-resize": // 右
-		newW = currentW + dx
-	}
-	m.window.SetBounds(newX, newY, newW, newH)
-	return true
 }

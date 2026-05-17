@@ -103,6 +103,8 @@ type IWindow interface {
 	Unfullscreen()
 	SetTitle(title string)
 	GetTitle() string
+	BeginResizeDrag(edge WindowEdge, button ButtonType, rootX, rootY int, timestamp uint32)
+	BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp uint32)
 	SetOnMap(fn TMapEvent) ISignalHandlerID
 	SetOnDraw(fn TDrawEvent) ISignalHandlerID
 	SetOnConfigure(fn TConfigureEvent) ISignalHandlerID

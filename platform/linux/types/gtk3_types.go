@@ -361,3 +361,17 @@ const (
 	// STATUS_INVALID_MESH_CONSTRUCTION Status = C.CAIRO_STATUS_INVALID_MESH_CONSTRUCTION (since 1.12)
 	// STATUS_DEVICE_FINISHED           Status = C.CAIRO_STATUS_DEVICE_FINISHED (since 1.12)
 )
+
+// WindowEdge is a representation of GDK's GdkWindowEdge
+type WindowEdge int
+
+const (
+	GDK_WINDOW_EDGE_NORTH_WEST WindowEdge = 0 // 左上
+	GDK_WINDOW_EDGE_NORTH      WindowEdge = 1 // 上
+	GDK_WINDOW_EDGE_NORTH_EAST WindowEdge = 2 // 右上
+	GDK_WINDOW_EDGE_WEST       WindowEdge = 3 // 左
+	GDK_WINDOW_EDGE_EAST       WindowEdge = 4 // 右
+	GDK_WINDOW_EDGE_SOUTH_WEST WindowEdge = 5 // 左下
+	GDK_WINDOW_EDGE_SOUTH      WindowEdge = 6 // 下
+	GDK_WINDOW_EDGE_SOUTH_EAST WindowEdge = 7 // 右下
+)
