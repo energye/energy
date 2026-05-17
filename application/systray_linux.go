@@ -177,7 +177,7 @@ func (m *TTrayMenu) SetImageList(pngImagePathList []string) *TTrayImageList {
 //   - embed: 嵌入文件系统接口，用于读取嵌入的图片资源
 //   - pngImageEmbedPathList: PNG图片的嵌入路径列表
 //   - size: 图片尺寸
-func (m *TTrayMenu) SetImageListEmbed(embed emfs.IResourceProvider, pngImageEmbedPathList []string) *TTrayImageList {
+func (m *TTrayMenu) SetImageListEmbed(embed emfs.IEmbedFS, pngImageEmbedPathList []string) *TTrayImageList {
 	m.mustImageList()
 	imageListAddPng := func(imagePath string, name string, index int32) {
 		data, err := embed.ReadFile(imagePath)

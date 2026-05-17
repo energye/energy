@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/v3/application"
 	platformLinux "github.com/energye/energy/v3/platform/linux"
 	"github.com/energye/energy/v3/platform/linux/webkit2gtk"
-	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
@@ -29,8 +28,8 @@ var (
 )
 
 // Init 全局初始化, 需手动调用的函数
-func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) *Application {
-	lcl.Init(libs, resources)
+func Init() *Application {
+	lcl.Init()
 	wv.Init()
 	return NewApplication()
 }

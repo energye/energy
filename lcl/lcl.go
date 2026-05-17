@@ -11,7 +11,6 @@
 package lcl
 
 import (
-	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 )
 
@@ -21,8 +20,8 @@ func SetOnBeforeRun(fn func()) {
 	beforeRun = append(beforeRun, fn)
 }
 
-func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
-	lcl.Init(libs, resources)
+func Init() {
+	lcl.Init()
 }
 
 func Run(forms ...lcl.IEngForm) {
