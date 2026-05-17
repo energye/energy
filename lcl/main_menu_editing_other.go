@@ -16,4 +16,5 @@ func isWebview(control lcl.IWinControl) IMenuEditing {
 	if control == nil {
 		return nil
 	}
+	return nil
 }
