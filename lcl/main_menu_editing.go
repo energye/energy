@@ -106,7 +106,7 @@ func (m *TMenuEditing) init() {
 func (m *TMenuEditing) CutActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] cut-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] cut-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).CutToClipboard()
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -120,7 +120,7 @@ func (m *TMenuEditing) CutActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) CutActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] cut-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] cut-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TCustomEditClass()) {
 			edit := lcl.AsCustomEdit(activeControl)
 			enable := edit.Enabled() && !edit.ReadOnly()
@@ -141,7 +141,7 @@ func (m *TMenuEditing) CutActionOnUpdate(sender lcl.IObject) {
 func (m *TMenuEditing) CopyActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] copy-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] copy-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).CopyToClipboard()
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -155,7 +155,7 @@ func (m *TMenuEditing) CopyActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) CopyActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] copy-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] copy-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TCustomEditClass()) {
 			edit := lcl.AsCustomEdit(activeControl)
 			enable := edit.Enabled() && !edit.ReadOnly()
@@ -176,7 +176,7 @@ func (m *TMenuEditing) CopyActionOnUpdate(sender lcl.IObject) {
 func (m *TMenuEditing) PasteActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] paste-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] paste-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).PasteFromClipboard(true)
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -190,7 +190,7 @@ func (m *TMenuEditing) PasteActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) PasteActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] paste-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] paste-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TCustomEditClass()) {
 			edit := lcl.AsCustomEdit(activeControl)
 			enable := edit.Enabled() && !edit.ReadOnly()
@@ -211,7 +211,7 @@ func (m *TMenuEditing) PasteActionOnUpdate(sender lcl.IObject) {
 func (m *TMenuEditing) SelectAllActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] selectAll-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] selectAll-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).SelectAll()
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -226,7 +226,7 @@ func (m *TMenuEditing) SelectAllActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) SelectAllActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] selectAll-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] selectAll-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TCustomEditClass()) {
 			edit := lcl.AsCustomEdit(activeControl)
 			enable := edit.Enabled()
@@ -249,7 +249,7 @@ func (m *TMenuEditing) SelectAllActionOnUpdate(sender lcl.IObject) {
 func (m *TMenuEditing) UndoActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] undo-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] undo-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).Undo()
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -263,7 +263,7 @@ func (m *TMenuEditing) UndoActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) UndoActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] undo-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] undo-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TCustomEditClass()) {
 			m.UndoAction.SetEnabled(lcl.AsCustomEdit(activeControl).CanUndo())
 		} else if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
@@ -280,7 +280,7 @@ func (m *TMenuEditing) UndoActionOnUpdate(sender lcl.IObject) {
 func (m *TMenuEditing) RedoActionOnExecute(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] redo-execute class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] redo-execute class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			lcl.AsSynEdit(activeControl).Redo()
 		} else if webview := isWebview(activeControl); webview != nil {
@@ -294,7 +294,7 @@ func (m *TMenuEditing) RedoActionOnExecute(sender lcl.IObject) {
 func (m *TMenuEditing) RedoActionOnUpdate(sender lcl.IObject) {
 	activeControl := lcl.Screen.ActiveControl()
 	if activeControl != nil {
-		println("[debug] redo-update class-name:", activeControl.ClassName(), activeControl.Caption())
+		//println("[debug] redo-update class-name:", activeControl.ClassName(), activeControl.Caption())
 		if activeControl.IsObjectInstanceOf(lcl.TSynEditClass()) {
 			m.RedoAction.SetEnabled(lcl.AsSynEdit(activeControl).CanRedo())
 		} else if webview := isWebview(activeControl); webview != nil {
