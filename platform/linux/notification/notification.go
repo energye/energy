@@ -14,6 +14,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/v3/application/pack"
 	. "github.com/energye/energy/v3/platform/notification/types"
+	"github.com/energye/lcl/emfs"
+	"github.com/energye/lcl/tool"
 	"github.com/godbus/dbus/v5"
 	"os"
 	"path/filepath"
@@ -88,6 +90,12 @@ func (m *Notification) Initialize() error {
 		name = "ENERGY APP"
 	}
 	m.appName = sanitizeAppName(name)
+
+	configDir, err := m.getConfigDir()
+	if err != nil {
+		return err
+	}
+	m.iconPath = filepath.Join(configDir, "icon.png")
 
 	conn, err := dbus.ConnectSessionBus()
 	if err != nil {
@@ -165,7 +173,11 @@ func (m *Notification) SendNotification(options Options) error {
 	if err := validateNotificationOptions(options); err != nil {
 		return err
 	}
-	iconPath := "" // "file://" + m.iconPath
+	err := m.saveIconToDir()
+	iconPath := "file://" + m.iconPath
+	if err != nil {
+		iconPath = ""
+	}
 
 	hints := map[string]dbus.Variant{}
 
@@ -231,7 +243,11 @@ func (m *Notification) SendNotificationWithActions(options Options) error {
 	if err := validateNotificationOptions(options); err != nil {
 		return err
 	}
-	iconPath := "" // "file://" + m.iconPath
+	err := m.saveIconToDir()
+	iconPath := "file://" + m.iconPath
+	if err != nil {
+		iconPath = ""
+	}
 
 	m.categoriesLock.RLock()
 	category, exists := m.categories[options.CategoryID]
@@ -650,6 +666,22 @@ func (m *Notification) checkReady() error {
 	if !m.initialized || m.conn == nil {
 		return fmt.Errorf("notification service not initialized or already closed")
 	}
+	return nil
+}
+
+func (m *Notification) saveIconToDir() error {
+	if tool.IsExist(m.iconPath) {
+		return nil
+	}
+	res, err := emfs.GetProvider("energy-application-icon")
+	if err != nil {
+		return err
+	}
+	iconData, err := res.ReadFile("icon.png")
+	if err != nil {
+		return err
+	}
+	_ = os.WriteFile(m.iconPath, iconData, 0644)
 	return nil
 }
 
