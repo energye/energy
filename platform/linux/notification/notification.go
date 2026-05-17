@@ -626,28 +626,17 @@ func (m *Notification) handleActionInvoked(signal *dbus.Signal) {
 // 2 - dismissed by user (click on X)
 // 3 - closed by CloseNotification call
 // 4 - undefined/reserved
-//
-// 注意：根据常规 UX 预期，用户关闭通知（reason=2）不应触发默认动作，
-// 因此此处不再生成回调。如需此行为，请在上层通过超时或其他逻辑处理。
 func (m *Notification) handleNotificationClosed(signal *dbus.Signal) {
 	if len(signal.Body) < 2 {
 		return
 	}
-
 	dbusID, ok := signal.Body[0].(uint32)
 	if !ok {
 		return
 	}
-
 	m.notificationsLock.Lock()
-	_, exists := m.notifications[dbusID]
-	if exists {
-		delete(m.notifications, dbusID)
-	}
+	delete(m.notifications, dbusID)
 	m.notificationsLock.Unlock()
-
-	// 移除通知时不再触发任何业务回调
-	_ = exists
 }
 
 // validateNotificationOptions validates notification options
