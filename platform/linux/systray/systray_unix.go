@@ -19,8 +19,8 @@ package systray
 import (
 	"bytes"
 	"fmt"
-	"github.com/energye/energy/v3/application/internal/systray/internal/generated/menu"
-	"github.com/energye/energy/v3/application/internal/systray/internal/generated/notifier"
+	"github.com/energye/energy/v3/platform/linux/systray/internal/generated/menu"
+	"github.com/energye/energy/v3/platform/linux/systray/internal/generated/notifier"
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"

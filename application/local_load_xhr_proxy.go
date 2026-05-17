@@ -48,11 +48,11 @@ type XHRProxy struct {
 //
 //	https证书配置，如果其中某一配置为空，则跳过ssl检查, 如果证书配置错误则请求失败
 type XHRProxySSL struct {
-	FS      emfs.IEmbedFS // 证书到内置执行文件时需要设置
-	RootDir string        // 根目录 如果使用 FS 时目录名 root/path, 否则本地目录/to/root/path
-	Cert    string        // RootDir/to/path/cert.crt
-	Key     string        // RootDir/to/path/key.key
-	CARoots []string      // RootDir/to/path/ca.crt
+	FS      emfs.IResourceProvider // 证书到内置执行文件时需要设置
+	RootDir string                 // 根目录 如果使用 FS 时目录名 root/path, 否则本地目录/to/root/path
+	Cert    string                 // RootDir/to/path/cert.crt
+	Key     string                 // RootDir/to/path/key.key
+	CARoots []string               // RootDir/to/path/ca.crt
 }
 
 // HttpClient
