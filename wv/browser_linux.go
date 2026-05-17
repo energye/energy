@@ -563,6 +563,7 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	)
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
+		//println("[debug] browser OnMouseMove", event.Time)
 		if m.window != nil && m.window.Options().Frameless {
 			br := m.BoundsRect()
 			w, h := br.Width(), br.Height()
