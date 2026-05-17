@@ -685,9 +685,7 @@ func (m *Notification) saveIconToDir() error {
 	return nil
 }
 
-// sanitizeAppName 清理应用名称中的非法字符，确保可安全用作目录名
 func sanitizeAppName(name string) string {
-	// 替换 Windows/Linux 文件名中常见的非法字符为下划线
 	replacer := strings.NewReplacer(
 		"/", "_",
 		"\\", "_",
