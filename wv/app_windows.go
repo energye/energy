@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/application/pack"
 	"github.com/energye/lcl/api/libname"
-	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool/exec"
 	wv "github.com/energye/wv/windows"
@@ -39,8 +38,8 @@ func init() {
 }
 
 // Init 全局初始化, 需手动调用的函数
-func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) *Application {
-	lcl.Init(libs, resources)
+func Init() *Application {
+	lcl.Init()
 	wv.Init()
 	return NewApplication()
 }
