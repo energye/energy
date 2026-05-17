@@ -673,7 +673,7 @@ func (m *Notification) saveIconToDir() error {
 	if tool.IsExist(m.iconPath) {
 		return nil
 	}
-	res, err := emfs.GetProvider("embed")
+	res, err := emfs.GetProvider(emfs.FSName)
 	if err != nil {
 		return err
 	}
