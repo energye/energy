@@ -1,11 +1,11 @@
 github.com/ebitengine/purego v0.10.0 h1:QIw4xfpWT6GWTzaW5XEKy3HXoqrJGx1ijYHzTF0/ISU=
 github.com/ebitengine/purego v0.10.0/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
-github.com/energye/cef v1.0.3 h1:vk6auu6A3WiZ/Rw3TXwRPJ5t7vioGhOXwNa6M6fUDCw=
-github.com/energye/cef v1.0.3/go.mod h1:kJvlRZ0Y6wwZt42xP7ih/VRRxSIamQnL3DOGBtn1J84=
-github.com/energye/lcl v1.0.5 h1:bKLoJ9OhMW4QETK2DrCzXrdgmX9zHv88uH6N0ipP9XY=
-github.com/energye/lcl v1.0.5/go.mod h1:k9apUIp1r1FMg1e+S3psbS4rQigEiyOmqxMsIOOz+Rs=
-github.com/energye/wv v1.0.6 h1:iqCKw0uN2kHHICX2g05PDhY6HeU6+hPRgbtnGEJGu0Q=
-github.com/energye/wv v1.0.6/go.mod h1:nE6W5jYAbdIaseEb5igAjJqfnJmhaEtSfev61Ag12/M=
+github.com/energye/cef v1.0.5 h1:tSF4dsvTTBewWpP6CzL4XexH+zhbsRTMb4cN4Jl53XQ=
+github.com/energye/cef v1.0.5/go.mod h1:IRqPQq1y5LVBHmR8Jb/JnwslQH/0wbwVPtrPy60bJ7I=
+github.com/energye/lcl v1.0.6 h1:pKnOsZZWt+/1ugaYpIBasSXyQ97LpfmKWE2y7mT5OTM=
+github.com/energye/lcl v1.0.6/go.mod h1:k9apUIp1r1FMg1e+S3psbS4rQigEiyOmqxMsIOOz+Rs=
+github.com/energye/wv v1.0.7 h1:OuUGC2voSmFJSEC1LH5WAUnGKdCLbnRLlnMUydKN0S0=
+github.com/energye/wv v1.0.7/go.mod h1:gaB3pVrHMRN1a04N93SdfE+FklvAFgcYYW5C8YTm+Us=
 github.com/godbus/dbus/v5 v5.2.2 h1:TUR3TgtSVDmjiXOgAAyaZbYmIeP3DPkld3jgKGV8mXQ=
 github.com/godbus/dbus/v5 v5.2.2/go.mod h1:3AAv2+hPq5rdnr5txxxRwiGjPXamgoIHgz9FPBfOp3c=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=

@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/energye/cef v1.0.3
-	github.com/energye/lcl v1.0.5
-	github.com/energye/wv v1.0.6
+	github.com/energye/cef v1.0.5
+	github.com/energye/lcl v1.0.6
+	github.com/energye/wv v1.0.7
 )
