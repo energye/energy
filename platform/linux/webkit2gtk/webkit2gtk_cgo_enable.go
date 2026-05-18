@@ -23,6 +23,6 @@ func AsWebkit2(ptr unsafe.Pointer) IWebkit2 {
 	return cgo.AsWebkit2(ptr)
 }
 
-func Webkit2Ver() wvTypes.Webkit2Version {
+func Webkit2Ver() wvTypes.TWebkit2Version {
 	return cgo.Wkv
 }
