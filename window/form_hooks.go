@@ -15,54 +15,18 @@ import (
 	"github.com/energye/lcl/types"
 )
 
-type IFormHook interface{}
-
-type IFormCreateHook interface {
-	OnFormCreate(sender lcl.IObject)
+func CallFormCreate(target lcl.IFormHook, sender lcl.IObject) {
+	lcl.CallFormCreate(target, sender)
 }
 
-type IFormShowHook interface {
-	OnFormShow(sender lcl.IObject)
+func CallFormShow(target lcl.IFormHook, sender lcl.IObject) {
+	lcl.CallFormShow(target, sender)
 }
 
-type IFormCloseQueryHook interface {
-	OnFormCloseQuery(sender lcl.IObject, canClose *bool) bool
+func CallFormCloseQuery(target lcl.IFormHook, sender lcl.IObject, canClose *bool) bool {
+	return lcl.CallFormCloseQuery(target, sender, canClose)
 }
 
-type IFormCloseHook interface {
-	OnFormClose(sender lcl.IObject, closeAction *types.TCloseAction) bool
-}
-
-func CallFormCreate(target IFormHook, sender lcl.IObject) {
-	if target != nil {
-		if hook, ok := target.(IFormCreateHook); ok {
-			hook.OnFormCreate(sender)
-		}
-	}
-}
-
-func CallFormShow(target IFormHook, sender lcl.IObject) {
-	if target != nil {
-		if hook, ok := target.(IFormShowHook); ok {
-			hook.OnFormShow(sender)
-		}
-	}
-}
-
-func CallFormCloseQuery(target IFormHook, sender lcl.IObject, canClose *bool) bool {
-	if target != nil {
-		if hook, ok := target.(IFormCloseQueryHook); ok {
-			return hook.OnFormCloseQuery(sender, canClose)
-		}
-	}
-	return false
-}
-
-func CallFormClose(target IFormHook, sender lcl.IObject, closeAction *types.TCloseAction) bool {
-	if target != nil {
-		if hook, ok := target.(IFormCloseHook); ok {
-			return hook.OnFormClose(sender, closeAction)
-		}
-	}
-	return false
+func CallFormClose(target lcl.IFormHook, sender lcl.IObject, closeAction *types.TCloseAction) bool {
+	return lcl.CallFormClose(target, sender, closeAction)
 }
