@@ -18,6 +18,14 @@ import (
 	"github.com/energye/lcl/types/colors"
 )
 
+type TWindowCloseState int32
+
+const (
+	WcsOpen TWindowCloseState = iota
+	WcsClosing
+	WcsClosed
+)
+
 type IWindow interface {
 	lcl.IEngForm
 	// SetOptions 设置当前窗口配置选项
@@ -37,6 +45,7 @@ type IWindow interface {
 	IsFullScreen() bool
 	SetClose(v bool)
 	IsClose() bool
+	Close()
 	AddOnWindowStateChange(fn lcl.TNotifyEvent)
 	AddOnWindowResize(fn lcl.TNotifyEvent)
 	AddOnWindowCreate(fn lcl.TNotifyEvent)
@@ -48,7 +57,7 @@ type IWindow interface {
 type TEnergyWindow struct {
 	lcl.TEngForm
 	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
-	isClose                 bool
+	closeState              TWindowCloseState
 	flagFirstShow           bool
 	options                 *application.Options
 	oldWndPrc               uintptr
@@ -66,11 +75,21 @@ type TEnergyWindow struct {
 }
 
 func (m *TEnergyWindow) SetClose(v bool) {
-	m.isClose = v
+	if v {
+		m.closeState = WcsClosing
+	}
 }
 
 func (m *TEnergyWindow) IsClose() bool {
-	return m.isClose
+	return m.closeState == WcsClosing
+}
+
+func (m *TEnergyWindow) Close() {
+	if m.closeState == WcsClosed {
+		return
+	}
+	m.closeState = WcsClosed
+	m.TEngForm.Close()
 }
 
 func (m *TEnergyWindow) AddOnWindowStateChange(fn lcl.TNotifyEvent) {
@@ -192,6 +211,9 @@ func (m *TWindow) OnShow(sender lcl.IObject) {
 func (m *TWindow) OnCloseQuery(sender lcl.IObject, canClose *bool) {
 	for _, fn := range m.onWindowCloseQueryList {
 		fn(sender, canClose)
+	}
+	if *canClose {
+		m.closeState = WcsClosed
 	}
 }
 

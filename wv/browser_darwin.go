@@ -260,7 +260,6 @@ func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TClose
 // onWindowCloseQuery 处理窗口关闭查询事件
 // 当用户尝试关闭窗口时触发此回调函数
 func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
-	//*canClose = m.window.IsClose()
 	if !m.window.IsClose() {
 		m.window.SetClose(true)
 		m.browser.StopLoading()
@@ -268,9 +267,6 @@ func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 		m.browser.Release()
 		m.windowParent.Free()
 	}
-	//if *canClose && m.isMainWindow {
-	//	os.Exit(0)
-	//}
 }
 
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {

@@ -208,6 +208,8 @@ func (m *TWebview) Close() {
 		return
 	}
 	m.isClose = true
+	m.browser.Stop()
+	m.browser.TerminateWebProcess()
 	m.IWkWebviewParent.Free()
 	ipc.UnRegisterProcessMessage(m)
 }
@@ -254,18 +256,12 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 }
 
-// doOnWindowCloseQuery 处理窗口关闭查询事件
+// doOnWindowCloseQuery 窗口关闭查询事件
 // 当用户尝试关闭窗口时触发此回调函数
 func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
-	*canClose = m.window.IsClose()
-	if !m.window.IsClose() {
-		m.window.SetClose(true)
-		m.browser.Stop()
-		m.browser.TerminateWebProcess()
+	if *canClose {
+		m.Close()
 	}
-	//if *canClose && m.isMainWindow {
-	//	os.Exit(0)
-	//}
 }
 
 func (m *TWebview) NotifyUpdateSize() {
@@ -458,19 +454,19 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 
-	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
-		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
-			if !m.browser.IsValid() {
-				return
-			}
-			lcl.RunOnMainThreadAsync(func(id uint32) {
-				m.browser.Free()
-				if m.window != nil {
-					m.window.Close()
-				}
-			})
-		}
-	})
+	//m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
+	//	if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
+	//		if !m.browser.IsValid() {
+	//			return
+	//		}
+	//		lcl.RunOnMainThreadAsync(func(id uint32) {
+	//			if m.window != nil {
+	//				m.window.Close()
+	//			}
+	//		})
+	//	}
+	//})
+
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, jsValue wv.IWkJSValue, processId wvTypes.TWkProcessId) {
 		var handle bool
 		message := jsValue.StringValue()
