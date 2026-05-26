@@ -42,6 +42,7 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	defaultURL              string
 	isAddWindowSubview      bool
 	gtkScrolledWindow       IScrolledWindow
 	gtkCssProvider          ICssProvider
@@ -134,12 +135,11 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 
 // UpdateBrowserOptions 更新浏览器配置
 func (m *TWebview) UpdateBrowserOptions() {
-	// 1. 获取 LocalLoad 全局配置
+	// 获取 LocalLoad 全局配置
 	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
-	// 2.
 	if gApplication.onCustomSchemes != nil {
 		customSchemes := &TCustomSchemes{}
 		gApplication.onCustomSchemes(customSchemes)
@@ -176,7 +176,7 @@ func (m *TWebview) UpdateBrowserOptions() {
 				//println("CssProvider.LoadFromData:", err.Error())
 			}
 		}
-		if options.DefaultURL != "" {
+		if options.DefaultURL != "" && m.defaultURL == "" {
 			m.SetDefaultURL(options.DefaultURL)
 		}
 	}
@@ -216,7 +216,10 @@ func (m *TWebview) Close() {
 
 // SetDefaultURL 设置WebView的默认URL
 func (m *TWebview) SetDefaultURL(url string) {
-	m.browser.LoadURL(url)
+	if m.defaultURL != url {
+		m.LoadURL(url)
+	}
+	m.defaultURL = url
 }
 
 // LoadURL 加载指定的URL地址到webview中
