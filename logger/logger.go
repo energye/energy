@@ -205,10 +205,9 @@ func (l *Logger) log(level Level, msg string, args ...any) {
 }
 
 func appendHeader(b []byte, lv Level, caller bool, skip int) []byte {
-	b = append(b, '[')
-	b = appendLevel(b, lv)
-	b = append(b, "] "...)
 	b = time.Now().AppendFormat(b, timeFmt)
+	b = append(b, ' ')
+	b = appendLevel(b, lv)
 	b = append(b, ' ')
 
 	if caller {
