@@ -45,6 +45,7 @@ type TWebview struct {
 	browserId               uint32
 	isClose                 bool
 	created                 bool
+	defaultURL              string
 	executeScriptCallback   sync.Map
 	executeScriptId         int32
 	window                  window.IWindow
@@ -113,11 +114,11 @@ func (m *TWebview) UpdateBrowserOptions() {
 	if m.window != nil {
 		// 2 设置浏览器配置
 		options := m.window.Options()
-		if options.DefaultURL != "" {
+		if options.DefaultURL != "" && m.defaultURL == "" {
 			m.SetDefaultURL(options.DefaultURL)
-			//m.LoadURL(options.DefaultURL)
+		} else if m.defaultURL != "" {
+			m.SetDefaultURL(m.defaultURL)
 		}
-
 		if options.BackgroundColor != nil {
 			r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
 			color := colors.TColor(colors.RGB(r, g, b))
@@ -195,7 +196,10 @@ func (m *TWebview) Close() {
 
 // SetDefaultURL 设置WebView的默认URL
 func (m *TWebview) SetDefaultURL(url string) {
-	m.browser.SetDefaultURL(url)
+	if m.defaultURL != url {
+		m.browser.SetDefaultURL(url)
+	}
+	m.defaultURL = url
 }
 
 // LoadURL 加载指定的URL地址到webview中

@@ -178,6 +178,8 @@ func (m *TWebview) UpdateBrowserOptions() {
 		}
 		if options.DefaultURL != "" && m.defaultURL == "" {
 			m.SetDefaultURL(options.DefaultURL)
+		} else if m.defaultURL != "" {
+			m.SetDefaultURL(m.defaultURL)
 		}
 	}
 }

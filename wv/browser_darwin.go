@@ -42,6 +42,7 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	defaultURL              string
 	menu                    lcl.IPopupMenu
 	window                  window.IDarwinWindow
 	oldBounds               types.TRect
@@ -154,8 +155,10 @@ func (m *TWebview) UpdateBrowserOptions() {
 	}
 	if m.window != nil {
 		options := m.window.Options()
-		if options.DefaultURL != "" {
-			m.browser.LoadURL(options.DefaultURL)
+		if options.DefaultURL != "" && m.defaultURL == "" {
+			m.SetDefaultURL(options.DefaultURL)
+		} else if m.defaultURL != "" {
+			m.SetDefaultURL(m.defaultURL)
 		}
 		m.wkWebView.SetWebviewTransparent(options.WebviewTransparent)
 	}
@@ -220,7 +223,10 @@ func (m *TWebview) Close() {
 
 // SetDefaultURL 设置WebView的默认URL
 func (m *TWebview) SetDefaultURL(url string) {
-	m.browser.LoadURL(url)
+	if m.defaultURL != url {
+		m.LoadURL(url)
+	}
+	m.defaultURL = url
 }
 
 // LoadURL 加载指定的URL地址到webview中
