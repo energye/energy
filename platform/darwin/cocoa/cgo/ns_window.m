@@ -394,3 +394,97 @@ TRect WindowContentViewFrame(void* nsWindow) {
     rect.Bottom = rect.Top + (int32_t)round(height);
     return rect;
 }
+
+#pragma mark - Appearance Observer
+
+// 全局 observer 映射: nsWindow pointer -> TAppearanceObserver*
+static NSMutableDictionary<NSValue *, id> *_appearanceObservers = nil;
+
+@interface TAppearanceObserver : NSObject
+@property (assign) NSWindow *window;
+@property (assign) TEventCallback _callback;
+@end
+
+@implementation TAppearanceObserver
+
+- (void)startObserving {
+    if (!_appearanceObservers) {
+        _appearanceObservers = [[NSMutableDictionary alloc] init];
+    }
+    NSValue *key = [NSValue valueWithPointer:(const void *)self.window];
+    _appearanceObservers[key] = self;
+
+    [[NSDistributedNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(themeChanged:)
+               name:@"AppleInterfaceThemeChangedNotification"
+             object:nil];
+}
+
+- (void)stopObserving {
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
+    if (_appearanceObservers) {
+        NSValue *key = [NSValue valueWithPointer:(const void *)self.window];
+        [_appearanceObservers removeObjectForKey:key];
+    }
+}
+
+- (void)themeChanged:(NSNotification *)notification {
+    if (self._callback) {
+        BOOL isDark = IsDarkAppearance();
+        NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventAppearanceChanged, self.window];
+        TCallbackContext *context = CreateCallbackContext(eventId, @"", isDark ? 1 : 0, nil, self.window);
+        GoArguments *result;
+        @try {
+            result = self._callback(context);
+        } @finally {
+            if (result) {
+                FreeGoArguments(result);
+            }
+            FreeCallbackContext(context);
+        }
+    }
+}
+
+- (void)dealloc {
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
+@end
+
+BOOL IsDarkAppearance() {
+    NSAppearanceName appearanceName = [[NSApp effectiveAppearance]
+        bestMatchFromAppearancesWithNames:@[
+            NSAppearanceNameAqua,
+            NSAppearanceNameDarkAqua
+        ]];
+    return [appearanceName isEqualToString:NSAppearanceNameDarkAqua];
+}
+
+void StartAppearanceObserver(void* nsWindow, TEventCallback callback) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        NSLog(@"StartAppearanceObserver window is nil");
+        return;
+    }
+    TAppearanceObserver *observer = [[TAppearanceObserver alloc] init];
+    observer.window = window;
+    observer._callback = callback;
+    [observer startObserving];
+}
+
+void StopAppearanceObserver(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+    if (!window) {
+        return;
+    }
+    if (_appearanceObservers) {
+        NSValue *key = [NSValue valueWithPointer:(const void *)window];
+        TAppearanceObserver *observer = _appearanceObservers[key];
+        if (observer) {
+            [observer stopObserving];
+            [observer release];
+        }
+    }
+}

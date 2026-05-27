@@ -90,6 +90,7 @@ type IStyleContext interface {
 	IObject
 	AddClass(class_name string)
 	RemoveClass(class_name string)
+	HasClass(className string) bool
 	AddProvider(provider IStyleProvider, prio uint)
 }
 
@@ -135,6 +136,11 @@ type ICssProvider interface {
 	LoadFromPath(path string) error
 	LoadFromData(data string) error
 	ToString() string
+}
+
+type ISettings interface {
+	IObject
+	SetOnThemeChanged(fn TThemeChangedEvent) ISignalHandlerID
 }
 
 type IRectangle interface {

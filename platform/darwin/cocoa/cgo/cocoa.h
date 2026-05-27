@@ -10,7 +10,8 @@ typedef enum {
     TWindowEventEnterFullScreen = 10000,
     TWindowEventExitFullScreen = 10001,
     TWindowEventWillUseFullScreenPresentationOptions = 10002,
-    TWindowEventDidResize = 10003
+    TWindowEventDidResize = 10003,
+    TWindowEventAppearanceChanged = 10004
 } TWindowEvent;
 
 // 颜色

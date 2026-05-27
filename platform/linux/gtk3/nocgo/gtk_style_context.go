@@ -37,6 +37,11 @@ func (m *StyleContext) RemoveClass(class_name string) {
 	gtk3.SysCall("gtk_style_context_remove_class", m.Instance(), CStr(class_name))
 }
 
+func (m *StyleContext) HasClass(className string) bool {
+	r := gtk3.SysCall("gtk_style_context_has_class", m.Instance(), CStr(className))
+	return ToGoBool(r)
+}
+
 // AddProvider is a wrapper around gtk_style_context_add_provider().
 func (m *StyleContext) AddProvider(provider IStyleProvider, prio uint) {
 	gtk3.SysCall("gtk_style_context_add_provider", m.Instance(), provider.Instance(), uintptr(prio))

@@ -94,6 +94,8 @@ func (m *TWindow) UpdateWindowOption() {
 	m.SetWindowRadius()
 	m.Frameless()
 	m.TitleBar()
+	// 启动系统主题变更监听
+	m.startThemeObserver()
 }
 
 func (m *TWindow) SetWindowState(value types.TWindowState) {
@@ -130,4 +132,11 @@ func (m *TWindow) ExitFullScreen() {
 			m.nsWindow.ExitFullScreen()
 		})
 	}
+}
+
+func (m *TWindow) startThemeObserver() {
+	m.nsWindow.SetOnThemeChanged(func(isDark bool) {
+		m.doOnThemeChange(isDark)
+	})
+	m.nsWindow.StartThemeObserver()
 }

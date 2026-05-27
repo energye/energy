@@ -13,6 +13,7 @@
 package window
 
 import (
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/platform/linux/gtk3"
 	gtk3Types "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/lcl/lcl"
@@ -186,6 +187,49 @@ func (m *TWindow) UpdateWindowOption() {
 		m.SetCaption(m.options.Caption)
 		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 	}
+	// 启动系统主题变更监听
+	m.startThemeObserver()
+}
+
+// IsCurrentlyDarkMode 检测当前 GTK 主题是否为暗色主题
+// 通过检查背景色亮度判断
+func (m *TWindow) IsCurrentlyDarkMode() bool {
+	styleCtx := m.gtkWindow.GetStyleContext()
+	// 获取背景色，通过亮度判断是否为暗色主题
+	// GTK3 中可以通过 gtk_style_context_lookup_color 获取 "theme_bg_color"
+	// 这里使用一个简化的方式：检查 "dark" CSS 类
+	// 大多数暗色主题（如 Adwaita-dark）会添加 "dark" 类
+	if styleCtx.HasClass("dark") {
+		return true
+	}
+	return false
+}
+
+// UpdateTheme 更新主题
+func (m *TWindow) UpdateTheme() {
+	if m.options == nil {
+		return
+	}
+	isDark := false
+	switch m.options.Linux.Theme {
+	case application.SystemDefault:
+		isDark = m.IsCurrentlyDarkMode()
+	case application.Dark:
+		isDark = true
+	case application.Light:
+		isDark = false
+	}
+	m.doOnThemeChange(isDark)
+}
+
+func (m *TWindow) startThemeObserver() {
+	settings := gtk3.SettingsGetDefault()
+	if settings == nil {
+		return
+	}
+	settings.SetOnThemeChanged(func(sender gtk3Types.PGtkWidget, pspec uintptr, userData gtk3Types.GPointer) {
+		m.UpdateTheme()
+	})
 }
 
 func (m *TWindow) FullScreen() {

@@ -28,7 +28,8 @@ import (
 
 type NSWindow struct {
 	NSResponder
-	frostedView INSVisualEffectView
+	frostedView    INSVisualEffectView
+	onThemeChanged func(isDark bool)
 }
 
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
@@ -68,6 +69,15 @@ func (m *NSWindow) registerEvents() {
 		result := new(GoArguments)
 		result.Add(defaultOptions)
 		return result
+	}))
+	windowAppearanceChangedEventId := fmt.Sprintf("%d_%v", TWindowEventAppearanceChanged, nsWindow)
+	RegisterEvent(windowAppearanceChangedEventId, MakeDelegateEvent(func(arguments *OCGoArguments, owner Pointer, sender Pointer) *GoArguments {
+		isDark := false
+		if arguments != nil {
+			isDark = arguments.GetInt(0) != 0
+		}
+		m.doAppearanceChanged(isDark)
+		return nil
 	}))
 }
 
@@ -182,4 +192,26 @@ func (m *NSWindow) doWindowDidExitFullScreen() {
 func (m *NSWindow) doWindowWillUseFullScreenPresentationOptions(options NSApplicationPresentationOptions) NSApplicationPresentationOptions {
 	//println("[DEBUG] WindowWillUseFullScreenPresentationOptions options:", options)
 	return options
+}
+
+func (m *NSWindow) doAppearanceChanged(isDark bool) {
+	if m.onThemeChanged != nil {
+		m.onThemeChanged(isDark)
+	}
+}
+
+func (m *NSWindow) SetOnThemeChanged(fn func(isDark bool)) {
+	m.onThemeChanged = fn
+}
+
+func (m *NSWindow) StartThemeObserver() {
+	C.StartAppearanceObserver(unsafe.Pointer(m.Instance()), C.TEventCallback(C.doOnWindowDelegateEvent))
+}
+
+func (m *NSWindow) StopThemeObserver() {
+	C.StopAppearanceObserver(unsafe.Pointer(m.Instance()))
+}
+
+func IsDarkMode() bool {
+	return bool(C.IsDarkAppearance())
 }

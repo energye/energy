@@ -67,6 +67,7 @@ func init() {
 		// StyleContext
 		imports.NewTable("gtk_style_context_add_class", 0),
 		imports.NewTable("gtk_style_context_remove_class", 0),
+		imports.NewTable("gtk_style_context_has_class", 0),
 		imports.NewTable("gtk_style_context_add_provider", 0),
 		// SelectionData
 		imports.NewTable("gtk_selection_data_get_length", 0),
@@ -84,6 +85,8 @@ func init() {
 		imports.NewTable("gtk_entry_get_text_length", 0),
 		// drag
 		imports.NewTable("gtk_drag_get_data", 0),
+		// settings
+		imports.NewTable("gtk_settings_get_default", 0),
 	}
 	gtk3.SetLibClose()
 	gtk3.MapperIndex()

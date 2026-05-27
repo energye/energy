@@ -92,3 +92,7 @@ func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 func NewCssProvider() ICssProvider {
 	return cgo.NewCssProvider()
 }
+
+func SettingsGetDefault() ISettings {
+	return cgo.SettingsGetDefault()
+}

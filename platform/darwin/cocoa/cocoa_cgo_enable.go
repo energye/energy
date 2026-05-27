@@ -33,3 +33,7 @@ func WrapNSDraggingInfo(data unsafe.Pointer) INSDraggingInfo {
 func WrapNSPasteboard(data unsafe.Pointer) INSPasteboard {
 	return cgo.WrapNSPasteboard(data)
 }
+
+func IsDarkMode() bool {
+	return cgo.IsDarkMode()
+}

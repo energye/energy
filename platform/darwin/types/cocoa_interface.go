@@ -53,6 +53,9 @@ type INSWindow interface {
 	SwitchFrostedMaterial(appearanceName string)
 	AddSubview(view INSView, x, y, width, height float32)
 	ContentViewFrame() (rect types.TRect)
+	SetOnThemeChanged(fn func(isDark bool))
+	StartThemeObserver()
+	StopThemeObserver()
 }
 
 type INSWindowDelegate interface {

@@ -18,6 +18,7 @@ const (
 	TWindowEventExitFullScreen                       TWindowEvent = 10001
 	TWindowEventWillUseFullScreenPresentationOptions TWindowEvent = 10002
 	TWindowEventDidResize                            TWindowEvent = 10003
+	TWindowEventAppearanceChanged                    TWindowEvent = 10004
 )
 
 type NSAutoresizingMaskOptions = int

@@ -42,6 +42,9 @@ void UpdateFrostedViewBounds(void* nsFrostedView, void* nsWindow);
 
 TWindowDelegate* CreateWindowDelegate(void* nsWindow, TEventCallback callback);
 TRect WindowContentViewFrame(void* nsWindow);
+void StartAppearanceObserver(void* nsWindow, TEventCallback callback);
+void StopAppearanceObserver(void* nsWindow);
+BOOL IsDarkAppearance();
 
 
 #ifdef __cplusplus

@@ -415,6 +415,8 @@ static GtkCssProvider *toGtkCssProvider(void *p) {
   return (GTK_CSS_PROVIDER(p));
 }
 
+static GtkSettings *toGtkSettings(void *p) { return (GTK_SETTINGS(p)); }
+
 static GtkStyleContext *toGtkStyleContext(void *p) {
   return (GTK_STYLE_CONTEXT(p));
 }

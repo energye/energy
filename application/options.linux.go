@@ -12,5 +12,6 @@ package application
 
 type Linux struct {
 	HardwareGPU THardwareGPU
+	Theme       Theme // 跟随系统主题设置, SystemDefault, Dark, Light
 	// TODO add titlebar
 }

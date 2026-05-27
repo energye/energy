@@ -19,7 +19,8 @@ import (
 
 type NSWindow struct {
 	NSResponder
-	frostedView INSVisualEffectView
+	frostedView    INSVisualEffectView
+	onThemeChanged func(isDark bool)
 }
 
 func AsNSWindow(ptr unsafe.Pointer) INSWindow {
@@ -263,6 +264,42 @@ func (m *NSWindow) ContentViewFrame() (rect types.TRect) {
 	rect.Right = int32(topLeftX + originalFrame.Width)
 	rect.Bottom = int32(topLeftY + originalFrame.Height)
 	return rect
+}
+
+// SetOnThemeChanged 设置主题变更回调
+func (m *NSWindow) SetOnThemeChanged(fn func(isDark bool)) {
+	m.onThemeChanged = fn
+}
+
+// StartThemeObserver 开始监听系统主题变更
+func (m *NSWindow) StartThemeObserver() {
+	nsWindow := objc.ID(m.Instance())
+	// 创建 observer 实例
+	observer := objc.ID(appearanceObserverClass).Send(objc.RegisterName("new"))
+	// 设置 window 属性
+	observer.Send(objc.RegisterName("setWindow:"), uintptr(unsafe.Pointer(m)))
+	// 启动观察
+	observer.Send(objc.RegisterName("startObserving"))
+	// 保存 observer 引用到 window 的关联对象中，以便后续停止
+	nsWindow.Send(objc.RegisterName("setAssociatedObject:forKey:"),
+		observer, appearanceObserverKey, 0x301) // OBJC_ASSOCIATION_RETAIN_NONATOMIC
+}
+
+// StopThemeObserver 停止监听系统主题变更
+func (m *NSWindow) StopThemeObserver() {
+	nsWindow := objc.ID(m.Instance())
+	observer := nsWindow.Send(objc.RegisterName("associatedObjectForKey:"), appearanceObserverKey)
+	if observer != 0 {
+		observer.Send(objc.RegisterName("stopObserving"))
+		nsWindow.Send(objc.RegisterName("setAssociatedObject:forKey:"),
+			0, appearanceObserverKey, 0x301)
+	}
+}
+
+func (m *NSWindow) doAppearanceChanged(isDark bool) {
+	if m.onThemeChanged != nil {
+		m.onThemeChanged(isDark)
+	}
 }
 
 func (m *NSWindow) doWindowDidResie() {

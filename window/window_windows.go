@@ -182,6 +182,7 @@ func (m *TWindow) UpdateTheme() {
 	case application.Light:
 		isDark = false
 	}
+	m.doOnThemeChange(isDark)
 	hWnd := m.Handle()
 	win32.ChangeTheme(hWnd, isDark)
 	themeSetting := options.Windows.ThemeSetting

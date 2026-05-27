@@ -52,6 +52,8 @@ type IWindow interface {
 	AddOnWindowShow(fn lcl.TNotifyEvent)
 	AddOnWindowClose(fn lcl.TCloseEvent)
 	AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
+	// AddOnThemeChange 系统主题变更事件回调
+	AddOnThemeChange(fn func(isDark bool))
 }
 
 type TEnergyWindow struct {
@@ -72,6 +74,7 @@ type TEnergyWindow struct {
 	onWindowShowList        []lcl.TNotifyEvent
 	onWindowCloseList       []lcl.TCloseEvent
 	onWindowCloseQueryList  []lcl.TCloseQueryEvent
+	onThemeChangeList       []func(isDark bool)
 }
 
 func (m *TEnergyWindow) SetClose(v bool) {
@@ -114,6 +117,16 @@ func (m *TEnergyWindow) AddOnWindowClose(fn lcl.TCloseEvent) {
 
 func (m *TEnergyWindow) AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
 	m.onWindowCloseQueryList = append(m.onWindowCloseQueryList, fn)
+}
+
+func (m *TEnergyWindow) AddOnThemeChange(fn func(isDark bool)) {
+	m.onThemeChangeList = append(m.onThemeChangeList, fn)
+}
+
+func (m *TEnergyWindow) doOnThemeChange(isDark bool) {
+	for _, fn := range m.onThemeChangeList {
+		fn(isDark)
+	}
 }
 
 func (m *TEnergyWindow) SetOnResize(fn lcl.TNotifyEvent) {
