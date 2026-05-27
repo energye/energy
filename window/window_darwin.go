@@ -94,8 +94,8 @@ func (m *TWindow) UpdateWindowOption() {
 	m.SetWindowRadius()
 	m.Frameless()
 	m.TitleBar()
-	// 启动系统主题变更监听
-	m.startThemeObserver()
+	// TODO 启动系统主题变更监听
+	//m.startThemeObserver()
 }
 
 func (m *TWindow) SetWindowState(value types.TWindowState) {
