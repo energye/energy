@@ -263,3 +263,43 @@ func PtInRegion(x, y int32, rectX, rectY, rectWidth, rectHeight int32) bool {
 	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
 	return x >= rectX && x <= rectX+rectWidth && y >= rectY && y <= rectY+rectHeight
 }
+
+func (m *TWindow) UpdateConfigProperty() {
+	if m.options != nil {
+		if !m.options.Frameless {
+			if m.options.DisableResize {
+				m.SetBorderStyleToFormBorderStyle(types.BsSingle)
+				m.EnabledMaximize(false)
+			}
+			if m.options.DisableMinimize {
+				m.EnabledMinimize(false)
+			}
+			if m.options.DisableMaximize {
+				m.EnabledMaximize(false)
+			}
+			if m.options.DisableSystemMenu {
+				m.EnabledSystemMenu(false)
+			}
+		}
+		constr := m.Constraints()
+		if m.options.MaxWidth > 0 || m.options.MaxHeight > 0 {
+			constr.SetMaxWidth(m.options.MaxWidth)
+			constr.SetMaxHeight(m.options.MaxHeight)
+		}
+		if m.options.MinWidth > 0 || m.options.MinHeight > 0 {
+			constr.SetMinWidth(m.options.MinWidth)
+			constr.SetMinHeight(m.options.MinHeight)
+		}
+		if m.options.Width <= 0 {
+			m.options.Width = m.Width()
+		}
+		if m.options.Height <= 0 {
+			m.options.Height = m.Height()
+		}
+		if m.Caption() == "" {
+			m.SetCaption(m.options.Caption)
+		}
+
+		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
+	}
+}

@@ -69,14 +69,6 @@ func (m *TWindow) _BeforeFormShow() {
 
 func (m *TWindow) UpdateWindowOption() {
 	if m.options != nil {
-		if m.options.Width <= 0 {
-			m.options.Width = m.Width()
-		}
-		if m.options.Height <= 0 {
-			m.options.Height = m.Height()
-		}
-		m.SetCaption(m.options.Caption)
-		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 		if m.options.MacOS.UseWindowDelegate {
 			m.nsDelegate = cocoa.NewWindowDelegate(m.nsWindow)
 		}
@@ -90,6 +82,7 @@ func (m *TWindow) UpdateWindowOption() {
 			r, g, b, a := uint8(m.options.BackgroundColor.R), uint8(m.options.BackgroundColor.G), uint8(m.options.BackgroundColor.B), uint8(m.options.BackgroundColor.A)
 			m.SetBackgroundColor(r, g, b, a)
 		}
+		m.UpdateConfigProperty()
 	}
 	m.SetWindowRadius()
 	m.Frameless()
