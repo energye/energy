@@ -62,6 +62,12 @@ type TGdkEventFocus struct {
 
 // const
 
+const (
+	ColorSchemePreferLight  = 0
+	ColorSchemePreferDark   = 1
+	ColorSchemeHighContrast = 2
+)
+
 type StyleProviderPriority = uint
 
 const (

@@ -26,6 +26,8 @@ const (
 	WcsClosed
 )
 
+type TOnThemeChange func(isDark bool)
+
 type IWindow interface {
 	lcl.IEngForm
 	// SetOptions 设置当前窗口配置选项
@@ -52,8 +54,7 @@ type IWindow interface {
 	AddOnWindowShow(fn lcl.TNotifyEvent)
 	AddOnWindowClose(fn lcl.TCloseEvent)
 	AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
-	// AddOnThemeChange 系统主题变更事件回调
-	AddOnThemeChange(fn func(isDark bool))
+	SetOnThemeChange(fn TOnThemeChange)
 }
 
 type TEnergyWindow struct {
@@ -74,7 +75,7 @@ type TEnergyWindow struct {
 	onWindowShowList        []lcl.TNotifyEvent
 	onWindowCloseList       []lcl.TCloseEvent
 	onWindowCloseQueryList  []lcl.TCloseQueryEvent
-	onThemeChangeList       []func(isDark bool)
+	onThemeChange           TOnThemeChange
 }
 
 func (m *TEnergyWindow) SetClose(v bool) {
@@ -119,13 +120,13 @@ func (m *TEnergyWindow) AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
 	m.onWindowCloseQueryList = append(m.onWindowCloseQueryList, fn)
 }
 
-func (m *TEnergyWindow) AddOnThemeChange(fn func(isDark bool)) {
-	m.onThemeChangeList = append(m.onThemeChangeList, fn)
+func (m *TEnergyWindow) SetOnThemeChange(fn TOnThemeChange) {
+	m.onThemeChange = fn
 }
 
 func (m *TEnergyWindow) doOnThemeChange(isDark bool) {
-	for _, fn := range m.onThemeChangeList {
-		fn(isDark)
+	if m.onThemeChange != nil {
+		m.onThemeChange(isDark)
 	}
 }
 

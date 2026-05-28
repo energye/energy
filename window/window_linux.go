@@ -18,6 +18,7 @@ import (
 	gtk3Types "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
+	"github.com/godbus/dbus/v5"
 	"unsafe"
 )
 
@@ -191,18 +192,30 @@ func (m *TWindow) UpdateWindowOption() {
 	m.startThemeObserver()
 }
 
-// IsCurrentlyDarkMode 检测当前 GTK 主题是否为暗色主题
-// 通过检查背景色亮度判断
 func (m *TWindow) IsCurrentlyDarkMode() bool {
-	styleCtx := m.gtkWindow.GetStyleContext()
-	// 获取背景色，通过亮度判断是否为暗色主题
-	// GTK3 中可以通过 gtk_style_context_lookup_color 获取 "theme_bg_color"
-	// 这里使用一个简化的方式：检查 "dark" CSS 类
-	// 大多数暗色主题（如 Adwaita-dark）会添加 "dark" 类
-	if styleCtx.HasClass("dark") {
-		return true
+	conn, err := dbus.SessionBus()
+	if err != nil {
+		return false
 	}
-	return false
+	//defer conn.Close()
+	obj := conn.Object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
+	call := obj.Call("org.freedesktop.portal.Settings.Read", 0, "org.freedesktop.appearance", "color-scheme")
+	if call.Err != nil {
+		return false
+	}
+	var result dbus.Variant
+	if err := call.Store(&result); err != nil {
+		return false
+	}
+	innerVariant, ok := result.Value().(dbus.Variant)
+	if !ok {
+		return false
+	}
+	colorScheme, ok := innerVariant.Value().(uint32)
+	if !ok {
+		return false
+	}
+	return colorScheme == gtk3Types.ColorSchemePreferDark
 }
 
 // UpdateTheme 更新主题

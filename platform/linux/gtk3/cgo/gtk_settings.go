@@ -45,7 +45,7 @@ func AsSettings(ptr unsafe.Pointer) *Settings {
 }
 
 func (v *Settings) native() *C.GtkSettings {
-	return toGtkSettings(unsafe.Pointer(v.Instance()))
+	return C.toGtkSettings(unsafe.Pointer(v.Instance()))
 }
 
 func (v *Settings) SetOnThemeChanged(fn types.TThemeChangedEvent) types.ISignalHandlerID {

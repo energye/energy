@@ -653,3 +653,23 @@ _gtk_tree_selection_set_select_function(GtkTreeSelection *selection,
       selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data,
       (GDestroyNotify)(gotk3_callbackDelete));
 }
+
+// Helper: get a string property from a GObject
+static inline const gchar* _g_object_get_string_property(GObject *object, const gchar *property_name) {
+  GValue value = G_VALUE_INIT;
+  g_value_init(&value, G_TYPE_STRING);
+  g_object_get_property(object, property_name, &value);
+  const gchar *str = g_value_get_string(&value);
+  g_value_unset(&value);
+  return str;
+}
+
+// Helper: get a boolean property from a GObject
+static inline gboolean _g_object_get_boolean_property(GObject *object, const gchar *property_name) {
+  GValue value = G_VALUE_INIT;
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_object_get_property(object, property_name, &value);
+  gboolean b = g_value_get_boolean(&value);
+  g_value_unset(&value);
+  return b;
+}
