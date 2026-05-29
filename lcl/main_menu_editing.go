@@ -45,30 +45,37 @@ func NewMenuEditing(owner lcl.IComponent) *TMenuEditing {
 	m := &TMenuEditing{ActionList: lcl.NewActionList(owner)}
 
 	m.CutAction = lcl.NewEditCut(m.ActionList)
+	m.CutAction.SetName("MenuActionCut")
 	m.CutAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+X"))
 	m.CutAction.SetCaption("剪切")
 
 	m.CopyAction = lcl.NewEditCopy(m.ActionList)
+	m.CopyAction.SetName("MenuActionCopy")
 	m.CopyAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+C"))
 	m.CopyAction.SetCaption("复制")
 
 	m.PasteAction = lcl.NewEditPaste(m.ActionList)
+	m.PasteAction.SetName("MenuActionPaste")
 	m.PasteAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+V"))
 	m.PasteAction.SetCaption("粘贴")
 
 	m.SelectAllAction = lcl.NewEditSelectAll(m.ActionList)
+	m.SelectAllAction.SetName("MenuActionSelectAll")
 	m.SelectAllAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+A"))
 	m.SelectAllAction.SetCaption("全选")
 
 	m.UndoAction = lcl.NewEditUndo(m.ActionList)
+	m.UndoAction.SetName("MenuActionUndo")
 	m.UndoAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+Z"))
 	m.UndoAction.SetCaption("撤销")
 
 	m.RedoAction = lcl.NewAction(m.ActionList)
+	m.RedoAction.SetName("MenuActionRedo")
 	m.RedoAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+Shift+Z"))
 	m.RedoAction.SetCaption("恢复")
 
 	m.DeleteAction = lcl.NewEditDelete(m.ActionList)
+	m.DeleteAction.SetName("MenuActionDelete")
 	m.DeleteAction.SetShortCut(api.TextToShortCut(PlatformControl() + "+Del"))
 	m.DeleteAction.SetCaption("删除")
 
