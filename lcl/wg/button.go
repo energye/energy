@@ -71,7 +71,6 @@ type TButton struct {
 	alpha                              byte            // 透明度 0 ~ 255
 	radius                             int32           // 圆角度
 	autoSize                           bool            // 自动大小
-	text                               string          // 文本
 	RoundedCorner                      TRoundedCorners // 按钮圆角方向，默认四角
 	TextOffSetX, TextOffSetY           int32           // 文本显示偏移位置
 	IconCloseOffSetX, IconCloseOffSetY int32           // 关闭按钮偏移位置
@@ -327,7 +326,7 @@ func (m *TButton) move(sender lcl.IObject, shift types.TShiftState, X int32, Y i
 }
 
 func (m *TButton) drawRoundedGradientButton(canvas lcl.ICanvas, rect types.TRect) {
-	text := m.text
+	text := m.ICustomGraphicControl.Caption()
 	var color *TButtonColor
 	switch m.buttonState {
 	case BsDefault:
@@ -443,11 +442,11 @@ func (m *TButton) SetCaption(value string) {
 }
 
 func (m *TButton) Caption() string {
-	return m.text
+	return m.Text()
 }
 
 func (m *TButton) SetText(value string) {
-	m.text = value
+	m.ICustomGraphicControl.SetCaption(value)
 	m.AutoSizeWidth()
 }
 
@@ -464,7 +463,7 @@ func (m *TButton) AutoSizeWidth() {
 				if m.iconClose.Width() > 0 {
 					rightArea = iconMargin + m.iconClose.Width() + iconMargin
 				}
-				textWidth := m.Canvas().TextWidthWithStr(m.text)
+				textWidth := m.Canvas().TextWidthWithStr(m.ICustomGraphicControl.Caption())
 				width := textWidth + leftArea + rightArea + iconMargin*2
 				if m.Width() != width {
 					m.SetWidth(width)
@@ -477,7 +476,7 @@ func (m *TButton) AutoSizeWidth() {
 }
 
 func (m *TButton) Text() string {
-	return m.text
+	return m.ICustomGraphicControl.Caption()
 }
 
 // SetAutoSize 设置按钮的自动大小属性
