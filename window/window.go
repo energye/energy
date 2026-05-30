@@ -203,7 +203,6 @@ func (m *TWindow) Options() *application.Options {
 
 func (m *TWindow) FormCreate(sender lcl.IObject) {
 	if m.options == nil {
-		// 获取全局配置
 		if application.GApplication != nil {
 			m.SetOptions(application.GApplication.Options)
 		}
@@ -281,6 +280,9 @@ func (m *TWindow) UpdateConfigProperty() {
 				m.EnabledSystemMenu(false)
 			}
 		}
+		if m.Caption() == "" {
+			m.SetCaption(m.options.Caption)
+		}
 		constr := m.Constraints()
 		if m.options.MaxWidth > 0 || m.options.MaxHeight > 0 {
 			constr.SetMaxWidth(m.options.MaxWidth)
@@ -290,16 +292,25 @@ func (m *TWindow) UpdateConfigProperty() {
 			constr.SetMinWidth(m.options.MinWidth)
 			constr.SetMinHeight(m.options.MinHeight)
 		}
+		windowBr := m.BoundsRect()
 		if m.options.Width <= 0 {
-			m.options.Width = m.Width()
+			m.options.Width = windowBr.Width()
 		}
 		if m.options.Height <= 0 {
-			m.options.Height = m.Height()
+			m.options.Height = windowBr.Height()
 		}
-		if m.Caption() == "" {
-			m.SetCaption(m.options.Caption)
+		if m.options.X != 0 {
+			windowBr.Left = m.options.X
 		}
-
-		m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
+		if m.options.Y != 0 {
+			windowBr.Top = m.options.Y
+		}
+		if m.options.Width > 0 {
+			windowBr.SetWidth(m.options.Width)
+		}
+		if m.options.Height > 0 {
+			windowBr.SetHeight(m.options.Height)
+		}
+		m.SetBoundsRect(windowBr)
 	}
 }

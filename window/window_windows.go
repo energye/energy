@@ -76,7 +76,6 @@ func (m *TWindow) UpdateWindowOption() {
 		if m.options.BackgroundColor != nil {
 			r, g, b := byte(m.options.BackgroundColor.R), byte(m.options.BackgroundColor.G), byte(m.options.BackgroundColor.B)
 			color := colors.TColor(colors.RGB(r, g, b))
-			_ = color
 			m.SetColor(color)
 			win32.SetBackgroundColor(hWnd, r, g, b)
 		}
