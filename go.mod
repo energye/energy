@@ -1,13 +1,16 @@
-module github.com/energye/energy/v2
+module github.com/energye/energy/v3
 
-go 1.16
-
-require github.com/energye/golcl v1.1.2
+go 1.20
 
 require (
-	github.com/godbus/dbus/v5 v5.1.0
-	github.com/mattn/go-pointer v0.0.1
-	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c
-	golang.org/x/image v0.12.0
-	golang.org/x/sys v0.12.0
+	github.com/energye/cef v1.0.5
+	github.com/energye/lcl v1.0.9
+	github.com/energye/wv v1.0.10
+)
+
+require (
+	github.com/ebitengine/purego v0.10.0
+	github.com/godbus/dbus/v5 v5.2.2
+	github.com/google/uuid v1.6.0
+	golang.org/x/sys v0.30.0
 )

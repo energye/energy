@@ -3,3 +3,5 @@
 *.h linguist-language=go
 *.html linguist-language=go
 *.m linguist-language=go
+
+* text=auto eol=lf

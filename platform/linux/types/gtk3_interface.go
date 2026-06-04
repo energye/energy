@@ -1,0 +1,272 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+package types
+
+import (
+	"github.com/energye/lcl/types/colors"
+	"unsafe"
+)
+
+type ISignalHandlerID interface {
+	Disconnect()
+}
+
+type IObject interface {
+	Instance() uintptr
+	Ref()
+	Unref()
+}
+
+type IScreen interface {
+	IObject
+	GetRGBAVisual() IVisual
+	IsComposited() bool
+}
+
+type IVisual interface {
+	IObject
+}
+
+type IWidget interface {
+	IObject
+	GetScreen() IScreen
+	SetVisual(visual IVisual)
+	SetAppPaintable(paintable bool)
+	GetName() string
+	GetAllocation() IRectangle
+	SetSizeRequest(width, height int)
+	GetSizeRequest() (width, height int)
+	GetStyleContext() IStyleContext
+	GrabFocus()
+	DragGetData(context IDragContext, target IAtom, time uint)
+	IsContainer() bool
+}
+
+type IContainer interface {
+	IWidget
+	Add(w IWidget)
+	Remove(w IWidget)
+	CheckResize()
+	GetChildren() IList
+}
+
+type IBin interface {
+	IContainer
+}
+
+type IBox interface {
+	IContainer
+	PackStart(child IWidget, expand, fill bool, padding uint)
+	PackEnd(child IWidget, expand, fill bool, padding uint)
+}
+
+type IStyleProvider interface {
+	Instance() uintptr
+}
+
+type IList interface {
+	Instance() uintptr
+	Append(data uintptr) IList
+	Prepend(data uintptr) IList
+	Insert(data uintptr, position int) IList
+	Length() uint
+	NthDataRaw(n uint) unsafe.Pointer
+	Next() IList
+	Previous() IList
+	First() IList
+	Last() IList
+	Free()
+}
+
+type IStyleContext interface {
+	IObject
+	AddClass(class_name string)
+	RemoveClass(class_name string)
+	HasClass(className string) bool
+	AddProvider(provider IStyleProvider, prio uint)
+}
+
+type IWindow interface {
+	IBin
+	GetDefaultSize() (width, height int)
+	SetDecorated(setting bool)
+	Maximize()
+	Unmaximize()
+	Fullscreen()
+	Unfullscreen()
+	SetTitle(title string)
+	GetTitle() string
+	BeginResizeDrag(edge WindowEdge, button ButtonType, rootX, rootY int, timestamp uint32)
+	BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp uint32)
+	SetOnMap(fn TMapEvent) ISignalHandlerID
+	SetOnDraw(fn TDrawEvent) ISignalHandlerID
+	SetOnConfigure(fn TConfigureEvent) ISignalHandlerID
+}
+
+type IMenuShell interface {
+	IContainer
+}
+
+type IScrolledWindow interface {
+	IBin
+}
+
+type IMenuBar interface {
+	IMenuShell
+}
+
+type ILayout interface {
+	IContainer
+	Put(w IWidget, x, y int)
+	Move(w IWidget, x, y int)
+	SetSize(width, height uint)
+	GetSize() (width, height uint)
+}
+
+type ICssProvider interface {
+	IObject
+	LoadFromPath(path string) error
+	LoadFromData(data string) error
+	ToString() string
+}
+
+type ISettings interface {
+	IObject
+	SetOnThemeChanged(fn TThemeChangedEvent) ISignalHandlerID
+}
+
+type IRectangle interface {
+	GetX() int
+	SetX(x int)
+	GetY() int
+	SetY(y int)
+	GetWidth() int
+	SetWidth(width int)
+	GetHeight() int
+	SetHeight(height int)
+}
+
+type IDragContext interface {
+	IObject
+	ListTargets() IList
+	Finish(success bool, del bool, time uint)
+	Status(actions DragAction, time uint)
+}
+
+type ISelectionData interface {
+	Instance() uintptr
+	GetLength() int
+	GetData() []byte
+	SetData(atom TAtom, data []byte)
+	GetText() string
+	SetText(text string) bool
+	SetURIs(uris []string) bool
+	GetURIs() []string
+	Free()
+}
+
+type IAtom interface {
+	Name() string
+	Atom() TAtom
+}
+
+type IEvent interface {
+	Instance() uintptr
+	Free()
+	ScanCode() int
+}
+
+type IEventKey interface {
+	IEvent
+	KeyVal() uint
+	HardwareKeyCode() uint16
+	Type() EventType
+	State() uint
+}
+
+type IEventButton interface {
+	IEvent
+	X() float64
+	Y() float64
+	XRoot() float64
+	YRoot() float64
+	Button() ButtonType
+	State() uint
+	Time() uint32
+	Type() EventType
+}
+
+type IEventCrossing interface {
+	IEvent
+	X() float64
+	Y() float64
+	XRoot() float64
+	YRoot() float64
+	State() uint
+	Time() uint32
+	Type() EventType
+	Mode() CrossingMode
+	Detail() NotifyType
+	Focus() bool
+}
+
+type IEventConfigure interface {
+	IEvent
+	X() int
+	Y() int
+	Width() int
+	Height() int
+	Type() EventType
+}
+
+type IContext interface {
+	Instance() uintptr
+	Status() Status
+}
+
+type IEntry interface {
+	IWidget
+	SetText(text string)
+	GetText() string
+	GetTextLength() uint16
+	SetOnChanged(fn TTextChangedEvent) ISignalHandlerID
+	SetOnCommit(fn TTextCommitEvent) ISignalHandlerID
+	SetOnKeyPress(fn TTextKeyEvent) ISignalHandlerID
+	SetOnKeyRelease(fn TTextKeyEvent) ISignalHandlerID
+}
+
+type IWebkit2 interface {
+	IWidget
+	OpenDevTools()
+	SetBackgroundColor(color *colors.TARGB)
+	SetOnDragDataReceived(fn TDragDataReceivedEvent) ISignalHandlerID
+	SetOnDragDrop(fn TDragDropEvent) ISignalHandlerID
+	SetOnDragMotion(fn TDragMotionEvent) ISignalHandlerID
+	SetOnDragLeave(fn TDragLeaveEvent) ISignalHandlerID
+	SetOnDragDataDelete(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnDragBegin(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnDragEnd(fn TDragDataDeleteOrBeginOrEndEvent) ISignalHandlerID
+	SetOnFocusIn(fn TFocusInEvent) ISignalHandlerID
+	SetOnFocusOut(fn TFocusOutEvent) ISignalHandlerID
+	Undo()
+	CanUndo() bool
+	Redo()
+	CanRedo() bool
+	Cut()
+	CanCut() bool
+	Copy()
+	CanCopy() bool
+	Paste()
+	CanPaste() bool
+	Delete()
+	CanDelete() bool
+	SelectAll()
+}
