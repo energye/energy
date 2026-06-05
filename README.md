@@ -47,15 +47,14 @@ English
 
 ### Features
 
-> - Native and Web can be used together (hybrid) or independently
-> - Self-hosted GUI designer: Energy Designer
-> - Hundreds of native controls, rich CEF API, and a lightweight Webview system runtime
-> - Simple development environment — only Go and the Energy rendering runtime are required
-> - Go backend: window management, CEF API encapsulation & configuration, feature implementation, various UI component creation, low-level system calls, and anything JavaScript cannot handle (e.g. file streams, encryption, high-performance processing)
-> - Web frontend: HTML + CSS + JavaScript handles the client UI — build any interface you want
-> - Frontend tech: supports mainstream frontend frameworks
-> - Event-driven: high-performance event-driven IPC communication for fast invocation and data exchange between Go and the Web layer
-> - Resource loading: load local resources or resources embedded into the executable directly, without an HTTP server; HTTP server loading is also supported
+> - **Three rendering engines**: LCL native controls (lightweight, system look), Webview system runtime (WebView2 / WebKit2, no extra dependencies), CEF full Chromium (complete browser capabilities). Use them together or independently
+> - **Visual designer**: Energy Designer supports drag-and-drop components, property/event configuration, and one-click run preview, generating maintainable Go source code
+> - **100+ native controls**: Based on LCL, providing 100+ system-native GUI components including buttons, grids, tree views, list views, dialogs, code editors, and more
+> - **Go + Web hybrid architecture**: Go backend handles window management, system calls, file I/O, encryption, etc.; Web frontend (HTML + CSS + JavaScript) handles UI rendering. Supports Vue, React, Angular, and other mainstream frontend frameworks
+> - **Bidirectional IPC**: High-performance event-driven IPC enabling Go and Web to call each other and exchange data, with callback support and automatic type conversion
+> - **Local resource loading**: Custom protocol scheme to load local files or Go embedded resources directly, without an HTTP server; HTTP server loading is also supported
+> - **Cross-platform**: Windows (7+), macOS (Intel / Apple Silicon), Linux (x86 / ARM)
+> - **NO CGO**: Optionally develop in pure Go — no CGO compilation required, lowering the environment setup barrier
 
 ### Development Environment
 
@@ -66,19 +65,108 @@ English
 2. Create a project from [Energy Designer](https://github.com/energye/designer) [Releases](https://github.com/energye/designer/releases)
 
 
-## Create an App in 1 Minute
+## Quick Start
 
-1. Launch Energy Designer
-2. Create a new project
-3. Drag components onto the canvas
-4. Configure properties and events
-5. Click Run to preview
+### LCL Native Mode
+
+```go
+package main
+
+import (
+	"github.com/energye/lcl/api"
+	"github.com/energye/lcl/lcl"
+)
+
+type TMainForm struct {
+	lcl.TEngForm
+}
+
+var MainForm TMainForm
+
+func main() {
+	lcl.Init()
+	lcl.RunApp(&MainForm)
+}
+
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
+	m.SetCaption("Hello Energy")
+	m.SetWidth(400)
+	m.SetHeight(300)
+	m.WorkAreaCenter()
+
+	btn := lcl.NewButton(m)
+	btn.SetParent(m)
+	btn.SetCaption("点击我")
+	btn.SetLeft(50)
+	btn.SetTop(50)
+	btn.SetOnClick(func(sender lcl.IObject) {
+		api.ShowMessage("Hello from Go!")
+	})
+}
+```
+
+### Webview Hybrid Mode
+
+```go
+package main
+
+import (
+	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/window"
+	"github.com/energye/energy/v3/wv"
+	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
+)
+
+type TForm1 struct {
+	window.TWindow
+	Webview1 wv.IWebview
+}
+
+var Form1 TForm1
+
+func (m *TForm1) FormCreate(sender lcl.IObject) {
+	m.TWindow.InternalBeforeFormCreate() // window create before call
+	m.SetCaption("Hello Energy")
+	m.SetWidth(800)
+	m.SetHeight(600)
+
+	m.Webview1 = wv.NewWebview(m)
+	m.Webview1.SetAlign(types.AlClient)
+	m.Webview1.SetParent(m)
+
+	m.TWindow.FormCreate(sender) // window widget create after call
+
+	m.Webview1.SetWindow(m)
+}
+
+func main() {
+	wvApp := wv.Init()
+	wvApp.SetOptions(application.Options{
+		DefaultURL: "https://energye.github.io",
+	})
+	wv.Run(&Form1)
+}
+```
+
+### Using Energy Designer
+
+1. Launch [Energy Designer](https://github.com/energye/designer)
+2. Create a new project, drag components onto the canvas
+3. Configure properties and events
+4. Click Run to preview
 
 ### NO CGO
 
 > Optionally develop in pure `Go` — no `CGO` compilation required
 
 ### [Examples](https://github.com/energye/examples/tree/main)
+
+### Documentation
+
+- [Introduction](https://energye.github.io/course/what-is-energy) — What is Energy
+- [Go Reference](https://pkg.go.dev/github.com/energye/energy/v2) — API Documentation
+- [DeepWiki](https://deepwiki.com/energye/energy) — Project Wiki
 
 
 ### Platform Support

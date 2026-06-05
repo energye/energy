@@ -48,15 +48,14 @@
 
 ### 特性
 
-> - 原生和 Web 可混合开发或独立使用
-> - 基于框架自举 Energy Designer GUI 设计器
-> - 上百种原生控件，丰富的 CEF 框架 API，轻量级 Webview 系统运行时框架
-> - 开发环境简单，仅需 Go 和 Energy 所需的渲染运行时库
-> - Go 后端：窗口管理、CEF API 封装与配置、功能实现、各种 UI 组件创建、系统底层调用，以及 JavaScript 处理不了的功能（如文件流、安全加密、高性能处理等）
-> - Web 前端：HTML + CSS + JavaScript 负责客户端界面的功能，做出任意你想要的界面
-> - 前端技术：支持主流前端框架
-> - 事件驱动：高性能事件驱动，基于 IPC 通信，实现 Go 和 Web 端迅捷调用及数据交互
-> - 资源加载：可无需 HTTP 服务支撑，直接读取本地资源或内置到执行文件的资源；也支持 HTTP 服务加载资源
+> - **三种渲染引擎可选**：LCL 原生控件（轻量、系统风格）、Webview 系统运行时（WebView2 / WebKit2，无需额外依赖）、CEF 完整 Chromium（全量浏览器能力）。三者可混合使用或独立使用
+> - **可视化设计器**：Energy Designer 支持拖拽组件、配置属性和事件、一键运行预览，生成可维护的 Go 源码
+> - **上百种原生控件**：基于 LCL 提供 100+ 系统原生 GUI 组件，包括按钮、表格、树形视图、列表、网格、对话框、代码编辑器等
+> - **Go + Web 混合架构**：Go 后端负责窗口管理、系统调用、文件流、安全加密等；Web 前端（HTML + CSS + JavaScript）负责界面展示，支持 Vue、React、Angular 等主流前端框架
+> - **IPC 双向通信**：基于事件驱动的高性能 IPC，Go 与 Web 端可双向调用和传递数据，支持回调和自动类型转换
+> - **本地资源加载**：支持自定义协议直接读取本地文件或 Go embed 嵌入资源，无需 HTTP 服务器；也支持 HTTP 服务加载
+> - **跨平台**：支持 Windows（7+）、macOS（Intel / Apple Silicon）、Linux（x86 / ARM）
+> - **NO CGO**：可选纯 Go 开发，无需 CGO 编译，降低环境配置门槛
 
 ### 开发环境
 
@@ -67,19 +66,108 @@
 2. 从 [Energy Designer](https://github.com/energye/designer) [Releases](https://github.com/energye/designer/releases) 创建项目
 
 
-## 1 分钟创建一个应用
+## 快速开始
 
-1. 启动 Energy Designer
-2. 新建项目
-3. 拖拽组件到画布
-4. 配置属性和事件
-5. 点击运行预览
+### LCL 原生模式
+
+```go
+package main
+
+import (
+	"github.com/energye/lcl/api"
+	"github.com/energye/lcl/lcl"
+)
+
+type TMainForm struct {
+	lcl.TEngForm
+}
+
+var MainForm TMainForm
+
+func main() {
+	lcl.Init()
+	lcl.RunApp(&MainForm)
+}
+
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
+	m.SetCaption("Hello Energy")
+	m.SetWidth(400)
+	m.SetHeight(300)
+	m.WorkAreaCenter()
+
+	btn := lcl.NewButton(m)
+	btn.SetParent(m)
+	btn.SetCaption("点击我")
+	btn.SetLeft(50)
+	btn.SetTop(50)
+	btn.SetOnClick(func(sender lcl.IObject) {
+		api.ShowMessage("Hello from Go!")
+	})
+}
+```
+
+### Webview 混合模式
+
+```go
+package main
+
+import (
+	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/window"
+	"github.com/energye/energy/v3/wv"
+	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
+)
+
+type TForm1 struct {
+	window.TWindow
+	Webview1 wv.IWebview
+}
+
+var Form1 TForm1
+
+func (m *TForm1) FormCreate(sender lcl.IObject) {
+	m.TWindow.InternalBeforeFormCreate() // window create before call
+	m.SetCaption("Hello Energy")
+	m.SetWidth(800)
+	m.SetHeight(600)
+
+	m.Webview1 = wv.NewWebview(m)
+	m.Webview1.SetAlign(types.AlClient)
+	m.Webview1.SetParent(m)
+
+	m.TWindow.FormCreate(sender) // window widget create after call
+
+	m.Webview1.SetWindow(m)
+}
+
+func main() {
+	wvApp := wv.Init()
+	wvApp.SetOptions(application.Options{
+		DefaultURL: "https://energye.github.io",
+	})
+	wv.Run(&Form1)
+}
+```
+
+### 使用 Energy Designer
+
+1. 启动 [Energy Designer](https://github.com/energye/designer)
+2. 新建项目，拖拽组件到画布
+3. 配置属性和事件
+4. 点击运行预览
 
 ### NO CGO
 
 > 可选纯 `Go` 开发，无需 `CGO` 编译
 
 ### [示例](https://github.com/energye/examples/tree/main)
+
+### 文档
+
+- [项目简介](https://energye.github.io/course/what-is-energy) — 什么是 Energy
+- [Go Reference](https://pkg.go.dev/github.com/energye/energy/v2) — API 文档
+- [DeepWiki](https://deepwiki.com/energye/energy) — 项目 Wiki
 
 
 ### 系统支持
