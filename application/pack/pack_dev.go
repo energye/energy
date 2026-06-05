@@ -10,14 +10,6 @@
 
 //go:build !prod
 
-<<<<<<<< HEAD:cmd/internal/tools/version_other.go
-package tools
-
-func VersionNumber() (majorVersion, minorVersion, buildNumber uint32) {
-	return
-}
-========
 package pack
 
 const IsDev = true
->>>>>>>> v3-alpha:application/pack/pack_dev.go

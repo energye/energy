@@ -8,12 +8,8 @@
 //
 //----------------------------------------
 
-<<<<<<<< HEAD:cmd/internal/consts/functions.go
-package consts
-========
 package nocgo
 
 type NSResponder struct {
 	NSObject
 }
->>>>>>>> v3-alpha:platform/darwin/cocoa/nocgo/ns_responder.go
