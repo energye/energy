@@ -96,7 +96,7 @@ func (m *TMainForm) FormCreate(sender lcl.IObject) {
 
 	btn := lcl.NewButton(m)
 	btn.SetParent(m)
-	btn.SetCaption("点击我")
+	btn.SetCaption("Click Me")
 	btn.SetLeft(50)
 	btn.SetTop(50)
 	btn.SetOnClick(func(sender lcl.IObject) {
