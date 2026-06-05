@@ -11,5 +11,14 @@
 package cef
 
 import (
+	"github.com/energye/cef/cef"
 	_ "github.com/energye/cef/cef"
+	"github.com/energye/lcl/lcl"
 )
+
+// Init 全局初始化, 需手动调用的函数
+func Init() *Application {
+	lcl.Init()
+	cef.Init()
+	return NewApplication()
+}
