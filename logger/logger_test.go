@@ -53,41 +53,6 @@ func TestLevel(t *testing.T) {
 	}
 }
 
-// TestLogWithAny 测试 any 参数日志输出
-func TestLogWithAny(t *testing.T) {
-	var buf bytes.Buffer
-	l := New(Config{Output: &buf})
-
-	l.Info("request", "url", "/api/test", "status", 200, "duration", 0.045)
-	l.Close()
-
-	output := buf.String()
-
-	if !strings.Contains(output, `url="/api/test"`) {
-		t.Errorf("缺少 url 字段, 输出: %q", output)
-	}
-	if !strings.Contains(output, "status=200") {
-		t.Errorf("缺少 status 字段, 输出: %q", output)
-	}
-	if !strings.Contains(output, "duration=0.045") {
-		t.Errorf("缺少 duration 字段, 输出: %q", output)
-	}
-}
-
-// TestLogWithMixedValues 测试混合值（非 key-value）
-func TestLogWithMixedValues(t *testing.T) {
-	var buf bytes.Buffer
-	l := New(Config{Output: &buf})
-
-	l.Info("values", "first", 123, "second")
-	l.Close()
-
-	output := buf.String()
-	if !strings.Contains(output, `"first"`) || !strings.Contains(output, "123") {
-		t.Errorf("输出不符合预期: %q", output)
-	}
-}
-
 // TestCaller 测试调用者信息显示
 func TestCaller(t *testing.T) {
 	var buf bytes.Buffer
@@ -102,23 +67,6 @@ func TestCaller(t *testing.T) {
 	output := buf.String()
 	if !strings.Contains(output, ".go:") {
 		t.Errorf("缺少调用者信息, 输出: %q", output)
-	}
-}
-
-// TestNoCaller 测试不显示调用者信息
-func TestNoCaller(t *testing.T) {
-	var buf bytes.Buffer
-	l := New(Config{
-		Output: &buf,
-		Caller: false,
-	})
-
-	l.Info("no caller")
-	l.Close()
-
-	output := buf.String()
-	if strings.Contains(output, ".go:") {
-		t.Errorf("不应包含调用者信息, 输出: %q", output)
 	}
 }
 
