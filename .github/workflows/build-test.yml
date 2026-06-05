@@ -32,16 +32,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mesa-utils mesa-common-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev
 
-      - name: Windows Enable CGO
-        if: matrix.os == 'windows-latest'
-        run: |
-          $env:CGO_ENABLED=1
-          go env
-        shell: powershell
-
       - name: Test
         run: |
           go mod tidy
+          go env -w CGO_ENABLED=1
+          go env
           go test -v -coverprofile="cover.out" -covermode=atomic ./...
 
       - name: Upload coverage reports to Codecov
