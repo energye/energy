@@ -51,12 +51,11 @@ func NewApplication() *Application {
 			if libCef != "" {
 				if frameworkDir := cfg.ChromiumPath(); tool.IsExist(filepath.Join(frameworkDir, libCef)) {
 					GApplication.SetCEFFrameworkDir(frameworkDir)
-					return GApplication
-				}
-				execDir := exec.AppDir()
-				if tool.IsExist(filepath.Join(execDir, libCef)) {
-					GApplication.SetCEFFrameworkDir(execDir)
-					return GApplication
+				} else {
+					execDir := exec.AppDir()
+					if tool.IsExist(filepath.Join(execDir, libCef)) {
+						GApplication.SetCEFFrameworkDir(execDir)
+					}
 				}
 			}
 		}
