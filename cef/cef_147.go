@@ -15,6 +15,8 @@ package cef
 import (
 	"github.com/energye/cef/147/cef"
 	"github.com/energye/cef/147/types"
+	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool"
 )
 
 type ICEFApplication interface {

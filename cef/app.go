@@ -91,7 +91,6 @@ func (m *Application) SetMessageLoop() {
 				GCEFWorkScheduler.ScheduleMessagePumpWork(delayMs)
 			})
 		}
-		m.SetOnScheduleMessagePumpWork(nil)
 		m.SetExternalMessagePump(true)
 		m.SetMultiThreadedMessageLoop(false)
 	} else { // Windows, Linux => LCL窗口
