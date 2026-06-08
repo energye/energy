@@ -27,7 +27,7 @@ var (
 	gWk2Context     wv.IWkWebContext
 )
 
-// Init 全局初始化, 需手动调用的函数
+// Init Webkit2Gtk Global initialization, invoked at application startup in main
 func Init() *Application {
 	lcl.Init()
 	wv.Init()

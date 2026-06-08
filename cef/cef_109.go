@@ -16,6 +16,7 @@ import (
 	"github.com/energye/cef/109/cef"
 	"github.com/energye/cef/109/types"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool"
 )
 
 type ICEFApplication interface {
@@ -26,14 +27,36 @@ type ICEFWorkScheduler interface {
 	cef.ICEFWorkScheduler
 }
 
-func NewCEFApplication() ICEFApplication {
-	return cef.NewApplication()
+type ICEFWindowParent interface {
+	cef.ICEFWinControl
+}
+
+type ICEFChromium interface {
+	cef.IChromium
 }
 
 func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
-func NewWorkScheduler(owner lcl.IComponent) ICEFWorkScheduler {
+func NewCEFApplication() ICEFApplication {
+	return cef.NewApplication()
+}
+
+func NewCEFWorkScheduler(owner lcl.IComponent) ICEFWorkScheduler {
 	return cef.NewWorkScheduler(owner)
+}
+
+func NewCEFChromium(owner lcl.IComponent) ICEFChromium {
+	return cef.NewChromium(owner)
+}
+
+func NewCEFWindowParent(chromium ICEFChromium, value lcl.IWinControl) ICEFWindowParent {
+	if tool.IsWindows() {
+		return cef.NewWindowParent(value)
+	} else {
+		windowParent := cef.NewLinkedWindowParent(value)
+		windowParent.SetChromium(chromium)
+		return windowParent
+	}
 }

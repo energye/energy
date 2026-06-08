@@ -37,7 +37,7 @@ func init() {
 	gWebView2Loader = fmt.Sprintf(gWebView2Loader, runtime.GOARCH)
 }
 
-// Init 全局初始化, 需手动调用的函数
+// Init Webview2 Global initialization, invoked at application startup in main
 func Init() *Application {
 	lcl.Init()
 	wv.Init()

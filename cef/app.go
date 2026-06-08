@@ -31,6 +31,13 @@ type Application struct {
 	ICEFApplication
 }
 
+// Init CEF Global initialization, invoked at application startup in main
+func Init() *Application {
+	lcl.Init()
+	base.Init()
+	return NewApplication()
+}
+
 func NewApplication() *Application {
 	if GApplication == nil {
 		GApplication = &Application{
@@ -78,7 +85,7 @@ func (m *Application) SetCEFFrameworkDir(path string) {
 func (m *Application) SetMessageLoop() {
 	if tool.IsDarwin() { // Darwin => LCL窗口
 		if m.IsMainProcess() {
-			GCEFWorkScheduler = NewWorkScheduler(nil)
+			GCEFWorkScheduler = NewCEFWorkScheduler(nil)
 			base.SetGlobalCEFWorkSchedule(GCEFWorkScheduler.Instance())
 			m.SetOnScheduleMessagePumpWork(func(delayMs int64) {
 				GCEFWorkScheduler.ScheduleMessagePumpWork(delayMs)
@@ -117,6 +124,9 @@ func Run(forms ...lcl.IEngForm) {
 		isSuccess := GApplication.StartMainProcess()
 		if isSuccess {
 			api.SetOnReleaseCallback(func() {
+				if GCEFWorkScheduler != nil && GCEFWorkScheduler.IsValid() {
+					GCEFWorkScheduler.Free()
+				}
 				GApplication.ICEFApplication.Free()
 			})
 			// LCL Application

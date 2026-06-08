@@ -22,7 +22,7 @@ var (
 	gApplication *Application
 )
 
-// Init 全局初始化, 需手动调用的函数
+// Init WkWebkit Global initialization, invoked at application startup in main
 func Init() *Application {
 	lcl.Init()
 	wv.Init()
