@@ -24,11 +24,11 @@ import (
 var (
 	// GApplication global application instance
 	GApplication      *Application
-	GCEFWorkScheduler ICEFWorkScheduler
+	GCEFWorkScheduler *TCEFWorkScheduler
 )
 
 type Application struct {
-	ICEFApplication
+	*TCEFApplication
 }
 
 // Init CEF Global initialization, invoked at application startup in main
@@ -41,7 +41,7 @@ func Init() *Application {
 func NewApplication() *Application {
 	if GApplication == nil {
 		GApplication = &Application{
-			ICEFApplication: NewCEFApplication(),
+			TCEFApplication: NewCEFApplication(),
 		}
 		base.SetGlobalCEFApplication(GApplication.Instance())
 	}
@@ -76,9 +76,9 @@ func NewApplication() *Application {
 
 // SetCEFFrameworkDir Set unified key paths for CEF framework
 func (m *Application) SetCEFFrameworkDir(path string) {
-	m.ICEFApplication.SetFrameworkDirPath(path)
-	m.ICEFApplication.SetResourcesDirPath(path)
-	m.ICEFApplication.SetLocalesDirPath(filepath.Join(path, "locales"))
+	m.TCEFApplication.SetFrameworkDirPath(path)
+	m.TCEFApplication.SetResourcesDirPath(path)
+	m.TCEFApplication.SetLocalesDirPath(filepath.Join(path, "locales"))
 }
 
 // SetMessageLoop 消息轮询, CEF Application 在不同的 OS 使用不同的配置
@@ -126,13 +126,13 @@ func Run(forms ...lcl.IEngForm) {
 				if GCEFWorkScheduler != nil && GCEFWorkScheduler.IsValid() {
 					GCEFWorkScheduler.Free()
 				}
-				GApplication.ICEFApplication.Free()
+				GApplication.Free()
 			})
 			// LCL Application
 			engLCL.Run(forms...)
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
 		GApplication.StartSubProcess()
-		GApplication.ICEFApplication.Free()
+		GApplication.Free()
 	}
 }

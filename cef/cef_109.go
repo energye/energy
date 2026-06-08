@@ -20,24 +20,40 @@ import (
 	"unsafe"
 )
 
-type ICEFApplication interface {
+type TCEFApplication struct {
 	cef.ICefApplication
 }
 
-type ICEFWorkScheduler interface {
+type TCEFWorkScheduler struct {
 	cef.ICEFWorkScheduler
 }
 
-type ICEFWindowParent interface {
+type TCEFWindowParent struct {
 	cef.ICEFWinControl
 }
 
-type ICEFChromium interface {
+type TCEFChromium struct {
 	cef.IChromium
+}
+
+type ICEFRequestContext interface {
+	cef.ICefRequestContext
+}
+
+type ICEFDictionaryValue interface {
+	cef.ICefDictionaryValue
 }
 
 func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
+}
+
+func (m *Application) Free() {
+	m.TCEFApplication.ICefApplication.Free()
+}
+
+func (m *TCEFWorkScheduler) Free() {
+	m.ICEFWorkScheduler.Free()
 }
 
 func (m *TChromium) SendProcessMessage(name string, targetProcess types.TCefProcessId, payload []byte) {
@@ -66,24 +82,32 @@ func (m *TChromium) SendProcessMessageToRenderer(name string, payload []byte) {
 	m.SendProcessMessage(name, types.PID_RENDERER, payload)
 }
 
-func NewCEFApplication() ICEFApplication {
-	return cef.NewApplication()
+func NewCEFApplication() *TCEFApplication {
+	m := &TCEFApplication{}
+	m.ICefApplication = cef.NewApplication()
+	return m
 }
 
-func NewCEFWorkScheduler(owner lcl.IComponent) ICEFWorkScheduler {
-	return cef.NewWorkScheduler(owner)
+func NewCEFWorkScheduler(owner lcl.IComponent) *TCEFWorkScheduler {
+	m := &TCEFWorkScheduler{}
+	m.ICEFWorkScheduler = cef.NewWorkScheduler(owner)
+	return m
 }
 
-func NewCEFChromium(owner lcl.IComponent) ICEFChromium {
-	return cef.NewChromium(owner)
+func NewCEFChromium(owner lcl.IComponent) *TCEFChromium {
+	m := &TCEFChromium{}
+	m.IChromium = cef.NewChromium(owner)
+	return m
 }
 
-func NewCEFWindowParent(chromium ICEFChromium, value lcl.IWinControl) ICEFWindowParent {
+func NewCEFWindowParent(chromium cef.IChromium, value lcl.IWinControl) *TCEFWindowParent {
+	m := &TCEFWindowParent{}
 	if tool.IsWindows() {
-		return cef.NewWindowParent(value)
+		m.ICEFWinControl = cef.NewWindowParent(value)
 	} else {
 		windowParent := cef.NewLinkedWindowParent(value)
 		windowParent.SetChromium(chromium)
-		return windowParent
+		m.ICEFWinControl = windowParent
 	}
+	return m
 }

@@ -28,19 +28,22 @@ func getNextBrowserID() uint32 {
 }
 
 type TChromium struct {
-	ICEFWindowParent
-	ICEFChromium
+	*TCEFWindowParent
+	*TCEFChromium
 	isClosed                bool
 	browserId               uint32
 	window                  window.IWindow
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
 	timer                   lcl.ITimer
+	windowName              string
+	context                 ICEFRequestContext
+	extraInfo               ICEFDictionaryValue
 }
 
 func NewChromium(owner lcl.IWinControl) *TChromium {
 	m := &TChromium{browserId: getNextBrowserID()}
-	m.ICEFChromium = NewCEFChromium(owner)
-	m.ICEFWindowParent = NewCEFWindowParent(m.ICEFChromium, owner)
+	m.TCEFChromium = NewCEFChromium(owner)
+	m.TCEFWindowParent = NewCEFWindowParent(m.TCEFChromium, owner)
 
 	const (
 		HpDisableNonProxiedUDP = 3
@@ -93,6 +96,12 @@ func (m *TChromium) SetWindow(window window.IWindow) {
 	}
 }
 
+func (m *TChromium) SetCreateBrowserExtraInfo(windowName string, context ICEFRequestContext, extraInfo ICEFDictionaryValue) {
+	m.windowName = windowName
+	m.context = context
+	m.extraInfo = extraInfo
+}
+
 func (m *TChromium) CreateBrowser() {
 	m.onTimerCreateBrowser(m.timer)
 }
@@ -120,7 +129,8 @@ func (m *TChromium) onTimerCreateBrowser(sender lcl.IObject) {
 	}
 	m.timer.SetEnabled(false)
 	rect := m.ClientRect()
-	created := m.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, "", nil, nil, false)
+	created := m.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, m.windowName,
+		m.context, m.extraInfo, false)
 	init := m.Initialized()
 	if !created && !init {
 		m.timer.SetEnabled(true)
