@@ -19,7 +19,7 @@ import (
 	"github.com/energye/lcl/tool"
 )
 
-type ICefApplication interface {
+type ICEFApplication interface {
 	cef.ICefApplication
 }
 
@@ -39,7 +39,7 @@ func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
-func NewCEFApplication() ICefApplication {
+func NewCEFApplication() ICEFApplication {
 	return cef.NewApplication()
 }
 
