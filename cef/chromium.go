@@ -11,16 +11,32 @@
 package cef
 
 import (
+	"github.com/energye/energy/v3/ipc"
+	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
+	"sync/atomic"
 )
+
+// global browser id
+var globalBrowserID uint32
+
+// return next browser id
+func getNextBrowserID() uint32 {
+	atomic.AddUint32(&globalBrowserID, 1)
+	return globalBrowserID
+}
 
 type TChromium struct {
 	ICEFWindowParent
 	ICEFChromium
+	isClosed                bool
+	browserId               uint32
+	window                  window.IWindow
+	messageReceivedDelegate ipc.IMessageReceivedDelegate
 }
 
 func NewChromium(owner lcl.IWinControl) *TChromium {
-	m := &TChromium{}
+	m := &TChromium{browserId: getNextBrowserID()}
 	m.ICEFChromium = NewCEFChromium(owner)
 	m.ICEFWindowParent = NewCEFWindowParent(m.ICEFChromium, owner)
 
@@ -32,5 +48,19 @@ func NewChromium(owner lcl.IWinControl) *TChromium {
 	m.SetWebRTCMultipleRoutes(STATE_DISABLED)
 	m.SetWebRTCNonproxiedUDP(STATE_DISABLED)
 
+	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
+	ipc.RegisterProcessMessage(m)
+
 	return m
+}
+
+func (m *TChromium) BrowserId() uint32 {
+	return m.browserId
+}
+
+func (m *TChromium) SendMessage(payload []byte) {
+	if m.isClosed || len(payload) == 0 {
+		return
+	}
+	m.SendProcessMessage("", payload)
 }
