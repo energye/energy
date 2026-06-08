@@ -106,7 +106,7 @@ func Run(forms ...lcl.IEngForm) {
 		return
 	}
 	const (
-		LOGSEVERITY_DISABLE = 99
+		LOGSEVERITY_DISABLE = 99 // cefTypes.LOGSEVERITY_DISABLE
 	)
 	GApplication.SetLogSeverity(LOGSEVERITY_DISABLE)
 	GApplication.SetEnablePrintPreview(true)

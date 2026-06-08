@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
 	"sync/atomic"
 )
 
@@ -33,6 +34,7 @@ type TChromium struct {
 	browserId               uint32
 	window                  window.IWindow
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
+	timer                   lcl.ITimer
 }
 
 func NewChromium(owner lcl.IWinControl) *TChromium {
@@ -53,6 +55,11 @@ func NewChromium(owner lcl.IWinControl) *TChromium {
 
 	m.initDefaultEvent()
 
+	m.timer = lcl.NewTimer(m)
+	m.timer.SetEnabled(false)
+	m.timer.SetInterval(500)
+	m.timer.SetOnTimer(m.onTimerCreateBrowser)
+
 	return m
 }
 
@@ -70,6 +77,59 @@ func (m *TChromium) SendMessage(payload []byte) {
 func (m *TChromium) ExecuteJavaScript(javaScript string) {
 	frame := m.Browser().GetMainFrame()
 	m.ExecuteJavaScriptWithStrX2FrameInt(javaScript, "", frame, 0)
+}
+
+func (m *TChromium) SetWindow(window window.IWindow) {
+	m.window = window
+	if m.window != nil {
+		if m.window.BrowserId() == 0 {
+			m.window.SetBrowserId(m.browserId)
+		}
+		window.AddOnWindowStateChange(m.doOnWindowStateChange)
+		window.AddOnWindowResize(m.doOnWindowResize)
+		window.AddOnWindowShow(m.doOnWindowShow)
+		window.AddOnWindowClose(m.doOnWindowClose)
+		window.AddOnWindowCloseQuery(m.doOnWindowCloseQuery)
+	}
+}
+
+func (m *TChromium) CreateBrowser() {
+	m.onTimerCreateBrowser(m.timer)
+}
+
+func (m *TChromium) doOnWindowStateChange(sender lcl.IObject) {
+}
+
+func (m *TChromium) doOnWindowResize(sender lcl.IObject) {
+}
+
+func (m *TChromium) doOnWindowShow(sender lcl.IObject) {
+	m.CreateBrowser()
+}
+
+func (m *TChromium) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+
+}
+
+func (m *TChromium) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+}
+
+func (m *TChromium) onTimerCreateBrowser(sender lcl.IObject) {
+	if m.timer == nil {
+		return
+	}
+	m.timer.SetEnabled(false)
+	rect := m.ClientRect()
+	created := m.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, "", nil, nil, false)
+	init := m.Initialized()
+	if !created && !init {
+		m.timer.SetEnabled(true)
+	} else {
+		m.UpdateSize()
+		m.timer.SetOnTimer(nil)
+		m.timer.Free()
+		m.timer = nil
+	}
 }
 
 func (m *TChromium) initDefaultEvent() {
