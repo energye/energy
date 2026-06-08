@@ -9,15 +9,3 @@
 //----------------------------------------
 
 package cef
-
-import (
-	"github.com/energye/cef/base"
-	"github.com/energye/lcl/lcl"
-)
-
-// Init 全局初始化, 需手动调用的函数
-func Init() *Application {
-	lcl.Init()
-	base.Init()
-	return NewApplication()
-}
