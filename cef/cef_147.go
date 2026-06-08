@@ -17,6 +17,7 @@ import (
 	"github.com/energye/cef/147/types"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
+	"unsafe"
 )
 
 type ICEFApplication interface {
@@ -39,7 +40,7 @@ func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
-func (m *TChromium) SendProcessMessage(name string, payload []byte) {
+func (m *TChromium) SendProcessMessage(name string, targetProcess types.TCefProcessId, payload []byte) {
 	if m.isClosed || len(payload) == 0 {
 		return
 	}
@@ -54,7 +55,15 @@ func (m *TChromium) SendProcessMessage(name string, payload []byte) {
 		messageArgumentList.Release()
 		processMessage.Release()
 	}()
-	m.SendProcessMessageWithPIdPMessageFrame(types.PID_BROWSER, processMessage, frame)
+	m.SendProcessMessageWithPIdPMessageFrame(targetProcess, processMessage, frame)
+}
+
+func (m *TChromium) SendProcessMessageToBrowser(name string, payload []byte) {
+	m.SendProcessMessage(name, types.PID_BROWSER, payload)
+}
+
+func (m *TChromium) SendProcessMessageToRenderer(name string, payload []byte) {
+	m.SendProcessMessage(name, types.PID_RENDERER, payload)
 }
 
 func NewCEFApplication() ICEFApplication {

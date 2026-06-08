@@ -51,6 +51,8 @@ func NewChromium(owner lcl.IWinControl) *TChromium {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 
+	m.initDefaultEvent()
+
 	return m
 }
 
@@ -62,5 +64,14 @@ func (m *TChromium) SendMessage(payload []byte) {
 	if m.isClosed || len(payload) == 0 {
 		return
 	}
-	m.SendProcessMessage("", payload)
+	m.SendProcessMessageToRenderer("", payload)
+}
+
+func (m *TChromium) ExecuteJavaScript(javaScript string) {
+	frame := m.Browser().GetMainFrame()
+	m.ExecuteJavaScriptWithStrX2FrameInt(javaScript, "", frame, 0)
+}
+
+func (m *TChromium) initDefaultEvent() {
+
 }
