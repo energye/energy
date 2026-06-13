@@ -12,6 +12,8 @@ package cef
 
 import (
 	"github.com/energye/cef/base"
+	"github.com/energye/cef/cef"
+	"github.com/energye/cef/cef/types"
 	"github.com/energye/cef/config"
 	engLCL "github.com/energye/energy/v3/lcl"
 	"github.com/energye/lcl/api"
@@ -24,11 +26,11 @@ import (
 var (
 	// GApplication global application instance
 	GApplication      *Application
-	GCEFWorkScheduler *TCEFWorkScheduler
+	GCEFWorkScheduler cef.ICEFWorkScheduler
 )
 
 type Application struct {
-	*TCEFApplication
+	cef.ICefApplication
 }
 
 // Init CEF Global initialization, invoked at application startup in main
@@ -41,7 +43,7 @@ func Init() *Application {
 func NewApplication() *Application {
 	if GApplication == nil {
 		GApplication = &Application{
-			TCEFApplication: NewCEFApplication(),
+			ICefApplication: cef.NewApplication(),
 		}
 		base.SetGlobalCEFApplication(GApplication.Instance())
 	}
@@ -76,16 +78,16 @@ func NewApplication() *Application {
 
 // SetCEFFrameworkDir Set unified key paths for CEF framework
 func (m *Application) SetCEFFrameworkDir(path string) {
-	m.TCEFApplication.SetFrameworkDirPath(path)
-	m.TCEFApplication.SetResourcesDirPath(path)
-	m.TCEFApplication.SetLocalesDirPath(filepath.Join(path, "locales"))
+	m.ICefApplication.SetFrameworkDirPath(path)
+	m.ICefApplication.SetResourcesDirPath(path)
+	m.ICefApplication.SetLocalesDirPath(filepath.Join(path, "locales"))
 }
 
 // SetMessageLoop 消息轮询, CEF Application 在不同的 OS 使用不同的配置
 func (m *Application) SetMessageLoop() {
 	if tool.IsDarwin() { // Darwin => LCL窗口
 		if m.IsMainProcess() {
-			GCEFWorkScheduler = NewCEFWorkScheduler(nil)
+			GCEFWorkScheduler = cef.NewWorkScheduler(nil)
 			base.SetGlobalCEFWorkSchedule(GCEFWorkScheduler.Instance())
 			m.SetOnScheduleMessagePumpWork(func(delayMs int64) {
 				GCEFWorkScheduler.ScheduleMessagePumpWork(delayMs)
@@ -98,6 +100,10 @@ func (m *Application) SetMessageLoop() {
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
 	}
+}
+
+func (m *Application) IsMainProcess() bool {
+	return m.ProcessType() == types.PtBrowser
 }
 
 func Run(forms ...lcl.IEngForm) {
@@ -126,13 +132,13 @@ func Run(forms ...lcl.IEngForm) {
 				if GCEFWorkScheduler != nil && GCEFWorkScheduler.IsValid() {
 					GCEFWorkScheduler.Free()
 				}
-				GApplication.Free()
+				GApplication.ICefApplication.Free()
 			})
 			// LCL Application
 			engLCL.Run(forms...)
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
 		GApplication.StartSubProcess()
-		GApplication.Free()
+		GApplication.ICefApplication.Free()
 	}
 }
