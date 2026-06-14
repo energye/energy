@@ -108,13 +108,11 @@ func (m *Application) IsMainProcess() bool {
 
 func Run(forms ...lcl.IEngForm) {
 	if GApplication == nil || !GApplication.IsValid() {
-		println("CEF Application 实例未初始化")
+		println("[ERROR] CEF Application Instance is not initialized")
 		return
 	}
-	const (
-		LOGSEVERITY_DISABLE = 99 // cefTypes.LOGSEVERITY_DISABLE
-	)
-	GApplication.SetLogSeverity(LOGSEVERITY_DISABLE)
+
+	GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
 	GApplication.SetEnablePrintPreview(true)
 	GApplication.SetEnablePrintPreview(true)
 	if tool.IsDarwin() {

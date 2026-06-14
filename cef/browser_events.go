@@ -38,12 +38,10 @@ func (m *TBrowser) initDefaultEvent() {
 
 func (m *TBrowser) onProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, outResult *bool) {
-
 }
 
 func (m *TBrowser) onBeforeResourceLoad(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	callback cef.ICefCallback, outResult *cefTypes.TCefReturnValue) {
-
 }
 
 func (m *TBrowser) onAdapterBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
