@@ -32,8 +32,8 @@ func getNextBrowserID() uint32 {
 }
 
 type TBrowser struct {
-	windowParentRaw         cef.ICEFWinControl
-	chromiumRaw             cef.IChromium
+	cef.ICEFWinControl
+	chromium                cef.IChromium
 	isClosed                bool
 	browserId               uint32
 	window                  window.IWindow
@@ -46,22 +46,22 @@ type TBrowser struct {
 
 func NewChromium(owner lcl.IWinControl) *TBrowser {
 	m := &TBrowser{browserId: getNextBrowserID()}
-	m.chromiumRaw = cef.NewChromium(owner)
+	m.chromium = cef.NewChromium(owner)
 	if tool.IsWindows() {
-		m.windowParentRaw = cef.NewWindowParent(owner)
+		m.ICEFWinControl = cef.NewWindowParent(owner)
 	} else {
 		windowParent := cef.NewLinkedWindowParent(owner)
-		windowParent.SetChromium(m.chromiumRaw)
-		m.windowParentRaw = windowParent
+		windowParent.SetChromium(m.chromium)
+		m.ICEFWinControl = windowParent
 	}
 
 	const (
 		HpDisableNonProxiedUDP = 3
 		STATE_DISABLED         = 2
 	)
-	m.chromiumRaw.SetWebRTCIPHandlingPolicy(HpDisableNonProxiedUDP)
-	m.chromiumRaw.SetWebRTCMultipleRoutes(STATE_DISABLED)
-	m.chromiumRaw.SetWebRTCNonproxiedUDP(STATE_DISABLED)
+	m.chromium.SetWebRTCIPHandlingPolicy(HpDisableNonProxiedUDP)
+	m.chromium.SetWebRTCMultipleRoutes(STATE_DISABLED)
+	m.chromium.SetWebRTCNonproxiedUDP(STATE_DISABLED)
 
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
@@ -80,6 +80,10 @@ func (m *TBrowser) BrowserId() uint32 {
 	return m.browserId
 }
 
+func (m *TBrowser) Chromium() cef.IChromium {
+	return m.chromium
+}
+
 func (m *TBrowser) SendMessage(payload []byte) {
 	if m.isClosed || len(payload) == 0 {
 		return
@@ -88,8 +92,8 @@ func (m *TBrowser) SendMessage(payload []byte) {
 }
 
 func (m *TBrowser) ExecuteJavaScript(javaScript string) {
-	frame := m.chromiumRaw.Browser().GetMainFrame()
-	m.chromiumRaw.ExecuteJavaScriptWithStrX2FrameInt(javaScript, "", frame, 0)
+	frame := m.chromium.Browser().GetMainFrame()
+	m.chromium.ExecuteJavaScriptWithStrX2FrameInt(javaScript, "", frame, 0)
 }
 
 func (m *TBrowser) SendProcessMessage(name string, targetProcess cefTypes.TCefProcessId, payload []byte) {
@@ -100,14 +104,14 @@ func (m *TBrowser) SendProcessMessage(name string, targetProcess cefTypes.TCefPr
 	messageArgumentList := processMessage.GetArgumentList()
 	dataBin := cef.BinaryValueRef.New(uintptr(unsafe.Pointer(&payload[0])), uint32(len(payload)))
 	messageArgumentList.SetBinary(0, dataBin)
-	frame := m.chromiumRaw.Browser().GetMainFrame()
+	frame := m.chromium.Browser().GetMainFrame()
 	defer func() {
 		dataBin.Release()
 		messageArgumentList.Clear()
 		messageArgumentList.Release()
 		processMessage.Release()
 	}()
-	m.chromiumRaw.SendProcessMessageWithPIdPMessageFrame(targetProcess, processMessage, frame)
+	m.chromium.SendProcessMessageWithPIdPMessageFrame(targetProcess, processMessage, frame)
 }
 
 func (m *TBrowser) SendProcessMessageToBrowser(name string, payload []byte) {
@@ -164,14 +168,14 @@ func (m *TBrowser) onTimerCreateBrowser(sender lcl.IObject) {
 		return
 	}
 	m.timer.SetEnabled(false)
-	rect := m.windowParentRaw.ClientRect()
-	created := m.chromiumRaw.CreateBrowserWithWHandleRectStrRContextDValueBool(m.windowParentRaw.Handle(), rect, m.windowName,
+	rect := m.ClientRect()
+	created := m.chromium.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, m.windowName,
 		m.context, m.extraInfo, false)
-	init := m.chromiumRaw.Initialized()
+	init := m.chromium.Initialized()
 	if !created && !init {
 		m.timer.SetEnabled(true)
 	} else {
-		m.windowParentRaw.UpdateSize()
+		m.UpdateSize()
 		m.timer.SetOnTimer(nil)
 		m.timer.Free()
 		m.timer = nil
