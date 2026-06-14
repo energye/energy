@@ -55,13 +55,9 @@ func NewChromium(owner lcl.IWinControl) *TBrowser {
 		m.ICEFWinControl = windowParent
 	}
 
-	const (
-		HpDisableNonProxiedUDP = 3
-		STATE_DISABLED         = 2
-	)
-	m.chromium.SetWebRTCIPHandlingPolicy(HpDisableNonProxiedUDP)
-	m.chromium.SetWebRTCMultipleRoutes(STATE_DISABLED)
-	m.chromium.SetWebRTCNonproxiedUDP(STATE_DISABLED)
+	m.chromium.SetWebRTCIPHandlingPolicy(cefTypes.HpDisableNonProxiedUDP)
+	m.chromium.SetWebRTCMultipleRoutes(cefTypes.STATE_DISABLED)
+	m.chromium.SetWebRTCNonproxiedUDP(cefTypes.STATE_DISABLED)
 
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
@@ -136,7 +132,7 @@ func (m *TBrowser) SetWindow(window window.IWindow) {
 	}
 }
 
-func (m *TBrowser) SetCreateBrowserExtraInfo(windowName string, context cef.ICefRequestContext, extraInfo cef.ICefDictionaryValue) {
+func (m *TBrowser) SetBrowserExtraInfo(windowName string, context cef.ICefRequestContext, extraInfo cef.ICefDictionaryValue) {
 	m.windowName = windowName
 	m.context = context
 	m.extraInfo = extraInfo
@@ -180,8 +176,4 @@ func (m *TBrowser) onTimerCreateBrowser(sender lcl.IObject) {
 		m.timer.Free()
 		m.timer = nil
 	}
-}
-
-func (m *TBrowser) initDefaultEvent() {
-
 }
