@@ -114,7 +114,6 @@ func Run(forms ...lcl.IEngForm) {
 
 	GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
 	GApplication.SetEnablePrintPreview(true)
-	GApplication.SetEnablePrintPreview(true)
 	if tool.IsDarwin() {
 		base.AddCrDelegate()
 		GApplication.InitLibLocationFromArgs()
@@ -124,8 +123,8 @@ func Run(forms ...lcl.IEngForm) {
 	GApplication.SetMessageLoop()
 
 	if GApplication.IsMainProcess() {
-		isSuccess := GApplication.StartMainProcess()
-		if isSuccess {
+		mainSuccess := GApplication.StartMainProcess()
+		if mainSuccess {
 			api.SetOnReleaseCallback(func() {
 				if GCEFWorkScheduler != nil && GCEFWorkScheduler.IsValid() {
 					GCEFWorkScheduler.Free()
@@ -138,5 +137,16 @@ func Run(forms ...lcl.IEngForm) {
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
 		GApplication.StartSubProcess()
 		GApplication.ICefApplication.Free()
+	} else if !GApplication.IsMainProcess() {
+		var subSuccess bool
+		subProcessPath := GApplication.BrowserSubprocessPath()
+		if subProcessPath != "" {
+			subSuccess = GApplication.StartSubProcess()
+		} else {
+			subSuccess = GApplication.StartMainProcess()
+		}
+		if subSuccess {
+
+		}
 	}
 }

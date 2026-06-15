@@ -34,6 +34,15 @@ func (m *TBrowser) initDefaultEvent() {
 	m.chromium.SetOnClose(m.onClose)
 	m.chromium.SetOnOpenUrlFromTab(m.onOpenUrlFromTab)
 	m.chromium.SetOnBeforePopup(m.onBeforePopup)
+
+	m.SetOnEnter(func(sender lcl.IObject) {
+		m.chromium.Initialized()
+		m.chromium.FrameIsFocused()
+		m.chromium.SetFocus(true)
+	})
+	m.SetOnExit(func(sender lcl.IObject) {
+		m.chromium.SendCaptureLostEvent()
+	})
 }
 
 func (m *TBrowser) onProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
