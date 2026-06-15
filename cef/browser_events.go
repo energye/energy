@@ -68,7 +68,7 @@ func (m *TBrowser) onContextMenuCommand(sender lcl.IObject, browser cef.ICefBrow
 }
 
 func (m *TBrowser) onAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-
+	println("[DEBUG]", "onAfterCreated")
 }
 
 func (m *TBrowser) onKeyEvent(sender lcl.IObject, browser cef.ICefBrowser, event cef.TCefKeyEvent, osEvent cefTypes.TCefEventHandle, outResult *bool) {
