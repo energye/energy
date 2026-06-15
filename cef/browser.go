@@ -45,7 +45,7 @@ type TBrowser struct {
 	extraInfo               cef.ICefDictionaryValue
 }
 
-func NewChromium(owner lcl.IWinControl) *TBrowser {
+func NewBrowser(owner lcl.IWinControl) *TBrowser {
 	m := &TBrowser{browserId: getNextBrowserID()}
 	m.chromium = cef.NewChromium(owner)
 	if tool.IsWindows() {
