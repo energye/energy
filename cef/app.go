@@ -25,8 +25,8 @@ import (
 
 var (
 	// GApplication global application instance
-	GApplication      *Application
-	GCEFWorkScheduler cef.ICEFWorkScheduler
+	GApplication   *Application
+	GWorkScheduler cef.ICEFWorkScheduler
 )
 
 type Application struct {
@@ -87,16 +87,16 @@ func (m *Application) SetCEFFrameworkDir(path string) {
 func (m *Application) SetMessageLoop() {
 	if tool.IsDarwin() { // Darwin => LCL窗口
 		if m.IsMainProcess() {
-			GCEFWorkScheduler = cef.NewWorkScheduler(nil)
-			base.SetGlobalCEFWorkSchedule(GCEFWorkScheduler.Instance())
+			GWorkScheduler = cef.NewWorkScheduler(nil)
+			base.SetGlobalCEFWorkSchedule(GWorkScheduler.Instance())
 			m.SetOnScheduleMessagePumpWork(func(delayMs int64) {
-				GCEFWorkScheduler.ScheduleMessagePumpWork(delayMs)
+				GWorkScheduler.ScheduleMessagePumpWork(delayMs)
 			})
 		}
 		m.SetExternalMessagePump(true)
 		m.SetMultiThreadedMessageLoop(false)
-	} else { // Windows, Linux => LCL窗口
-		// TODO Linux 需要 Gtk3
+	} else { // Windows, Linux => LCL
+		// TODO Linux Gtk3
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
 	}
@@ -126,26 +126,26 @@ func Run(forms ...lcl.IEngForm) {
 		mainSuccess := GApplication.StartMainProcess()
 		if mainSuccess {
 			api.SetOnReleaseCallback(func() {
-				if GCEFWorkScheduler != nil && GCEFWorkScheduler.IsValid() {
-					GCEFWorkScheduler.Free()
+				println("[DEBUG] Release Callback")
+				if GWorkScheduler != nil && GWorkScheduler.IsValid() {
+					GWorkScheduler.Free()
 				}
 				GApplication.ICefApplication.Free()
 			})
-			// LCL Application
 			engLCL.Run(forms...)
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
 		GApplication.StartSubProcess()
 		GApplication.ICefApplication.Free()
 	} else if !GApplication.IsMainProcess() {
-		var subSuccess bool
+		var startSubSuccess bool
 		subProcessPath := GApplication.BrowserSubprocessPath()
 		if subProcessPath != "" {
-			subSuccess = GApplication.StartSubProcess()
+			startSubSuccess = GApplication.StartSubProcess()
 		} else {
-			subSuccess = GApplication.StartMainProcess()
+			startSubSuccess = GApplication.StartMainProcess()
 		}
-		if subSuccess {
+		if startSubSuccess {
 
 		}
 	}

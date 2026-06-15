@@ -18,7 +18,6 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
-	"github.com/energye/lcl/types/colors"
 	"sync/atomic"
 	"unsafe"
 )
@@ -55,8 +54,6 @@ func NewBrowser(owner lcl.IWinControl) *TBrowser {
 		windowParent.SetChromium(m.chromium)
 		m.ICEFWinControl = windowParent
 	}
-
-	m.SetColor(colors.ClBlue)
 
 	m.chromium.SetWebRTCIPHandlingPolicy(cefTypes.HpDisableNonProxiedUDP)
 	m.chromium.SetWebRTCMultipleRoutes(cefTypes.STATE_DISABLED)
