@@ -11,6 +11,8 @@
 package cef
 
 import (
+	"errors"
+	"fmt"
 	"github.com/energye/cef/base"
 	"github.com/energye/cef/cef"
 	"github.com/energye/cef/cef/types"
@@ -41,8 +43,24 @@ func Init() *Application {
 	return NewApplication()
 }
 
+// CheckLibRuntimeVersion Check runtime library and CEF version compatibility
+func CheckLibRuntimeVersion() error {
+	major, _, _, _ := cef.LibVersion()
+	if cef.CEFVersion != major {
+		e := fmt.Sprintf("CEF version does not match the runtime library. Current CEF version: %v, Runtime library version: %v",
+			cef.CEFVersion, major)
+		return errors.New(e)
+	}
+	return nil
+}
+
 func NewApplication() *Application {
 	if GApplication == nil {
+		chkErr := CheckLibRuntimeVersion()
+		if chkErr != nil {
+			println("[ERROR]", chkErr.Error())
+			return nil
+		}
 		GApplication = &Application{
 			ICefApplication: cef.NewApplication(),
 		}
