@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
+	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/rtl"
 	"github.com/energye/lcl/tool"
@@ -84,11 +85,12 @@ func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.
 }
 
 func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-	println("[DEBUG]", "onAfterCreated")
+	logger.Debug("chromium.OnAfterCreated")
 }
 
 func (m *TBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
 	isRedirect bool, outResult *bool) {
+	logger.Debug("chromium.OnBeforeBrowse")
 	m.UpdateSize()
 }
 
@@ -118,10 +120,10 @@ func (m *TBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser
 }
 
 func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
-	println("[DEBUG] chromium.OnClose")
+	logger.Debug("chromium.OnClose")
 	if tool.IsDarwin() {
 		ok := m.DestroyChildWindow()
-		println("[DEBUG] chromium.onClose => windowParent.DestroyChildWindow() Success:", ok)
+		logger.Debug("chromium.onClose => windowParent.DestroyChildWindow() Success:", ok)
 		*action = cefTypes.CbaClose
 	} else if tool.IsLinux() {
 		*action = cefTypes.CbaClose
@@ -136,7 +138,7 @@ func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, 
 }
 
 func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
-	println("[DEBUG] chromium.OnBeforeClose")
+	logger.Debug("chromium.OnBeforeClose")
 	closeWindow := func() {
 		if m.window != nil {
 			m.canClose = true
@@ -146,7 +148,7 @@ func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBro
 				m.window.Close()
 			}
 		} else {
-			println("[ERROR] 浏览器所属窗口对象为空无法正常关闭浏览器 ")
+			logger.Error("浏览器所属窗口对象为空无法正常关闭浏览器 ")
 		}
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {

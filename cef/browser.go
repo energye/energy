@@ -14,6 +14,7 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/ipc"
+	"github.com/energye/energy/v3/logger"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
@@ -153,14 +154,17 @@ func (m *TBrowser) doOnWindowResize(sender lcl.IObject) {
 }
 
 func (m *TBrowser) doOnWindowShow(sender lcl.IObject) {
+	logger.Debug("browser.doOnWindowShow")
 	m.CreateBrowser()
 }
 
 func (m *TBrowser) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+	logger.Debug("browser.doOnWindowClose")
 	*closeAction = types.CaFree
 }
 
 func (m *TBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+	logger.Debug("browser.doOnWindowCloseQuery canClose:", m.canClose)
 	if tool.IsDarwin() {
 		*canClose = m.canClose
 	} else {
@@ -177,11 +181,13 @@ func (m *TBrowser) onTimerCreateBrowser(sender lcl.IObject) {
 	if m.timer == nil {
 		return
 	}
+	logger.Debug("browser.onTimerCreateBrowser")
 	m.timer.SetEnabled(false)
 	rect := m.ClientRect()
 	created := m.chromium.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, m.windowName,
 		m.context, m.extraInfo, false)
 	init := m.chromium.Initialized()
+	logger.Debug("browser.onTimerCreateBrowser created:", created, "init:", init)
 	if !created && !init {
 		m.timer.SetEnabled(true)
 	} else {
