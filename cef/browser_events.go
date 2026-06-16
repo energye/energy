@@ -14,108 +14,152 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/rtl"
+	"github.com/energye/lcl/tool"
+	"github.com/energye/lcl/types/messages"
 )
 
 func (m *TBrowser) initDefaultEvent() {
-	m.chromium.SetOnProcessMessageReceived(m.onProcessMessageReceived)
-	m.chromium.SetOnBeforeResourceLoad(m.onBeforeResourceLoad)
-	m.chromium.SetOnBeforeDownload(m.onBeforeDownload)
-	m.chromium.SetOnLoadStart(m.onLoadStart)
-	m.chromium.SetOnGetResourceHandler(m.onGetResourceHandler)
-	m.chromium.SetOnBeforeContextMenu(m.onBeforeContextMenu)
-	m.chromium.SetOnContextMenuCommand(m.onContextMenuCommand)
-	m.chromium.SetOnAfterCreated(m.onAfterCreated)
-	m.chromium.SetOnKeyEvent(m.onKeyEvent)
-	m.chromium.SetOnBeforeBrowse(m.onBeforeBrowse)
-	m.chromium.SetOnTitleChange(m.onTitleChange)
-	m.chromium.SetOnDragEnter(m.onDragEnter)
-	m.chromium.SetOnDraggableRegionsChanged(m.onDraggableRegionsChanged)
-	m.chromium.SetOnBeforeClose(m.onBeforeClose)
-	m.chromium.SetOnClose(m.onClose)
-	m.chromium.SetOnOpenUrlFromTab(m.onOpenUrlFromTab)
-	m.chromium.SetOnBeforePopup(m.onBeforePopup)
+	m.chromium.SetOnProcessMessageReceived(m.chromiumOnProcessMessageReceived)
 
-	m.SetOnEnter(func(sender lcl.IObject) {
-		m.chromium.Initialized()
-		m.chromium.FrameIsFocused()
-		m.chromium.SetFocus(true)
-	})
-	m.SetOnExit(func(sender lcl.IObject) {
-		m.chromium.SendCaptureLostEvent()
-	})
+	m.chromium.SetOnBeforeResourceLoad(m.chromiumOnBeforeResourceLoad)
+	m.chromium.SetOnGetResourceHandler(m.chromiumOnGetResourceHandler)
+
+	m.chromium.SetOnBeforeContextMenu(m.chromiumOnBeforeContextMenu)
+	m.chromium.SetOnContextMenuCommand(m.chromiumOnContextMenuCommand)
+
+	m.chromium.SetOnAfterCreated(m.chromiumOnAfterCreated)
+	m.chromium.SetOnBeforeBrowse(m.chromiumOnBeforeBrowse)
+
+	m.chromium.SetOnBeforeDownload(m.chromiumOnBeforeDownload)
+	m.chromium.SetOnLoadStart(m.chromiumOnLoadStart)
+	m.chromium.SetOnKeyEvent(m.chromiumOnKeyEvent)
+
+	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
+	m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
+	m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
+
+	// new tab or popup browser
+	m.chromium.SetOnOpenUrlFromTab(m.chromiumOnOpenUrlFromTab)
+	m.chromium.SetOnBeforePopup(m.chromiumOnBeforePopup)
+
+	// close browser
+	m.chromium.SetOnBeforeClose(m.chromiumOnBeforeClose)
+	m.chromium.SetOnClose(m.chromiumOnClose)
+
+	m.ICEFWinControl.SetOnEnter(m.winControlOnEnter)
+	m.ICEFWinControl.SetOnExit(m.winControlOnExit)
 }
 
-func (m *TBrowser) onProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
+func (m *TBrowser) winControlOnEnter(sender lcl.IObject) {
+	m.chromium.Initialized()
+	m.chromium.FrameIsFocused()
+	m.chromium.SetFocus(true)
+}
+
+func (m *TBrowser) winControlOnExit(sender lcl.IObject) {
+	m.chromium.SendCaptureLostEvent()
+}
+
+func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, outResult *bool) {
 }
 
-func (m *TBrowser) onBeforeResourceLoad(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
+func (m *TBrowser) chromiumOnBeforeResourceLoad(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	callback cef.ICefCallback, outResult *cefTypes.TCefReturnValue) {
 }
 
-func (m *TBrowser) onAdapterBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
-	callback cef.ICefBeforeDownloadCallback, result *bool) {
-
-}
-
-func (m *TBrowser) onLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
-
-}
-
-func (m *TBrowser) onGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
+func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
 
 }
 
-func (m *TBrowser) onBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
+func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
 
 }
 
-func (m *TBrowser) onContextMenuCommand(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams,
+func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams,
 	commandId int32, eventFlags cefTypes.TCefEventFlags, outResult *bool) {
 
 }
 
-func (m *TBrowser) onAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
+func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
 	println("[DEBUG]", "onAfterCreated")
 }
 
-func (m *TBrowser) onKeyEvent(sender lcl.IObject, browser cef.ICefBrowser, event cef.TCefKeyEvent, osEvent cefTypes.TCefEventHandle, outResult *bool) {
-
-}
-
-func (m *TBrowser) onBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
+func (m *TBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
 	isRedirect bool, outResult *bool) {
+	m.UpdateSize()
+}
+
+func (m *TBrowser) chromiumOnAdapterBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
+	callback cef.ICefBeforeDownloadCallback, result *bool) {
+
+}
+func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
 
 }
 
-func (m *TBrowser) onTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
+func (m *TBrowser) chromiumOnKeyEvent(sender lcl.IObject, browser cef.ICefBrowser, event cef.TCefKeyEvent, osEvent cefTypes.TCefEventHandle, outResult *bool) {
 
 }
 
-func (m *TBrowser) onDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
+func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
 
 }
 
-func (m *TBrowser) onDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, regionsCount cefTypes.NativeUInt,
+func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
+
+}
+
+func (m *TBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, regionsCount cefTypes.NativeUInt,
 	regions cef.ICefDraggableRegionArray) {
 
 }
 
-func (m *TBrowser) onBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
-
+func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
+	println("[DEBUG] chromium.OnClose")
+	if tool.IsDarwin() {
+		ok := m.DestroyChildWindow()
+		println("[DEBUG] chromium.onClose => windowParent.DestroyChildWindow() Success:", ok)
+		*action = cefTypes.CbaClose
+	} else if tool.IsLinux() {
+		*action = cefTypes.CbaClose
+	} else if tool.IsWindows() {
+		*action = cefTypes.CbaDelay
+	}
+	if tool.IsWindows() || tool.IsLinux() {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			m.Free()
+		})
+	}
 }
 
-func (m *TBrowser) onClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
-
+func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
+	println("[DEBUG] chromium.OnBeforeClose")
+	closeWindow := func() {
+		if m.window != nil {
+			m.canClose = true
+			if tool.IsWindows() {
+				rtl.PostMessage(m.window.Handle(), messages.WM_CLOSE, 0, 0)
+			} else if tool.IsDarwin() || tool.IsLinux() {
+				m.window.Close()
+			}
+		} else {
+			println("[ERROR] 浏览器所属窗口对象为空无法正常关闭浏览器 ")
+		}
+	}
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		closeWindow()
+	})
 }
 
-func (m *TBrowser) onOpenUrlFromTab(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, targetUrl string,
+func (m *TBrowser) chromiumOnOpenUrlFromTab(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, targetUrl string,
 	targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, outResult *bool) {
 
 }
 
-func (m *TBrowser) onAdapterBeforePopup(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, popupId int32, targetUrl string,
+func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, popupId int32, targetUrl string,
 	targetFrameName string, targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, popupFeatures cef.TCefPopupFeatures,
 	windowInfo *cef.TCefWindowInfo, client *cef.IEngClient, settings *cef.TCefBrowserSettings, extraInfo *cef.ICefDictionaryValue,
 	noJavascriptAccess *bool, result *bool) {

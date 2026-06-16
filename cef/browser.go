@@ -34,7 +34,7 @@ func getNextBrowserID() uint32 {
 type TBrowser struct {
 	cef.ICEFWinControl
 	chromium                cef.IChromium
-	isClosed                bool
+	canClose                bool
 	browserId               uint32
 	window                  window.IWindow
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
@@ -81,7 +81,7 @@ func (m *TBrowser) Chromium() cef.IChromium {
 }
 
 func (m *TBrowser) SendMessage(payload []byte) {
-	if m.isClosed || len(payload) == 0 {
+	if m.canClose || len(payload) == 0 {
 		return
 	}
 	m.SendProcessMessageToRenderer("", payload)
@@ -93,7 +93,7 @@ func (m *TBrowser) ExecuteJavaScript(javaScript string) {
 }
 
 func (m *TBrowser) SendProcessMessage(name string, targetProcess cefTypes.TCefProcessId, payload []byte) {
-	if m.isClosed || len(payload) == 0 {
+	if m.canClose || len(payload) == 0 {
 		return
 	}
 	processMessage := cef.ProcessMessageRef.New(name)
@@ -157,10 +157,20 @@ func (m *TBrowser) doOnWindowShow(sender lcl.IObject) {
 }
 
 func (m *TBrowser) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
-
+	*closeAction = types.CaFree
 }
 
 func (m *TBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+	if tool.IsDarwin() {
+		*canClose = m.canClose
+	} else {
+		*canClose = m.canClose
+	}
+	if !m.canClose {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			m.chromium.CloseBrowser(true)
+		})
+	}
 }
 
 func (m *TBrowser) onTimerCreateBrowser(sender lcl.IObject) {
