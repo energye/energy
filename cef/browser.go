@@ -122,9 +122,6 @@ func (m *TBrowser) SendProcessMessageToRenderer(name string, payload []byte) {
 func (m *TBrowser) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
-		if m.window.BrowserId() == 0 {
-			m.window.SetBrowserId(m.browserId)
-		}
 		window.AddOnWindowStateChange(m.doOnWindowStateChange)
 		window.AddOnWindowResize(m.doOnWindowResize)
 		window.AddOnWindowShow(m.doOnWindowShow)

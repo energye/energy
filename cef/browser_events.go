@@ -87,7 +87,11 @@ func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.
 }
 
 func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("Chromium.OnAfterCreated")
+	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
+	if m.window != nil && m.window.BrowserId() == 0 {
+		m.browserId = uint32(browser.GetIdentifier())
+		m.window.SetBrowserId(m.browserId)
+	}
 }
 
 func (m *TBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
@@ -122,7 +126,7 @@ func (m *TBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser
 }
 
 func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
-	logger.Debug("Chromium.OnClose")
+	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
 	if tool.IsDarwin() {
 		ok := m.DestroyChildWindow()
 		logger.Debug("Chromium.OnClose => winControl.DestroyChildWindow() Success:", ok)
@@ -140,7 +144,11 @@ func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, 
 }
 
 func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("Chromium.OnBeforeClose")
+	logger.Debug("Chromium.OnBeforeClose", browser.GetIdentifier())
+	if m.browserId != uint32(browser.GetIdentifier()) {
+		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
+		return
+	}
 	closeWindow := func() {
 		if m.window != nil {
 			m.canClose = true
