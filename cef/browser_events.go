@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/rtl"
@@ -91,6 +92,7 @@ func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBr
 	if m.window != nil && m.window.BrowserId() == 0 {
 		m.browserId = uint32(browser.GetIdentifier())
 		m.window.SetBrowserId(m.browserId)
+		ipc.RegisterProcessMessage(m)
 	}
 }
 

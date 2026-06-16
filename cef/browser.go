@@ -19,18 +19,8 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
-	"sync/atomic"
 	"unsafe"
 )
-
-// global browser id
-var globalBrowserID uint32
-
-// return next browser id
-func getNextBrowserID() uint32 {
-	atomic.AddUint32(&globalBrowserID, 1)
-	return globalBrowserID
-}
 
 type TBrowser struct {
 	cef.ICEFWinControl
@@ -46,7 +36,7 @@ type TBrowser struct {
 }
 
 func NewBrowser(owner lcl.IWinControl) *TBrowser {
-	m := &TBrowser{browserId: getNextBrowserID()}
+	m := &TBrowser{}
 	m.chromium = cef.NewChromium(owner)
 	if tool.IsWindows() {
 		m.ICEFWinControl = cef.NewWindowParent(owner)
@@ -61,7 +51,6 @@ func NewBrowser(owner lcl.IWinControl) *TBrowser {
 	m.chromium.SetWebRTCNonproxiedUDP(cefTypes.STATE_DISABLED)
 
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
-	ipc.RegisterProcessMessage(m)
 
 	m.initDefaultEvent()
 
@@ -85,7 +74,7 @@ func (m *TBrowser) SendMessage(payload []byte) {
 	if m.canClose || len(payload) == 0 {
 		return
 	}
-	m.SendProcessMessageToRenderer("", payload)
+	m.SendProcessMessageToRenderer("ipc", payload)
 }
 
 func (m *TBrowser) ExecuteJavaScript(javaScript string) {
