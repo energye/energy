@@ -108,6 +108,9 @@ func (m *TBrowser) SendProcessMessageToRenderer(name string, payload []byte) {
 	m.SendProcessMessage(name, cefTypes.PID_RENDERER, payload)
 }
 
+// SetWindow sets the window instance for webview and initializes related callback functions
+//
+//	window - Window interface instance hosting webview content
 func (m *TBrowser) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
