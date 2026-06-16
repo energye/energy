@@ -68,7 +68,7 @@ func NewBrowser(owner lcl.IWinControl) *TBrowser {
 	m.timer = lcl.NewTimer(owner)
 	m.timer.SetEnabled(false)
 	m.timer.SetInterval(500)
-	m.timer.SetOnTimer(m.onTimerCreateBrowser)
+	m.timer.SetOnTimer(m.createBrowserOnTimer)
 
 	return m
 }
@@ -140,7 +140,8 @@ func (m *TBrowser) SetBrowserExtraInfo(windowName string, context cef.ICefReques
 }
 
 func (m *TBrowser) CreateBrowser() {
-	m.onTimerCreateBrowser(m.timer)
+	logger.Debug("browser.CreateBrowser")
+	m.createBrowserOnTimer(m.timer)
 }
 
 func (m *TBrowser) doOnWindowStateChange(sender lcl.IObject) {
@@ -177,20 +178,21 @@ func (m *TBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	}
 }
 
-func (m *TBrowser) onTimerCreateBrowser(sender lcl.IObject) {
+func (m *TBrowser) createBrowserOnTimer(sender lcl.IObject) {
 	if m.timer == nil {
 		return
 	}
-	logger.Debug("browser.onTimerCreateBrowser")
 	m.timer.SetEnabled(false)
 	rect := m.ClientRect()
 	created := m.chromium.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, m.windowName,
 		m.context, m.extraInfo, false)
 	init := m.chromium.Initialized()
-	logger.Debug("browser.onTimerCreateBrowser created:", created, "init:", init)
+	logger.Debug("browser.createBrowserOnTimer created:", created, "init:", init)
 	if !created && !init {
+		logger.Debug("browser.createBrowserOnTimer fail")
 		m.timer.SetEnabled(true)
 	} else {
+		logger.Debug("browser.createBrowserOnTimer success")
 		m.UpdateSize()
 		m.timer.SetOnTimer(nil)
 		m.timer.Free()

@@ -16,6 +16,7 @@ import (
 	"github.com/energye/cef/cef/types"
 	"github.com/energye/cef/config"
 	engLCL "github.com/energye/energy/v3/lcl"
+	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
@@ -124,9 +125,10 @@ func Run(forms ...lcl.IEngForm) {
 
 	if GApplication.IsMainProcess() {
 		mainSuccess := GApplication.StartMainProcess()
+		logger.Debug("Application StartMainProcess:", mainSuccess)
 		if mainSuccess {
 			api.SetOnReleaseCallback(func() {
-				println("[DEBUG] Release Callback")
+				logger.Debug("Release Callback")
 				if GWorkScheduler != nil && GWorkScheduler.IsValid() {
 					GWorkScheduler.Free()
 				}
@@ -135,18 +137,21 @@ func Run(forms ...lcl.IEngForm) {
 			engLCL.Run(forms...)
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
+		logger.Debug("Application StartProcess 'darwin' for sub. processType:", GApplication.ProcessType())
 		GApplication.StartSubProcess()
 		GApplication.ICefApplication.Free()
 	} else if !GApplication.IsMainProcess() {
 		var startSubSuccess bool
 		subProcessPath := GApplication.BrowserSubprocessPath()
 		if subProcessPath != "" {
+			logger.Debug("Application StartProcess for sub. processType:", GApplication.ProcessType(), "subprocessPath:", subProcessPath)
 			startSubSuccess = GApplication.StartSubProcess()
 		} else {
+			logger.Debug("Application StartProcess for main. processType:", GApplication.ProcessType())
 			startSubSuccess = GApplication.StartMainProcess()
 		}
 		if startSubSuccess {
-
+			GApplication.ICefApplication.Free()
 		}
 	}
 }
