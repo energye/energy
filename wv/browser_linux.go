@@ -63,7 +63,7 @@ type TWebview struct {
 	onDragOver              TOnDragOverEvent
 }
 
-// NewWebview 创建一个新的浏览器窗口实例
+// NewWebview creates a new browser window instance
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 
@@ -104,7 +104,9 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
-// 在窗口显示时调用
+// CreateBrowser creates a browser instance
+// This method initializes the webview browser, ensures it is created only once,
+// and creates the browser window after the application initialization completes
 func (m *TWebview) CreateBrowser() {
 	if m.isCreated {
 		return
@@ -133,9 +135,9 @@ func (m *TWebview) SetWindow(iWindow window.IWindow) {
 	}
 }
 
-// UpdateBrowserOptions 更新浏览器配置
+// UpdateBrowserOptions updates browser configuration
 func (m *TWebview) UpdateBrowserOptions() {
-	// 获取 LocalLoad 全局配置
+	// retrieves global LocalLoad configuration
 	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
@@ -189,7 +191,7 @@ func (m *TWebview) BrowserId() uint32 {
 	return m.browserId
 }
 
-// SendMessage 发送消息到webview浏览器
+// SendMessage sends a message to the webview browser
 func (m *TWebview) SendMessage(payload []byte) {
 	if m.isClose {
 		return
@@ -204,7 +206,7 @@ func (m *TWebview) evalExecuteEventJS(js []byte) string {
 	return evalJS
 }
 
-// Close 关闭webview窗口并清理相关资源
+// Close closes the webview window and releases associated resources
 func (m *TWebview) Close() {
 	if m.isClose {
 		return
@@ -216,7 +218,7 @@ func (m *TWebview) Close() {
 	ipc.UnRegisterProcessMessage(m)
 }
 
-// SetDefaultURL 设置WebView的默认URL
+// SetDefaultURL sets the default URL for the WebView
 func (m *TWebview) SetDefaultURL(url string) {
 	if m.defaultURL != url {
 		m.LoadURL(url)
@@ -224,12 +226,12 @@ func (m *TWebview) SetDefaultURL(url string) {
 	m.defaultURL = url
 }
 
-// LoadURL 加载指定的URL地址到webview中
+// LoadURL loads the specified URL address into the webview
 func (m *TWebview) LoadURL(url string) {
 	m.browser.LoadURL(url)
 }
 
-// Browser 返回TWebview实例关联的浏览器对象
+// Browser returns the browser object associated with the TWebview instance
 func (m *TWebview) Browser() IBrowser {
 	return m.browser
 }
@@ -238,7 +240,7 @@ func (m *TWebview) GtkWebview() IWebkit2 {
 	return m.gtkWebview
 }
 
-// WindowParent 获取TWebview实例关联的窗口父对象
+// WindowParent obtains the parent window object associated with the TWebview instance
 func (m *TWebview) WindowParent() IWindowParent {
 	return m
 }
@@ -247,8 +249,8 @@ func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {}
 
 func (m *TWebview) doOnWindowResize(sender lcl.IObject) {}
 
-// doOnWindowShow 是窗口显示事件的回调函数
-// 当窗口显示时触发此函数，用于创建浏览器实例
+// doOnWindowShow is the callback function for window show event
+// It is triggered when the window becomes visible, responsible for creating the browser instance
 func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	if m.isCreated || m.window == nil {
 		return
@@ -256,13 +258,11 @@ func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	m.CreateBrowser()
 }
 
-// doOnWindowClose 处理窗口关闭事件的回调函数
-// 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
 func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 }
 
-// doOnWindowCloseQuery 窗口关闭查询事件
-// 当用户尝试关闭窗口时触发此回调函数
+// doOnWindowCloseQuery handles the window close query event
+// This callback is triggered when the user attempts to close the window
 func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	if *canClose {
 		m.Close()
@@ -277,19 +277,19 @@ func (m *TWebview) NotifyUpdateSize() {
 	})
 }
 
-// SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
+// SetOnBrowserAfterCreated sets the callback handler triggered after browser creation completes
 func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
 	m.onBrowserAfterCreated = fn
 }
 
-// SetOnResourceRequest 设置资源请求事件处理函数
-// 该方法用于注册一个回调函数，当webview发起资源请求时会触发此回调
+// SetOnResourceRequest sets the handler for resource request events
+// This method registers a callback function that will be triggered when the webview initiates a resource request
 func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
 	m.onResourceRequest = fn
 }
 
-// SetOnProcessMessage 设置处理进程消息的回调函数
-// 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
+// SetOnProcessMessage sets the callback function for processing process messages
+// This method registers a callback that is triggered when a process message is received
 func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
 }
@@ -333,7 +333,6 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 }
 
 func (m *TWebview) initDefaultEvent() {
-
 	m.browser.SetOnExecuteScriptFinished(func(sender lcl.IObject, jsValue wv.IWkJSValue, id int32) {
 		callback, ok := gEvaluateScriptEventCallback.Load(id)
 		if ok {

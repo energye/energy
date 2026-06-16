@@ -64,7 +64,7 @@ type TWebview struct {
 	onDragOver              TOnDragOverEvent
 }
 
-// NewWebview 创建一个新的浏览器窗口实例
+// NewWebview creates a new browser window instance
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 	m.IPanel = lcl.NewPanel(owner)
@@ -87,9 +87,9 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
-// SetWindow 设置webview的窗口实例，并初始化相关回调函数
+// SetWindow sets the window instance for webview and initializes related callback functions
 //
-//	window - 窗口接口实例，用于承载webview内容
+//	window - Window interface instance hosting webview content
 func (m *TWebview) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
@@ -104,15 +104,15 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 	}
 }
 
-// UpdateBrowserOptions 更新浏览器配置
+// UpdateBrowserOptions updates browser configuration
 func (m *TWebview) UpdateBrowserOptions() {
-	// 1. 获取 LocalLoad 全局配置
+	// retrieves global LocalLoad configuration
 	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
 		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
 	if m.window != nil {
-		// 2 设置浏览器配置
+		// sets browser configuration
 		options := m.window.Options()
 		if options.DefaultURL != "" && m.defaultURL == "" {
 			m.SetDefaultURL(options.DefaultURL)
@@ -127,8 +127,8 @@ func (m *TWebview) UpdateBrowserOptions() {
 	}
 }
 
-// SetParent 设置浏览器窗口的父控件
-// 该方法会同时设置内部面板的父控件和窗口父控件的引用
+// SetParent sets the parent control of the browser window
+// This method sets references for both the inner panel parent and window parent control simultaneously
 func (m *TWebview) SetParent(window lcl.IWinControl) {
 	m.IPanel.SetParent(window)
 	m.windowParent.SetParent(m.IPanel)
@@ -152,16 +152,17 @@ func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScri
 	m.browser.ExecuteScript(script, m.executeScriptId)
 }
 
-// CreateBrowser 创建浏览器实例
-// 该方法负责初始化webview浏览器，确保只创建一次，并在应用程序初始化完成后创建浏览器窗口
+// CreateBrowser creates a browser instance
+// This method initializes the webview browser, ensures it is created only once,
+// and creates the browser window after the application initialization completes
 func (m *TWebview) CreateBrowser() {
 	if m.created {
 		return
 	}
 	m.created = true
-	// 1. 更新浏览器配置
+	// updates browser configuration
 	m.UpdateBrowserOptions()
-	// 2. 初始化 webview
+	// init webview
 	if gApplication.InitializationError() {
 		// Log ???
 	} else {
@@ -171,12 +172,12 @@ func (m *TWebview) CreateBrowser() {
 	}
 }
 
-// BrowserId 返回TWebview实例关联的浏览器ID
+// BrowserId returns the browser ID associated with the TWebview instance
 func (m *TWebview) BrowserId() uint32 {
 	return m.browserId
 }
 
-// SendMessage 发送消息到webview浏览器
+// SendMessage sends a message to the webview browser
 func (m *TWebview) SendMessage(payload []byte) {
 	if m.isClose {
 		return
@@ -184,7 +185,7 @@ func (m *TWebview) SendMessage(payload []byte) {
 	m.browser.PostWebMessageAsString(string(payload))
 }
 
-// Close 关闭webview窗口并清理相关资源
+// Close closes the webview window and releases associated resources
 func (m *TWebview) Close() {
 	if m.isClose {
 		return
@@ -194,7 +195,7 @@ func (m *TWebview) Close() {
 	ipc.UnRegisterProcessMessage(m)
 }
 
-// SetDefaultURL 设置WebView的默认URL
+// SetDefaultURL sets the default URL for the WebView
 func (m *TWebview) SetDefaultURL(url string) {
 	if m.defaultURL != url {
 		m.browser.SetDefaultURL(url)
@@ -202,17 +203,17 @@ func (m *TWebview) SetDefaultURL(url string) {
 	m.defaultURL = url
 }
 
-// LoadURL 加载指定的URL地址到webview中
+// LoadURL loads the specified URL address into the webview
 func (m *TWebview) LoadURL(url string) {
 	m.browser.Navigate(url)
 }
 
-// Browser 返回TWebview实例关联的浏览器对象
+// Browser returns the browser object associated with the TWebview instance
 func (m *TWebview) Browser() IBrowser {
 	return m.browser
 }
 
-// WindowParent 获取TWebview实例关联的窗口父对象
+// WindowParent obtains the parent window object associated with the TWebview instance
 func (m *TWebview) WindowParent() IWindowParent {
 	return m.windowParent
 }
@@ -224,38 +225,38 @@ func (m *TWebview) doOnWindowResize(sender lcl.IObject) {
 	m.browser.NotifyParentWindowPositionChanged()
 }
 
-// doOnWindowShow 是窗口显示事件的回调函数
-// 当窗口显示时触发此函数，用于创建浏览器实例
+// doOnWindowShow is the callback function for window show event
+// It is triggered when the window becomes visible, responsible for creating the browser instance
 func (m *TWebview) doOnWindowShow(sender lcl.IObject) {
 	m.CreateBrowser()
 }
 
-// doOnWindowClose 处理窗口关闭事件的回调函数
-// 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
+// doOnWindowClose is the callback function to handle window close event
+// When the window receives a close signal, this function stops the browser instance to ensure proper resource release
 func (m *TWebview) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 	if m.browser != nil {
 		m.browser.Stop()
 	}
 }
 
-// doOnWindowCloseQuery 处理窗口关闭查询事件
-// 当用户尝试关闭窗口时触发此回调函数
+// doOnWindowCloseQuery handles the window close query event
+// This callback is triggered when the user attempts to close the window
 func (m *TWebview) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 }
 
-// SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
+// SetOnBrowserAfterCreated sets the callback handler triggered after browser creation completes
 func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
 	m.onBrowserAfterCreated = fn
 }
 
-// SetOnResourceRequest 设置资源请求事件处理函数
-// 该方法用于注册一个回调函数，当webview发起资源请求时会触发此回调
+// SetOnResourceRequest sets the handler for resource request events
+// This method registers a callback function that will be triggered when the webview initiates a resource request
 func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
 	m.onResourceRequest = fn
 }
 
-// SetOnProcessMessage 设置处理进程消息的回调函数
-// 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
+// SetOnProcessMessage sets the callback function for processing process messages
+// This method registers a callback that is triggered when a process message is received
 func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
 }
