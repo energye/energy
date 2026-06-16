@@ -30,13 +30,14 @@ type TOnThemeChange func(isDark bool)
 
 type IWindow interface {
 	lcl.IEngForm
-	// SetOptions 设置当前窗口配置选项
+	// SetOptions Configure options for current window
 	SetOptions(options application.Options)
 	Options() *application.Options
-	// UpdateWindowOption 窗口的选项配置, 该方法用于配置*TWindow实例的各种选项参数
+	// UpdateWindowOption Configure window options for a *TWindow instance
 	UpdateWindowOption()
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
+	IsMain() bool // Whether current window is main window
 	Restore()
 	Minimize()
 	Maximize()
@@ -59,7 +60,8 @@ type IWindow interface {
 
 type TEnergyWindow struct {
 	lcl.TEngForm
-	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
+	windowId                uint32 // Window ID maps to first browser ID in current window
+	isMain                  bool
 	closeState              TWindowCloseState
 	flagFirstShow           bool
 	options                 *application.Options
@@ -138,12 +140,21 @@ func (m *TEnergyWindow) SetOnWindowStateChange(fn lcl.TNotifyEvent) {
 	m.onWindowStateChange = fn
 }
 
+func (m *TEnergyWindow) FormAfterCreate(sender lcl.IObject) {
+	mainForm := lcl.Application.MainForm()
+	m.isMain = mainForm == nil || mainForm.Instance() == 0
+}
+
 func (m *TWindow) SetBrowserId(windowId uint32) {
 	m.windowId = windowId
 }
 
 func (m *TWindow) BrowserId() uint32 {
 	return m.windowId
+}
+
+func (m *TEnergyWindow) IsMain() bool {
+	return m.isMain
 }
 
 func (m *TWindow) Minimize() {

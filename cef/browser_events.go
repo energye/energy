@@ -132,7 +132,7 @@ func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, 
 	}
 	if tool.IsWindows() || tool.IsLinux() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			m.Free()
+			m.ICEFWinControl.Free()
 		})
 	}
 }
@@ -148,7 +148,7 @@ func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBro
 				m.window.Close()
 			}
 		} else {
-			logger.Error("浏览器所属窗口对象为空无法正常关闭浏览器 ")
+			logger.Error("Browser associated window is nil, failed to close browser")
 		}
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
