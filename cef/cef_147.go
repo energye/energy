@@ -20,7 +20,8 @@ import (
 
 func (m *TBrowser) chromiumOnBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
 	callback cef.ICefBeforeDownloadCallback, result *bool) {
-	m.onAdapterBeforeDownload(sender, browser, downloadItem, suggestedName, callback, result)
+
+	m.chromiumOnAdapterBeforeDownload(sender, browser, downloadItem, suggestedName, callback, result)
 }
 
 func (m *TBrowser) chromiumOnBeforePopup(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, popupId int32, targetUrl string,

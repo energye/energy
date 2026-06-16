@@ -20,6 +20,7 @@ import (
 
 func (m *TBrowser) chromiumOnBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
 	callback cef.ICefBeforeDownloadCallback) {
+
 	var result bool
 	m.chromiumOnAdapterBeforeDownload(sender, browser, downloadItem, suggestedName, callback, &result)
 }
