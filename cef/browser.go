@@ -140,7 +140,7 @@ func (m *TBrowser) SetBrowserExtraInfo(windowName string, context cef.ICefReques
 }
 
 func (m *TBrowser) CreateBrowser() {
-	logger.Debug("browser.CreateBrowser")
+	logger.Debug("Browser.CreateBrowser")
 	m.createBrowserOnTimer(m.timer)
 }
 
@@ -155,17 +155,17 @@ func (m *TBrowser) doOnWindowResize(sender lcl.IObject) {
 }
 
 func (m *TBrowser) doOnWindowShow(sender lcl.IObject) {
-	logger.Debug("browser.doOnWindowShow")
+	logger.Debug("Browser.doOnWindowShow")
 	m.CreateBrowser()
 }
 
 func (m *TBrowser) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
-	logger.Debug("browser.doOnWindowClose")
+	logger.Debug("Browser.doOnWindowClose")
 	*closeAction = types.CaFree
 }
 
 func (m *TBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
-	logger.Debug("browser.doOnWindowCloseQuery canClose:", m.canClose)
+	logger.Debug("Browser.doOnWindowCloseQuery canClose:", m.canClose)
 	if tool.IsDarwin() {
 		*canClose = m.canClose
 	} else {
@@ -187,12 +187,12 @@ func (m *TBrowser) createBrowserOnTimer(sender lcl.IObject) {
 	created := m.chromium.CreateBrowserWithWHandleRectStrRContextDValueBool(m.Handle(), rect, m.windowName,
 		m.context, m.extraInfo, false)
 	init := m.chromium.Initialized()
-	logger.Debug("browser.createBrowserOnTimer created:", created, "init:", init)
+	logger.Debug("Browser.createBrowserOnTimer created:", created, "init:", init)
 	if !created && !init {
-		logger.Debug("browser.createBrowserOnTimer fail")
+		logger.Debug("Browser.createBrowserOnTimer fail")
 		m.timer.SetEnabled(true)
 	} else {
-		logger.Debug("browser.createBrowserOnTimer success")
+		logger.Debug("Browser.createBrowserOnTimer success")
 		m.UpdateSize()
 		m.timer.SetOnTimer(nil)
 		m.timer.Free()

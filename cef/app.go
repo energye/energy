@@ -30,6 +30,16 @@ var (
 	// GApplication global application instance
 	GApplication   *Application
 	GWorkScheduler cef.ICEFWorkScheduler
+	gProcessType   = map[types.TCefProcessType]string{
+		types.PtBrowser:  "Browser",
+		types.PtRenderer: "Renderer",
+		types.PtZygote:   "Zygote",
+		types.PtGPU:      "GPU",
+		types.PtUtility:  "Utility",
+		types.PtBroker:   "Broker",
+		types.PtCrashpad: "Crashpad",
+		types.PtOther:    "Other",
+	}
 )
 
 type Application struct {
@@ -52,6 +62,10 @@ func CheckLibRuntimeVersion() error {
 		return errors.New(e)
 	}
 	return nil
+}
+
+func ProcessType(pt types.TCefProcessType) string {
+	return gProcessType[pt]
 }
 
 func NewApplication() *Application {
@@ -102,9 +116,14 @@ func (m *Application) SetCEFFrameworkDir(path string) {
 	m.ICefApplication.SetLocalesDirPath(filepath.Join(path, "locales"))
 }
 
-// SetMessageLoop 消息轮询, CEF Application 在不同的 OS 使用不同的配置
-func (m *Application) SetMessageLoop() {
-	if tool.IsDarwin() { // Darwin => LCL窗口
+// messageLoop Message polling. CEF Application uses OS-specific configurations
+func (m *Application) messageLoop() {
+	if tool.IsDarwin() { // Darwin => LCL
+		if m.IsMainProcess() {
+			base.AddCrDelegate()
+		}
+		m.InitLibLocationFromArgs()
+
 		if m.IsMainProcess() {
 			GWorkScheduler = cef.NewWorkScheduler(nil)
 			base.SetGlobalCEFWorkSchedule(GWorkScheduler.Instance())
@@ -130,16 +149,12 @@ func Run(forms ...lcl.IEngForm) {
 		println("[ERROR] CEF Application Instance is not initialized")
 		return
 	}
-
+	GApplication.initDefaultEvent()
+	GApplication.messageLoop()
 	GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
 	GApplication.SetEnablePrintPreview(true)
-	if tool.IsDarwin() {
-		base.AddCrDelegate()
-		GApplication.InitLibLocationFromArgs()
-		GApplication.SetExternalMessagePump(true)
-		GApplication.SetMultiThreadedMessageLoop(false)
-	}
-	GApplication.SetMessageLoop()
+
+	processTypeStr := ProcessType(GApplication.ProcessType())
 
 	if GApplication.IsMainProcess() {
 		mainSuccess := GApplication.StartMainProcess()
@@ -155,17 +170,17 @@ func Run(forms ...lcl.IEngForm) {
 			engLCL.Run(forms...)
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
-		logger.Debug("Application StartProcess 'darwin' for sub. processType:", GApplication.ProcessType())
+		logger.Debug("Application StartProcess 'darwin' for sub.executable processType:", processTypeStr)
 		GApplication.StartSubProcess()
 		GApplication.ICefApplication.Free()
 	} else if !GApplication.IsMainProcess() {
 		var startSubSuccess bool
 		subProcessPath := GApplication.BrowserSubprocessPath()
 		if subProcessPath != "" {
-			logger.Debug("Application StartProcess for sub. processType:", GApplication.ProcessType(), "subprocessPath:", subProcessPath)
+			logger.Debug("Application StartProcess for sub.executable processType:", processTypeStr, "subprocessPath:", subProcessPath)
 			startSubSuccess = GApplication.StartSubProcess()
 		} else {
-			logger.Debug("Application StartProcess for main. processType:", GApplication.ProcessType())
+			logger.Debug("Application StartProcess for main.executable processType:", processTypeStr)
 			startSubSuccess = GApplication.StartMainProcess()
 		}
 		if startSubSuccess {

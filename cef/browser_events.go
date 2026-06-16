@@ -21,6 +21,8 @@ import (
 )
 
 func (m *TBrowser) initDefaultEvent() {
+	logger.Debug("Browser.initDefaultEvent")
+
 	m.chromium.SetOnProcessMessageReceived(m.chromiumOnProcessMessageReceived)
 
 	m.chromium.SetOnBeforeResourceLoad(m.chromiumOnBeforeResourceLoad)
@@ -85,12 +87,12 @@ func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.
 }
 
 func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("chromium.OnAfterCreated")
+	logger.Debug("Chromium.OnAfterCreated")
 }
 
 func (m *TBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
 	isRedirect bool, outResult *bool) {
-	logger.Debug("chromium.OnBeforeBrowse")
+	logger.Debug("Chromium.OnBeforeBrowse")
 	m.UpdateSize()
 }
 
@@ -120,10 +122,10 @@ func (m *TBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser
 }
 
 func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
-	logger.Debug("chromium.OnClose")
+	logger.Debug("Chromium.OnClose")
 	if tool.IsDarwin() {
 		ok := m.DestroyChildWindow()
-		logger.Debug("chromium.onClose => windowParent.DestroyChildWindow() Success:", ok)
+		logger.Debug("Chromium.OnClose => winControl.DestroyChildWindow() Success:", ok)
 		*action = cefTypes.CbaClose
 	} else if tool.IsLinux() {
 		*action = cefTypes.CbaClose
@@ -138,7 +140,7 @@ func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, 
 }
 
 func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("chromium.OnBeforeClose")
+	logger.Debug("Chromium.OnBeforeClose")
 	closeWindow := func() {
 		if m.window != nil {
 			m.canClose = true
