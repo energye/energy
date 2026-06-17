@@ -197,6 +197,7 @@ func (m *TBrowser) SetBrowserExtraInfo(windowName string, context cef.ICefReques
 
 func (m *TBrowser) CreateBrowser() {
 	logger.Debug("Browser.CreateBrowser")
+	m.UpdateBrowserOptions()
 	m.createBrowserOnTimer(m.timer)
 }
 

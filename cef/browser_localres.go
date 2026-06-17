@@ -69,8 +69,8 @@ func (m *tSchemeHandlerFactory) schemeHandlerFactoryOnSchemeFactoryNew(browser c
 	resourceHandler.SetOnResourceGetResponseHeaders(src.resourceHandlerOnResourceGetResponseHeaders)
 	resourceHandler.SetOnResourceReadResponse(src.resourceHandlerOnResourceReadResponse)
 	resourceHandler.SetOnResourceRead(src.resourceHandlerOnResourceRead)
-	resourceHandler = cef.AsEngResourceHandler(resourceHandler.AsIntfResourceHandler())
-	return resourceHandler
+	intfResourceHandler := cef.AsEngResourceHandler(resourceHandler.AsIntfResourceHandler())
+	return intfResourceHandler
 }
 
 func (m *source) resourceHandlerOnResourceProcessRequest(request cef.ICefRequest, callback cef.ICefCallback) bool {
@@ -109,19 +109,19 @@ func (m *source) resourceHandlerOnResourceGetResponseHeaders(response cef.ICefRe
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
 	*outResponseLength = int64(len(m.bytes))
-	//if m.header != nil {
-	//	header := cef.NewCustomStringMultimap()
-	//	intfHeader := cef.AsCefCustomStringMultimap(header.AsIntfStringMultimap())
-	//	response.GetHeaderMap(intfHeader)
-	//	for key, value := range m.header {
-	//		for _, vs := range value {
-	//			header.Append(key, vs)
-	//		}
-	//	}
-	//	response.SetHeaderMap(intfHeader)
-	//	intfHeader.Release()
-	//	header.Free()
-	//}
+	if m.header != nil {
+		header := cef.NewCustomStringMultimap()
+		intfHeader := cef.AsCefCustomStringMultimap(header.AsIntfStringMultimap())
+		response.GetHeaderMap(intfHeader)
+		for key, value := range m.header {
+			for _, vs := range value {
+				header.Append(key, vs)
+			}
+		}
+		response.SetHeaderMap(intfHeader)
+		intfHeader.Release()
+		header.Free()
+	}
 }
 
 func (m *source) resourceHandlerOnResourceReadResponse(dataOut uintptr, bytesToRead int32, bytesRead *int32, callback cef.ICefCallback) bool {
