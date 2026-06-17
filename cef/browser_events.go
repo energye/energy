@@ -75,7 +75,9 @@ func (m *TBrowser) chromiumOnBeforeResourceLoad(sender lcl.IObject, browser cef.
 
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
+	if GApplication.IsMainProcess() {
 
+	}
 }
 
 func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
@@ -92,7 +94,10 @@ func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBr
 	if m.window != nil && m.window.BrowserId() == 0 {
 		m.browserId = uint32(browser.GetIdentifier())
 		m.window.SetBrowserId(m.browserId)
+		// ipc
 		ipc.RegisterProcessMessage(m)
+		// local load
+		m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
 	}
 }
 

@@ -33,6 +33,7 @@ type TBrowser struct {
 	windowName              string
 	context                 cef.ICefRequestContext
 	extraInfo               cef.ICefDictionaryValue
+	schemeHandlerFactory    *tSchemeHandlerFactory
 }
 
 func NewBrowser(owner lcl.IWinControl) *TBrowser {

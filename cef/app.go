@@ -58,6 +58,7 @@ func Init() *Application {
 // CheckLibRuntimeVersion Check runtime library and CEF version compatibility
 func CheckLibRuntimeVersion() error {
 	major, _, _, _ := cef.LibVersion()
+	//major = cef.CEFVersion // TODO test
 	if cef.CEFVersion != major {
 		e := fmt.Sprintf("CEF version does not match the runtime library. Current CEF version: %v, Runtime library version: %v",
 			cef.CEFVersion, major)
