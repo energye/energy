@@ -14,9 +14,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/window"
-	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/types"
+	"github.com/energye/energy/v3/core"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -40,48 +38,7 @@ func getNextBrowserID() uint32 {
 	return globalBrowserID
 }
 
-type IWindowParent interface {
-}
-
-type IBrowser interface {
-}
-
-type IWebview interface {
-	lcl.ICustomPanel
-	// SetWindow sets the window instance for webview and initializes relevant callback functions
-	// window - Window interface instance used to host webview content
-	SetWindow(window window.IWindow)
-	// SetLocalLoad sets custom resource loading mode for current browser
-	SetLocalLoad(localLoad application.LocalLoad)
-	LocalLoadResource() *application.LocalLoadResource
-	// UpdateBrowserOptions updates configuration of the current browser instance
-	UpdateBrowserOptions()
-	SetParent(window lcl.IWinControl)
-	CreateBrowser()
-	BrowserId() uint32
-	WindowParent() IWindowParent
-	Browser() IBrowser
-	SendMessage(payload []byte)
-	Close()
-	SetDefaultURL(url string)
-	LoadURL(url string)
-	ExecuteScript(javaScript string)
-	ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent)
-	SetWidth(v int32)
-	SetHeight(v int32)
-	SetBoundsRect(value types.TRect)
-	SetBounds(left int32, top int32, width int32, height int32)
-	SetOnBrowserAfterCreated(fn lcl.TNotifyEvent)
-	SetOnResourceRequest(fn TOnResourceRequestEvent)
-	SetOnProcessMessage(fn TOnProcessMessageEvent)
-	SetOnLoadChange(fn TOnLoadChangeEvent)
-	SetOnContextMenu(fn TOnContextMenuEvent)
-	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
-	SetOnPopupWindow(fn TOnPopupWindowEvent)
-	SetOnDragEnter(fn TOnDragEnterEvent)
-	SetOnDragLeave(fn TOnDragLeaveEvent)
-	SetOnDragOver(fn TOnDragOverEvent)
-}
+type IWebview = core.IBrowser
 
 type TEnergyWebview struct {
 	localLoad *application.LocalLoadResource
@@ -121,36 +78,3 @@ func (m *TWebview) createEnergyJavasScript() {
 	m.ExecuteScript(jsCode.String())
 	m.ExecuteScript(`window.energy.drag.setup();`)
 }
-
-type TLoadChange int32
-
-const (
-	LcStart TLoadChange = iota
-	LcLoading
-	LcFinish
-)
-
-type TDragType int32
-
-const (
-	DragTypeNo   TDragType = iota // file list
-	DragTypeFile                  // file list
-	DragTypeData                  // file bytes
-)
-
-type TDragData struct {
-	Type      TDragType
-	Data      []byte
-	Filenames []string
-}
-
-type TOnProcessMessageEvent func(message string)
-type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
-type TOnLoadChangeEvent func(url, title string, load TLoadChange)
-type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
-type TOnContextMenuCommandEvent func(commandId int32)
-type TOnPopupWindowEvent func(targetURL string) bool
-type TOnEvaluateScriptCallbackEvent func(result string, err string)
-type TOnDragEnterEvent func(type_ TDragType, x, y int32)
-type TOnDragLeaveEvent func()
-type TOnDragOverEvent func(data *TDragData, x, y int32)

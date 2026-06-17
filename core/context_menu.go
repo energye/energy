@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package wv
+package core
 
 type TContextMenuKind int32
 
@@ -20,22 +20,13 @@ const (
 
 var gContextMenuCommandId int32 = 10000
 
-func nextContextMenuCommandId() int32 {
+func NextContextMenuCommandId() int32 {
 	gContextMenuCommandId++
 	return gContextMenuCommandId
 }
 
 // TContextMenuItem 右键菜单
 type TContextMenuItem struct {
-	add   func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
-	clear func()
-}
-
-// Add 向上下文菜单中添加一个新的菜单项
-func (m *TContextMenuItem) Add(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
-	return m.add(text, kind)
-}
-
-func (m *TContextMenuItem) Clear() {
-	m.clear()
+	Add   func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
+	Clear func()
 }

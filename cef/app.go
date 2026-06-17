@@ -148,10 +148,6 @@ func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
-func (m *Application) IsMainThread() bool {
-	return api.CurrentThreadId() == api.MainThreadId()
-}
-
 func Run(forms ...lcl.IEngForm) {
 	if GApplication == nil || !GApplication.IsValid() {
 		println("[ERROR] CEF Application Instance is not initialized")

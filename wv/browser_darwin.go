@@ -15,6 +15,7 @@ package wv
 import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
+	. "github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/darwin/cocoa"
 	. "github.com/energye/energy/v3/platform/darwin/types"
@@ -237,12 +238,12 @@ func (m *TWebview) LoadURL(url string) {
 }
 
 // Browser returns the browser object associated with the TWebview instance
-func (m *TWebview) Browser() IBrowser {
+func (m *TWebview) Browser() Browser {
 	return m.browser
 }
 
 // WindowParent obtains the parent window object associated with the TWebview instance
-func (m *TWebview) WindowParent() IWindowParent {
+func (m *TWebview) WindowParent() WindowParent {
 	return m.windowParent
 }
 
@@ -499,7 +500,7 @@ func (m *TWebview) contextMenu(x, y int32) {
 	items := m.menu.Items()
 	items.Clear()
 	createMenuItem := func(text string, fn func(commandId int32)) (lcl.IMenuItem, int32) {
-		commandId := nextContextMenuCommandId()
+		commandId := NextContextMenuCommandId()
 		item := lcl.NewMenuItem(m)
 		item.SetCaption(text)
 		if text != "-" && fn != nil {
@@ -561,20 +562,20 @@ func (m *TWebview) contextMenu(x, y int32) {
 			return nil, 0
 		}
 		childContextMenu := &TContextMenuItem{
-			clear: func() {
+			Clear: func() {
 				menuItemClear(newCtxMenuItem)
 			},
-			add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+			Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 				newMenuItem, newCommandId := add(text, kind, newCtxMenuItem)
 				return newMenuItem, newCommandId
 			}}
 		return childContextMenu, newCommandId
 	}
 	contextMenuItem := &TContextMenuItem{
-		clear: func() {
+		Clear: func() {
 			items.Clear()
 		},
-		add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+		Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 			return add(text, kind, items)
 		}}
 	m.onContextMenu(contextMenuItem)

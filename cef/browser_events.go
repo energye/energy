@@ -129,7 +129,7 @@ func (m *TBrowser) chromiumOnKeyEvent(sender lcl.IObject, browser cef.ICefBrowse
 }
 
 func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
-	logger.Debug("Chromium.OnTitleChange title:", title, "IsMainThread:", GApplication.IsMainThread())
+	logger.Debug("Chromium.OnTitleChange title:", title)
 	lcl.RunOnMainThreadAsync(func(id uint32) {
 		if m.window.Caption() == "" {
 			m.window.SetCaption(title)

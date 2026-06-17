@@ -23,7 +23,7 @@ var (
 
 type TPopupWindow struct {
 	window.TWindow
-	browser *TBrowser
+	browser IBrowser
 }
 
 func NewPopupWindow() *TPopupWindow {
@@ -51,6 +51,6 @@ func (m *TPopupWindow) OnShow(sender lcl.IObject) {
 	m.TWindow.OnShow(sender)
 }
 
-func (m *TPopupWindow) Browser() *TBrowser {
+func (m *TPopupWindow) Browser() IBrowser {
 	return m.browser
 }

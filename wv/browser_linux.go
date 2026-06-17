@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v3/application"
+	. "github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/linux/gtk3"
 	. "github.com/energye/energy/v3/platform/linux/types"
@@ -231,18 +232,18 @@ func (m *TWebview) LoadURL(url string) {
 	m.browser.LoadURL(url)
 }
 
+// WindowParent obtains the parent window object associated with the TWebview instance
+func (m *TWebview) WindowParent() WindowParent {
+	return m
+}
+
 // Browser returns the browser object associated with the TWebview instance
-func (m *TWebview) Browser() IBrowser {
+func (m *TWebview) Browser() Browser {
 	return m.browser
 }
 
 func (m *TWebview) GtkWebview() IWebkit2 {
 	return m.gtkWebview
-}
-
-// WindowParent obtains the parent window object associated with the TWebview instance
-func (m *TWebview) WindowParent() IWindowParent {
-	return m
 }
 
 func (m *TWebview) doOnWindowStateChange(sender lcl.IObject) {}
@@ -365,7 +366,7 @@ func (m *TWebview) initDefaultEvent() {
 					newMenuItem    wv.IWkContextMenuItem
 					subContextMenu wv.IWkContextMenu
 				)
-				commandId := nextContextMenuCommandId()
+				commandId := NextContextMenuCommandId()
 				switch kind {
 				case CmkCommand:
 					newMenuItem = wv.ContextMenuItem.NewFromAction(defaultAction, text, commandId)
@@ -383,20 +384,20 @@ func (m *TWebview) initDefaultEvent() {
 
 				menuItems.Append(newMenuItem.Data())
 				childContextMenu := &TContextMenuItem{
-					clear: func() {
+					Clear: func() {
 						menuItemClear(subContextMenu)
 					},
-					add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+					Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 						newMenuItem, newCommandId := add(text, kind, subContextMenu)
 						return newMenuItem, newCommandId
 					}}
 				return childContextMenu, commandId
 			}
 			contextMenuItem := &TContextMenuItem{
-				clear: func() {
+				Clear: func() {
 					menuItemClear(rootContextMenu)
 				},
-				add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+				Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 					return add(text, kind, rootContextMenu)
 				}}
 			m.onContextMenu(contextMenuItem)

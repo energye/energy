@@ -13,6 +13,7 @@
 package wv
 
 import (
+	"github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/types"
 )
@@ -98,7 +99,7 @@ func (m *TWebview) UpdateWebviewBounds(x, y, width, height float32) {
 	m.wkWebView.UpdateBounds(m.window.NSWindow(), x, y, width, height)
 }
 
-func (m *TWebview) ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent) {
+func (m *TWebview) ExecuteScriptCallback(script string, callback core.TOnEvaluateScriptCallbackEvent) {
 	m.wkWebView.ExecuteScriptCallback(script, func(result string, err string) {
 		callback(result, err)
 	})

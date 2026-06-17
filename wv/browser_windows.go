@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/energye/energy/v3/application"
+	. "github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/win32"
 	"github.com/energye/energy/v3/window"
@@ -209,12 +210,12 @@ func (m *TWebview) LoadURL(url string) {
 }
 
 // Browser returns the browser object associated with the TWebview instance
-func (m *TWebview) Browser() IBrowser {
+func (m *TWebview) Browser() Browser {
 	return m.browser
 }
 
 // WindowParent obtains the parent window object associated with the TWebview instance
-func (m *TWebview) WindowParent() IWindowParent {
+func (m *TWebview) WindowParent() WindowParent {
 	return m.windowParent
 }
 
@@ -375,10 +376,10 @@ func (m *TWebview) initDefaultEvent() {
 					childMenuItems := wv.NewCoreWebView2ContextMenuItemCollection(menuItem.Children())
 					tempFreeContextMenuItems = append(tempFreeContextMenuItems, childMenuItems)
 					contextMenu := &TContextMenuItem{
-						clear: func() {
+						Clear: func() {
 							menuItemClear(childMenuItems)
 						},
-						add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+						Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 							newMenuItem, newCommandId := add(text, kind, childMenuItems)
 							return newMenuItem, newCommandId
 						}}
@@ -387,10 +388,10 @@ func (m *TWebview) initDefaultEvent() {
 				return nil, 0
 			}
 			contextMenu := &TContextMenuItem{
-				clear: func() {
+				Clear: func() {
 					menuItemClear(menuItemCollection)
 				},
-				add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+				Add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 					return add(text, kind, menuItemCollection)
 				}}
 			m.onContextMenu(contextMenu)
