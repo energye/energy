@@ -36,6 +36,7 @@ type TBrowser struct {
 	schemeHandlerFactory    *tSchemeHandlerFactory
 }
 
+// NewBrowser creates a new browser window instance
 func NewBrowser(owner lcl.IWinControl) *TBrowser {
 	m := &TBrowser{}
 	m.chromium = cef.NewChromium(owner)
