@@ -46,6 +46,7 @@ type Options struct {
 	Frameless                  bool               `json:"frameless"`                  //
 	WindowTransparent          bool               `json:"-"`                          //
 	WebviewTransparent         bool               `json:"-"`                          //
+	AutoPopup                  bool               `json:"-"`                          // auto popup window, CEF pre-creates a window
 	BackgroundColor            *colors.TARGB      `json:"-"`                          //
 	Windows                    Windows            `json:"-"`                          //
 	MacOS                      MacOS              `json:"-"`                          //

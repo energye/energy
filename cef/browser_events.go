@@ -92,12 +92,21 @@ func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.
 func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
 	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
 	if m.window != nil && m.window.BrowserId() == 0 {
+		options := m.window.Options()
 		m.browserId = uint32(browser.GetIdentifier())
 		m.window.SetBrowserId(m.browserId)
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// local load
 		m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+		// pre-creates a window
+		if options.AutoPopup {
+			if gPrePopupWindow == nil {
+				lcl.RunOnMainThreadAsync(func(id uint32) {
+					gPrePopupWindow = NewPopupWindow()
+				})
+			}
+		}
 	}
 }
 
@@ -151,7 +160,7 @@ func (m *TBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, 
 }
 
 func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("Chromium.OnBeforeClose", browser.GetIdentifier())
+	logger.Debug("Chromium.OnBeforeClose", "Current-BrowserID:", m.browserId, "Target-BrowserID:", browser.GetIdentifier())
 	if m.browserId != uint32(browser.GetIdentifier()) {
 		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
 		return
@@ -175,12 +184,23 @@ func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBro
 
 func (m *TBrowser) chromiumOnOpenUrlFromTab(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, targetUrl string,
 	targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, outResult *bool) {
-
+	logger.Debug("Chromium.OnOpenUrlFromTab")
+	*outResult = true
 }
 
 func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, popupId int32, targetUrl string,
 	targetFrameName string, targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, popupFeatures cef.TCefPopupFeatures,
 	windowInfo *cef.TCefWindowInfo, client *cef.IEngClient, settings *cef.TCefBrowserSettings, extraInfo *cef.ICefDictionaryValue,
 	noJavascriptAccess *bool, result *bool) {
-
+	logger.Debug("Chromium.OnAdapterBeforePopup")
+	*result = true
+	if m.window != nil {
+		options := m.window.Options()
+		if options.AutoPopup && gPrePopupWindow != nil {
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				gPrePopupWindow.Show()
+				gPrePopupWindow = nil
+			})
+		}
+	}
 }
