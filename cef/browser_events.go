@@ -75,9 +75,7 @@ func (m *TBrowser) chromiumOnBeforeResourceLoad(sender lcl.IObject, browser cef.
 
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
-	if GApplication.IsMainProcess() {
 
-	}
 }
 
 func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
@@ -107,6 +105,9 @@ func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBr
 				})
 			}
 		}
+	}
+	if m.onBrowserAfterCreated != nil {
+		m.onBrowserAfterCreated(sender)
 	}
 }
 
@@ -199,7 +200,11 @@ func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.
 	noJavascriptAccess *bool, result *bool) {
 	logger.Debug("Chromium.OnAdapterBeforePopup", "popupId:", popupId, "targetUrl:", targetUrl)
 	*result = true
-	if m.window != nil {
+	var handle bool
+	if m.onPopupWindow != nil {
+		handle = m.onPopupWindow(targetUrl)
+	}
+	if !handle && m.window != nil {
 		options := m.window.Options()
 		if options.AutoPopup && gPrePopupWindow != nil {
 			lcl.RunOnMainThreadAsync(func(id uint32) {
