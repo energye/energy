@@ -36,13 +36,12 @@ func (m *TPopupWindow) FormCreate(sender lcl.IObject) {
 	logger.Debug("PopupWindow.FormCreate")
 	m.InternalBeforeFormCreate()
 
-	m.SetCaption("ENERGY - CEF Simple 测试示例")
+	m.SetShowInTaskBar(types.StAlways)
 
 	m.browser = NewBrowser(m)
 	m.browser.SetAlign(types.AlClient)
 	m.browser.SetParent(m)
 	m.browser.SetWindow(m)
-	m.browser.Chromium().SetDefaultUrl("fs://energy/index-home.html")
 
 	m.TWindow.FormCreate(sender)
 }
@@ -50,4 +49,8 @@ func (m *TPopupWindow) FormCreate(sender lcl.IObject) {
 func (m *TPopupWindow) OnShow(sender lcl.IObject) {
 	logger.Debug("PopupWindow.OnShow")
 	m.TWindow.OnShow(sender)
+}
+
+func (m *TPopupWindow) Browser() *TBrowser {
+	return m.browser
 }

@@ -129,7 +129,12 @@ func (m *TBrowser) chromiumOnKeyEvent(sender lcl.IObject, browser cef.ICefBrowse
 }
 
 func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
-
+	logger.Debug("Chromium.OnTitleChange title:", title, "IsMainThread:", GApplication.IsMainThread())
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		if m.window.Caption() == "" {
+			m.window.SetCaption(title)
+		}
+	})
 }
 
 func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
@@ -184,7 +189,7 @@ func (m *TBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBro
 
 func (m *TBrowser) chromiumOnOpenUrlFromTab(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, targetUrl string,
 	targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, outResult *bool) {
-	logger.Debug("Chromium.OnOpenUrlFromTab")
+	logger.Debug("Chromium.OnOpenUrlFromTab", "targetUrl:", targetUrl)
 	*outResult = true
 }
 
@@ -192,12 +197,13 @@ func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.
 	targetFrameName string, targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, popupFeatures cef.TCefPopupFeatures,
 	windowInfo *cef.TCefWindowInfo, client *cef.IEngClient, settings *cef.TCefBrowserSettings, extraInfo *cef.ICefDictionaryValue,
 	noJavascriptAccess *bool, result *bool) {
-	logger.Debug("Chromium.OnAdapterBeforePopup")
+	logger.Debug("Chromium.OnAdapterBeforePopup", "popupId:", popupId, "targetUrl:", targetUrl)
 	*result = true
 	if m.window != nil {
 		options := m.window.Options()
 		if options.AutoPopup && gPrePopupWindow != nil {
 			lcl.RunOnMainThreadAsync(func(id uint32) {
+				gPrePopupWindow.Browser().Chromium().SetDefaultUrl(targetUrl)
 				gPrePopupWindow.Show()
 				gPrePopupWindow = nil
 			})
