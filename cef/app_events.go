@@ -13,7 +13,9 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/logger"
+	"strings"
 )
 
 func (m *Application) initDefaultEvent() {
@@ -37,5 +39,15 @@ func (m *Application) applicationOnWebKitInitialized() {
 }
 
 func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegistrarRef) {
-
+	logger.Debug("Application.OnRegCustomSchemes")
+	gApp := application.GApplication
+	if gApp == nil || gApp.LocalLoad == nil {
+		return
+	}
+	switch strings.ToUpper(gApp.LocalLoad.Scheme) {
+	case "HTTP", "HTTPS", "FILE", "FTP", "ABOUT", "DATA":
+		return
+	}
+	registrar.AddCustomScheme(gApp.LocalLoad.Scheme,
+		cefTypes.CEF_SCHEME_OPTION_STANDARD|cefTypes.CEF_SCHEME_OPTION_CORS_ENABLED|cefTypes.CEF_SCHEME_OPTION_SECURE|cefTypes.CEF_SCHEME_OPTION_FETCH_ENABLED)
 }

@@ -48,13 +48,13 @@ type IBrowser interface {
 
 type IWebview interface {
 	lcl.ICustomPanel
-	// SetWindow 设置webview的窗口实例，并初始化相关回调函数
-	// window - 窗口接口实例，用于承载webview内容
+	// SetWindow sets the window instance for webview and initializes relevant callback functions
+	// window - Window interface instance used to host webview content
 	SetWindow(window window.IWindow)
-	// 设置当前 browser 的自定义资源加载方试
+	// SetLocalLoad sets custom resource loading mode for current browser
 	SetLocalLoad(localLoad application.LocalLoad)
 	LocalLoadResource() *application.LocalLoadResource
-	// 更新当前 browser 配置
+	// UpdateBrowserOptions updates configuration of the current browser instance
 	UpdateBrowserOptions()
 	SetParent(window lcl.IWinControl)
 	CreateBrowser()

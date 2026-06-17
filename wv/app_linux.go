@@ -44,13 +44,13 @@ func (m *Application) SetOnCustomSchemes(fn TApplicationOnCustomSchemesEvent) {
 	m.onCustomSchemes = fn
 }
 
-// NewWKLoader 创建并返回一个Webkit2加载器实例
+// NewWKLoader creates and returns a WebKit2 loader instance
 func NewWKLoader() wv.IWkLoader {
 	if gGlobalWkLoader == nil {
 		gGlobalWkLoader = wv.NewLoader(nil)
-		// 通过 webkit2gtk.Webkit2Ver() 动态控制使用 webkit2gtk 4.0 或 4.1
-		// 当使用非 nocgo 优先尝试从 4.1 开始尝试
-		// 如果使用 cgo 需要使用条件编译 webkit2_4_1 选择 4.1, 默认 4.0
+		// Dynamically select webkit2gtk 4.0 or 4.1 via webkit2gtk.Webkit2Ver()
+		// When not using nocgo, attempt to use 4.1 first with priority
+		// For cgo build, use build tag webkit2_4_1 to enable 4.1; default to 4.0
 		if webkit2gtk.Webkit2Ver() == wvTypes.Wkv4_1 {
 			gGlobalWkLoader.SetLoaderWebKit2DllPath(platformLinux.Libwebkit2gtk4_1_0)
 			gGlobalWkLoader.SetLoaderJavascriptCoreDllPath(platformLinux.Libjavascriptcoregtk4_1_0)
@@ -61,8 +61,8 @@ func NewWKLoader() wv.IWkLoader {
 	return gGlobalWkLoader
 }
 
-// NewApplication 创建并返回单例Application实例
-// 如果全局Application实例尚未初始化，则进行初始化设置
+// NewApplication creates and returns an Application instance
+// If the global Application instance is not initialized yet, it will perform initialization setup
 func NewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{
@@ -76,8 +76,7 @@ func NewApplication() *Application {
 func DestroyGlobalLoader() {
 }
 
-// Start 启动应用程序
-// 在所有设置后调用
+// Start starts the application
 func (m *Application) Start() bool {
 	v := m.StartWebKit2()
 	return v

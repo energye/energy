@@ -34,8 +34,8 @@ type Application struct {
 	onCustomSchemes TApplicationOnCustomSchemesEvent
 }
 
-// NewApplication 创建并返回单例Application实例
-// 如果全局Application实例尚未初始化，则进行初始化设置
+// NewApplication creates and returns an Application instance
+// If the global Application instance is not initialized yet, it will perform initialization setup
 func NewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{}
@@ -47,8 +47,7 @@ func NewApplication() *Application {
 func DestroyGlobalLoader() {
 }
 
-// Start 启动应用程序
-// 在所有设置后调用
+// Start starts the application
 func (m *Application) Start() bool {
 	return true
 }

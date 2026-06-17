@@ -17,6 +17,7 @@ import (
 	"github.com/energye/cef/cef"
 	"github.com/energye/cef/cef/types"
 	"github.com/energye/cef/config"
+	"github.com/energye/energy/v3/application"
 	engLCL "github.com/energye/energy/v3/lcl"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/api"
@@ -44,6 +45,7 @@ var (
 
 type Application struct {
 	cef.ICefApplication
+	application.Application
 }
 
 // Init CEF Global initialization, invoked at application startup in main
@@ -78,6 +80,7 @@ func NewApplication() *Application {
 		GApplication = &Application{
 			ICefApplication: cef.NewApplication(),
 		}
+		application.GApplication = &GApplication.Application
 		base.SetGlobalCEFApplication(GApplication.Instance())
 	}
 	if !tool.IsDarwin() {

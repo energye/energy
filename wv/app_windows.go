@@ -44,7 +44,7 @@ func Init() *Application {
 	return NewApplication()
 }
 
-// NewWVLoader 创建并返回一个WebView2加载器实例
+// NewWVLoader creates and returns a WebView2 loader instance
 func NewWVLoader() wv.IWVLoader {
 	if gGlobalWVLoader == nil {
 		if gGlobalWVLoader = wv.GetGlobalWebView2Loader(); gGlobalWVLoader != nil {
@@ -69,8 +69,8 @@ func appLocalAppData() string {
 	return os.TempDir()
 }
 
-// NewApplication 创建并返回单例Application实例
-// 如果全局Application实例尚未初始化，则进行初始化设置
+// NewApplication creates and returns an Application instance
+// If the global Application instance is not initialized yet, it will perform initialization setup
 func NewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{
@@ -136,8 +136,7 @@ func (m *Application) initDefaultEvent() {
 	})
 }
 
-// Start 启动应用程序
-// 在所有设置后调用
+// Start starts the application
 func (m *Application) Start() bool {
 	return m.StartWebView2()
 }
