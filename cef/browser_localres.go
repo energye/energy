@@ -60,12 +60,12 @@ func createSchemeHandlerFactory(browser cef.ICefBrowser) *tSchemeHandlerFactory 
 
 func (m *tSchemeHandlerFactory) schemeHandlerFactoryOnSchemeFactoryNew(browser cef.ICefBrowser, frame cef.ICefFrame, schemeName string, request cef.ICefRequest) cef.IEngResourceHandler {
 	logger.Debug("SchemeHandlerFactory.OnNew schemeName:", schemeName)
-	src, err := makeSource(browser, frame, schemeName, request)
+	src, err := makeSource(browser, frame, request)
 	if err != nil {
 		logger.Error("SchemeHandlerFactory.OnNew", err.Error())
 		return nil
 	}
-	return src.resourceHandler
+	return cef.AsEngResourceHandler(src.resourceHandler.AsIntfResourceHandler())
 }
 
 func (m *source) resourceHandlerOnResourceProcessRequest(request cef.ICefRequest, callback cef.ICefCallback) bool {
@@ -192,19 +192,19 @@ func (m *source) readFile() {
 	}
 }
 
-func makeSource(browser cef.ICefBrowser, frame cef.ICefFrame, schemeName string, request cef.ICefRequest) (*source, error) {
-	logger.Debug("Make Source")
+func makeSource(browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest) (*source, error) {
 	rt := request.GetResourceType()
 	switch rt {
 	case /*RT_MEDIA,*/ types.RT_PING, types.RT_CSP_REPORT, types.RT_PLUGIN_RESOURCE:
 		return nil, errors.New("unsupported resource loading type")
 	}
 	targetURL := request.GetUrl()
+	logger.Debug("Make Source targetURL:", targetURL)
 	reqUrl, err := url.Parse(targetURL)
 	if err != nil {
 		return nil, errors.New("invalid URL: " + targetURL)
 	}
-	if reqUrl.Scheme != schemeName {
+	if application.GApplication == nil || application.GApplication.LocalLoad == nil || reqUrl.Scheme != application.GApplication.LocalLoad.Scheme {
 		return nil, errors.New("unsupported scheme: " + reqUrl.Scheme)
 	}
 	path := reqUrl.Path
@@ -223,11 +223,11 @@ func makeSource(browser cef.ICefBrowser, frame cef.ICefFrame, schemeName string,
 	m := &source{start: 0, statusCode: 404, statusText: "Not Found", err: nil, header: nil,
 		path: path, fileExt: ext, mimeType: mimeType, resourceType: rt}
 
-	resourceHandler := cef.NewEngResourceHandler(browser, frame, schemeName, request)
+	resourceHandler := cef.NewEngResourceHandler(browser, frame, application.GApplication.LocalLoad.Scheme, request)
 	resourceHandler.SetOnResourceProcessRequest(m.resourceHandlerOnResourceProcessRequest)
 	resourceHandler.SetOnResourceGetResponseHeaders(m.resourceHandlerOnResourceGetResponseHeaders)
 	resourceHandler.SetOnResourceReadResponse(m.resourceHandlerOnResourceReadResponse)
 	resourceHandler.SetOnResourceRead(m.resourceHandlerOnResourceRead)
-	m.resourceHandler = cef.AsEngResourceHandler(resourceHandler.AsIntfResourceHandler())
+	m.resourceHandler = resourceHandler
 	return m, nil
 }

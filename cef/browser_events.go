@@ -13,11 +13,15 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
+	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/rtl"
 	"github.com/energye/lcl/tool"
+	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/keys"
 	"github.com/energye/lcl/types/messages"
 	"net/url"
 )
@@ -27,8 +31,8 @@ func (m *TBrowser) initDefaultEvent() {
 
 	m.chromium.SetOnProcessMessageReceived(m.chromiumOnProcessMessageReceived)
 
-	m.chromium.SetOnBeforeResourceLoad(m.chromiumOnBeforeResourceLoad)
 	m.chromium.SetOnGetResourceHandler(m.chromiumOnGetResourceHandler)
+	m.chromium.SetOnResourceLoadComplete(m.chromiumOnResourceLoadComplete)
 
 	m.chromium.SetOnBeforeContextMenu(m.chromiumOnBeforeContextMenu)
 	m.chromium.SetOnContextMenuCommand(m.chromiumOnContextMenuCommand)
@@ -37,7 +41,10 @@ func (m *TBrowser) initDefaultEvent() {
 	m.chromium.SetOnBeforeBrowse(m.chromiumOnBeforeBrowse)
 
 	m.chromium.SetOnBeforeDownload(m.chromiumOnBeforeDownload)
+
 	m.chromium.SetOnLoadStart(m.chromiumOnLoadStart)
+	m.chromium.SetOnLoadEnd(m.chromiumOnLoadEnd)
+
 	m.chromium.SetOnKeyEvent(m.chromiumOnKeyEvent)
 
 	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
@@ -73,27 +80,28 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 	}
 }
 
-func (m *TBrowser) chromiumOnBeforeResourceLoad(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
-	callback cef.ICefCallback, outResult *cefTypes.TCefReturnValue) {
-	logger.Debug("Chromium.OnBeforeResourceLoad")
-}
-
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
 	logger.Debug("Chromium.OnGetResourceHandler")
+
 	var (
 		uri          = request.GetUrl()
 		reqUrl, err  = url.Parse(uri)
-		schemeName   string
 		path, method string
 		resource     string
 		handle       bool
-		header       = make(map[string]string)
 		data         []byte
 	)
+
 	if err == nil {
-		schemeName = reqUrl.Scheme
+		if application.GApplication == nil || application.GApplication.LocalLoad == nil || reqUrl.Scheme != application.GApplication.LocalLoad.Scheme {
+			return
+		}
+		if m.resourceHandlerList == nil {
+			m.resourceHandlerList = make(map[string]*source)
+		}
 		if m.onResourceRequest != nil {
+			header := make(map[string]string)
 			path = reqUrl.Path
 			method = request.GetMethod()
 			headerMap := cef.NewStringMultimapOwn()
@@ -111,13 +119,24 @@ func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.
 		if handle && resource != "" {
 			data = []byte(resource)
 		}
-		src, err := makeSource(browser, frame, schemeName, request)
+		src, err := makeSource(browser, frame, request)
 		if err != nil {
 			logger.Error("Chromium.OnGetResourceHandler makeSource:", err.Error())
 			return
 		}
 		src.data = data
-		*resourceHandler = src.resourceHandler
+		*resourceHandler = cef.AsEngResourceHandler(src.resourceHandler.AsIntfResourceHandler())
+		m.resourceHandlerList[uri] = src
+	}
+}
+
+func (m *TBrowser) chromiumOnResourceLoadComplete(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
+	response cef.ICefResponse, status cefTypes.TCefUrlRequestStatus, receivedContentLength int64) {
+	uri := request.GetUrl()
+	logger.Debug("Chromium.OnResourceLoadComplete uri:", uri, "status:", status, "receivedContentLength:", receivedContentLength)
+	if src, ok := m.resourceHandlerList[uri]; ok {
+		src.resourceHandler.Free()
+		delete(m.resourceHandlerList, uri)
 	}
 }
 
@@ -164,16 +183,33 @@ func (m *TBrowser) chromiumOnAdapterBeforeDownload(sender lcl.IObject, browser c
 	callback cef.ICefBeforeDownloadCallback, result *bool) {
 
 }
-func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
 
+func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
+	m.loadingURL = frame.GetUrl()
+	m.loadingState = core.LcStart
+	logger.Debug("Chromium.OnLoadStart", m.loadingURL)
+	if m.onLoadChange != nil {
+		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
+	}
+}
+
+func (m *TBrowser) chromiumOnLoadEnd(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, httpStatusCode int32) {
+	logger.Debug("Chromium.OnLoadEnd")
+	m.loadingState = core.LcFinish
+	if m.onLoadChange != nil {
+		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
+	}
 }
 
 func (m *TBrowser) chromiumOnKeyEvent(sender lcl.IObject, browser cef.ICefBrowser, event cef.TCefKeyEvent, osEvent cefTypes.TCefEventHandle, outResult *bool) {
-
+	if event.WindowsKeyCode == keys.VkF12 {
+		m.chromium.ShowDevToolsWithPointWinControl(types.Point(0, 0), nil)
+	}
 }
 
 func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
 	logger.Debug("Chromium.OnTitleChange title:", title)
+	m.loadingTitle = title
 	lcl.RunOnMainThreadAsync(func(id uint32) {
 		if m.window.Caption() == "" {
 			m.window.SetCaption(title)

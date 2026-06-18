@@ -39,6 +39,10 @@ type TBrowser struct {
 	browserId               uint32
 	isClose                 bool
 	defaultURL              string
+	loadingTitle            string
+	loadingURL              string
+	loadingState            core.TLoadChange
+	resourceHandlerList     map[string]*source
 	executeScriptCallback   sync.Map
 	executeScriptId         int32
 	window                  window.IWindow
