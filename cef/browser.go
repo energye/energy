@@ -26,6 +26,7 @@ import (
 	"unsafe"
 )
 
+// IBrowser extension -> core.IBrowser
 type IBrowser interface {
 	core.IBrowser
 	Chromium() cef.IChromium

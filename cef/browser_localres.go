@@ -29,16 +29,17 @@ type tSchemeHandlerFactory struct {
 }
 
 type source struct {
-	path         string                 // 资源路径, 根据请求URL地址
-	fileExt      string                 // 资源扩展名, 用于拿到 MimeType
-	bytes        []byte                 // 资源数据
-	err          error                  // 获取资源时的错误
-	start        int                    // 读取资源时的地址偏移
-	statusCode   int32                  // 响应状态码
-	statusText   string                 // 响应状态文本
-	mimeType     string                 // 响应的资源 MimeType
-	header       map[string][]string    // 响应头
-	resourceType types.TCefResourceType // 资源类型
+	path            string                  // 资源路径, 根据请求URL地址
+	fileExt         string                  // 资源扩展名, 用于拿到 MimeType
+	data            []byte                  // 资源数据
+	err             error                   // 获取资源时的错误
+	start           int                     // 读取资源时的地址偏移
+	statusCode      int32                   // 响应状态码
+	statusText      string                  // 响应状态文本
+	mimeType        string                  // 响应的资源 MimeType
+	header          map[string][]string     // 响应头
+	resourceType    types.TCefResourceType  // 资源类型
+	resourceHandler cef.IEngResourceHandler // 资源处理器
 }
 
 func createSchemeHandlerFactory(browser cef.ICefBrowser) *tSchemeHandlerFactory {
@@ -59,26 +60,24 @@ func createSchemeHandlerFactory(browser cef.ICefBrowser) *tSchemeHandlerFactory 
 
 func (m *tSchemeHandlerFactory) schemeHandlerFactoryOnSchemeFactoryNew(browser cef.ICefBrowser, frame cef.ICefFrame, schemeName string, request cef.ICefRequest) cef.IEngResourceHandler {
 	logger.Debug("SchemeHandlerFactory.OnNew schemeName:", schemeName)
-	src, err := makeSource(schemeName, request)
+	src, err := makeSource(browser, frame, schemeName, request)
 	if err != nil {
 		logger.Error("SchemeHandlerFactory.OnNew", err.Error())
 		return nil
 	}
-	resourceHandler := cef.NewEngResourceHandler(browser, frame, schemeName, request)
-	resourceHandler.SetOnResourceProcessRequest(src.resourceHandlerOnResourceProcessRequest)
-	resourceHandler.SetOnResourceGetResponseHeaders(src.resourceHandlerOnResourceGetResponseHeaders)
-	resourceHandler.SetOnResourceReadResponse(src.resourceHandlerOnResourceReadResponse)
-	resourceHandler.SetOnResourceRead(src.resourceHandlerOnResourceRead)
-	intfResourceHandler := cef.AsEngResourceHandler(resourceHandler.AsIntfResourceHandler())
-	return intfResourceHandler
+	return src.resourceHandler
 }
 
 func (m *source) resourceHandlerOnResourceProcessRequest(request cef.ICefRequest, callback cef.ICefCallback) bool {
 	logger.Debug("ResourceHandler.OnResourceProcessRequest")
+	if m.data != nil {
+		callback.Cont()
+		return true
+	}
 	localLoad := application.GApplication.LocalLoad
 	if m.resourceType == types.RT_XHR && localLoad.Proxy != nil {
 		if result, err := localLoad.Proxy.Send(request.GetUrl()); err == nil {
-			m.bytes, m.err = result.Data, err
+			m.data, m.err = result.Data, err
 			m.statusCode = result.StatusCode
 			m.statusText = result.Status
 			m.header = result.Header
@@ -94,7 +93,7 @@ func (m *source) resourceHandlerOnResourceProcessRequest(request cef.ICefRequest
 		} else {
 			logger.Error("ResourceHandler.OnResourceProcessRequest", m.err.Error())
 			m.statusText = "Invalid resource request"
-			m.bytes = []byte(m.statusText)
+			m.data = []byte(m.statusText)
 			m.mimeType = "application/json"
 			m.statusCode = 404
 		}
@@ -104,11 +103,11 @@ func (m *source) resourceHandlerOnResourceProcessRequest(request cef.ICefRequest
 }
 
 func (m *source) resourceHandlerOnResourceGetResponseHeaders(response cef.ICefResponse, outResponseLength *int64, outRedirectUrl *string) {
-	logger.Debug("ResourceHandler.OnResourceGetResponseHeaders statusCode:", m.statusCode, "statusText:", m.statusText, "mimeType:", m.mimeType, "dataLen:", len(m.bytes))
+	logger.Debug("ResourceHandler.OnResourceGetResponseHeaders statusCode:", m.statusCode, "statusText:", m.statusText, "mimeType:", m.mimeType, "dataLen:", len(m.data))
 	response.SetStatus(m.statusCode)
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
-	*outResponseLength = int64(len(m.bytes))
+	*outResponseLength = int64(len(m.data))
 	if m.header != nil {
 		header := cef.NewCustomStringMultimap()
 		intfHeader := cef.AsCefCustomStringMultimap(header.AsIntfStringMultimap())
@@ -145,7 +144,7 @@ func (m *source) resourceHandlerOnResourceRead(dataOut uintptr, bytesToRead int3
 }
 
 func (m *source) response(dataOut uintptr, bytesToRead int32, bytesRead *int32) bool {
-	dataSize := len(m.bytes)
+	dataSize := len(m.data)
 	result := false
 	if m.start < dataSize {
 		var min = func(x, y int) int {
@@ -168,7 +167,7 @@ func (m *source) response(dataOut uintptr, bytesToRead int32, bytesRead *int32) 
 			end += int(bytesToRead)
 		}
 		end = min(end, dataSize)
-		c := copy(dst, m.bytes[m.start:end])
+		c := copy(dst, m.data[m.start:end])
 		m.start += c
 		*bytesRead = int32(c)
 		result = c > 0
@@ -186,14 +185,15 @@ func (m *source) readFile() {
 			path = localLoad.ResRootDir
 		}
 		logger.Debug("ResourceHandler.OnResourceProcessRequest Local ReadFile:", m.path)
-		m.bytes, m.err = os.ReadFile(filepath.Join(path, m.path))
+		m.data, m.err = os.ReadFile(filepath.Join(path, m.path))
 	} else {
 		logger.Debug("ResourceHandler.OnResourceProcessRequest Embed ReadFile:", m.path)
-		m.bytes, m.err = localLoad.FS.ReadFile(localLoad.ResRootDir + m.path)
+		m.data, m.err = localLoad.FS.ReadFile(localLoad.ResRootDir + m.path)
 	}
 }
 
-func makeSource(schemeName string, request cef.ICefRequest) (*source, error) {
+func makeSource(browser cef.ICefBrowser, frame cef.ICefFrame, schemeName string, request cef.ICefRequest) (*source, error) {
+	logger.Debug("Make Source")
 	rt := request.GetResourceType()
 	switch rt {
 	case /*RT_MEDIA,*/ types.RT_PING, types.RT_CSP_REPORT, types.RT_PLUGIN_RESOURCE:
@@ -219,7 +219,15 @@ func makeSource(schemeName string, request cef.ICefRequest) (*source, error) {
 	if ext != "" {
 		mimeType = cef.MiscFunc.CefGetMimeType(ext)
 	}
+
 	m := &source{start: 0, statusCode: 404, statusText: "Not Found", err: nil, header: nil,
 		path: path, fileExt: ext, mimeType: mimeType, resourceType: rt}
+
+	resourceHandler := cef.NewEngResourceHandler(browser, frame, schemeName, request)
+	resourceHandler.SetOnResourceProcessRequest(m.resourceHandlerOnResourceProcessRequest)
+	resourceHandler.SetOnResourceGetResponseHeaders(m.resourceHandlerOnResourceGetResponseHeaders)
+	resourceHandler.SetOnResourceReadResponse(m.resourceHandlerOnResourceReadResponse)
+	resourceHandler.SetOnResourceRead(m.resourceHandlerOnResourceRead)
+	m.resourceHandler = cef.AsEngResourceHandler(resourceHandler.AsIntfResourceHandler())
 	return m, nil
 }

@@ -19,6 +19,7 @@ import (
 	"github.com/energye/lcl/rtl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types/messages"
+	"net/url"
 )
 
 func (m *TBrowser) initDefaultEvent() {
@@ -67,15 +68,57 @@ func (m *TBrowser) winControlOnExit(sender lcl.IObject) {
 
 func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, outResult *bool) {
+	if m.onProcessMessage != nil {
+		m.onProcessMessage("")
+	}
 }
 
 func (m *TBrowser) chromiumOnBeforeResourceLoad(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	callback cef.ICefCallback, outResult *cefTypes.TCefReturnValue) {
+	logger.Debug("Chromium.OnBeforeResourceLoad")
 }
 
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
-
+	logger.Debug("Chromium.OnGetResourceHandler")
+	var (
+		uri          = request.GetUrl()
+		reqUrl, err  = url.Parse(uri)
+		schemeName   string
+		path, method string
+		resource     string
+		handle       bool
+		header       = make(map[string]string)
+		data         []byte
+	)
+	if err == nil {
+		schemeName = reqUrl.Scheme
+		if m.onResourceRequest != nil {
+			path = reqUrl.Path
+			method = request.GetMethod()
+			headerMap := cef.NewStringMultimapOwn()
+			intfHeaderMap := cef.AsCefStringMultimapOwn(headerMap.AsIntfStringMultimap())
+			request.GetHeaderMap(intfHeaderMap)
+			for i := 0; i < int(intfHeaderMap.GetSize()); i++ {
+				key := intfHeaderMap.GetKey(uint32(i))
+				value := intfHeaderMap.GetValue(uint32(i))
+				header[key] = value
+			}
+			intfHeaderMap.Release()
+			headerMap.Free()
+			resource, handle = m.onResourceRequest(uri, path, method, header)
+		}
+		if handle && resource != "" {
+			data = []byte(resource)
+		}
+		src, err := makeSource(browser, frame, schemeName, request)
+		if err != nil {
+			logger.Error("Chromium.OnGetResourceHandler makeSource:", err.Error())
+			return
+		}
+		src.data = data
+		*resourceHandler = src.resourceHandler
+	}
 }
 
 func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
@@ -96,7 +139,7 @@ func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBr
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// local load
-		m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
 		// pre-creates a window
 		if options.AutoPopupWindow {
 			if gPrePopupWindow == nil {

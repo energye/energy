@@ -38,6 +38,7 @@ func getNextBrowserID() uint32 {
 	return globalBrowserID
 }
 
+// IWebview alias -> core.IBrowser
 type IWebview = core.IBrowser
 
 type TEnergyWebview struct {
