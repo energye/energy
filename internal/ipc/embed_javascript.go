@@ -8,16 +8,16 @@
 //
 // ----------------------------------------
 
-package wv
+package ipc
 
 import _ "embed"
 
-// ipc js
+// JSIPC js
 //
 //go:embed embed_ipc.js
-var ipcJS []byte
+var JSIPC []byte
 
-// drag js
+// JSDrag js
 //
 //go:embed embed_drag.js
-var dragJS []byte
+var JSDrag []byte

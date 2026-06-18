@@ -14,6 +14,7 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/application"
+	internalIPC "github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/logger"
 	"strings"
 )
@@ -27,15 +28,22 @@ func (m *Application) initDefaultEvent() {
 }
 
 func (m *Application) applicationOnContextCreated(browser cef.ICefBrowser, frame cef.ICefFrame, context cef.ICefv8Context) {
+	logger.Debug("Application.OnContextCreated")
+	m.postMessage = makePostMessageObject(browser, frame, context)
+	frame.ExecuteJavaScript(string(internalIPC.JSIPC), "", 0)
 }
 
 func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, handled *bool) {
-
+	name := message.GetName()
+	logger.Debug("Application.OnProcessMessageReceived name:", name)
+	defer func() {
+		message.Release()
+	}()
 }
 
 func (m *Application) applicationOnWebKitInitialized() {
-
+	logger.Debug("Application.OnWebKitInitialized")
 }
 
 func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegistrarRef) {

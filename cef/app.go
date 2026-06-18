@@ -46,6 +46,7 @@ var (
 type Application struct {
 	cef.ICefApplication
 	application.Application
+	postMessage *tPostMessage
 }
 
 // Init CEF Global initialization, invoked at application startup in main
@@ -83,6 +84,10 @@ func NewApplication() *Application {
 		}
 		application.GApplication = &GApplication.Application
 		base.SetGlobalCEFApplication(GApplication.Instance())
+		GApplication.initDefaultEvent()
+		GApplication.messageLoop()
+		GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
+		GApplication.SetEnablePrintPreview(true)
 	}
 	if !tool.IsDarwin() {
 		// Set up CEF Framework
@@ -153,10 +158,6 @@ func Run(forms ...lcl.IEngForm) {
 		println("[ERROR] CEF Application Instance is not initialized")
 		return
 	}
-	GApplication.initDefaultEvent()
-	GApplication.messageLoop()
-	GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
-	GApplication.SetEnablePrintPreview(true)
 
 	processTypeStr := ProcessType(GApplication.ProcessType())
 

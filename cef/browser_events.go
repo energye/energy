@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"encoding/json"
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/application"
@@ -20,10 +21,13 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/rtl"
 	"github.com/energye/lcl/tool"
+	"github.com/energye/lcl/tool/exec"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/keys"
 	"github.com/energye/lcl/types/messages"
 	"net/url"
+	"path/filepath"
+	"unsafe"
 )
 
 func (m *TBrowser) initDefaultEvent() {
@@ -48,7 +52,10 @@ func (m *TBrowser) initDefaultEvent() {
 	m.chromium.SetOnKeyEvent(m.chromiumOnKeyEvent)
 
 	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
-	m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
+
+	//m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
+	//m.chromium.SetOnStartDragging(m.chromiumOnStartDragging)
+
 	m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
 
 	// new tab or popup browser
@@ -75,8 +82,60 @@ func (m *TBrowser) winControlOnExit(sender lcl.IObject) {
 
 func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, outResult *bool) {
-	if m.onProcessMessage != nil {
-		m.onProcessMessage("")
+	name := message.GetName()
+	logger.Debug("Chromium.OnProcessMessageReceived name:", name)
+	defer func() {
+		message.Release()
+	}()
+	if name == core.PostMessageName {
+		var handle bool
+		messageData := ""
+		args := message.GetArgumentList()
+		dataBin := args.GetBinary(0)
+		defer func() {
+			dataBin.Release()
+			args.Release()
+		}()
+		messageDataBytes := make([]byte, int(dataBin.GetSize()))
+		dataBin.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), dataBin.GetSize(), 0)
+		messageData = string(messageDataBytes)
+		if m.messageReceivedDelegate != nil {
+			// ipc message
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal(messageDataBytes, &pMessage)
+			if err == nil {
+				switch pMessage.Type {
+				case ipc.MT_READY:
+					// ipc ready
+					handle = true
+				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
+					// ipc on, emit event
+					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
+				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					// ipc drag window
+					if m.window != nil {
+						//m.drag(pMessage)
+						handle = true
+					}
+				case ipc.MT_DRAG_RESIZE:
+					// border drag resize
+					if m.window != nil {
+						//ht := pMessage.Data.(string)
+						//m.resize(ht)
+						handle = true
+					}
+				case ipc.MT_DRAG_BORDER_WMSZ:
+				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
+					//m.dragDrop(pMessage, webview, args)
+				}
+			} else {
+				println("MessageReceived-ERROR：", err.Error())
+			}
+		}
+		logger.Debug("Chromium.OnProcessMessageReceived messageData:", messageData)
+		if !handle && m.onProcessMessage != nil {
+			m.onProcessMessage(messageData)
+		}
 	}
 }
 
@@ -181,7 +240,8 @@ func (m *TBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBr
 
 func (m *TBrowser) chromiumOnAdapterBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
 	callback cef.ICefBeforeDownloadCallback, result *bool) {
-
+	callback.Cont(filepath.Join(exec.AppDir(), suggestedName), true)
+	*result = true
 }
 
 func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
@@ -217,12 +277,18 @@ func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBro
 	})
 }
 
-func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
-
-}
+//func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
+//	logger.Debug("Chromium.OnDragEnter", browser.GetIdentifier())
+//}
+//
+//func (m *TBrowser) chromiumOnStartDragging(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, allowedOps cefTypes.TCefDragOperations,
+//	X int32, Y int32, outResult *bool) {
+//	logger.Debug("Chromium.OnStartDragging", browser.GetIdentifier())
+//}
 
 func (m *TBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, regionsCount cefTypes.NativeUInt,
 	regions cef.ICefDraggableRegionArray) {
+	logger.Debug("Chromium.OnDraggableRegionsChanged", browser.GetIdentifier())
 
 }
 

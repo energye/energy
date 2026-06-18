@@ -17,6 +17,7 @@ import (
 	"errors"
 	"github.com/energye/energy/v3/application"
 	. "github.com/energye/energy/v3/core"
+	internalIPC "github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/win32"
 	"github.com/energye/energy/v3/window"
@@ -427,7 +428,7 @@ func (m *TWebview) initDefaultEvent() {
 			m.browser.AddWebResourceRequestedFilter(m.LocalLoadResource().LocalLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
-		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
+		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(internalIPC.JSIPC), m.browser)
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos
@@ -449,7 +450,7 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnNavigationCompleted(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationCompletedEventArgs) {
 		m.createEnergyJavasScript()
-		m.ExecuteScript(string(dragJS))
+		m.ExecuteScript(string(internalIPC.JSDrag))
 		if m.onLoadChange != nil {
 			webview = wv.NewCoreWebView2(webview)
 			defer webview.Free()
@@ -499,8 +500,6 @@ func (m *TWebview) initDefaultEvent() {
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
-				//fmt.Println("pMessage.Data", pMessage.Data)
-				//m._SetCursor(17)
 				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
 					m.dragDrop(pMessage, webview, args)
 				}

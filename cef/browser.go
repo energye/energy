@@ -105,7 +105,7 @@ func (m *TBrowser) SendMessage(payload []byte) {
 	if m.canClose || len(payload) == 0 {
 		return
 	}
-	m.SendProcessMessageToRenderer("ipc", payload)
+	m.SendProcessMessageToRenderer(core.PostMessageName, payload)
 }
 
 func (m *TBrowser) ExecuteScript(javaScript string) {

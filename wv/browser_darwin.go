@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	. "github.com/energye/energy/v3/core"
+	internalIPC "github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/darwin/cocoa"
 	. "github.com/energye/energy/v3/platform/darwin/types"
@@ -83,7 +84,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	userContentController := wv.UserContentController.New()
 	scriptMessageHandler := wv.NewScriptMessageHandler(m.browser.AsReceiveScriptMessageDelegate())
 	userContentController.AddScriptMessageHandlerName(scriptMessageHandler, energyProcessMessage)
-	userScript := wv.UserScript.InitWithSourceInjectionTimeForMainFrameOnly(string(ipcJS), 0, false)
+	userScript := wv.UserScript.InitWithSourceInjectionTimeForMainFrameOnly(string(internalIPC.JSIPC), 0, false)
 	userContentController.AddUserScript(userScript.Data())
 
 	configuration := wv.WebViewConfiguration.New()

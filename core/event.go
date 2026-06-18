@@ -10,6 +10,8 @@
 
 package core
 
+const PostMessageName = "postMessage"
+
 type TLoadChange int32
 
 const (

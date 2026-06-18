@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+let __energy;
 
 // render process send process message
 (function () {
@@ -82,7 +83,6 @@
             this.executionID = 0;
 
             // process message
-
             if (window.chrome?.webview?.postMessage) {
                 // webview2
                 // render process send message => go
@@ -97,6 +97,12 @@
                 // this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
                 this.processMessage = window.webkit.messageHandlers.processMessage.postMessage.bind(window.webkit.messageHandlers.processMessage);
                 // this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage(message);
+            } else if (window.chrome?.energy?.postMessage) {
+                // energy
+                this.processMessage = window.chrome.energy.postMessage.bind(window.chrome.energy)
+                window.chrome.energy.addEventListener("message", event => {
+                    window.energy.__executeEvent(event.data);
+                });
             } else {
                 console.warn('ENERGY IPC Message Unsupported Platform');
             }

@@ -25,7 +25,7 @@ func NextContextMenuCommandId() int32 {
 	return gContextMenuCommandId
 }
 
-// TContextMenuItem 右键菜单
+// TContextMenuItem Context menu.
 type TContextMenuItem struct {
 	Add   func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
 	Clear func()

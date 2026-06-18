@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v3/application"
 	. "github.com/energye/energy/v3/core"
+	internalIPC "github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/linux/gtk3"
 	. "github.com/energye/energy/v3/platform/linux/types"
@@ -79,7 +80,7 @@ func NewWebview(owner lcl.IComponent) IWebview {
 		gWk2Context = wv.WebContext.Default()
 	}
 
-	m.browser.RegisterScriptCode(string(ipcJS))
+	m.browser.RegisterScriptCode(string(internalIPC.JSIPC))
 	m.browser.RegisterScriptMessageHandler(energyProcessMessage)
 
 	m.settings = wv.NewSettings()
