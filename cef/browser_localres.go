@@ -208,8 +208,8 @@ func makeSource(schemeName string, request cef.ICefRequest) (*source, error) {
 		return nil, errors.New("unsupported scheme: " + reqUrl.Scheme)
 	}
 	path := reqUrl.Path
-	ext := ""
 	mimeType := ""
+	ext := ""
 	for i := len(path) - 1; i >= 0 && !os.IsPathSeparator(path[i]); i-- {
 		if path[i] == '.' {
 			ext = path[i+1:]

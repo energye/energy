@@ -98,7 +98,7 @@ func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBr
 		// local load
 		m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
 		// pre-creates a window
-		if options.AutoPopup {
+		if options.AutoPopupWindow {
 			if gPrePopupWindow == nil {
 				lcl.RunOnMainThreadAsync(func(id uint32) {
 					gPrePopupWindow = NewPopupWindow()
@@ -206,7 +206,7 @@ func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.
 	}
 	if !handle && m.window != nil {
 		options := m.window.Options()
-		if options.AutoPopup && gPrePopupWindow != nil {
+		if options.AutoPopupWindow && gPrePopupWindow != nil {
 			lcl.RunOnMainThreadAsync(func(id uint32) {
 				gPrePopupWindow.Browser().Chromium().SetDefaultUrl(targetUrl)
 				gPrePopupWindow.Show()

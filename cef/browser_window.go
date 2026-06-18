@@ -18,9 +18,11 @@ import (
 )
 
 var (
+	// Pre-create popup windows, enabled via app option `AutoPopupWindow`
 	gPrePopupWindow *TPopupWindow
 )
 
+// TPopupWindow Popup browser window.
 type TPopupWindow struct {
 	window.TWindow
 	browser IBrowser
