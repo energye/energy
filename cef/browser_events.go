@@ -136,6 +136,7 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 		if !handle && m.onProcessMessage != nil {
 			m.onProcessMessage(messageData)
 		}
+		*outResult = handle
 	}
 }
 

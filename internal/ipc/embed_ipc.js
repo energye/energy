@@ -100,8 +100,9 @@ let __energy;
             } else if (window.chrome?.energy?.postMessage) {
                 // energy
                 this.processMessage = window.chrome.energy.postMessage.bind(window.chrome.energy)
-                window.chrome.energy.addEventListener("message", event => {
-                    window.energy.__executeEvent(event.data);
+                window.chrome.energy.addEventListener("message", data => {
+                    console.debug("[DEBUG] postMessage -> message:", data);
+                    window.energy.__executeEvent(data);
                 });
             } else {
                 console.warn('ENERGY IPC Message Unsupported Platform');

@@ -77,7 +77,7 @@ func (m *tPostMessage) postMessageHandleOnV8Execute(name string, object cef.ICef
 			if nameV8Value.IsString() && callbackV8Value.IsFunction() {
 				callbackName := nameV8Value.GetStringValue()
 				logger.Debug("PostMessageHandle.OnV8Execute - addEventListener callbackName:", callbackName)
-				if callbackName == "message" {
+				if callbackName == core.RenderProcessMessageName {
 					m.eventCallbacks[callbackName] = cef.V8ValueRef.UnWrap(callbackV8Value.Wrap())
 					//*retval = cef.V8ValueRef.NewUndefined()
 					return true

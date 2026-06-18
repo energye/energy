@@ -10,7 +10,10 @@
 
 package core
 
-const PostMessageName = "postMessage"
+const (
+	PostMessageName          = "postMessage"
+	RenderProcessMessageName = "message"
+)
 
 type TLoadChange int32
 
