@@ -11,10 +11,10 @@
 package cef
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
-	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
@@ -27,6 +27,7 @@ import (
 	"github.com/energye/lcl/types/messages"
 	"net/url"
 	"path/filepath"
+	"runtime"
 	"unsafe"
 )
 
@@ -56,7 +57,7 @@ func (m *TBrowser) initDefaultEvent() {
 	//m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
 	//m.chromium.SetOnStartDragging(m.chromiumOnStartDragging)
 
-	m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
+	//m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
 
 	// new tab or popup browser
 	m.chromium.SetOnOpenUrlFromTab(m.chromiumOnOpenUrlFromTab)
@@ -154,7 +155,7 @@ func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.
 	)
 
 	if err == nil {
-		if application.GApplication == nil || application.GApplication.LocalLoad == nil || reqUrl.Scheme != application.GApplication.LocalLoad.Scheme {
+		if GApplication == nil || GApplication.LocalLoad == nil || reqUrl.Scheme != GApplication.LocalLoad.Scheme {
 			return
 		}
 		if m.resourceHandlerList == nil {
@@ -257,6 +258,7 @@ func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrows
 func (m *TBrowser) chromiumOnLoadEnd(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, httpStatusCode int32) {
 	logger.Debug("Chromium.OnLoadEnd")
 	m.loadingState = core.LcFinish
+	m.createEnergyJavasScript()
 	if m.onLoadChange != nil {
 		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
 	}
@@ -361,3 +363,36 @@ func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.
 		}
 	}
 }
+
+func (m *TBrowser) createEnergyJavasScript() {
+	jsCode := &bytes.Buffer{}
+	var envJS = func(json string) {
+		jsCode.WriteString(`window.energy.setOptionsEnv(`)
+		jsCode.WriteString(json)
+		jsCode.WriteString(`);`)
+	}
+	optionsJSON, err := json.Marshal(GApplication.Options)
+	if err == nil {
+		envJS(string(optionsJSON))
+	}
+	browser := make(map[string]any)
+	browser["id"] = m.BrowserId()
+	env := make(map[string]any)
+	env["frameWidth"] = frameWidth
+	env["frameHeight"] = frameHeight
+	env["frameCorner"] = frameCorner
+	env["os"] = runtime.GOOS
+	env["browser"] = browser
+	envJSON, err := json.Marshal(env)
+	if err == nil {
+		envJS(string(envJSON))
+	}
+	m.ExecuteScript(jsCode.String())
+	m.ExecuteScript(`window.energy.drag.setup();`)
+}
+
+var (
+	frameWidth  = int32(4)
+	frameHeight = int32(4)
+	frameCorner = frameWidth + frameHeight
+)

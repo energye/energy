@@ -174,8 +174,8 @@ func (m *TBrowser) SetWindow(window window.IWindow) {
 // UpdateBrowserOptions updates browser configuration
 func (m *TBrowser) UpdateBrowserOptions() {
 	// retrieves global LocalLoad configuration
-	if application.GApplication != nil && application.GApplication.LocalLoad != nil {
-		newLocalLoad := *application.GApplication.LocalLoad.LocalLoad
+	if GApplication != nil && GApplication.LocalLoad != nil {
+		newLocalLoad := *GApplication.LocalLoad.LocalLoad
 		m.SetLocalLoad(newLocalLoad)
 	}
 	if m.window != nil {
