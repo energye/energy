@@ -33,6 +33,7 @@ func (m *Application) applicationOnContextCreated(browser cef.ICefBrowser, frame
 	logger.Debug("Application.OnContextCreated")
 	m.postMessage = makePostMessageObject(browser, frame, context)
 	frame.ExecuteJavaScript(string(internalIPC.JSIPC), "", 0)
+	frame.ExecuteJavaScript(string(internalIPC.JSDrag), "", 0)
 }
 
 func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,

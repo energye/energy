@@ -109,13 +109,13 @@
         }
 
         /**
-         * 构造一个包含消息类型、名称、数据和执行ID的对象。
+         * Constructs an object containing message type, name, data, and execution ID.
          *
-         * @param {string}      t - const 消息类型 (MessageType)
-         * @param {string}      n - string 名称 (name)
-         * @param {*}           d - any 数据 (data)
-         * @param {number}      i - int 执行 ID (executionID)
-         * @returns {Object} 包含t、n、d、i属性的对象
+         * @param {string}      t - const MessageType
+         * @param {string}      n - string name
+         * @param {*}           d - any data
+         * @param {number}      i - int executionID
+         * @returns {Object} Object with properties t, n, d, i
          */
         makePayload(t, n, d, i) {
             const data = {
@@ -440,8 +440,8 @@
         }
     }
 
-
     window.energy = new Energy();
     window.ipc = new IPC();
     // window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
+    // console.log("embed ipc js init ok.");
 })();

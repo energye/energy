@@ -17,7 +17,7 @@
     const DragTypeFile = DragTypeNo + 1; // file list
     const DragTypeData = DragTypeFile + 1;
 
-    const docElement = document.documentElement;
+    const docElement = document;
     const formats = ['text/plain', 'Files'];
     let dragCount = 0;
     let isDrag = false;
@@ -53,7 +53,7 @@
         return null;
     }
 
-    // 拖拽进入事件
+    // Drag enter event.
     docElement.addEventListener('dragenter', (event) => {
         const format = isFormats(event);
         if (format == null) {
@@ -68,7 +68,7 @@
         }
     }, {passive: true});
 
-    // 拖拽离开事件
+    // Drag leave event.
     docElement.addEventListener('dragleave', (event) => {
         const format = isFormats(event);
         if (format == null) {
@@ -84,7 +84,7 @@
         }
     }, {passive: true});
 
-    // 拖拽结束事件（包含 放置完成 和 未放置直接离开）
+    // Drag end event (includes drop completion and leaving without dropping).
     docElement.addEventListener('drop', (event) => {
         const format = isFormats(event);
         if (format == null) {
@@ -112,4 +112,5 @@
             }
         }
     }, {passive: true});
+    // console.log("embed drag js init ok.");
 })();
