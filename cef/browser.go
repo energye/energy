@@ -19,9 +19,11 @@ import (
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
+	"github.com/energye/lcl/types/messages"
 	"sync"
 	"unsafe"
 )
@@ -105,7 +107,7 @@ func (m *TBrowser) SendMessage(payload []byte) {
 	if m.canClose || len(payload) == 0 {
 		return
 	}
-	m.SendProcessMessageToRenderer(core.PostMessageName, payload)
+	m.SendProcessMessageToRenderer(internalPostMessageName, payload)
 }
 
 func (m *TBrowser) ExecuteScript(javaScript string) {
@@ -337,5 +339,95 @@ func (m *TBrowser) createBrowserOnTimer(sender lcl.IObject) {
 		m.timer.SetOnTimer(nil)
 		m.timer.Free()
 		m.timer = nil
+	}
+}
+
+func (m *TBrowser) dragDrop(message ipc.ProcessMessage, messageData string) {
+	data, ok := message.Data.(map[string]any)
+	if !ok {
+		return
+	}
+	dataType := core.TDragType(tool.ToInt(data["type"]))
+	x := int32(tool.ToInt(data["x"]))
+	y := int32(tool.ToInt(data["y"]))
+	switch message.Type {
+	case ipc.MT_DRAG_DROP_ENTER:
+		if m.onDragEnter != nil {
+			m.onDragEnter(dataType, x, y)
+		}
+	case ipc.MT_DRAG_DROP_LEAVE:
+		if m.onDragLeave != nil {
+			m.onDragLeave()
+		}
+	case ipc.MT_DRAG_DROP_OVER:
+		if m.onDragOver != nil {
+			dragData := &core.TDragData{Type: dataType}
+			if dataType == core.DragTypeData {
+				dragData.Data = []byte(data["text"].(string))
+			} else if dataType == core.DragTypeFile {
+				var files []string
+				//additionalObjects := wv.NewCoreWebView2ObjectCollectionView(args.AdditionalObjects())
+				//defer additionalObjects.Free()
+				//count := additionalObjects.Count()
+				//for i := uint32(0); i < count; i++ {
+				//	unknown := additionalObjects.Items(i)
+				//	file := wv.NewCoreWebView2File(wv.AsCoreWebView2File(unknown))
+				//	files = append(files, file.Path())
+				//	file.Free()
+				//}
+				dragData.Filenames = files
+			}
+			m.onDragOver(dragData, x, y)
+		}
+	}
+}
+
+func (m *TBrowser) drag(message ipc.ProcessMessage) {
+	if m.window == nil || m.window.IsFullScreen() {
+		return
+	}
+	switch message.Type {
+	case ipc.MT_DRAG_MOVE:
+		if m.window.IsFullScreen() {
+			return
+		}
+		if win.ReleaseCapture() {
+			win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+		}
+	case ipc.MT_DRAG_DOWN:
+	case ipc.MT_DRAG_UP:
+	case ipc.MT_DRAG_DBLCLICK:
+		m.window.Maximize()
+	}
+}
+
+func (m *TBrowser) resize(ht string) {
+	if m.window == nil {
+		return
+	}
+	if m.window.IsFullScreen() || m.window.Options().DisableResize {
+		return
+	}
+	if win.ReleaseCapture() {
+		var borderHT uintptr
+		switch ht {
+		case "n-resize":
+			borderHT = messages.HTTOP
+		case "ne-resize":
+			borderHT = messages.HTTOPRIGHT
+		case "e-resize":
+			borderHT = messages.HTRIGHT
+		case "se-resize":
+			borderHT = messages.HTBOTTOMRIGHT
+		case "s-resize":
+			borderHT = messages.HTBOTTOM
+		case "sw-resize":
+			borderHT = messages.HTBOTTOMLEFT
+		case "w-resize":
+			borderHT = messages.HTLEFT
+		case "nw-resize":
+			borderHT = messages.HTTOPLEFT
+		}
+		win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
 	}
 }

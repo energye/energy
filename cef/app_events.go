@@ -14,11 +14,17 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/core"
 	internalIPC "github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/logger"
 	"strings"
 	"unsafe"
+)
+
+const (
+	internalPostMessageName                      = "postMessage"
+	internalAddEventListenerName                 = "addEventListener"
+	internalPostMessageWithAdditionalObjectsName = "postMessageWithAdditionalObjects"
+	internalRenderProcessMessageName             = "message"
 )
 
 func (m *Application) initDefaultEvent() {
@@ -43,8 +49,8 @@ func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowse
 	defer func() {
 		message.Release()
 	}()
-	if m.postMessage != nil && name == core.PostMessageName {
-		callback, ok := m.postMessage.eventCallbacks[core.RenderProcessMessageName]
+	if m.postMessage != nil && name == internalPostMessageName {
+		callback, ok := m.postMessage.eventCallbacks[internalRenderProcessMessageName]
 		if !ok {
 			return
 		}

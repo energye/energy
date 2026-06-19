@@ -88,7 +88,7 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 	defer func() {
 		message.Release()
 	}()
-	if name == core.PostMessageName {
+	if name == internalPostMessageName {
 		var handle bool
 		messageData := ""
 		args := message.GetArgumentList()
@@ -115,19 +115,19 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					if m.window != nil {
-						//m.drag(pMessage)
+						m.drag(pMessage)
 						handle = true
 					}
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
 					if m.window != nil {
-						//ht := pMessage.Data.(string)
-						//m.resize(ht)
+						ht := pMessage.Data.(string)
+						m.resize(ht)
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
 				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
-					//m.dragDrop(pMessage, webview, args)
+					m.dragDrop(pMessage, messageData)
 				}
 			} else {
 				println("MessageReceived-ERROR：", err.Error())

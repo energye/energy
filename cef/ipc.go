@@ -13,42 +13,46 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	"github.com/energye/cef/cef/types"
-	"github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/logger"
 	"unsafe"
 )
 
 type tPostMessage struct {
-	energy               cef.ICefv8Value
-	postMessageHandle    cef.IEngV8Handler
-	postMessageFunc      cef.ICefv8Value
-	addEventListenerFunc cef.ICefv8Value
-	eventCallbacks       map[string]cef.ICefv8Value
+	energy                               cef.ICefv8Value
+	funcHandle                           cef.IEngV8Handler
+	postMessageFunc                      cef.ICefv8Value
+	addEventListenerFunc                 cef.ICefv8Value
+	postMessageWithAdditionalObjectsFunc cef.ICefv8Value
+	eventCallbacks                       map[string]cef.ICefv8Value
 }
 
 func makePostMessageObject(browser cef.ICefBrowser, frame cef.ICefFrame, context cef.ICefv8Context) *tPostMessage {
 	m := &tPostMessage{eventCallbacks: make(map[string]cef.ICefv8Value)}
 	m.energy = cef.V8ValueRef.NewObject(nil, nil)
 
-	m.postMessageHandle = cef.NewEngV8Handler()
-	m.postMessageHandle.SetOnV8Execute(m.postMessageHandleOnV8Execute)
-	m.postMessageFunc = cef.V8ValueRef.NewFunction("postMessage", cef.AsEngV8Handler(m.postMessageHandle.AsIntfV8Handler()))
-	m.addEventListenerFunc = cef.V8ValueRef.NewFunction("addEventListener", cef.AsEngV8Handler(m.postMessageHandle.AsIntfV8Handler()))
+	m.funcHandle = cef.NewEngV8Handler()
+	m.funcHandle.SetOnV8Execute(m.funcHandleOnV8Execute)
+	intfFuncHandle := cef.AsEngV8Handler(m.funcHandle.AsIntfV8Handler())
 
-	m.energy.SetValueByKey("postMessage", m.postMessageFunc, types.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.energy.SetValueByKey("addEventListener", m.addEventListenerFunc, types.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.postMessageFunc = cef.V8ValueRef.NewFunction(internalPostMessageName, intfFuncHandle)
+	m.addEventListenerFunc = cef.V8ValueRef.NewFunction(internalAddEventListenerName, intfFuncHandle)
+	m.postMessageWithAdditionalObjectsFunc = cef.V8ValueRef.NewFunction(internalPostMessageWithAdditionalObjectsName, intfFuncHandle)
+
+	m.energy.SetValueByKey(internalPostMessageName, m.postMessageFunc, types.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.energy.SetValueByKey(internalAddEventListenerName, m.addEventListenerFunc, types.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.energy.SetValueByKey(internalPostMessageWithAdditionalObjectsName, m.postMessageWithAdditionalObjectsFunc, types.V8_PROPERTY_ATTRIBUTE_READONLY)
 
 	context.GetGlobal().GetValueByKey("chrome").
 		SetValueByKey("energy", m.energy, types.V8_PROPERTY_ATTRIBUTE_READONLY)
 	return m
 }
 
-func (m *tPostMessage) postMessageHandleOnV8Execute(name string, object cef.ICefv8Value, arguments cef.ICefv8ValueArray,
+func (m *tPostMessage) funcHandleOnV8Execute(name string, object cef.ICefv8Value, arguments cef.ICefv8ValueArray,
 	retval *cef.ICefv8Value, exception *string) bool {
-	logger.Debug("PostMessageHandle.OnV8Execute name:", name)
 	defer arguments.Free()
 	size := arguments.Count()
-	if name == core.PostMessageName {
+	logger.Debug("PostMessageHandle.OnV8Execute name:", name, "args-size:", size)
+	if name == internalPostMessageName {
 		if size == 1 {
 			messageV8Value := arguments.Get(0)
 			defer func() {
@@ -62,11 +66,11 @@ func (m *tPostMessage) postMessageHandleOnV8Execute(name string, object cef.ICef
 					frame.Release()
 					v8Context.Release()
 				}()
-				m.sendBrowserProcessMessage(frame, core.PostMessageName, []byte(message))
+				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(message))
 			}
 			//*retval = cef.V8ValueRef.NewUndefined()
 		}
-	} else if name == "addEventListener" {
+	} else if name == internalAddEventListenerName {
 		if size == 2 {
 			nameV8Value := arguments.Get(0)
 			callbackV8Value := arguments.Get(1)
@@ -77,19 +81,19 @@ func (m *tPostMessage) postMessageHandleOnV8Execute(name string, object cef.ICef
 			if nameV8Value.IsString() && callbackV8Value.IsFunction() {
 				callbackName := nameV8Value.GetStringValue()
 				logger.Debug("PostMessageHandle.OnV8Execute - addEventListener callbackName:", callbackName)
-				if callbackName == core.RenderProcessMessageName {
+				if callbackName == internalRenderProcessMessageName {
 					m.eventCallbacks[callbackName] = cef.V8ValueRef.UnWrap(callbackV8Value.Wrap())
 					//*retval = cef.V8ValueRef.NewUndefined()
 					return true
 				}
 			}
 		}
+	} else if name == internalPostMessageWithAdditionalObjectsName {
+		if size == 2 {
+
+		}
 	}
 	return false
-}
-
-func (m *tPostMessage) triggerMessageEvent() {
-
 }
 
 func (m *tPostMessage) sendBrowserProcessMessage(frame cef.ICefFrame, name string, data []byte) {

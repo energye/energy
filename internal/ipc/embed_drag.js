@@ -26,6 +26,8 @@
     const postMessageWithAdditionalObjects = function (message, additionalObjects) {
         if (window.chrome?.webview?.postMessageWithAdditionalObjects) {
             window.chrome.webview.postMessageWithAdditionalObjects(message, additionalObjects);
+        } else if (window.chrome?.energy?.postMessageWithAdditionalObjects) {
+            window.chrome.energy.postMessageWithAdditionalObjects(message, additionalObjects);
         }
     }
     const makePayload = window?.energy?.makePayload;
