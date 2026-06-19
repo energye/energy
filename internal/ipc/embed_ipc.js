@@ -8,8 +8,6 @@
 //
 //----------------------------------------
 
-let __energy;
-
 // render process send process message
 (function () {
     const MT_READY = 1;
@@ -101,7 +99,7 @@ let __energy;
                 // energy
                 this.processMessage = window.chrome.energy.postMessage.bind(window.chrome.energy)
                 window.chrome.energy.addEventListener("message", data => {
-                    console.debug("[DEBUG] postMessage -> message:", data);
+                    //console.log("[DEBUG] postMessage -> message:", data);
                     window.energy.__executeEvent(data);
                 });
             } else {
