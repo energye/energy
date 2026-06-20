@@ -54,7 +54,7 @@ func (m *TBrowser) initDefaultEvent() {
 
 	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
 
-	//m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
+	m.chromium.SetOnDragEnter(m.chromiumOnDragEnter)
 	//m.chromium.SetOnStartDragging(m.chromiumOnStartDragging)
 
 	//m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
@@ -127,7 +127,7 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
 				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
-					m.dragDrop(pMessage, messageData)
+					m.dragDrop(pMessage, args)
 				}
 			} else {
 				println("MessageReceived-ERROR：", err.Error())
@@ -280,10 +280,22 @@ func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBro
 	})
 }
 
-//func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations, outResult *bool) {
-//	logger.Debug("Chromium.OnDragEnter", browser.GetIdentifier())
-//}
-//
+func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations,
+	outResult *bool) {
+	logger.Debug("Chromium.OnDragEnter", browser.GetIdentifier())
+	if dragData.IsFile() {
+		m.dragFilePathCache = make(map[string]string) // clear and new
+		names := lcl.AsStrings(lcl.NewStringList())
+		dragData.GetFileNames(&names)
+		for i := int32(0); i < names.Count(); i++ {
+			dragFilePath := names.Strings(i)
+			_, fileName := filepath.Split(dragFilePath)
+			m.dragFilePathCache[fileName] = dragFilePath
+		}
+		names.Free()
+	}
+}
+
 //func (m *TBrowser) chromiumOnStartDragging(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, allowedOps cefTypes.TCefDragOperations,
 //	X int32, Y int32, outResult *bool) {
 //	logger.Debug("Chromium.OnStartDragging", browser.GetIdentifier())

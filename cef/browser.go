@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"encoding/json"
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/application"
@@ -44,6 +45,7 @@ type TBrowser struct {
 	loadingTitle            string
 	loadingURL              string
 	loadingState            core.TLoadChange
+	dragFilePathCache       map[string]string
 	resourceHandlerList     map[string]*source
 	executeScriptCallback   sync.Map
 	executeScriptId         int32
@@ -342,7 +344,7 @@ func (m *TBrowser) createBrowserOnTimer(sender lcl.IObject) {
 	}
 }
 
-func (m *TBrowser) dragDrop(message ipc.ProcessMessage, messageData string) {
+func (m *TBrowser) dragDrop(message ipc.ProcessMessage, args cef.ICefListValue) {
 	data, ok := message.Data.(map[string]any)
 	if !ok {
 		return
@@ -365,17 +367,28 @@ func (m *TBrowser) dragDrop(message ipc.ProcessMessage, messageData string) {
 			if dataType == core.DragTypeData {
 				dragData.Data = []byte(data["text"].(string))
 			} else if dataType == core.DragTypeFile {
-				var files []string
-				//additionalObjects := wv.NewCoreWebView2ObjectCollectionView(args.AdditionalObjects())
-				//defer additionalObjects.Free()
-				//count := additionalObjects.Count()
-				//for i := uint32(0); i < count; i++ {
-				//	unknown := additionalObjects.Items(i)
-				//	file := wv.NewCoreWebView2File(wv.AsCoreWebView2File(unknown))
-				//	files = append(files, file.Path())
-				//	file.Free()
-				//}
+				objectsDataBin := args.GetBinary(1)
+				defer func() {
+					objectsDataBin.Release()
+				}()
+				objectsDataBytes := make([]byte, int(objectsDataBin.GetSize()))
+				objectsDataBin.GetData(uintptr(unsafe.Pointer(&objectsDataBytes[0])), objectsDataBin.GetSize(), 0)
+
+				var (
+					objectFiles []TObjectFile
+					files       []string
+				)
+				err := json.Unmarshal(objectsDataBytes, &objectFiles)
+				if err == nil && m.dragFilePathCache != nil {
+					for _, file := range objectFiles {
+						if filePath, ok := m.dragFilePathCache[file.Name]; ok {
+							files = append(files, filePath)
+						}
+					}
+				}
+
 				dragData.Filenames = files
+				m.dragFilePathCache = nil // clear
 			}
 			m.onDragOver(dragData, x, y)
 		}

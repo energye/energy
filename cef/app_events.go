@@ -31,7 +31,6 @@ func (m *Application) initDefaultEvent() {
 	logger.Debug("Application.initDefaultEvent")
 	m.SetOnContextCreated(m.applicationOnContextCreated)
 	m.SetOnProcessMessageReceived(m.applicationOnProcessMessageReceived)
-	m.SetOnWebKitInitialized(m.applicationOnWebKitInitialized)
 	m.SetOnRegCustomSchemes(m.applicationOnRegCustomSchemes)
 }
 
@@ -73,10 +72,6 @@ func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowse
 			v8ctx.Exit()
 		}
 	}
-}
-
-func (m *Application) applicationOnWebKitInitialized() {
-	logger.Debug("Application.OnWebKitInitialized")
 }
 
 func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegistrarRef) {

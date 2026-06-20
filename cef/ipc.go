@@ -11,9 +11,11 @@
 package cef
 
 import (
+	"encoding/json"
 	"github.com/energye/cef/cef"
 	"github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/logger"
+	lclTypes "github.com/energye/lcl/types"
 	"unsafe"
 )
 
@@ -54,21 +56,17 @@ func (m *tPostMessage) funcHandleOnV8Execute(name string, object cef.ICefv8Value
 	logger.Debug("PostMessageHandle.OnV8Execute name:", name, "args-size:", size)
 	if name == internalPostMessageName {
 		if size == 1 {
-			messageV8Value := arguments.Get(0)
-			defer func() {
-				messageV8Value.Release()
-			}()
-			if messageV8Value.IsString() {
-				message := messageV8Value.GetStringValue()
+			if messageData := m.getPostMessageData(arguments); messageData != "" {
 				v8Context := cef.V8ContextRef.Current()
 				frame := v8Context.GetFrame()
 				defer func() {
 					frame.Release()
 					v8Context.Release()
 				}()
-				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(message))
+				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData), nil)
+				//*retval = cef.V8ValueRef.NewUndefined()
+				return true
 			}
-			//*retval = cef.V8ValueRef.NewUndefined()
 		}
 	} else if name == internalAddEventListenerName {
 		if size == 2 {
@@ -90,21 +88,90 @@ func (m *tPostMessage) funcHandleOnV8Execute(name string, object cef.ICefv8Value
 		}
 	} else if name == internalPostMessageWithAdditionalObjectsName {
 		if size == 2 {
-
+			messageData := m.getPostMessageData(arguments)
+			objectsFileData := m.getPostMessageWithAdditionalObjectsFileData(arguments)
+			if messageData != "" {
+				v8Context := cef.V8ContextRef.Current()
+				frame := v8Context.GetFrame()
+				defer func() {
+					frame.Release()
+					v8Context.Release()
+				}()
+				var (
+					objectsFileDataBytes []byte
+					err                  error
+				)
+				if len(objectsFileData) > 0 {
+					objectsFileDataBytes, err = json.Marshal(objectsFileData)
+					if err != nil {
+						return false
+					}
+				}
+				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData),
+					objectsFileDataBytes)
+			}
+			//*retval = cef.V8ValueRef.NewUndefined()
+			return true
 		}
 	}
 	return false
 }
 
-func (m *tPostMessage) sendBrowserProcessMessage(frame cef.ICefFrame, name string, data []byte) {
+func (m *tPostMessage) getPostMessageData(arguments cef.ICefv8ValueArray) string {
+	messageV8Value := arguments.Get(0)
+	defer func() {
+		messageV8Value.Release()
+	}()
+	if messageV8Value.IsString() {
+		return messageV8Value.GetStringValue()
+	}
+	return ""
+}
+
+type TObjectFile struct {
+	Name         string `json:"name"`
+	LastModified int64  `json:"last_modified"`
+	Size         uint32 `json:"size"`
+}
+
+func (m *tPostMessage) getPostMessageWithAdditionalObjectsFileData(arguments cef.ICefv8ValueArray) []TObjectFile {
+	objectsV8Value := arguments.Get(1)
+	defer func() {
+		objectsV8Value.Release()
+	}()
+	if !objectsV8Value.IsArray() {
+		return nil
+	}
+	var files []TObjectFile
+	for i := int32(0); i < objectsV8Value.GetArrayLength(); i++ {
+		fileItemV8Value := objectsV8Value.GetValueByIndex(i)
+		fileName := fileItemV8Value.GetValueByKey("name")
+		fileLastModified := fileItemV8Value.GetValueByKey("lastModified")
+		fileSize := fileItemV8Value.GetValueByKey("size")
+		files = append(files, TObjectFile{
+			Name:         fileName.GetStringValue(),
+			LastModified: lclTypes.TDateTime(fileLastModified.GetDoubleValue()).ToTime().UnixMilli(),
+			Size:         fileSize.GetUIntValue(),
+		})
+		fileItemV8Value.Release()
+	}
+	return files
+}
+
+func (m *tPostMessage) sendBrowserProcessMessage(frame cef.ICefFrame, name string, data []byte, objects []byte) {
 	processMessage := cef.ProcessMessageRef.New(name)
 	messageArgumentList := processMessage.GetArgumentList()
-	var dataPtr = uintptr(0)
 	if len(data) > 0 {
-		dataPtr = uintptr(unsafe.Pointer(&data[0]))
+		dataPtr := uintptr(unsafe.Pointer(&data[0]))
 		dataBin := cef.BinaryValueRef.New(dataPtr, uint32(len(data)))
 		defer dataBin.Release()
 		messageArgumentList.SetBinary(0, dataBin)
+	}
+	if len(objects) > 0 {
+		objectsPtr := uintptr(unsafe.Pointer(&objects[0]))
+		objectsBin := cef.BinaryValueRef.New(objectsPtr, uint32(len(objects)))
+		defer objectsBin.Release()
+		messageArgumentList.SetBinary(1, objectsBin)
 	}
 	frame.SendProcessMessage(types.PID_BROWSER, processMessage)
 	messageArgumentList.Clear()
