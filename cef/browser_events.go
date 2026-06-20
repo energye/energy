@@ -402,9 +402,3 @@ func (m *TBrowser) createEnergyJavasScript() {
 	m.ExecuteScript(jsCode.String())
 	m.ExecuteScript(`window.energy.drag.setup();`)
 }
-
-var (
-	frameWidth  = int32(4)
-	frameHeight = int32(4)
-	frameCorner = frameWidth + frameHeight
-)
