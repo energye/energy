@@ -88,6 +88,7 @@ func NewApplication() *Application {
 		GApplication.messageLoop()
 		GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
 		GApplication.SetEnablePrintPreview(true)
+		//GApplication.SetAllowFileAccessFromFiles(true)
 	}
 	if !tool.IsDarwin() {
 		// Set up CEF Framework

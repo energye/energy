@@ -116,6 +116,7 @@ func (m *TBrowser) ExecuteScript(javaScript string) {
 }
 
 func (m *TBrowser) ExecuteScriptCallback(script string, callback core.TOnEvaluateScriptCallbackEvent) {
+	// todo 未实现
 	if script == "" || callback == nil {
 		return
 	}
