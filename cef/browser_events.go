@@ -39,8 +39,8 @@ func (m *TBrowser) initDefaultEvent() {
 	m.chromium.SetOnGetResourceHandler(m.chromiumOnGetResourceHandler)
 	m.chromium.SetOnResourceLoadComplete(m.chromiumOnResourceLoadComplete)
 
-	m.chromium.SetOnBeforeContextMenu(m.chromiumOnBeforeContextMenu)
-	m.chromium.SetOnContextMenuCommand(m.chromiumOnContextMenuCommand)
+	m.chromium.SetOnBeforeContextMenu(m.chromiumOnBeforeContextMenu)   // ContextMenu
+	m.chromium.SetOnContextMenuCommand(m.chromiumOnContextMenuCommand) // ContextMenuCommand
 
 	m.chromium.SetOnAfterCreated(m.chromiumOnAfterCreated)
 	m.chromium.SetOnBeforeBrowse(m.chromiumOnBeforeBrowse)
@@ -202,12 +202,61 @@ func (m *TBrowser) chromiumOnResourceLoadComplete(sender lcl.IObject, browser ce
 }
 
 func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
-
+	menuItemClear := func(menuItems cef.ICefMenuModel) {
+		menuItems.Clear()
+	}
+	if m.window != nil && m.window.Options().DisableContextMenu {
+		menuItemClear(model)
+		return
+	}
+	if m.onContextMenu != nil {
+		nextMenuId := cefTypes.MENU_ID_USER_FIRST
+		var nextContextMenuCommandId = func() int32 {
+			nextMenuId++
+			return int32(nextMenuId)
+		}
+		var add func(text string, kind core.TContextMenuKind, menuItems cef.ICefMenuModel) (*core.TContextMenuItem, int32)
+		add = func(text string, kind core.TContextMenuKind, menuItems cef.ICefMenuModel) (*core.TContextMenuItem, int32) {
+			var subContextMenu cef.ICefMenuModel
+			commandId := nextContextMenuCommandId()
+			switch kind {
+			case core.CmkCommand:
+				menuItems.AddItem(commandId, text)
+			case core.CmkSub:
+				subContextMenu = menuItems.AddSubMenu(commandId, text)
+			case core.CmkSeparator:
+				menuItems.AddSeparator()
+			default:
+				return nil, 0
+			}
+			childContextMenu := &core.TContextMenuItem{
+				Clear: func() {
+					menuItemClear(subContextMenu)
+				},
+				Add: func(text string, kind core.TContextMenuKind) (*core.TContextMenuItem, int32) {
+					newMenuItem, newCommandId := add(text, kind, subContextMenu)
+					return newMenuItem, newCommandId
+				}}
+			return childContextMenu, commandId
+		}
+		contextMenu := &core.TContextMenuItem{
+			Clear: func() {
+				menuItemClear(model)
+			},
+			Add: func(text string, kind core.TContextMenuKind) (*core.TContextMenuItem, int32) {
+				return add(text, kind, model)
+			},
+		}
+		m.onContextMenu(contextMenu)
+	}
 }
 
 func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams,
 	commandId int32, eventFlags cefTypes.TCefEventFlags, outResult *bool) {
-
+	if m.onContextMenuCommand != nil {
+		m.onContextMenuCommand(commandId)
+		*outResult = true
+	}
 }
 
 func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
