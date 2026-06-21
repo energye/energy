@@ -116,14 +116,21 @@ func (m *TBrowser) ExecuteScript(javaScript string) {
 }
 
 func (m *TBrowser) ExecuteScriptCallback(script string, callback core.TOnEvaluateScriptCallbackEvent) {
-	// todo 未实现
 	if script == "" || callback == nil {
 		return
 	}
 	m.executeScriptId++
 	m.executeScriptCallback.Store(m.executeScriptId, callback)
-	frame := m.chromium.Browser().GetMainFrame()
-	m.chromium.ExecuteJavaScriptWithStrX2FrameInt(script, "", frame, 0)
+	message := &tExecuteScriptMessage{
+		Id:     m.executeScriptId,
+		Script: script,
+	}
+	payload, err := json.Marshal(message)
+	if err != nil {
+		m.executeScriptCallback.Delete(m.executeScriptId)
+		return
+	}
+	m.SendProcessMessageToRenderer(internalExecuteScriptName, payload)
 }
 
 func (m *TBrowser) SetLocalLoad(localLoad application.LocalLoad) {

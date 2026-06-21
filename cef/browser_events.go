@@ -138,6 +138,23 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 			m.onProcessMessage(messageData)
 		}
 		*outResult = handle
+	} else if name == internalExecuteScriptResultName {
+		args := message.GetArgumentList()
+		dataBin := args.GetBinary(0)
+		defer func() {
+			dataBin.Release()
+			args.Release()
+		}()
+		messageDataBytes := make([]byte, int(dataBin.GetSize()))
+		dataBin.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), dataBin.GetSize(), 0)
+		executeScriptResult := tExecuteScriptResultMessage{}
+		_ = json.Unmarshal(messageDataBytes, &executeScriptResult)
+		executionID := executeScriptResult.Id
+		if callback, ok := m.executeScriptCallback.Load(executionID); ok {
+			m.executeScriptCallback.Delete(executionID)
+			callback.(core.TOnEvaluateScriptCallbackEvent)(executeScriptResult.Data, executeScriptResult.Error)
+		}
+		*outResult = true
 	}
 }
 

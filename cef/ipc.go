@@ -63,7 +63,7 @@ func (m *tPostMessage) funcHandleOnV8Execute(name string, object cef.ICefv8Value
 					frame.Release()
 					v8Context.Release()
 				}()
-				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData), nil)
+				sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData), nil)
 				//*retval = cef.V8ValueRef.NewUndefined()
 				return true
 			}
@@ -107,7 +107,7 @@ func (m *tPostMessage) funcHandleOnV8Execute(name string, object cef.ICefv8Value
 						return false
 					}
 				}
-				m.sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData),
+				sendBrowserProcessMessage(frame, internalPostMessageName, []byte(messageData),
 					objectsFileDataBytes)
 			}
 			//*retval = cef.V8ValueRef.NewUndefined()
@@ -158,7 +158,7 @@ func (m *tPostMessage) getPostMessageWithAdditionalObjectsFileData(arguments cef
 	return files
 }
 
-func (m *tPostMessage) sendBrowserProcessMessage(frame cef.ICefFrame, name string, data []byte, objects []byte) {
+func sendBrowserProcessMessage(frame cef.ICefFrame, name string, data []byte, objects []byte) {
 	processMessage := cef.ProcessMessageRef.New(name)
 	messageArgumentList := processMessage.GetArgumentList()
 	if len(data) > 0 {

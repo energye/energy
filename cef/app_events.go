@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"encoding/json"
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/application"
@@ -25,6 +26,8 @@ const (
 	internalAddEventListenerName                 = "addEventListener"
 	internalPostMessageWithAdditionalObjectsName = "postMessageWithAdditionalObjects"
 	internalRenderProcessMessageName             = "message"
+	internalExecuteScriptName                    = "executeScript"
+	internalExecuteScriptResultName              = "executeScriptResult"
 )
 
 func (m *Application) initDefaultEvent() {
@@ -71,6 +74,57 @@ func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowse
 			callback.ExecuteFunctionWithContext(v8ctx, nil, callFuncArgs)
 			v8ctx.Exit()
 		}
+	} else if name == internalExecuteScriptName {
+		args := message.GetArgumentList()
+		dataBin := args.GetBinary(0)
+		v8ctx := frame.GetV8Context()
+		defer func() {
+			dataBin.Release()
+			args.Release()
+			v8ctx.Release()
+		}()
+		messageDataBytes := make([]byte, int(dataBin.GetSize()))
+		dataBin.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), dataBin.GetSize(), 0)
+		scriptMessage := tExecuteScriptMessage{}
+		err := json.Unmarshal(messageDataBytes, &scriptMessage)
+		if err != nil {
+			return
+		}
+		executeScriptResult := tExecuteScriptResultMessage{Id: scriptMessage.Id}
+		if v8ctx.Enter() {
+			var (
+				retval    cef.ICefv8Value
+				exception cef.ICefV8Exception
+			)
+
+			defer func() {
+				if !IsNil(exception) {
+					retval.Release()
+				}
+				if !IsNil(exception) {
+					exception.Release()
+				}
+			}()
+			evalOK := v8ctx.Eval(scriptMessage.Script, "", 0, &retval, &exception)
+			if evalOK {
+				value := v8ValueToJSON(retval)
+				result, err := json.Marshal(value)
+				if err != nil {
+					executeScriptResult.Error = err.Error()
+				} else {
+					executeScriptResult.Data = string(result)
+				}
+			}
+
+			if !IsNil(exception) {
+				executeScriptResult.Error = exception.GetMessage()
+			}
+			v8ctx.Exit()
+		} else {
+			executeScriptResult.Error = "Failed to enter V8Context"
+		}
+		data, _ := json.Marshal(executeScriptResult)
+		sendBrowserProcessMessage(frame, internalExecuteScriptResultName, data, nil)
 	}
 }
 
