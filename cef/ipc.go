@@ -128,13 +128,7 @@ func (m *tPostMessage) getPostMessageData(arguments cef.ICefv8ValueArray) string
 	return ""
 }
 
-type TObjectFile struct {
-	Name         string `json:"name"`
-	LastModified int64  `json:"last_modified"`
-	Size         uint32 `json:"size"`
-}
-
-func (m *tPostMessage) getPostMessageWithAdditionalObjectsFileData(arguments cef.ICefv8ValueArray) []TObjectFile {
+func (m *tPostMessage) getPostMessageWithAdditionalObjectsFileData(arguments cef.ICefv8ValueArray) []tObjectFile {
 	objectsV8Value := arguments.Get(1)
 	defer func() {
 		objectsV8Value.Release()
@@ -142,13 +136,13 @@ func (m *tPostMessage) getPostMessageWithAdditionalObjectsFileData(arguments cef
 	if !objectsV8Value.IsArray() {
 		return nil
 	}
-	var files []TObjectFile
+	var files []tObjectFile
 	for i := int32(0); i < objectsV8Value.GetArrayLength(); i++ {
 		fileItemV8Value := objectsV8Value.GetValueByIndex(i)
 		fileName := fileItemV8Value.GetValueByKey("name")
 		fileLastModified := fileItemV8Value.GetValueByKey("lastModified")
 		fileSize := fileItemV8Value.GetValueByKey("size")
-		files = append(files, TObjectFile{
+		files = append(files, tObjectFile{
 			Name:         fileName.GetStringValue(),
 			LastModified: lclTypes.TDateTime(fileLastModified.GetDoubleValue()).ToTime().UnixMilli(),
 			Size:         fileSize.GetUIntValue(),

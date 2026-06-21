@@ -28,6 +28,12 @@ type tExecuteScriptResultMessage struct {
 	Error string `json:"error"`
 }
 
+type tObjectFile struct {
+	Name         string `json:"name"`
+	LastModified int64  `json:"last_modified"`
+	Size         uint32 `json:"size"`
+}
+
 // v8ValueToJSON
 func v8ValueToJSON(v cef.ICefv8Value) any {
 	if v == nil || v.IsUndefined() || v.IsNull() {

@@ -381,7 +381,7 @@ func (m *TBrowser) dragDrop(message ipc.ProcessMessage, args cef.ICefListValue) 
 				objectsDataBin.GetData(uintptr(unsafe.Pointer(&objectsDataBytes[0])), objectsDataBin.GetSize(), 0)
 
 				var (
-					objectFiles []TObjectFile
+					objectFiles []tObjectFile
 					files       []string
 				)
 				err := json.Unmarshal(objectsDataBytes, &objectFiles)
