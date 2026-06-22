@@ -147,6 +147,9 @@ func (m *Application) messageLoop() {
 		// TODO Linux Gtk3
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
+		// Solution for "GPU unavailable error" on Linux.
+		// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
+		m.SetDisableZygote(true)
 	}
 }
 
