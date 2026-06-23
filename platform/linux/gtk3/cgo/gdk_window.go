@@ -5,12 +5,22 @@ package cgo
 // #include "gdk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
 // GdkWindow is a representation of GDK's GdkWindow.
 type GdkWindow struct {
 	*Object
+}
+
+func AsGdkWindow(ptr unsafe.Pointer) types.IGdkWindow {
+	if ptr == nil {
+		return nil
+	}
+	window := new(GdkWindow)
+	window.Object = &Object{ToCObject(ptr)}
+	return window
 }
 
 // native returns a pointer to the underlying GdkWindow.
@@ -67,6 +77,10 @@ func (v *GdkWindow) GetDevicePosition(d *Device) (*GdkWindow, int, int, Modifier
 // SetOverrideRedirect is a wrapper around gdk_window_set_override_redirect().
 func (v *GdkWindow) SetOverrideRedirect(overrideRedirect bool) {
 	C.gdk_window_set_override_redirect(v.native(), CBool(overrideRedirect))
+}
+
+func (v *GdkWindow) SetDecorations(decorations types.TGdkWMDecoration) {
+	C.gdk_window_set_decorations(v.native(), C.TGdkWMDecoration(decorations))
 }
 
 func toGdkWindow(s *C.GdkWindow) *GdkWindow {

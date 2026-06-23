@@ -89,6 +89,11 @@ func (m *Widget) GrabFocus() {
 	gtk3.SysCall("gtk_widget_grab_focus", m.Instance())
 }
 
+// Realize is a wrapper around gtk_widget_realize().
+func (m *Widget) Realize() {
+	gtk3.SysCall("gtk_widget_realize", m.Instance())
+}
+
 func (m *Widget) DragGetData(context IDragContext, target IAtom, time uint) {
 	gtk3.SysCall("gtk_drag_get_data", m.Instance(), context.Instance(), uintptr(target.Atom()), uintptr(time))
 }

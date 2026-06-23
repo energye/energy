@@ -25,6 +25,7 @@ func AsScrolledWindow(ptr unsafe.Pointer) IScrolledWindow {
 func AsWindow(ptr unsafe.Pointer) IWindow {
 	return nocgo.AsWindow(ptr)
 }
+
 func AsContainer(ptr unsafe.Pointer) IContainer {
 	return nocgo.AsContainer(ptr)
 }
@@ -91,6 +92,10 @@ func GdkAtomIntern(atomName string, onlyIfExists bool) IAtom {
 
 func NewCssProvider() ICssProvider {
 	return nocgo.NewCssProvider()
+}
+
+func AsGdkWindow(ptr unsafe.Pointer) IGdkWindow {
+	return nocgo.AsGdkWindow(ptr)
 }
 
 func SettingsGetDefault() ISettings {

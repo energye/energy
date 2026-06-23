@@ -93,6 +93,10 @@ func NewCssProvider() ICssProvider {
 	return cgo.NewCssProvider()
 }
 
+func AsGdkWindow(ptr unsafe.Pointer) IGdkWindow {
+	return cgo.AsGdkWindow(ptr)
+}
+
 func SettingsGetDefault() ISettings {
 	return cgo.SettingsGetDefault()
 }

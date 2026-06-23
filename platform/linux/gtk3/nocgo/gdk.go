@@ -33,6 +33,8 @@ func init() {
 		// Event
 		imports.NewTable("gdk_event_free", 0),
 		imports.NewTable("gdk_event_get_scancode", 0),
+		// window
+		imports.NewTable("gdk_window_set_decorations", 0),
 	}
 	gdk3.SetLibClose()
 	gdk3.MapperIndex()

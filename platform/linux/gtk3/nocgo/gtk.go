@@ -50,6 +50,7 @@ func init() {
 		imports.NewTable("gtk_widget_get_size_request", 0),
 		imports.NewTable("gtk_widget_get_style_context", 0),
 		imports.NewTable("gtk_widget_grab_focus", 0),
+		imports.NewTable("gtk_widget_realize", 0),
 		// box
 		imports.NewTable("gtk_box_pack_start", 0),
 		imports.NewTable("gtk_box_pack_end", 0),

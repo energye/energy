@@ -35,6 +35,11 @@ type IVisual interface {
 	IObject
 }
 
+type IGdkWindow interface {
+	IObject
+	SetDecorations(decorations TGdkWMDecoration)
+}
+
 type IWidget interface {
 	IObject
 	GetScreen() IScreen
