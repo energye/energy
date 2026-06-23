@@ -107,6 +107,10 @@ type IWindow interface {
 	Unmaximize()
 	Fullscreen()
 	Unfullscreen()
+	Iconify()
+	Deiconify()
+	Stick()
+	Unstick()
 	SetTitle(title string)
 	GetTitle() string
 	BeginResizeDrag(edge WindowEdge, button ButtonType, rootX, rootY int, timestamp uint32)

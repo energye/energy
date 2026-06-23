@@ -59,6 +59,26 @@ func (m *Window) Unfullscreen() {
 	gtk3.SysCall("gtk_window_unfullscreen", m.Instance())
 }
 
+// Iconify is a wrapper around gtk_window_iconify().
+func (m *Window) Iconify() {
+	gtk3.SysCall("gtk_window_iconify", m.Instance())
+}
+
+// Deiconify is a wrapper around gtk_window_deiconify().
+func (m *Window) Deiconify() {
+	gtk3.SysCall("gtk_window_deiconify", m.Instance())
+}
+
+// Stick is a wrapper around gtk_window_stick().
+func (m *Window) Stick() {
+	gtk3.SysCall("gtk_window_stick", m.Instance())
+}
+
+// Unstick is a wrapper around gtk_window_unstick().
+func (m *Window) Unstick() {
+	gtk3.SysCall("gtk_window_unstick", m.Instance())
+}
+
 // SetTitle is a wrapper around gtk_window_set_title().
 func (m *Window) SetTitle(title string) {
 	gtk3.SysCall("gtk_window_set_title", m.Instance(), CStr(title))
