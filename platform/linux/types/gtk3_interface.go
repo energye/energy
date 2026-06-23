@@ -53,6 +53,7 @@ type IWidget interface {
 	GrabFocus()
 	DragGetData(context IDragContext, target IAtom, time uint)
 	IsContainer() bool
+	Realize()
 }
 
 type IContainer interface {
