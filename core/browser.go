@@ -14,7 +14,6 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/types"
 )
 
 type Browser interface {
@@ -24,7 +23,7 @@ type WindowParent interface {
 }
 
 type IBrowser interface {
-	lcl.IWinControl
+	lcl.IComponent
 	// SetWindow sets the window instance for webview and initializes relevant callback functions
 	// window - Window interface instance used to host webview content
 	SetWindow(window window.IWindow)
@@ -44,10 +43,6 @@ type IBrowser interface {
 	LoadURL(url string)
 	ExecuteScript(javaScript string)
 	ExecuteScriptCallback(script string, callback TOnEvaluateScriptCallbackEvent)
-	SetWidth(v int32)
-	SetHeight(v int32)
-	SetBoundsRect(value types.TRect)
-	SetBounds(left int32, top int32, width int32, height int32)
 	SetOnBrowserAfterCreated(fn lcl.TNotifyEvent)
 	SetOnResourceRequest(fn TOnResourceRequestEvent)
 	SetOnProcessMessage(fn TOnProcessMessageEvent)

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/core"
+	"github.com/energye/lcl/lcl"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -39,7 +40,10 @@ func getNextBrowserID() uint32 {
 }
 
 // IWebview alias -> core.IBrowser
-type IWebview = core.IBrowser
+type IWebview interface {
+	lcl.IWinControl
+	core.IBrowser
+}
 
 type TEnergyWebview struct {
 	localLoad *application.LocalLoadResource
