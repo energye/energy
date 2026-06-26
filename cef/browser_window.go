@@ -25,7 +25,7 @@ var (
 // TPopupWindow Popup browser window.
 type TPopupWindow struct {
 	window.TWindow
-	browser ILCLBrowser
+	browser IEmbeddedBrowser
 }
 
 func NewPopupWindow() *TPopupWindow {
@@ -40,7 +40,7 @@ func (m *TPopupWindow) FormCreate(sender lcl.IObject) {
 
 	m.SetShowInTaskBar(types.StAlways)
 
-	m.browser = NewLCLBrowser(m)
+	m.browser = NewEmbeddedBrowser(m)
 	m.browser.SetAlign(types.AlClient)
 	m.browser.SetParent(m)
 	m.browser.SetWindow(m)

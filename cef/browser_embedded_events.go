@@ -14,18 +14,13 @@ import (
 	"unsafe"
 )
 
-func (m *TLCLBrowser) initLCLBrowserDefaultEvent() {
-	logger.Debug("Browser.initLCLBrowserDefaultEvent")
+func (m *TEmbeddedBrowser) iniTEmbeddedBrowserDefaultEvent() {
+	logger.Debug("Browser.iniTEmbeddedBrowserDefaultEvent")
 
 	m.chromium.SetOnProcessMessageReceived(m.chromiumOnProcessMessageReceived)
 
 	m.chromium.SetOnAfterCreated(m.chromiumOnAfterCreated)
 	m.chromium.SetOnBeforeBrowse(m.chromiumOnBeforeBrowse)
-
-	m.chromium.SetOnLoadStart(m.chromiumOnLoadStart)
-	m.chromium.SetOnLoadEnd(m.chromiumOnLoadEnd)
-
-	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
 
 	//m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
 
@@ -37,17 +32,17 @@ func (m *TLCLBrowser) initLCLBrowserDefaultEvent() {
 	m.ICEFWinControl.SetOnExit(m.winControlOnExit)
 }
 
-func (m *TLCLBrowser) winControlOnEnter(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) winControlOnEnter(sender lcl.IObject) {
 	m.chromium.Initialized()
 	m.chromium.FrameIsFocused()
 	m.chromium.SetFocus(true)
 }
 
-func (m *TLCLBrowser) winControlOnExit(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) winControlOnExit(sender lcl.IObject) {
 	m.chromium.SendCaptureLostEvent()
 }
 
-func (m *TLCLBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
+func (m *TEmbeddedBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
 	message cef.ICefProcessMessage, outResult *bool) {
 	name := message.GetName()
 	logger.Debug("Chromium.OnProcessMessageReceived name:", name)
@@ -124,52 +119,48 @@ func (m *TLCLBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, brows
 	}
 }
 
-func (m *TLCLBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
+func (m *TEmbeddedBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
+	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
+	if m.window != nil && m.window.BrowserId() == 0 {
+		options := m.window.Options()
+		m.browserId = uint32(browser.GetIdentifier())
+		m.window.SetBrowserId(m.browserId)
+		// ipc
+		ipc.RegisterProcessMessage(m)
+		// local load
+		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+		// pre-creates a window
+		if options.AutoPopupWindow {
+			if gPrePopupWindow == nil {
+				lcl.RunOnMainThreadAsync(func(id uint32) {
+					gPrePopupWindow = NewPopupWindow()
+				})
+			}
+		}
+	}
+	if m.onBrowserAfterCreated != nil {
+		m.onBrowserAfterCreated(sender)
+	}
+}
+
+func (m *TEmbeddedBrowser) chromiumOnBeforeBrowse(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest, userGesture bool,
 	isRedirect bool, outResult *bool) {
 	logger.Debug("Chromium.OnBeforeBrowse")
 	m.UpdateSize()
 }
 
-func (m *TLCLBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
-	m.loadingURL = frame.GetUrl()
-	m.loadingState = core.LcStart
-	logger.Debug("Chromium.OnLoadStart", m.loadingURL)
-	if m.onLoadChange != nil {
-		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
-	}
-}
-
-func (m *TLCLBrowser) chromiumOnLoadEnd(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, httpStatusCode int32) {
-	logger.Debug("Chromium.OnLoadEnd")
-	m.loadingState = core.LcFinish
-	m.createEnergyJavasScript()
-	if m.onLoadChange != nil {
-		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
-	}
-}
-
-func (m *TLCLBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
-	logger.Debug("Chromium.OnTitleChange title:", title)
-	m.loadingTitle = title
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.window.Caption() == "" {
-			m.window.SetCaption(title)
-		}
-	})
-}
-
-//func (m *TLCLBrowser) chromiumOnStartDragging(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, allowedOps cefTypes.TCefDragOperations,
+//func (m *TEmbeddedBrowser) chromiumOnStartDragging(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, allowedOps cefTypes.TCefDragOperations,
 //	X int32, Y int32, outResult *bool) {
 //	logger.Debug("Chromium.OnStartDragging", browser.GetIdentifier())
 //}
 
-func (m *TLCLBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, regionsCount cefTypes.NativeUInt,
+func (m *TEmbeddedBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, regionsCount cefTypes.NativeUInt,
 	regions cef.ICefDraggableRegionArray) {
 	logger.Debug("Chromium.OnDraggableRegionsChanged", browser.GetIdentifier())
 
 }
 
-func (m *TLCLBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
+func (m *TEmbeddedBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
 	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
 	if tool.IsDarwin() {
 		ok := m.DestroyChildWindow()
@@ -187,7 +178,7 @@ func (m *TLCLBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowse
 	}
 }
 
-func (m *TLCLBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
+func (m *TEmbeddedBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
 	logger.Debug("Chromium.OnBeforeClose", "Current-BrowserID:", m.browserId, "Target-BrowserID:", browser.GetIdentifier())
 	if m.browserId != uint32(browser.GetIdentifier()) {
 		logger.Debug("Chromium.OnBeforeClose Non-current user browser")

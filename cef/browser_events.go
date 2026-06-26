@@ -16,9 +16,9 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/core"
-	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool/exec"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/keys"
 	"net/url"
@@ -29,6 +29,10 @@ import (
 func (m *TBrowser) initBrowserDefaultEvent() {
 	m.chromium.SetOnGetResourceHandler(m.chromiumOnGetResourceHandler)
 	m.chromium.SetOnResourceLoadComplete(m.chromiumOnResourceLoadComplete)
+
+	m.chromium.SetOnLoadStart(m.chromiumOnLoadStart)
+	m.chromium.SetOnLoadEnd(m.chromiumOnLoadEnd)
+	m.chromium.SetOnTitleChange(m.chromiumOnTitleChange)
 
 	m.chromium.SetOnBeforeContextMenu(m.chromiumOnBeforeContextMenu)   // ContextMenu
 	m.chromium.SetOnContextMenuCommand(m.chromiumOnContextMenuCommand) // ContextMenuCommand
@@ -163,33 +167,10 @@ func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.
 	}
 }
 
-func (m *TBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
-	if m.window != nil && m.window.BrowserId() == 0 {
-		options := m.window.Options()
-		m.browserId = uint32(browser.GetIdentifier())
-		m.window.SetBrowserId(m.browserId)
-		// ipc
-		ipc.RegisterProcessMessage(m)
-		// local load
-		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
-		// pre-creates a window
-		if options.AutoPopupWindow {
-			if gPrePopupWindow == nil {
-				lcl.RunOnMainThreadAsync(func(id uint32) {
-					gPrePopupWindow = NewPopupWindow()
-				})
-			}
-		}
-	}
-	if m.onBrowserAfterCreated != nil {
-		m.onBrowserAfterCreated(sender)
-	}
-}
-
 func (m *TBrowser) chromiumOnKeyEvent(sender lcl.IObject, browser cef.ICefBrowser, event cef.TCefKeyEvent, osEvent cefTypes.TCefEventHandle, outResult *bool) {
 	if event.WindowsKeyCode == keys.VkF12 {
 		m.chromium.ShowDevToolsWithPointWinControl(types.Point(0, 0), nil)
+		*outResult = true
 	}
 }
 
@@ -197,6 +178,34 @@ func (m *TBrowser) chromiumOnOpenUrlFromTab(sender lcl.IObject, browser cef.ICef
 	targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, outResult *bool) {
 	logger.Debug("Chromium.OnOpenUrlFromTab", "targetUrl:", targetUrl)
 	*outResult = true
+}
+
+func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, popupId int32, targetUrl string,
+	targetFrameName string, targetDisposition cefTypes.TCefWindowOpenDisposition, userGesture bool, popupFeatures cef.TCefPopupFeatures,
+	windowInfo *cef.TCefWindowInfo, client *cef.IEngClient, settings *cef.TCefBrowserSettings, extraInfo *cef.ICefDictionaryValue,
+	noJavascriptAccess *bool, result *bool) {
+	logger.Debug("Chromium.OnAdapterBeforePopup", "popupId:", popupId, "targetUrl:", targetUrl)
+	*result = true
+	var handle bool
+	if m.onPopupWindow != nil {
+		handle = m.onPopupWindow(targetUrl)
+	}
+	if m.kind == bkEmbedded && !handle && m.window != nil {
+		options := m.window.Options()
+		if options.AutoPopupWindow && gPrePopupWindow != nil {
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				gPrePopupWindow.Browser().Chromium().SetDefaultUrl(targetUrl)
+				gPrePopupWindow.Show()
+				gPrePopupWindow = nil
+			})
+		}
+	}
+}
+
+func (m *TBrowser) chromiumOnAdapterBeforeDownload(sender lcl.IObject, browser cef.ICefBrowser, downloadItem cef.ICefDownloadItem, suggestedName string,
+	callback cef.ICefBeforeDownloadCallback, result *bool) {
+	callback.Cont(filepath.Join(exec.AppDir(), suggestedName), true)
+	*result = true
 }
 
 func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrowser, dragData cef.ICefDragData, mask cefTypes.TCefDragOperations,
@@ -212,6 +221,36 @@ func (m *TBrowser) chromiumOnDragEnter(sender lcl.IObject, browser cef.ICefBrows
 			m.dragFilePathCache[fileName] = dragFilePath
 		}
 		names.Free()
+	}
+}
+
+func (m *TBrowser) chromiumOnLoadStart(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, transitionType cefTypes.TCefTransitionType) {
+	m.loadingURL = frame.GetUrl()
+	m.loadingState = core.LcStart
+	logger.Debug("Chromium.OnLoadStart", m.loadingURL)
+	if m.onLoadChange != nil {
+		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
+	}
+}
+
+func (m *TBrowser) chromiumOnLoadEnd(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, httpStatusCode int32) {
+	logger.Debug("Chromium.OnLoadEnd")
+	m.loadingState = core.LcFinish
+	m.createEnergyJavasScript()
+	if m.onLoadChange != nil {
+		m.onLoadChange(m.loadingURL, m.loadingTitle, m.loadingState)
+	}
+}
+
+func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBrowser, title string) {
+	logger.Debug("Chromium.OnTitleChange title:", title)
+	m.loadingTitle = title
+	if m.kind == bkEmbedded {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			if m.window.Caption() == "" {
+				m.window.SetCaption(title)
+			}
+		})
 	}
 }
 

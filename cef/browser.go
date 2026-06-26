@@ -23,6 +23,15 @@ import (
 	"unsafe"
 )
 
+type browserKind = int32
+
+const (
+	bkNone     browserKind = iota // none
+	bkViews                       // CEF views framework
+	bkEmbedded                    // Embed into window
+	bkOSR                         // Off-screen rendering
+)
+
 // IBrowser extension -> core.IBrowser
 type IBrowser interface {
 	core.IBrowser
@@ -46,6 +55,8 @@ type TBrowser struct {
 	loadingState            core.TLoadChange
 	resourceHandlerList     map[string]*source
 	dragFilePathCache       map[string]string
+
+	kind browserKind
 
 	windowName string
 	context    cef.ICefRequestContext
@@ -143,4 +154,72 @@ func (m *TBrowser) SetBrowserExtraInfo(windowName string, context cef.ICefReques
 	m.windowName = windowName
 	m.context = context
 	m.extraInfo = extraInfo
+}
+
+// SetDefaultURL sets the default URL for the WebView
+func (m *TBrowser) SetDefaultURL(url string) {
+	if m.defaultURL != url {
+		m.chromium.SetDefaultUrl(url)
+	}
+	m.defaultURL = url
+}
+
+// LoadURL loads the specified URL address into the webview
+func (m *TBrowser) LoadURL(url string) {
+	m.chromium.LoadURLWithStrFrame(url, m.chromium.Browser().GetMainFrame())
+}
+
+// Browser returns the browser object associated with the TWebview instance
+func (m *TBrowser) Browser() core.Browser {
+	return m.chromium
+}
+
+// WindowParent obtains the parent window object associated with the TWebview instance
+func (m *TBrowser) WindowParent() core.WindowParent {
+	return m
+}
+
+// SetOnBrowserAfterCreated sets the callback handler triggered after browser creation completes
+func (m *TBrowser) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
+	m.onBrowserAfterCreated = fn
+}
+
+// SetOnResourceRequest sets the handler for resource request events
+// This method registers a callback function that will be triggered when the webview initiates a resource request
+func (m *TBrowser) SetOnResourceRequest(fn core.TOnResourceRequestEvent) {
+	m.onResourceRequest = fn
+}
+
+// SetOnProcessMessage sets the callback function for processing process messages
+// This method registers a callback that is triggered when a process message is received
+func (m *TBrowser) SetOnProcessMessage(fn core.TOnProcessMessageEvent) {
+	m.onProcessMessage = fn
+}
+
+func (m *TBrowser) SetOnLoadChange(fn core.TOnLoadChangeEvent) {
+	m.onLoadChange = fn
+}
+
+func (m *TBrowser) SetOnContextMenu(fn core.TOnContextMenuEvent) {
+	m.onContextMenu = fn
+}
+
+func (m *TBrowser) SetOnContextMenuCommand(fn core.TOnContextMenuCommandEvent) {
+	m.onContextMenuCommand = fn
+}
+
+func (m *TBrowser) SetOnPopupWindow(fn core.TOnPopupWindowEvent) {
+	m.onPopupWindow = fn
+}
+
+func (m *TBrowser) SetOnDragEnter(fn core.TOnDragEnterEvent) {
+	m.onDragEnter = fn
+}
+
+func (m *TBrowser) SetOnDragLeave(fn core.TOnDragLeaveEvent) {
+	m.onDragLeave = fn
+}
+
+func (m *TBrowser) SetOnDragOver(fn core.TOnDragOverEvent) {
+	m.onDragOver = fn
 }

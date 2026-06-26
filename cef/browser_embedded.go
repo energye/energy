@@ -25,20 +25,21 @@ import (
 	"unsafe"
 )
 
-// ILCLBrowser extension -> IBrowser, LCL Component browser.
-type ILCLBrowser interface {
+// IEmbeddedBrowser extension -> IBrowser, LCL Component browser.
+type IEmbeddedBrowser interface {
 	lcl.IWinControl
 	IBrowser
 }
-type TLCLBrowser struct {
+type TEmbeddedBrowser struct {
 	cef.ICEFWinControl
 	TBrowser
 	timer lcl.ITimer
 }
 
-// NewLCLBrowser creates a new browser window instance
-func NewLCLBrowser(owner lcl.IWinControl) ILCLBrowser {
-	m := &TLCLBrowser{}
+// NewEmbeddedBrowser creates a new browser window instance
+func NewEmbeddedBrowser(owner lcl.IWinControl) IEmbeddedBrowser {
+	m := &TEmbeddedBrowser{}
+	m.kind = bkEmbedded
 	m.chromium = cef.NewChromium(owner)
 	if tool.IsWindows() {
 		m.ICEFWinControl = cef.NewWindowParent(owner)
@@ -55,7 +56,7 @@ func NewLCLBrowser(owner lcl.IWinControl) ILCLBrowser {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 
 	m.initBrowserDefaultEvent()
-	m.initLCLBrowserDefaultEvent()
+	m.iniTEmbeddedBrowserDefaultEvent()
 
 	m.timer = lcl.NewTimer(owner)
 	m.timer.SetEnabled(false)
@@ -68,7 +69,7 @@ func NewLCLBrowser(owner lcl.IWinControl) ILCLBrowser {
 // SetWindow sets the window instance for webview and initializes related callback functions
 //
 //	window - Window interface instance hosting webview content
-func (m *TLCLBrowser) SetWindow(window window.IWindow) {
+func (m *TEmbeddedBrowser) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
 		window.AddOnWindowStateChange(m.doOnWindowStateChange)
@@ -80,7 +81,7 @@ func (m *TLCLBrowser) SetWindow(window window.IWindow) {
 }
 
 // UpdateBrowserOptions updates browser configuration
-func (m *TLCLBrowser) UpdateBrowserOptions() {
+func (m *TEmbeddedBrowser) UpdateBrowserOptions() {
 	// retrieves global LocalLoad configuration
 	if GApplication != nil && GApplication.LocalLoad != nil {
 		newLocalLoad := *GApplication.LocalLoad.LocalLoad
@@ -102,14 +103,14 @@ func (m *TLCLBrowser) UpdateBrowserOptions() {
 	}
 }
 
-func (m *TLCLBrowser) CreateBrowser() {
+func (m *TEmbeddedBrowser) CreateBrowser() {
 	logger.Debug("Browser.CreateBrowser")
 	m.UpdateBrowserOptions()
 	m.createBrowserOnTimer(m.timer)
 }
 
 // Close closes the webview window and releases associated resources
-func (m *TLCLBrowser) Close() {
+func (m *TEmbeddedBrowser) Close() {
 	if m.isClose {
 		return
 	}
@@ -118,95 +119,32 @@ func (m *TLCLBrowser) Close() {
 	ipc.UnRegisterProcessMessage(m)
 }
 
-// SetDefaultURL sets the default URL for the WebView
-func (m *TLCLBrowser) SetDefaultURL(url string) {
-	if m.defaultURL != url {
-		m.chromium.SetDefaultUrl(url)
-	}
-	m.defaultURL = url
-}
-
-// LoadURL loads the specified URL address into the webview
-func (m *TLCLBrowser) LoadURL(url string) {
-	m.chromium.LoadURLWithStrFrame(url, m.chromium.Browser().GetMainFrame())
-}
-
-// Browser returns the browser object associated with the TWebview instance
-func (m *TLCLBrowser) Browser() core.Browser {
-	return m.chromium
-}
-
-// WindowParent obtains the parent window object associated with the TWebview instance
-func (m *TLCLBrowser) WindowParent() core.WindowParent {
-	return m
-}
-
-// SetOnBrowserAfterCreated sets the callback handler triggered after browser creation completes
-func (m *TLCLBrowser) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
-	m.onBrowserAfterCreated = fn
-}
-
-// SetOnResourceRequest sets the handler for resource request events
-// This method registers a callback function that will be triggered when the webview initiates a resource request
-func (m *TLCLBrowser) SetOnResourceRequest(fn core.TOnResourceRequestEvent) {
-	m.onResourceRequest = fn
-}
-
-// SetOnProcessMessage sets the callback function for processing process messages
-// This method registers a callback that is triggered when a process message is received
-func (m *TLCLBrowser) SetOnProcessMessage(fn core.TOnProcessMessageEvent) {
-	m.onProcessMessage = fn
-}
-
-func (m *TLCLBrowser) SetOnLoadChange(fn core.TOnLoadChangeEvent) {
-	m.onLoadChange = fn
-}
-
-func (m *TLCLBrowser) SetOnContextMenu(fn core.TOnContextMenuEvent) {
-	m.onContextMenu = fn
-}
-
-func (m *TLCLBrowser) SetOnContextMenuCommand(fn core.TOnContextMenuCommandEvent) {
-	m.onContextMenuCommand = fn
-}
-
-func (m *TLCLBrowser) SetOnPopupWindow(fn core.TOnPopupWindowEvent) {
-	m.onPopupWindow = fn
-}
-
-func (m *TLCLBrowser) SetOnDragEnter(fn core.TOnDragEnterEvent) {
-	m.onDragEnter = fn
-}
-
-func (m *TLCLBrowser) SetOnDragLeave(fn core.TOnDragLeaveEvent) {
-	m.onDragLeave = fn
-}
-
-func (m *TLCLBrowser) SetOnDragOver(fn core.TOnDragOverEvent) {
+// SetOnDragOver TBrowser.SetOnDragOver
+func (m *TEmbeddedBrowser) SetOnDragOver(fn core.TOnDragOverEvent) {
 	m.onDragOver = fn
 }
 
-func (m *TLCLBrowser) doOnWindowStateChange(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) doOnWindowStateChange(sender lcl.IObject) {
 }
 
-func (m *TLCLBrowser) doOnWindowResize(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) doOnWindowResize(sender lcl.IObject) {
 	if m.chromium != nil {
 		m.chromium.NotifyMoveOrResizeStarted()
 		m.UpdateSize()
 	}
 }
 
-func (m *TLCLBrowser) doOnWindowShow(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) doOnWindowShow(sender lcl.IObject) {
 	logger.Debug("Browser.doOnWindowShow")
 	m.CreateBrowser()
 }
 
-func (m *TLCLBrowser) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+func (m *TEmbeddedBrowser) doOnWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 	logger.Debug("Browser.doOnWindowClose")
 	*closeAction = types.CaFree
 }
 
-func (m *TLCLBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+func (m *TEmbeddedBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	logger.Debug("Browser.doOnWindowCloseQuery canClose:", m.canClose)
 	if tool.IsDarwin() {
 		*canClose = m.canClose
@@ -220,7 +158,7 @@ func (m *TLCLBrowser) doOnWindowCloseQuery(sender lcl.IObject, canClose *bool) {
 	}
 }
 
-func (m *TLCLBrowser) createBrowserOnTimer(sender lcl.IObject) {
+func (m *TEmbeddedBrowser) createBrowserOnTimer(sender lcl.IObject) {
 	if m.timer == nil {
 		return
 	}
@@ -242,7 +180,7 @@ func (m *TLCLBrowser) createBrowserOnTimer(sender lcl.IObject) {
 	}
 }
 
-func (m *TLCLBrowser) dragDrop(message ipc.ProcessMessage, args cef.ICefListValue) {
+func (m *TEmbeddedBrowser) dragDrop(message ipc.ProcessMessage, args cef.ICefListValue) {
 	data, ok := message.Data.(map[string]any)
 	if !ok {
 		return
