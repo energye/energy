@@ -39,6 +39,9 @@ func NewViewsBrowser(owner lcl.IComponent) IViewsBrowser {
 
 	m.window.SetOnWindowCreated(m.windowOnWindowCreated)
 
+	m.initBrowserDefaultEvent()
+	m.initViewsBrowserDefaultEvent()
+
 	return m
 }
 

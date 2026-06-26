@@ -56,7 +56,7 @@ func NewEmbeddedBrowser(owner lcl.IWinControl) IEmbeddedBrowser {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 
 	m.initBrowserDefaultEvent()
-	m.iniTEmbeddedBrowserDefaultEvent()
+	m.initEmbeddedBrowserDefaultEvent()
 
 	m.timer = lcl.NewTimer(owner)
 	m.timer.SetEnabled(false)
