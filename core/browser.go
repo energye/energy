@@ -31,7 +31,7 @@ type IBrowser interface {
 	SetLocalLoad(localLoad application.LocalLoad)
 	LocalLoadResource() *application.LocalLoadResource
 	// UpdateBrowserOptions updates configuration of the current browser instance
-	UpdateBrowserOptions()
+	//UpdateBrowserOptions()
 	SetParent(window lcl.IWinControl)
 	CreateBrowser()
 	BrowserId() uint32

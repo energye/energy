@@ -12,6 +12,7 @@ package cef
 
 import (
 	"github.com/energye/cef/cef"
+	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
@@ -21,6 +22,10 @@ func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
 	logger.Debug("Browser.initViewsBrowserDefaultEvent")
 
 	m.chromium.SetOnAfterCreated(m.chromiumOnAfterCreated)
+
+	// close browser
+	m.chromium.SetOnBeforeClose(m.chromiumOnBeforeClose)
+	m.chromium.SetOnClose(m.chromiumOnClose)
 }
 
 func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
@@ -38,5 +43,18 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 	}
 	if m.onBrowserAfterCreated != nil {
 		m.onBrowserAfterCreated(sender)
+	}
+}
+
+func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
+	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
+
+}
+
+func (m *TViewsBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
+	logger.Debug("Chromium.OnBeforeClose", "Current-BrowserID:", m.browserId, "Target-BrowserID:", browser.GetIdentifier())
+	if m.browserId != uint32(browser.GetIdentifier()) {
+		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
+		return
 	}
 }
