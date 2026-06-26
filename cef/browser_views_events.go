@@ -20,19 +20,19 @@ import (
 func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
 	logger.Debug("Browser.initViewsBrowserDefaultEvent")
 
+	m.chromium.SetOnAfterCreated(m.chromiumOnAfterCreated)
 }
 
 func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
 	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
 	if m.browserId == 0 {
-		options := m.window.Options()
 		m.browserId = uint32(browser.GetIdentifier())
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// local load
 		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
 		// pre-creates a window
-		if options.AutoPopupWindow {
+		if m.options.AutoPopupWindow {
 
 		}
 	}

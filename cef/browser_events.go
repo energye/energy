@@ -16,17 +16,24 @@ import (
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/core"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/tool/exec"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/keys"
 	"net/url"
 	"path/filepath"
 	"runtime"
+	"unsafe"
 )
 
 func (m *TBrowser) initBrowserDefaultEvent() {
+	logger.Debug("Browser.initBrowserDefaultEvent")
+
+	m.chromium.SetOnProcessMessageReceived(m.chromiumOnProcessMessageReceived)
+
 	m.chromium.SetOnGetResourceHandler(m.chromiumOnGetResourceHandler)
 	m.chromium.SetOnResourceLoadComplete(m.chromiumOnResourceLoadComplete)
 
@@ -47,6 +54,22 @@ func (m *TBrowser) initBrowserDefaultEvent() {
 	// new tab or popup browser
 	m.chromium.SetOnOpenUrlFromTab(m.chromiumOnOpenUrlFromTab)
 	m.chromium.SetOnBeforePopup(m.chromiumOnBeforePopup)
+}
+
+func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
+	message cef.ICefProcessMessage, outResult *bool) {
+	name := message.GetName()
+	args := message.GetArgumentList()
+	logger.Debug("Chromium.OnProcessMessageReceived name:", name)
+	defer func() {
+		message.Release()
+		args.Release()
+	}()
+	if ok := m.doProcessMessagePostMessage(name, args); ok {
+		*outResult = true
+	} else if ok := m.doProcessMessageExecuteScriptResult(name, args); ok {
+		*outResult = true
+	}
 }
 
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
@@ -252,6 +275,130 @@ func (m *TBrowser) chromiumOnTitleChange(sender lcl.IObject, browser cef.ICefBro
 			}
 		})
 	}
+}
+
+func (m *TBrowser) doDragDrop(message ipc.ProcessMessage, args cef.ICefListValue) {
+	data, ok := message.Data.(map[string]any)
+	if !ok {
+		return
+	}
+	dataType := core.TDragType(tool.ToInt(data["type"]))
+	x := int32(tool.ToInt(data["x"]))
+	y := int32(tool.ToInt(data["y"]))
+	switch message.Type {
+	case ipc.MT_DRAG_DROP_ENTER:
+		if m.onDragEnter != nil {
+			m.onDragEnter(dataType, x, y)
+		}
+	case ipc.MT_DRAG_DROP_LEAVE:
+		if m.onDragLeave != nil {
+			m.onDragLeave()
+		}
+	case ipc.MT_DRAG_DROP_OVER:
+		if m.onDragOver != nil {
+			dragData := &core.TDragData{Type: dataType}
+			if dataType == core.DragTypeData {
+				dragData.Data = []byte(data["text"].(string))
+			} else if dataType == core.DragTypeFile {
+				objectsDataBin := args.GetBinary(1)
+				defer func() {
+					objectsDataBin.Release()
+				}()
+				objectsDataBytes := make([]byte, int(objectsDataBin.GetSize()))
+				objectsDataBin.GetData(uintptr(unsafe.Pointer(&objectsDataBytes[0])), objectsDataBin.GetSize(), 0)
+
+				var (
+					objectFiles []tObjectFile
+					files       []string
+				)
+				err := json.Unmarshal(objectsDataBytes, &objectFiles)
+				if err == nil && m.dragFilePathCache != nil {
+					for _, file := range objectFiles {
+						if filePath, ok := m.dragFilePathCache[file.Name]; ok {
+							files = append(files, filePath)
+						}
+					}
+				}
+
+				dragData.Filenames = files
+				m.dragFilePathCache = nil // clear
+			}
+			m.onDragOver(dragData, x, y)
+		}
+	}
+}
+
+func (m *TBrowser) doProcessMessagePostMessage(name string, arguments cef.ICefListValue) bool {
+	if name == internalPostMessageName {
+		var handle bool
+		messageData := ""
+		dataBin := arguments.GetBinary(0)
+		defer func() {
+			dataBin.Release()
+		}()
+		messageDataBytes := make([]byte, int(dataBin.GetSize()))
+		dataBin.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), dataBin.GetSize(), 0)
+		messageData = string(messageDataBytes)
+		if m.messageReceivedDelegate != nil {
+			// ipc message
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal(messageDataBytes, &pMessage)
+			if err == nil {
+				switch pMessage.Type {
+				case ipc.MT_READY:
+					// ipc ready
+					handle = true
+				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
+					// ipc on, emit event
+					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
+				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					// ipc drag window
+					if m.window != nil && m.kind == bkEmbedded {
+						m.drag(pMessage)
+						handle = true
+					}
+				case ipc.MT_DRAG_RESIZE:
+					// border drag resize
+					if m.window != nil && m.kind == bkEmbedded {
+						ht := pMessage.Data.(string)
+						m.resize(ht)
+						handle = true
+					}
+				case ipc.MT_DRAG_BORDER_WMSZ:
+				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
+					m.doDragDrop(pMessage, arguments)
+				}
+			} else {
+				println("MessageReceived-ERROR：", err.Error())
+			}
+		}
+		logger.Debug("Chromium.OnProcessMessageReceived messageData:", messageData)
+		if !handle && m.onProcessMessage != nil {
+			m.onProcessMessage(messageData)
+		}
+		return true
+	}
+	return false
+}
+
+func (m *TBrowser) doProcessMessageExecuteScriptResult(name string, arguments cef.ICefListValue) bool {
+	if name == internalExecuteScriptResultName {
+		dataBin := arguments.GetBinary(0)
+		defer func() {
+			dataBin.Release()
+		}()
+		messageDataBytes := make([]byte, int(dataBin.GetSize()))
+		dataBin.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), dataBin.GetSize(), 0)
+		executeScriptResult := tExecuteScriptResultMessage{}
+		_ = json.Unmarshal(messageDataBytes, &executeScriptResult)
+		executionID := executeScriptResult.Id
+		if callback, ok := m.executeScriptCallback.Load(executionID); ok {
+			m.executeScriptCallback.Delete(executionID)
+			callback.(core.TOnEvaluateScriptCallbackEvent)(executeScriptResult.Data, executeScriptResult.Error)
+		}
+		return true
+	}
+	return false
 }
 
 func (m *TBrowser) createEnergyJavasScript() {

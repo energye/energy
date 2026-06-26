@@ -11,7 +11,6 @@
 package cef
 
 import (
-	"encoding/json"
 	"github.com/energye/cef/cef"
 	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/energy/v3/core"
@@ -22,7 +21,6 @@ import (
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
-	"unsafe"
 )
 
 // IEmbeddedBrowser extension -> IBrowser, LCL Component browser.
@@ -178,56 +176,5 @@ func (m *TEmbeddedBrowser) createBrowserOnTimer(sender lcl.IObject) {
 		m.timer.SetOnTimer(nil)
 		m.timer.Free()
 		m.timer = nil
-	}
-}
-
-func (m *TEmbeddedBrowser) dragDrop(message ipc.ProcessMessage, args cef.ICefListValue) {
-	data, ok := message.Data.(map[string]any)
-	if !ok {
-		return
-	}
-	dataType := core.TDragType(tool.ToInt(data["type"]))
-	x := int32(tool.ToInt(data["x"]))
-	y := int32(tool.ToInt(data["y"]))
-	switch message.Type {
-	case ipc.MT_DRAG_DROP_ENTER:
-		if m.onDragEnter != nil {
-			m.onDragEnter(dataType, x, y)
-		}
-	case ipc.MT_DRAG_DROP_LEAVE:
-		if m.onDragLeave != nil {
-			m.onDragLeave()
-		}
-	case ipc.MT_DRAG_DROP_OVER:
-		if m.onDragOver != nil {
-			dragData := &core.TDragData{Type: dataType}
-			if dataType == core.DragTypeData {
-				dragData.Data = []byte(data["text"].(string))
-			} else if dataType == core.DragTypeFile {
-				objectsDataBin := args.GetBinary(1)
-				defer func() {
-					objectsDataBin.Release()
-				}()
-				objectsDataBytes := make([]byte, int(objectsDataBin.GetSize()))
-				objectsDataBin.GetData(uintptr(unsafe.Pointer(&objectsDataBytes[0])), objectsDataBin.GetSize(), 0)
-
-				var (
-					objectFiles []tObjectFile
-					files       []string
-				)
-				err := json.Unmarshal(objectsDataBytes, &objectFiles)
-				if err == nil && m.dragFilePathCache != nil {
-					for _, file := range objectFiles {
-						if filePath, ok := m.dragFilePathCache[file.Name]; ok {
-							files = append(files, filePath)
-						}
-					}
-				}
-
-				dragData.Filenames = files
-				m.dragFilePathCache = nil // clear
-			}
-			m.onDragOver(dragData, x, y)
-		}
 	}
 }
