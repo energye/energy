@@ -34,8 +34,6 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 		m.browserId = uint32(browser.GetIdentifier())
 		// ipc
 		ipc.RegisterProcessMessage(m)
-		// local load
-		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
 		// pre-creates a window
 		if m.options.AutoPopupWindow {
 
