@@ -10,9 +10,33 @@
 
 package cef
 
-import "github.com/energye/energy/v3/logger"
+import (
+	"github.com/energye/cef/cef"
+	"github.com/energye/energy/v3/ipc"
+	"github.com/energye/energy/v3/logger"
+	"github.com/energye/lcl/lcl"
+)
 
 func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
 	logger.Debug("Browser.initViewsBrowserDefaultEvent")
 
+}
+
+func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
+	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
+	if m.browserId == 0 {
+		options := m.window.Options()
+		m.browserId = uint32(browser.GetIdentifier())
+		// ipc
+		ipc.RegisterProcessMessage(m)
+		// local load
+		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+		// pre-creates a window
+		if options.AutoPopupWindow {
+
+		}
+	}
+	if m.onBrowserAfterCreated != nil {
+		m.onBrowserAfterCreated(sender)
+	}
 }

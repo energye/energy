@@ -30,6 +30,7 @@ type IEmbeddedBrowser interface {
 	lcl.IWinControl
 	IBrowser
 }
+
 type TEmbeddedBrowser struct {
 	cef.ICEFWinControl
 	TBrowser

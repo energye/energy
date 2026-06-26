@@ -125,31 +125,31 @@ func (m *TEmbeddedBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, 
 			m.executeScriptCallback.Delete(executionID)
 			callback.(core.TOnEvaluateScriptCallbackEvent)(executeScriptResult.Data, executeScriptResult.Error)
 		}
-		*outResult = true
-	}
-}
-
-func (m *TEmbeddedBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
-	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
-	if m.window != nil && m.window.BrowserId() == 0 {
-		options := m.window.Options()
-		m.browserId = uint32(browser.GetIdentifier())
-		m.window.SetBrowserId(m.browserId)
-		// ipc
-		ipc.RegisterProcessMessage(m)
-		// local load
-		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
-		// pre-creates a window
-		if options.AutoPopupWindow {
-			if gPrePopupWindow == nil {
-				lcl.RunOnMainThreadAsync(func(id uint32) {
-					gPrePopupWindow = NewPopupWindow()
-				})
+		func (m *TEmbeddedBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
+			logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
+			if m.window != nil && m.window.BrowserId() == 0 {
+				options := m.window.Options()
+				m.browserId = uint32(browser.GetIdentifier())
+				m.window.SetBrowserId(m.browserId)
+				// ipc
+				ipc.RegisterProcessMessage(m)
+				// local load
+				//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+				// pre-creates a window
+				if options.AutoPopupWindow {
+					if gPrePopupWindow == nil {
+						lcl.RunOnMainThreadAsync(func(id uint32) {
+							gPrePopupWindow = NewPopupWindow()
+						})
+					}
+				}
+			}
+			if m.onBrowserAfterCreated != nil {
+				m.onBrowserAfterCreated(sender)
 			}
 		}
-	}
-	if m.onBrowserAfterCreated != nil {
-		m.onBrowserAfterCreated(sender)
+
+		*outResult = true
 	}
 }
 
