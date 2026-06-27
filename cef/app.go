@@ -61,6 +61,10 @@ type Application struct {
 // windows (objects implementing CreateTopLevelWindow).
 type IRunWindow = any
 
+// IViewsWindow CEF views framework
+//
+//	When creating a window in CEF Views Framework mode, TViewsBrowser must be visibly
+//	embedded and the `CreateTopLevelWindow` method must be implemented.
 type IViewsWindow interface {
 	CreateTopLevelWindow()
 }
