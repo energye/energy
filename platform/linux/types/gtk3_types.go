@@ -382,16 +382,19 @@ const (
 	GDK_WINDOW_EDGE_SOUTH_EAST WindowEdge = 7 // 右下
 )
 
-type TGdkWMDecoration = uint
+type TGdkWMDecorationIdx = uint
 
 const (
-	TGdkWMDecorationIdxMinValue TGdkWMDecoration = 0
-	GDK_DECOR_ALL               TGdkWMDecoration = 0
-	GDK_DECOR_BORDER            TGdkWMDecoration = 1
-	GDK_DECOR_RESIZEH           TGdkWMDecoration = 2
-	GDK_DECOR_TITLE             TGdkWMDecoration = 3
-	GDK_DECOR_MENU              TGdkWMDecoration = 4
-	GDK_DECOR_MINIMIZE          TGdkWMDecoration = 5
-	GDK_DECOR_MAXIMIZE          TGdkWMDecoration = 6
-	TGdkWMDecorationIdxMaxValue TGdkWMDecoration = 31
+	TGdkWMDecorationIdxMinValue TGdkWMDecorationIdx = 0
+	GDK_DECOR_ALL               TGdkWMDecorationIdx = 0
+	GDK_DECOR_BORDER            TGdkWMDecorationIdx = 1
+	GDK_DECOR_RESIZEH           TGdkWMDecorationIdx = 2
+	GDK_DECOR_TITLE             TGdkWMDecorationIdx = 3
+	GDK_DECOR_MENU              TGdkWMDecorationIdx = 4
+	GDK_DECOR_MINIMIZE          TGdkWMDecorationIdx = 5
+	GDK_DECOR_MAXIMIZE          TGdkWMDecorationIdx = 6
+	TGdkWMDecorationIdxMaxValue TGdkWMDecorationIdx = 31
 )
+
+// TGdkWMDecoration : TGdkWMDecorationIdx
+type TGdkWMDecoration = types.TSet

@@ -80,7 +80,7 @@ func (v *GdkWindow) SetOverrideRedirect(overrideRedirect bool) {
 }
 
 func (v *GdkWindow) SetDecorations(decorations types.TGdkWMDecoration) {
-	C.gdk_window_set_decorations(v.native(), C.TGdkWMDecoration(decorations))
+	C.gdk_window_set_decorations(v.native(), C.GdkWMDecoration(decorations))
 }
 
 func toGdkWindow(s *C.GdkWindow) *GdkWindow {
