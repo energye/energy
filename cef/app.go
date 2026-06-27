@@ -24,6 +24,7 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/tool/exec"
+	"os"
 	"path/filepath"
 )
 
@@ -46,7 +47,22 @@ var (
 type Application struct {
 	cef.ICefApplication
 	application.Application
-	postMessage *tPostMessage
+	postMessage              *tPostMessage
+	onContextCreated         cef.TOnContextCreatedEvent
+	onProcessMessageReceived cef.TOnProcessMessageReceivedEvent
+	onRegisterCustomSchemes  cef.TOnRegisterCustomSchemesEvent
+	onContextInitialized     cef.TOnContextInitializedEvent
+	viewsWindows             []IViewsWindow
+}
+
+// IRunWindow is the accepted Run target type.
+//
+// Supported values are native LCL forms (lcl.IEngForm) and CEF views framework
+// windows (objects implementing CreateTopLevelWindow).
+type IRunWindow = any
+
+type IViewsWindow interface {
+	CreateTopLevelWindow()
 }
 
 // Init CEF Global initialization, invoked at application startup in main
@@ -85,7 +101,6 @@ func NewApplication() *Application {
 		application.GApplication = &GApplication.Application
 		base.SetGlobalCEFApplication(GApplication.Instance())
 		GApplication.initDefaultEvent()
-		GApplication.messageLoop()
 		GApplication.SetLogSeverity(types.LOGSEVERITY_DISABLE)
 		GApplication.SetEnablePrintPreview(true)
 		//GApplication.SetAllowFileAccessFromFiles(true)
@@ -127,26 +142,42 @@ func (m *Application) SetCEFFrameworkDir(path string) {
 }
 
 // messageLoop Message polling. CEF Application uses OS-specific configurations
-func (m *Application) messageLoop() {
-	if tool.IsDarwin() { // Darwin => LCL
-		if m.IsMainProcess() {
-			base.AddCrDelegate()
-		}
-		m.InitLibLocationFromArgs()
+func (m *Application) messageLoop(kind browserKind) {
+	if kind == bkEmbedded {
+		if tool.IsDarwin() { // Darwin embed => LCL
+			if m.IsMainProcess() {
+				base.AddCrDelegate()
+			}
+			m.InitLibLocationFromArgs()
 
-		if m.IsMainProcess() {
-			GWorkScheduler = cef.NewWorkScheduler(nil)
-			base.SetGlobalCEFWorkSchedule(GWorkScheduler.Instance())
-			m.SetOnScheduleMessagePumpWork(func(delayMs int64) {
-				GWorkScheduler.ScheduleMessagePumpWork(delayMs)
-			})
+			if m.IsMainProcess() {
+				GWorkScheduler = cef.NewWorkScheduler(nil)
+				base.SetGlobalCEFWorkSchedule(GWorkScheduler.Instance())
+				m.SetOnScheduleMessagePumpWork(func(delayMs int64) {
+					GWorkScheduler.ScheduleMessagePumpWork(delayMs)
+				})
+			}
+			m.SetExternalMessagePump(true)
+			m.SetMultiThreadedMessageLoop(false)
+		} else if tool.IsWindows() { //  Window embed >= LCL
+			m.SetExternalMessagePump(false)
+			m.SetMultiThreadedMessageLoop(true)
+		} else if tool.IsLinux() { // Linux default GTK3 => views framework
+			if api.Widget().IsGTK2() {
+				// GTK2 => native LCL
+				println("[ERROR] Linux CEF use GTK3")
+				os.Exit(1)
+			} else if api.Widget().IsGTK3() {
+				m.SetExternalMessagePump(false)
+				m.SetMultiThreadedMessageLoop(true)
+				// Solution for "GPU unavailable error" on Linux.
+				// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
+				m.SetDisableZygote(true)
+			}
 		}
-		m.SetExternalMessagePump(true)
-		m.SetMultiThreadedMessageLoop(false)
-	} else { // Windows, Linux => LCL
-		// TODO Linux Gtk3
+	} else if kind == bkViews {
 		m.SetExternalMessagePump(false)
-		m.SetMultiThreadedMessageLoop(true)
+		m.SetMultiThreadedMessageLoop(false)
 		// Solution for "GPU unavailable error" on Linux.
 		// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
 		m.SetDisableZygote(true)
@@ -157,7 +188,12 @@ func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
-func Run(forms ...lcl.IEngForm) {
+// Run runs the application and starts the message loop
+//
+// Launches CEF application and selects window mode based on window instance type
+// Uses embedding when window implements lcl.IEngForm
+// Uses CEF Views Framework when window implements IViewsWindow
+func Run(windows ...IRunWindow) {
 	if GApplication == nil || !GApplication.IsValid() {
 		println("[ERROR] CEF Application Instance is not initialized")
 		return
@@ -166,6 +202,28 @@ func Run(forms ...lcl.IEngForm) {
 	processTypeStr := ProcessType(GApplication.ProcessType())
 
 	if GApplication.IsMainProcess() {
+		var kind browserKind
+		embedWindows := make([]lcl.IEngForm, 0, len(windows))
+		viewsWindows := make([]IViewsWindow, 0, len(windows))
+		for _, window := range windows {
+			if w, ok := window.(lcl.IEngForm); ok {
+				embedWindows = append(embedWindows, w)
+				continue
+			}
+			if w, ok := window.(IViewsWindow); ok {
+				viewsWindows = append(viewsWindows, w)
+				continue
+			}
+			logger.Debug("Application Run unsupported window:", fmt.Sprintf("%T", window))
+		}
+		if len(embedWindows) > 0 {
+			kind = bkEmbedded
+		} else if len(viewsWindows) > 0 {
+			kind = bkViews
+			GApplication.viewsWindows = viewsWindows
+		}
+		// selects window mode based on window instance type
+		GApplication.messageLoop(kind)
 		mainSuccess := GApplication.StartMainProcess()
 		logger.Debug("Application StartMainProcess:", mainSuccess)
 		if mainSuccess {
@@ -176,7 +234,11 @@ func Run(forms ...lcl.IEngForm) {
 				}
 				GApplication.ICefApplication.Free()
 			})
-			engLCL.Run(forms...)
+			if kind == bkEmbedded {
+				engLCL.Run(embedWindows...)
+			} else if kind == bkViews {
+				GApplication.RunMessageLoop()
+			}
 		}
 	} else if tool.IsDarwin() && !GApplication.SingleProcess() && !GApplication.IsMainProcess() {
 		logger.Debug("Application StartProcess 'darwin' for sub.executable processType:", processTypeStr)

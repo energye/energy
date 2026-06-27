@@ -32,9 +32,26 @@ const (
 
 func (m *Application) initDefaultEvent() {
 	logger.Debug("Application.initDefaultEvent")
-	m.SetOnContextCreated(m.applicationOnContextCreated)
-	m.SetOnProcessMessageReceived(m.applicationOnProcessMessageReceived)
-	m.SetOnRegCustomSchemes(m.applicationOnRegCustomSchemes)
+	m.ICefApplication.SetOnContextCreated(m.applicationOnContextCreated)
+	m.ICefApplication.SetOnProcessMessageReceived(m.applicationOnProcessMessageReceived)
+	m.ICefApplication.SetOnRegCustomSchemes(m.applicationOnRegCustomSchemes)
+	m.ICefApplication.SetOnContextInitialized(m.applicationOnContextInitialized)
+}
+
+func (m *Application) SetOnContextCreated(fn cef.TOnContextCreatedEvent) {
+	m.onContextCreated = fn
+}
+
+func (m *Application) SetOnProcessMessageReceived(fn cef.TOnProcessMessageReceivedEvent) {
+	m.onProcessMessageReceived = fn
+}
+
+func (m *Application) SetOnRegCustomSchemes(fn cef.TOnRegisterCustomSchemesEvent) {
+	m.onRegisterCustomSchemes = fn
+}
+
+func (m *Application) SetOnContextInitializedEvent(fn cef.TOnContextInitializedEvent) {
+	m.onContextInitialized = fn
 }
 
 func (m *Application) applicationOnContextCreated(browser cef.ICefBrowser, frame cef.ICefFrame, context cef.ICefv8Context) {
@@ -42,6 +59,9 @@ func (m *Application) applicationOnContextCreated(browser cef.ICefBrowser, frame
 	m.postMessage = makePostMessageObject(browser, frame, context)
 	frame.ExecuteJavaScript(string(internalIPC.JSIPC), "", 0)
 	frame.ExecuteJavaScript(string(internalIPC.JSDrag), "", 0)
+	if m.onContextCreated != nil {
+		m.onContextCreated(browser, frame, context)
+	}
 }
 
 func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowser, frame cef.ICefFrame, sourceProcess cefTypes.TCefProcessId,
@@ -125,6 +145,10 @@ func (m *Application) applicationOnProcessMessageReceived(browser cef.ICefBrowse
 		}
 		data, _ := json.Marshal(executeScriptResult)
 		sendBrowserProcessMessage(frame, internalExecuteScriptResultName, data, nil)
+	} else {
+		if m.onProcessMessageReceived != nil {
+			m.onProcessMessageReceived(browser, frame, sourceProcess, message, handled)
+		}
 	}
 }
 
@@ -140,4 +164,21 @@ func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegi
 	}
 	registrar.AddCustomScheme(gApp.LocalLoad.Scheme,
 		cefTypes.CEF_SCHEME_OPTION_STANDARD|cefTypes.CEF_SCHEME_OPTION_CORS_ENABLED|cefTypes.CEF_SCHEME_OPTION_SECURE|cefTypes.CEF_SCHEME_OPTION_FETCH_ENABLED)
+	if m.onRegisterCustomSchemes != nil {
+		m.onRegisterCustomSchemes(registrar)
+	}
+}
+
+func (m *Application) applicationOnContextInitialized() {
+	logger.Debug("Application.OnContextInitialized viewsWindows count: ", len(m.viewsWindows), "ProcessType:", ProcessType(m.ProcessType()))
+	if len(m.viewsWindows) > 0 {
+		mainWindow := m.viewsWindows[0] // As the first window.
+		if window, ok := mainWindow.(IViewsBrowser); ok {
+			window.buildViewsBrowser(nil, mainWindow)
+			mainWindow.CreateTopLevelWindow()
+		}
+	}
+	if m.onContextInitialized != nil {
+		m.onContextInitialized()
+	}
 }

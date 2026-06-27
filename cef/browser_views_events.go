@@ -35,7 +35,7 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// pre-creates a window
-		if m.options.AutoPopupWindow {
+		if m.options != nil && m.options.AutoPopupWindow {
 
 		}
 	}
@@ -55,4 +55,8 @@ func (m *TViewsBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.IC
 		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
 		return
 	}
+	m.canClose = true
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.window.Close()
+	})
 }
