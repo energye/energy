@@ -124,6 +124,7 @@ func (m *TViewsBrowser) Close() {
 func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
 	m.window.SetOnWindowCreated(m.windowOnWindowCreated)
 	m.window.SetOnGetInitialShowState(m.windowOnGetInitialShowState)
+	m.window.SetOnIsFrameless(m.windowOnIsFrameless)
 	m.window.SetOnGetInitialBounds(m.windowOnGetInitialBounds)
 	m.window.SetOnCanClose(m.windowOnCanClose)
 	m.window.SetOnWindowClosing(m.windowOnWindowClosing)
@@ -135,6 +136,7 @@ func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICe
 		return
 	}
 	m.created = true
+	lcl.CallFormCreate(m.self, m)
 
 	m.UpdateBrowserOptions()
 	url := m.defaultURL
@@ -166,8 +168,6 @@ func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICe
 		}
 	}
 
-	lcl.CallFormCreate(m.self, m)
-
 	m.browserView.RequestFocus()
 	m.window.Show()
 }
@@ -196,6 +196,13 @@ func (m *TViewsBrowser) windowOnGetInitialShowState(sender lcl.IObject, window c
 
 func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
 	logger.Debug("Window.OnWindowClosing")
+}
+
+func (m *TViewsBrowser) windowOnIsFrameless(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	logger.Debug("Window.OnIsFrameless")
+	if m.options != nil {
+		*result = m.options.Frameless
+	}
 }
 
 func (m *TViewsBrowser) windowOnCanClose(sender lcl.IObject, window cef.ICefWindow, result *bool) {

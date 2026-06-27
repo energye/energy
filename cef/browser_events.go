@@ -74,7 +74,7 @@ func (m *TBrowser) chromiumOnProcessMessageReceived(sender lcl.IObject, browser 
 
 func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, request cef.ICefRequest,
 	resourceHandler *cef.IEngResourceHandler) {
-	logger.Debug("Chromium.OnGetResourceHandler")
+	logger.Debug("Chromium.OnGetResourceHandler ProcessType:", ProcessType(GApplication.ProcessType()))
 
 	var (
 		uri          = request.GetUrl()
@@ -105,7 +105,6 @@ func (m *TBrowser) chromiumOnGetResourceHandler(sender lcl.IObject, browser cef.
 				header[key] = value
 			}
 			intfHeaderMap.Release()
-			headerMap.Free()
 			resource, handle = m.onResourceRequest(uri, path, method, header)
 		}
 		if handle && resource != "" {
