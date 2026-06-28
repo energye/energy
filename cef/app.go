@@ -219,7 +219,10 @@ func Run(windows ...IAppWindow) {
 			kind = bkEmbedded
 		} else if len(viewsWindowList) > 0 {
 			kind = bkViews
-			GApplication.windowList[0] = viewsWindowList[0] // As the first window.
+			// Initialize LCL Application to use base API.
+			//lcl.Application.Initialize()
+			// As the first window.
+			GApplication.windowList[0] = viewsWindowList[0]
 		}
 		// selects window mode based on window instance type
 		GApplication.messageLoop(kind)

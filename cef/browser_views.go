@@ -142,8 +142,7 @@ func (m *TViewsBrowser) Close() {
 		return
 	}
 	m.isClose = true
-	m.chromium.TryCloseBrowser()
-	m.window.Close()
+	m.chromium.CloseBrowser(true)
 }
 
 func (m *TViewsBrowser) IsClose() bool {
