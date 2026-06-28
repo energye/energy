@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/logger"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
 )
 
 func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
@@ -36,6 +37,25 @@ func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
 	m.window.SetOnGetInitialBounds(m.windowOnGetInitialBounds)
 	m.window.SetOnCanClose(m.windowOnCanClose)
 	m.window.SetOnWindowClosing(m.windowOnWindowClosing)
+	m.window.SetOnWindowActivationChanged(m.windowOnWindowActivationChanged)
+	m.window.SetOnWindowBoundsChanged(func(sender lcl.IObject, window cef.ICefWindow, newBounds cef.TCefRect) {
+		println("SetOnWindowBoundsChanged")
+	})
+	m.window.SetOnAccelerator(func(sender lcl.IObject, window cef.ICefWindow, commandId int32, result *bool) {
+
+	})
+	m.window.SetOnCanMaximize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+
+	})
+	m.window.SetOnCanMinimize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+
+	})
+	m.window.SetOnCanResize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+
+	})
+	m.window.SetOnKeyEvent(func(sender lcl.IObject, window cef.ICefWindow, event cef.TCefKeyEvent, result *bool) {
+
+	})
 }
 
 func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
@@ -83,9 +103,31 @@ func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICe
 }
 
 func (m *TViewsBrowser) windowOnCanClose(sender lcl.IObject, window cef.ICefWindow, result *bool) {
-	logger.Debug("Window.OnCanClose", m.canClose)
-	if result == nil {
-		return
+	logger.Debug("Window.OnCanClose", m.canClose, *result)
+	if !m.canClose {
+		canClose := true
+		closeQueryHandle := lcl.CallFormCloseQuery(m.self, sender, &canClose)
+		if closeQueryHandle || !canClose {
+			return
+		}
+		closeAction := types.CaFree
+		closeHandle := lcl.CallFormClose(m.self, sender, &closeAction)
+		if closeHandle {
+			return
+		}
+		switch closeAction {
+		case types.CaNone:
+			*result = false
+			return
+		case types.CaHide:
+			*result = false
+			m.Hide()
+			return
+		case types.CaMinimize:
+			*result = false
+			m.Minimize()
+			return
+		}
 	}
 	*result = m.canClose
 	if !m.canClose && m.chromium != nil {
@@ -160,5 +202,16 @@ func (m *TViewsBrowser) windowOnIsFrameless(sender lcl.IObject, window cef.ICefW
 	logger.Debug("Window.OnIsFrameless")
 	if m.options != nil {
 		*result = m.options.Frameless
+	}
+}
+
+func (m *TViewsBrowser) windowOnWindowActivationChanged(sender lcl.IObject, window cef.ICefWindow, active bool) {
+	logger.Debug("Window.OnWindowActivationChanged")
+	if !m.isFirstShow {
+		m.isFirstShow = true
+		lcl.CallFormShow(m.self, m)
+	}
+	if m.onActivate != nil {
+		m.onActivate(sender)
 	}
 }

@@ -61,6 +61,9 @@ type TViewsBrowser struct {
 	window      cef.ICEFWindowComponent
 	browserView cef.ICEFBrowserViewComponent
 	created     bool
+	isFirstShow bool
+
+	onActivate lcl.TNotifyEvent
 }
 
 func NewViewsBrowser(owner lcl.IComponent) IViewsBrowser {
@@ -138,11 +141,9 @@ func (m *TViewsBrowser) RawBrowserViewComponent() cef.ICEFBrowserViewComponent {
 
 // Close closes the webview window and releases associated resources
 func (m *TViewsBrowser) Close() {
-	if m.isClose {
-		return
-	}
-	m.isClose = true
-	m.chromium.CloseBrowser(true)
+	cef.RunOnMainThread(func() {
+		m.window.Close()
+	})
 }
 
 func (m *TViewsBrowser) IsClose() bool {
