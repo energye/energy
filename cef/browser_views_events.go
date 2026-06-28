@@ -55,7 +55,7 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 		} else {
 			GApplication.windowList[m.browserId] = m
 		}
-		
+
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// pre-creates a window
@@ -74,9 +74,8 @@ func (m *TViewsBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.IC
 		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
 		return
 	}
-	if len(GApplication.windowList) == 0 {
-		GApplication.QuitMessageLoop()
-	}
+	m.canClose = true
+	m.tryQuitMessageLoop()
 }
 
 func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
@@ -88,6 +87,14 @@ func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrow
 func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
 	logger.Debug("Window.OnWindowClosing")
 	delete(GApplication.windowList, m.browserId)
+	m.tryQuitMessageLoop()
+}
+
+func (m *TViewsBrowser) tryQuitMessageLoop() {
+	if len(GApplication.windowList) == 0 {
+		logger.Debug("Application QuitMessageLoop")
+		GApplication.QuitMessageLoop()
+	}
 }
 
 func (m *TViewsBrowser) windowOnCanClose(sender lcl.IObject, window cef.ICefWindow, result *bool) {
