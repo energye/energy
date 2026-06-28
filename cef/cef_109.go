@@ -32,3 +32,7 @@ func (m *TBrowser) chromiumOnBeforePopup(sender lcl.IObject, browser cef.ICefBro
 	m.chromiumOnAdapterBeforePopup(sender, browser, frame, -1, targetUrl, targetFrameName, targetDisposition, userGesture, popupFeatures, windowInfo, client,
 		settings, extraInfo, noJavascriptAccess, result)
 }
+
+func (m *TViewsBrowser) initViewsBrowserTagsDefaultEvent() {
+
+}

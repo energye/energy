@@ -12,6 +12,7 @@ package cef
 
 import (
 	"github.com/energye/cef/cef"
+	cefTypes "github.com/energye/cef/cef/types"
 	"github.com/energye/lcl/lcl"
 	"reflect"
 	"time"
@@ -89,4 +90,12 @@ func IsNil(v any) bool {
 	default:
 		return false
 	}
+}
+
+func ColorIsDark(color cefTypes.TCefColor) bool {
+	r := float64(cef.MiscFunc.CefColorGetR(color))
+	g := float64(cef.MiscFunc.CefColorGetG(color))
+	b := float64(cef.MiscFunc.CefColorGetB(color))
+	luma := 0.2126*r + 0.7152*g + 0.0722*b
+	return luma < 128
 }

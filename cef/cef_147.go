@@ -32,3 +32,14 @@ func (m *TBrowser) chromiumOnBeforePopup(sender lcl.IObject, browser cef.ICefBro
 	m.chromiumOnAdapterBeforePopup(sender, browser, frame, popupId, targetUrl, targetFrameName, targetDisposition, userGesture, popupFeatures, windowInfo, client,
 		settings, extraInfo, noJavascriptAccess, result)
 }
+
+func (m *TViewsBrowser) initViewsBrowserTagsDefaultEvent() {
+	if window147, ok := m.window.(cef.ICEFWindowComponent_147); ok {
+		const CEF_ColorPrimaryBackground int32 = 225 // CEF_ColorPrimaryBackground, CEF 147
+		window147.SetOnThemeColorsChanged(func(sender lcl.IObject, window cef.ICefWindow, chromeTheme int32) {
+			backgroundColor := window147.GetThemeColor(CEF_ColorPrimaryBackground)
+			isDark := ColorIsDark(backgroundColor)
+			m.windowOnAdapterThemeChanged(sender, isDark)
+		})
+	}
+}

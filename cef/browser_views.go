@@ -95,6 +95,7 @@ func (m *TViewsBrowser) buildViewsBrowser(owner lcl.IComponent, self IViewsBrows
 	m.initBrowserDefaultEvent()
 	m.initViewsWindowDefaultEvent()
 	m.initViewsBrowserDefaultEvent()
+	m.initViewsBrowserTagsDefaultEvent()
 }
 
 func (m *TViewsBrowser) SetOptions(options application.Options) {

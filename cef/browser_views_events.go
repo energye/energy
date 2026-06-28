@@ -42,15 +42,6 @@ func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
 	m.window.SetOnCanMaximize(m.windowOnCanMaximize)
 	m.window.SetOnCanMinimize(m.windowOnCanMinimize)
 	m.window.SetOnCanResize(m.windowOnCanResize)
-	m.window.SetOnWindowChanged(func(sender lcl.IObject, view cef.ICefView, added bool) {
-		println("SetOnWindowChanged")
-	})
-	m.window.SetOnFocus(func(sender lcl.IObject, view cef.ICefView) {
-		println("SetOnFocus")
-	})
-	m.window.SetOnBlur(func(sender lcl.IObject, view cef.ICefView) {
-		println("SetOnBlur")
-	})
 }
 
 func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.ICefBrowser) {
@@ -90,6 +81,13 @@ func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrow
 	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
 	*action = cefTypes.CbaClose
 	m.canClose = true
+}
+
+func (m *TViewsBrowser) windowOnAdapterThemeChanged(sender lcl.IObject, isDark bool) {
+	logger.Debug("Window.OnAdapterThemeChanged isDark:", isDark)
+	if m.onThemeChange != nil {
+		m.onThemeChange(isDark)
+	}
 }
 
 func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
