@@ -69,9 +69,8 @@ type TViewsBrowser struct {
 	isFirstShow bool
 	bounds      cef.TCefRect
 
-	onActivate    lcl.TNotifyEvent
-	onResize      lcl.TNotifyEvent
-	onThemeChange core.TOnThemeChange
+	onActivate lcl.TNotifyEvent
+	onResize   lcl.TNotifyEvent
 }
 
 func NewViewsBrowser(owner lcl.IComponent) IViewsBrowser {
@@ -226,8 +225,4 @@ func (m *TViewsBrowser) SetOnActivate(fn lcl.TNotifyEvent) {
 
 func (m *TViewsBrowser) SetOnResize(fn lcl.TNotifyEvent) {
 	m.onResize = fn
-}
-
-func (m *TViewsBrowser) SetOnThemeChange(fn core.TOnThemeChange) {
-	m.onThemeChange = fn
 }

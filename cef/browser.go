@@ -39,6 +39,7 @@ type IBrowser interface {
 	SetBrowserExtraInfo(windowName string, context cef.ICefRequestContext, extraInfo cef.ICefDictionaryValue)
 	SendProcessMessageToBrowser(name string, payload []byte)
 	SendProcessMessageToRenderer(name string, payload []byte)
+	doThemeChanged(isDark bool)
 }
 
 type TBrowser struct {
@@ -76,6 +77,7 @@ type TBrowser struct {
 	onDragEnter           core.TOnDragEnterEvent
 	onDragLeave           core.TOnDragLeaveEvent
 	onDragOver            core.TOnDragOverEvent
+	onThemeChange         core.TOnThemeChange
 }
 
 func (m *TBrowser) BrowserId() uint32 {
@@ -179,6 +181,12 @@ func (m *TBrowser) WindowParent() core.WindowParent {
 	return m
 }
 
+func (m *TBrowser) doThemeChanged(isDark bool) {
+	if m.onThemeChange != nil {
+		m.onThemeChange(isDark)
+	}
+}
+
 // SetOnBrowserAfterCreated sets the callback handler triggered after browser creation completes
 func (m *TBrowser) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
 	m.onBrowserAfterCreated = fn
@@ -222,4 +230,8 @@ func (m *TBrowser) SetOnDragLeave(fn core.TOnDragLeaveEvent) {
 
 func (m *TBrowser) SetOnDragOver(fn core.TOnDragOverEvent) {
 	m.onDragOver = fn
+}
+
+func (m *TBrowser) SetOnThemeChange(fn core.TOnThemeChange) {
+	m.onThemeChange = fn
 }

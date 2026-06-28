@@ -48,12 +48,14 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
 	if m.browserId == 0 {
 		m.browserId = uint32(browser.GetIdentifier())
+
 		if mainWindow, ok := GApplication.windowList[0]; ok {
 			delete(GApplication.windowList, 0)
 			GApplication.windowList[m.browserId] = mainWindow
 		} else {
 			GApplication.windowList[m.browserId] = m
 		}
+		
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// pre-creates a window
@@ -81,13 +83,6 @@ func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrow
 	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
 	*action = cefTypes.CbaClose
 	m.canClose = true
-}
-
-func (m *TViewsBrowser) windowOnAdapterThemeChanged(sender lcl.IObject, isDark bool) {
-	logger.Debug("Window.OnAdapterThemeChanged isDark:", isDark)
-	if m.onThemeChange != nil {
-		m.onThemeChange(isDark)
-	}
 }
 
 func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {

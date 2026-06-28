@@ -217,12 +217,13 @@ func Run(windows ...IAppWindow) {
 		}
 		if len(embedWindowList) > 0 {
 			kind = bkEmbedded
+			GApplication.windowList[0] = embedWindowList[0] // LCL + CEF embed
 		} else if len(viewsWindowList) > 0 {
 			kind = bkViews
 			// Initialize LCL Application to use base API.
 			//lcl.Application.Initialize()
 			// As the first window.
-			GApplication.windowList[0] = viewsWindowList[0]
+			GApplication.windowList[0] = viewsWindowList[0] // CEF views
 		}
 		// selects window mode based on window instance type
 		GApplication.messageLoop(kind)

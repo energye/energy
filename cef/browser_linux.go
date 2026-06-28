@@ -13,8 +13,12 @@
 package cef
 
 import (
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/ipc"
+	"github.com/energye/energy/v3/platform/linux/gtk3"
+	gtk3Types "github.com/energye/energy/v3/platform/linux/types"
 	"github.com/energye/energy/v3/window"
+	"github.com/godbus/dbus/v5"
 )
 
 var (
@@ -31,4 +35,57 @@ func (m *TBrowser) drag(message ipc.ProcessMessage) {
 
 func (m *TBrowser) resize(ht string) {
 	// todo 待实现
+}
+
+func IsCurrentlyDarkMode() bool {
+	conn, err := dbus.SessionBus()
+	if err != nil {
+		return false
+	}
+	//defer conn.Close()
+	obj := conn.Object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
+	call := obj.Call("org.freedesktop.portal.Settings.Read", 0, "org.freedesktop.appearance", "color-scheme")
+	if call.Err != nil {
+		return false
+	}
+	var result dbus.Variant
+	if err := call.Store(&result); err != nil {
+		return false
+	}
+	innerVariant, ok := result.Value().(dbus.Variant)
+	if !ok {
+		return false
+	}
+	colorScheme, ok := innerVariant.Value().(uint32)
+	if !ok {
+		return false
+	}
+	return colorScheme == gtk3Types.ColorSchemePreferDark
+}
+
+func UpdateTheme() {
+	isDark := false
+	switch GApplication.Options.Linux.Theme {
+	case application.SystemDefault:
+		isDark = IsCurrentlyDarkMode()
+	case application.Dark:
+		isDark = true
+	case application.Light:
+		isDark = false
+	}
+	_ = isDark
+	//for _, wind := range GApplication.windowList {,ok:=
+	//}
+	//m.doThemeChanged(isDark)
+}
+
+// TODO 待完成
+func startThemeObserver() {
+	settings := gtk3.SettingsGetDefault()
+	if settings == nil {
+		return
+	}
+	settings.SetOnThemeChanged(func(sender gtk3Types.PGtkWidget, pspec uintptr, userData gtk3Types.GPointer) {
+		UpdateTheme()
+	})
 }

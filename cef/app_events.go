@@ -172,6 +172,7 @@ func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegi
 func (m *Application) applicationOnContextInitialized() {
 	logger.Debug("Application.OnContextInitialized viewsWindows count: ", len(m.windowList), "ProcessType:", ProcessType(m.ProcessType()))
 	if mainWindow, ok := m.windowList[0]; ok {
+		// If using CEF Views Framework, construct ViewsBrowser as the main window.
 		if window, ok := mainWindow.(IViewsBrowser); ok {
 			window.buildViewsBrowser(nil, window)
 			window.CreateBrowser()
