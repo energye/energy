@@ -12,6 +12,7 @@ package window
 
 import (
 	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/core"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
@@ -25,8 +26,6 @@ const (
 	WcsClosing
 	WcsClosed
 )
-
-type TOnThemeChange func(isDark bool)
 
 type IWindow interface {
 	lcl.IEngForm
@@ -55,7 +54,7 @@ type IWindow interface {
 	AddOnWindowShow(fn lcl.TNotifyEvent)
 	AddOnWindowClose(fn lcl.TCloseEvent)
 	AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
-	SetOnThemeChange(fn TOnThemeChange)
+	SetOnThemeChange(fn core.TOnThemeChange)
 }
 
 type TEnergyWindow struct {
@@ -77,7 +76,7 @@ type TEnergyWindow struct {
 	onWindowShowList        []lcl.TNotifyEvent
 	onWindowCloseList       []lcl.TCloseEvent
 	onWindowCloseQueryList  []lcl.TCloseQueryEvent
-	onThemeChange           TOnThemeChange
+	onThemeChange           core.TOnThemeChange
 }
 
 func (m *TEnergyWindow) SetClose(v bool) {
@@ -122,7 +121,7 @@ func (m *TEnergyWindow) AddOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
 	m.onWindowCloseQueryList = append(m.onWindowCloseQueryList, fn)
 }
 
-func (m *TEnergyWindow) SetOnThemeChange(fn TOnThemeChange) {
+func (m *TEnergyWindow) SetOnThemeChange(fn core.TOnThemeChange) {
 	m.onThemeChange = fn
 }
 

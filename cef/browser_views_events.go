@@ -38,22 +38,17 @@ func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
 	m.window.SetOnCanClose(m.windowOnCanClose)
 	m.window.SetOnWindowClosing(m.windowOnWindowClosing)
 	m.window.SetOnWindowActivationChanged(m.windowOnWindowActivationChanged)
-	m.window.SetOnWindowBoundsChanged(func(sender lcl.IObject, window cef.ICefWindow, newBounds cef.TCefRect) {
-		println("SetOnWindowBoundsChanged")
-	})
-	m.window.SetOnAccelerator(func(sender lcl.IObject, window cef.ICefWindow, commandId int32, result *bool) {
+	m.window.SetOnWindowBoundsChanged(m.windowOnWindowBoundsChanged)
+	m.window.SetOnCanMaximize(m.windowOnCanMaximize)
+	m.window.SetOnCanMinimize(m.windowOnCanMinimize)
+	m.window.SetOnCanResize(m.windowOnCanResize)
+	m.window.SetOnWindowChanged(func(sender lcl.IObject, view cef.ICefView, added bool) {
 
 	})
-	m.window.SetOnCanMaximize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	m.window.SetOnFocus(func(sender lcl.IObject, view cef.ICefView) {
 
 	})
-	m.window.SetOnCanMinimize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
-
-	})
-	m.window.SetOnCanResize(func(sender lcl.IObject, window cef.ICefWindow, result *bool) {
-
-	})
-	m.window.SetOnKeyEvent(func(sender lcl.IObject, window cef.ICefWindow, event cef.TCefKeyEvent, result *bool) {
+	m.window.SetOnBlur(func(sender lcl.IObject, view cef.ICefView) {
 
 	})
 }
@@ -165,14 +160,8 @@ func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICe
 		if m.options.Caption != "" {
 			m.window.SetTitle(m.options.Caption)
 		}
-		if m.options.Width > 0 && m.options.Height > 0 {
-			m.window.CenterWindow(cef.TCefSize{
-				Width:  m.options.Width,
-				Height: m.options.Height,
-			})
-		}
+		m.CenterWindow()
 	}
-
 	m.browserView.RequestFocus()
 }
 
@@ -180,22 +169,39 @@ func (m *TViewsBrowser) windowOnGetInitialBounds(sender lcl.IObject, window cef.
 	if m.options == nil || result == nil {
 		return
 	}
-	if m.options.X > 0 {
-		result.X = m.options.X
+	m.bounds.X = m.options.X
+	m.bounds.Y = m.options.Y
+	m.bounds.Width = m.options.Width
+	m.bounds.Height = m.options.Height
+
+	if m.bounds.X > 0 {
+		result.X = m.bounds.X
 	}
-	if m.options.Y > 0 {
-		result.Y = m.options.Y
+	if m.bounds.Y > 0 {
+		result.Y = m.bounds.Y
 	}
-	if m.options.Width > 0 {
-		result.Width = m.options.Width
+	if m.bounds.Width > 0 {
+		result.Width = m.bounds.Width
 	}
-	if m.options.Height > 0 {
-		result.Height = m.options.Height
+	if m.bounds.Height > 0 {
+		result.Height = m.bounds.Height
 	}
 }
 
 func (m *TViewsBrowser) windowOnGetInitialShowState(sender lcl.IObject, window cef.ICefWindow, result *cefTypes.TCefShowState) {
 	logger.Debug("Window.OnGetInitialShowState")
+	if m.options != nil {
+		switch m.options.DefaultWindowStatus {
+		case types.WsMinimized:
+			*result = cefTypes.CEF_SHOW_STATE_MINIMIZED
+		case types.WsMaximized:
+			*result = cefTypes.CEF_SHOW_STATE_MAXIMIZED
+		case types.WsFullScreen:
+			*result = cefTypes.CEF_SHOW_STATE_FULLSCREEN
+		default:
+			*result = cefTypes.CEF_SHOW_STATE_NORMAL
+		}
+	}
 }
 
 func (m *TViewsBrowser) windowOnIsFrameless(sender lcl.IObject, window cef.ICefWindow, result *bool) {
@@ -214,4 +220,26 @@ func (m *TViewsBrowser) windowOnWindowActivationChanged(sender lcl.IObject, wind
 	if m.onActivate != nil {
 		m.onActivate(sender)
 	}
+}
+
+func (m *TViewsBrowser) windowOnWindowBoundsChanged(sender lcl.IObject, window cef.ICefWindow, newBounds cef.TCefRect) {
+	m.bounds.X = newBounds.X
+	m.bounds.Y = newBounds.Y
+	m.bounds.Width = newBounds.Width
+	m.bounds.Height = newBounds.Height
+	if m.onResize != nil {
+		m.onResize(sender)
+	}
+}
+
+func (m *TViewsBrowser) windowOnCanMaximize(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	*result = !m.options.DisableMaximize
+}
+
+func (m *TViewsBrowser) windowOnCanMinimize(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	*result = !m.options.DisableMinimize
+}
+
+func (m *TViewsBrowser) windowOnCanResize(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	*result = !m.options.DisableResize
 }

@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/core"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types/colors"
 )
@@ -46,6 +47,10 @@ type IViewsBrowser interface {
 	IsFullScreen() bool
 	FullScreen()
 	ExitFullScreen()
+	SetIsAlwaysOnTop(value bool)
+	SetOnActivate(fn lcl.TNotifyEvent)
+	SetOnResize(fn lcl.TNotifyEvent)
+	SetOnThemeChange(fn core.TOnThemeChange)
 }
 
 type TViewsBrowser struct {
@@ -62,8 +67,11 @@ type TViewsBrowser struct {
 	browserView cef.ICEFBrowserViewComponent
 	created     bool
 	isFirstShow bool
+	bounds      cef.TCefRect
 
-	onActivate lcl.TNotifyEvent
+	onActivate    lcl.TNotifyEvent
+	onResize      lcl.TNotifyEvent
+	onThemeChange core.TOnThemeChange
 }
 
 func NewViewsBrowser(owner lcl.IComponent) IViewsBrowser {
@@ -100,6 +108,15 @@ func (m *TViewsBrowser) Options() *application.Options {
 	return m.options
 }
 
+func (m *TViewsBrowser) CenterWindow() {
+	if m.bounds.Width > 0 && m.bounds.Height > 0 {
+		m.window.CenterWindow(cef.TCefSize{
+			Width:  m.bounds.Width,
+			Height: m.bounds.Height,
+		})
+	}
+}
+
 // UpdateBrowserOptions updates browser configuration
 func (m *TViewsBrowser) UpdateBrowserOptions() {
 	// retrieves global LocalLoad configuration
@@ -110,6 +127,12 @@ func (m *TViewsBrowser) UpdateBrowserOptions() {
 		options := GApplication.Options
 		if m.options == nil {
 			m.options = &options
+		}
+		if m.options.Width == 0 {
+			m.options.Width = 800
+		}
+		if m.options.Height == 0 {
+			m.options.Height = 600
 		}
 		if m.options.DefaultURL != "" && m.defaultURL == "" {
 			m.SetDefaultURL(m.options.DefaultURL)
@@ -188,4 +211,20 @@ func (m *TViewsBrowser) FullScreen() {
 
 func (m *TViewsBrowser) ExitFullScreen() {
 	m.window.SetIsFullscreen(false)
+}
+
+func (m *TViewsBrowser) SetIsAlwaysOnTop(value bool) {
+	m.window.SetIsAlwaysOnTop(value)
+}
+
+func (m *TViewsBrowser) SetOnActivate(fn lcl.TNotifyEvent) {
+	m.onActivate = fn
+}
+
+func (m *TViewsBrowser) SetOnResize(fn lcl.TNotifyEvent) {
+	m.onResize = fn
+}
+
+func (m *TViewsBrowser) SetOnThemeChange(fn core.TOnThemeChange) {
+	m.onThemeChange = fn
 }
