@@ -132,7 +132,6 @@ func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICe
 	}
 
 	m.browserView.RequestFocus()
-	m.window.Show()
 }
 
 func (m *TViewsBrowser) windowOnGetInitialBounds(sender lcl.IObject, window cef.ICefWindow, result *cef.TCefRect) {

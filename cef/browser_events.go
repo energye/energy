@@ -221,6 +221,11 @@ func (m *TBrowser) chromiumOnAdapterBeforePopup(sender lcl.IObject, browser cef.
 				gPrePopupWindow = nil
 			})
 		}
+	} else if m.kind == bkViews && !handle {
+		nViewsBrowser := NewViewsBrowser(nil)
+		nViewsBrowser.SetDefaultURL(targetUrl)
+		nViewsBrowser.CreateBrowser()
+		nViewsBrowser.Show()
 	}
 }
 

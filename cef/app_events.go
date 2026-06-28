@@ -174,7 +174,8 @@ func (m *Application) applicationOnContextInitialized() {
 	if mainWindow, ok := m.windowList[0]; ok {
 		if window, ok := mainWindow.(IViewsBrowser); ok {
 			window.buildViewsBrowser(nil, window)
-			window.CreateTopLevelWindow()
+			window.CreateBrowser()
+			window.Show()
 		}
 	}
 	if m.onContextInitialized != nil {

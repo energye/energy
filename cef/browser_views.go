@@ -33,6 +33,20 @@ type IViewsBrowser interface {
 	SetOptions(options application.Options)
 	Options() *application.Options
 	CreateTopLevelWindow()
+	RawWindowComponent() cef.ICEFWindowComponent
+	RawBrowserViewComponent() cef.ICEFBrowserViewComponent
+	Close()
+	IsClose() bool
+	Show()
+	Hide()
+	IsMain() bool
+	Minimize()
+	Maximize()
+	IsMinimize() bool
+	IsMaximize() bool
+	IsFullScreen() bool
+	FullScreen()
+	ExitFullScreen()
 }
 
 type TViewsBrowser struct {
@@ -124,6 +138,14 @@ func (m *TViewsBrowser) CreateTopLevelWindow() {
 	m.window.CreateTopLevelWindow()
 }
 
+func (m *TViewsBrowser) RawWindowComponent() cef.ICEFWindowComponent {
+	return m.window
+}
+
+func (m *TViewsBrowser) RawBrowserViewComponent() cef.ICEFBrowserViewComponent {
+	return m.browserView
+}
+
 // Close closes the webview window and releases associated resources
 func (m *TViewsBrowser) Close() {
 	if m.isClose {
@@ -132,4 +154,48 @@ func (m *TViewsBrowser) Close() {
 	m.isClose = true
 	m.chromium.TryCloseBrowser()
 	m.window.Close()
+}
+
+func (m *TViewsBrowser) IsClose() bool {
+	return m.isClose
+}
+
+func (m *TViewsBrowser) Show() {
+	m.window.Show()
+}
+
+func (m *TViewsBrowser) Hide() {
+	m.window.Hide()
+}
+
+func (m *TViewsBrowser) IsMain() bool {
+	return m.browserType == vbtMain
+}
+
+func (m *TViewsBrowser) Minimize() {
+	m.window.Minimize()
+}
+
+func (m *TViewsBrowser) Maximize() {
+	m.window.Maximize()
+}
+
+func (m *TViewsBrowser) IsMinimize() bool {
+	return m.window.IsMinimized()
+}
+
+func (m *TViewsBrowser) IsMaximize() bool {
+	return m.window.IsMaximized()
+}
+
+func (m *TViewsBrowser) IsFullScreen() bool {
+	return m.window.IsFullscreen()
+}
+
+func (m *TViewsBrowser) FullScreen() {
+	m.window.SetIsFullscreen(true)
+}
+
+func (m *TViewsBrowser) ExitFullScreen() {
+	m.window.SetIsFullscreen(false)
 }
