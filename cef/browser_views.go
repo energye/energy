@@ -18,20 +18,30 @@ import (
 	"github.com/energye/lcl/types/colors"
 )
 
+type viewsBrowserType int32
+
+const (
+	vbtMain viewsBrowserType = iota // main browser window
+	vbtSub                          // sub browser window
+)
+
 // IViewsBrowser extension -> IBrowser, CEF views framework Component browser.
 type IViewsBrowser interface {
 	lcl.IComponent
 	IBrowser
-	buildViewsBrowser(owner lcl.IComponent, self IViewsWindow)
+	buildViewsBrowser(owner lcl.IComponent, self IViewsBrowser)
 	SetOptions(options application.Options)
 	Options() *application.Options
+	CreateTopLevelWindow()
 }
 
 type TViewsBrowser struct {
 	lcl.IComponent
 	TBrowser
 
-	self IViewsWindow
+	self IViewsBrowser
+
+	browserType viewsBrowserType
 
 	options *application.Options
 
@@ -46,10 +56,15 @@ func NewViewsBrowser(owner lcl.IComponent) IViewsBrowser {
 	return m
 }
 
-func (m *TViewsBrowser) buildViewsBrowser(owner lcl.IComponent, self IViewsWindow) {
+func (m *TViewsBrowser) buildViewsBrowser(owner lcl.IComponent, self IViewsBrowser) {
 	m.self = self
 	m.IComponent = lcl.NewComponent(owner)
 	m.kind = bkViews
+	browserType := vbtSub
+	if len(GApplication.windowList) == 0 {
+		browserType = vbtMain
+	}
+	m.browserType = browserType
 	m.chromium = cef.NewChromium(m.IComponent)
 	m.window = cef.NewWindowComponent(m.IComponent)
 	m.browserView = cef.NewBrowserViewComponent(m.IComponent)

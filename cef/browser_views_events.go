@@ -42,6 +42,12 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 	logger.Debug("Chromium.OnAfterCreated", browser.GetIdentifier())
 	if m.browserId == 0 {
 		m.browserId = uint32(browser.GetIdentifier())
+		if mainWindow, ok := GApplication.windowList[0]; ok {
+			delete(GApplication.windowList, 0)
+			GApplication.windowList[m.browserId] = mainWindow
+		} else {
+			GApplication.windowList[m.browserId] = m
+		}
 		// ipc
 		ipc.RegisterProcessMessage(m)
 		// pre-creates a window
@@ -54,21 +60,37 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 	}
 }
 
-func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
-	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
-
-}
-
 func (m *TViewsBrowser) chromiumOnBeforeClose(sender lcl.IObject, browser cef.ICefBrowser) {
 	logger.Debug("Chromium.OnBeforeClose", "Current-BrowserID:", m.browserId, "Target-BrowserID:", browser.GetIdentifier())
 	if m.browserId != uint32(browser.GetIdentifier()) {
 		logger.Debug("Chromium.OnBeforeClose Non-current user browser")
 		return
 	}
+	if len(GApplication.windowList) == 0 {
+		GApplication.QuitMessageLoop()
+	}
+}
+
+func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrowser, action *cefTypes.TCefCloseBrowserAction) {
+	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
+	*action = cefTypes.CbaClose
 	m.canClose = true
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		m.window.Close()
-	})
+}
+
+func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
+	logger.Debug("Window.OnWindowClosing")
+	delete(GApplication.windowList, m.browserId)
+}
+
+func (m *TViewsBrowser) windowOnCanClose(sender lcl.IObject, window cef.ICefWindow, result *bool) {
+	logger.Debug("Window.OnCanClose", m.canClose)
+	if result == nil {
+		return
+	}
+	*result = m.canClose
+	if !m.canClose && m.chromium != nil {
+		m.chromium.CloseBrowser(true)
+	}
 }
 
 func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICefWindow) {
@@ -135,24 +157,9 @@ func (m *TViewsBrowser) windowOnGetInitialShowState(sender lcl.IObject, window c
 	logger.Debug("Window.OnGetInitialShowState")
 }
 
-func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
-	logger.Debug("Window.OnWindowClosing")
-}
-
 func (m *TViewsBrowser) windowOnIsFrameless(sender lcl.IObject, window cef.ICefWindow, result *bool) {
 	logger.Debug("Window.OnIsFrameless")
 	if m.options != nil {
 		*result = m.options.Frameless
-	}
-}
-
-func (m *TViewsBrowser) windowOnCanClose(sender lcl.IObject, window cef.ICefWindow, result *bool) {
-	logger.Debug("Window.OnCanClose")
-	if result == nil {
-		return
-	}
-	*result = m.canClose
-	if !m.canClose && m.chromium != nil {
-		m.chromium.CloseBrowser(true)
 	}
 }

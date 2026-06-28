@@ -170,12 +170,11 @@ func (m *Application) applicationOnRegCustomSchemes(registrar cef.ICefSchemeRegi
 }
 
 func (m *Application) applicationOnContextInitialized() {
-	logger.Debug("Application.OnContextInitialized viewsWindows count: ", len(m.viewsWindows), "ProcessType:", ProcessType(m.ProcessType()))
-	if len(m.viewsWindows) > 0 {
-		mainWindow := m.viewsWindows[0] // As the first window.
+	logger.Debug("Application.OnContextInitialized viewsWindows count: ", len(m.windowList), "ProcessType:", ProcessType(m.ProcessType()))
+	if mainWindow, ok := m.windowList[0]; ok {
 		if window, ok := mainWindow.(IViewsBrowser); ok {
-			window.buildViewsBrowser(nil, mainWindow)
-			mainWindow.CreateTopLevelWindow()
+			window.buildViewsBrowser(nil, window)
+			window.CreateTopLevelWindow()
 		}
 	}
 	if m.onContextInitialized != nil {

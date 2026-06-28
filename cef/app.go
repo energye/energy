@@ -52,22 +52,16 @@ type Application struct {
 	onProcessMessageReceived cef.TOnProcessMessageReceivedEvent
 	onRegisterCustomSchemes  cef.TOnRegisterCustomSchemesEvent
 	onContextInitialized     cef.TOnContextInitializedEvent
-	viewsWindows             []IViewsWindow
+	// Window list of current CEF application, key: browserID, value: window instance
+	// key=0 indicates main window initial stage
+	windowList map[uint32]IAppWindow
 }
 
-// IRunWindow is the accepted Run target type.
+// IAppWindow is the accepted Run target type.
 //
 // Supported values are native LCL forms (lcl.IEngForm) and CEF views framework
 // windows (objects implementing CreateTopLevelWindow).
-type IRunWindow = any
-
-// IViewsWindow CEF views framework
-//
-//	When creating a window in CEF Views Framework mode, TViewsBrowser must be visibly
-//	embedded and the `CreateTopLevelWindow` method must be implemented.
-type IViewsWindow interface {
-	CreateTopLevelWindow()
-}
+type IAppWindow = any
 
 // Init CEF Global initialization, invoked at application startup in main
 func Init() *Application {
@@ -101,6 +95,7 @@ func NewApplication() *Application {
 		}
 		GApplication = &Application{
 			ICefApplication: cef.NewApplication(),
+			windowList:      make(map[uint32]IAppWindow),
 		}
 		application.GApplication = &GApplication.Application
 		base.SetGlobalCEFApplication(GApplication.Instance())
@@ -196,8 +191,8 @@ func (m *Application) IsMainProcess() bool {
 //
 // Launches CEF application and selects window mode based on window instance type
 // Uses embedding when window implements lcl.IEngForm
-// Uses CEF Views Framework when window implements IViewsWindow
-func Run(windows ...IRunWindow) {
+// Uses CEF Views Framework when window implements IViewsBrowser
+func Run(windows ...IAppWindow) {
 	if GApplication == nil || !GApplication.IsValid() {
 		println("[ERROR] CEF Application Instance is not initialized")
 		return
@@ -207,24 +202,24 @@ func Run(windows ...IRunWindow) {
 
 	if GApplication.IsMainProcess() {
 		var kind browserKind
-		embedWindows := make([]lcl.IEngForm, 0, len(windows))
-		viewsWindows := make([]IViewsWindow, 0, len(windows))
+		embedWindowList := make([]lcl.IEngForm, 0, len(windows))
+		viewsWindowList := make([]IViewsBrowser, 0, len(windows))
 		for _, window := range windows {
 			if w, ok := window.(lcl.IEngForm); ok {
-				embedWindows = append(embedWindows, w)
+				embedWindowList = append(embedWindowList, w)
 				continue
 			}
-			if w, ok := window.(IViewsWindow); ok {
-				viewsWindows = append(viewsWindows, w)
+			if w, ok := window.(IViewsBrowser); ok {
+				viewsWindowList = append(viewsWindowList, w)
 				continue
 			}
 			logger.Debug("Application Run unsupported window:", fmt.Sprintf("%T", window))
 		}
-		if len(embedWindows) > 0 {
+		if len(embedWindowList) > 0 {
 			kind = bkEmbedded
-		} else if len(viewsWindows) > 0 {
+		} else if len(viewsWindowList) > 0 {
 			kind = bkViews
-			GApplication.viewsWindows = viewsWindows
+			GApplication.windowList[0] = viewsWindowList[0] // As the first window.
 		}
 		// selects window mode based on window instance type
 		GApplication.messageLoop(kind)
@@ -239,7 +234,7 @@ func Run(windows ...IRunWindow) {
 				GApplication.ICefApplication.Free()
 			})
 			if kind == bkEmbedded {
-				engLCL.Run(embedWindows...)
+				engLCL.Run(embedWindowList...)
 			} else if kind == bkViews {
 				GApplication.RunMessageLoop()
 			}
