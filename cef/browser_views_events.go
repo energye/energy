@@ -91,6 +91,7 @@ func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICe
 }
 
 func (m *TViewsBrowser) tryQuitMessageLoop() {
+	// Exit application when window count = 0.
 	if len(GApplication.windowList) == 0 {
 		logger.Debug("Application QuitMessageLoop")
 		GApplication.QuitMessageLoop()

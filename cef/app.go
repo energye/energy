@@ -26,6 +26,7 @@ import (
 	"github.com/energye/lcl/tool/exec"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 )
 
 var (
@@ -55,13 +56,14 @@ type Application struct {
 	// Window list of current CEF application, key: browserID, value: window instance
 	// key=0 indicates main window initial stage
 	windowList map[uint32]IAppWindow
+
+	quiting atomic.Bool
 }
 
 // IAppWindow is the accepted Run target type.
 //
 // Supported values are native LCL forms (lcl.IEngForm) and CEF views framework
-// windows (objects implementing CreateTopLevelWindow).
-type IAppWindow = any
+type IAppWindow interface{}
 
 // Init CEF Global initialization, invoked at application startup in main
 func Init() *Application {
@@ -187,6 +189,28 @@ func (m *Application) IsMainProcess() bool {
 	return m.ProcessType() == types.PtBrowser
 }
 
+func (m *Application) QuitMessageLoop() {
+	if !m.quiting.CompareAndSwap(false, true) {
+		return
+	}
+	m.ICefApplication.QuitMessageLoop()
+}
+
+func (m *Application) RunMessageLoop() {
+	m.ICefApplication.RunMessageLoop()
+}
+
+func (m *Application) GetWindowCount() int {
+	return len(m.windowList)
+}
+
+func (m *Application) GetWindow(browserID uint32) IAppWindow {
+	if browserID == 0 {
+		return nil
+	}
+	return m.windowList[browserID]
+}
+
 // Run runs the application and starts the message loop
 //
 // Launches CEF application and selects window mode based on window instance type
@@ -201,29 +225,40 @@ func Run(windows ...IAppWindow) {
 	processTypeStr := ProcessType(GApplication.ProcessType())
 
 	if GApplication.IsMainProcess() {
-		var kind browserKind
+		var (
+			kind             browserKind
+			isEmbed, isViews bool
+		)
 		embedWindowList := make([]lcl.IEngForm, 0, len(windows))
 		viewsWindowList := make([]IViewsBrowser, 0, len(windows))
 		for _, window := range windows {
 			if w, ok := window.(lcl.IEngForm); ok {
 				embedWindowList = append(embedWindowList, w)
+				isEmbed = true
 				continue
 			}
 			if w, ok := window.(IViewsBrowser); ok {
 				viewsWindowList = append(viewsWindowList, w)
+				isViews = true
 				continue
 			}
 			logger.Debug("Application Run unsupported window:", fmt.Sprintf("%T", window))
 		}
-		if len(embedWindowList) > 0 {
-			kind = bkEmbedded
-			GApplication.windowList[0] = embedWindowList[0] // LCL + CEF embed
-		} else if len(viewsWindowList) > 0 {
-			kind = bkViews
+		if isEmbed && isViews {
+			println("[ERROR] CEF Application Simultaneous use of 'embedded' and 'Views Framework' is not allowed.")
+			return
+		}
+		if isEmbed {
+			kind = bkEmbedded // LCL + CEF embed
+		} else if isViews {
+			kind = bkViews // CEF views
 			// Initialize LCL Application to use base API.
 			//lcl.Application.Initialize()
 			// As the first window.
-			GApplication.windowList[0] = viewsWindowList[0] // CEF views
+			GApplication.windowList[0] = viewsWindowList[0].(IAppWindow)
+		} else {
+			println("[ERROR] ")
+			return
 		}
 		// selects window mode based on window instance type
 		GApplication.messageLoop(kind)

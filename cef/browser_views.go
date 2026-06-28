@@ -219,6 +219,14 @@ func (m *TViewsBrowser) SetIsAlwaysOnTop(value bool) {
 	})
 }
 
+func (m *TViewsBrowser) AsViews() IViewsBrowser {
+	return m
+}
+
+func (m *TViewsBrowser) AsEmbedded() IEmbeddedBrowser {
+	return nil
+}
+
 func (m *TViewsBrowser) SetOnActivate(fn lcl.TNotifyEvent) {
 	m.onActivate = fn
 }

@@ -182,3 +182,11 @@ func (m *TEmbeddedBrowser) createBrowserOnTimer(sender lcl.IObject) {
 		m.timer = nil
 	}
 }
+
+func (m *TEmbeddedBrowser) AsViews() IViewsBrowser {
+	return nil
+}
+
+func (m *TEmbeddedBrowser) AsEmbedded() IEmbeddedBrowser {
+	return m
+}

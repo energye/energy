@@ -44,12 +44,7 @@ func (m *TEmbeddedBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser ce
 		m.browserId = uint32(browser.GetIdentifier())
 		m.window.SetBrowserId(m.browserId)
 
-		if mainWindow, ok := GApplication.windowList[0]; ok {
-			delete(GApplication.windowList, 0)
-			GApplication.windowList[m.browserId] = mainWindow
-		} else {
-			GApplication.windowList[m.browserId] = m.window
-		}
+		GApplication.windowList[m.browserId] = m
 
 		// ipc
 		ipc.RegisterProcessMessage(m)
