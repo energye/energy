@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/core"
+	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"runtime"
 	"sync"
@@ -43,6 +44,10 @@ func getNextBrowserID() uint32 {
 type IWebview interface {
 	lcl.IWinControl
 	core.IBrowser
+	// SetWindow sets the window instance for webview and initializes relevant callback functions
+	// window - Window interface instance used to host webview content
+	SetWindow(window window.IWindow)
+	SetParent(window lcl.IWinControl)
 }
 
 type TEnergyWebview struct {

@@ -27,6 +27,10 @@ import (
 type IEmbeddedBrowser interface {
 	lcl.IWinControl
 	IBrowser
+	// SetWindow sets the window instance for webview and initializes relevant callback functions
+	// window - Window interface instance used to host webview content
+	SetWindow(window window.IWindow)
+	SetParent(window lcl.IWinControl)
 }
 
 type TEmbeddedBrowser struct {

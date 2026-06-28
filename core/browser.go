@@ -12,7 +12,6 @@ package core
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 )
 
@@ -24,15 +23,9 @@ type WindowParent interface {
 
 type IBrowser interface {
 	lcl.IComponent
-	// SetWindow sets the window instance for webview and initializes relevant callback functions
-	// window - Window interface instance used to host webview content
-	SetWindow(window window.IWindow)
 	// SetLocalLoad sets custom resource loading mode for current browser
 	SetLocalLoad(localLoad application.LocalLoad)
 	LocalLoadResource() *application.LocalLoadResource
-	// UpdateBrowserOptions updates configuration of the current browser instance
-	//UpdateBrowserOptions()
-	SetParent(window lcl.IWinControl)
 	CreateBrowser()
 	BrowserId() uint32
 	WindowParent() WindowParent

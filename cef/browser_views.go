@@ -13,7 +13,6 @@ package cef
 import (
 	"github.com/energye/cef/cef"
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types/colors"
 )
@@ -86,15 +85,6 @@ func (m *TViewsBrowser) buildViewsBrowser(owner lcl.IComponent, self IViewsBrows
 	m.initViewsWindowDefaultEvent()
 	m.initViewsBrowserDefaultEvent()
 }
-
-// SetWindow sets the window instance for webview and initializes related callback functions
-//
-//	window - Window interface instance hosting webview content
-//	 VF Browser no impl
-func (m *TViewsBrowser) SetWindow(_ window.IWindow) {}
-
-// SetParent VF Browser no impl
-func (m *TViewsBrowser) SetParent(_ lcl.IWinControl) {}
 
 func (m *TViewsBrowser) SetOptions(options application.Options) {
 	m.options = &options
