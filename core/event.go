@@ -36,7 +36,7 @@ type TOnProcessMessageEvent func(message string)
 type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
 type TOnLoadChangeEvent func(url, title string, load TLoadChange)
 type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
-type TOnContextMenuCommandEvent func(commandId int32)
+type TOnContextMenuCommandEvent func(commandId int32, handle *bool)
 type TOnPopupWindowEvent func(targetURL string) bool
 type TOnEvaluateScriptCallbackEvent func(result string, err string)
 type TOnDragEnterEvent func(type_ TDragType, x, y int32)

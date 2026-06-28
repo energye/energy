@@ -33,8 +33,8 @@ type IViewsBrowser interface {
 	SetOptions(options application.Options)
 	Options() *application.Options
 	CreateTopLevelWindow()
-	RawWindowComponent() cef.ICEFWindowComponent
-	RawBrowserViewComponent() cef.ICEFBrowserViewComponent
+	//RawWindowComponent() cef.ICEFWindowComponent
+	//RawBrowserViewComponent() cef.ICEFBrowserViewComponent
 	Close()
 	IsClose() bool
 	Show()
@@ -154,13 +154,13 @@ func (m *TViewsBrowser) CreateTopLevelWindow() {
 	m.window.CreateTopLevelWindow()
 }
 
-func (m *TViewsBrowser) RawWindowComponent() cef.ICEFWindowComponent {
-	return m.window
-}
-
-func (m *TViewsBrowser) RawBrowserViewComponent() cef.ICEFBrowserViewComponent {
-	return m.browserView
-}
+//func (m *TViewsBrowser) RawWindowComponent() cef.ICEFWindowComponent {
+//	return m.window
+//}
+//
+//func (m *TViewsBrowser) RawBrowserViewComponent() cef.ICEFBrowserViewComponent {
+//	return m.browserView
+//}
 
 // Close closes the webview window and releases associated resources
 func (m *TViewsBrowser) Close() {
@@ -214,7 +214,9 @@ func (m *TViewsBrowser) ExitFullScreen() {
 }
 
 func (m *TViewsBrowser) SetIsAlwaysOnTop(value bool) {
-	m.window.SetIsAlwaysOnTop(value)
+	cef.RunOnMainThread(func() {
+		m.window.SetIsAlwaysOnTop(value)
+	})
 }
 
 func (m *TViewsBrowser) SetOnActivate(fn lcl.TNotifyEvent) {

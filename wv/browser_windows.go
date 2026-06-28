@@ -405,7 +405,8 @@ func (m *TWebview) initDefaultEvent() {
 		if m.onContextMenuCommand != nil {
 			menuItem = wv.NewCoreWebView2ContextMenuItem(menuItem)
 			defer menuItem.Free()
-			m.onContextMenuCommand(menuItem.CommandId())
+			handle := false
+			m.onContextMenuCommand(menuItem.CommandId(), &handle)
 		}
 	})
 	m.browser.SetOnNewWindowRequested(func(sender lcl.IObject, webView wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs) {

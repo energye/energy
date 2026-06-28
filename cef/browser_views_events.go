@@ -43,13 +43,13 @@ func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
 	m.window.SetOnCanMinimize(m.windowOnCanMinimize)
 	m.window.SetOnCanResize(m.windowOnCanResize)
 	m.window.SetOnWindowChanged(func(sender lcl.IObject, view cef.ICefView, added bool) {
-
+		println("SetOnWindowChanged")
 	})
 	m.window.SetOnFocus(func(sender lcl.IObject, view cef.ICefView) {
-
+		println("SetOnFocus")
 	})
 	m.window.SetOnBlur(func(sender lcl.IObject, view cef.ICefView) {
-
+		println("SetOnBlur")
 	})
 }
 

@@ -132,6 +132,7 @@ func (m *TBrowser) chromiumOnResourceLoadComplete(sender lcl.IObject, browser ce
 }
 
 func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams, model cef.ICefMenuModel) {
+	logger.Debug("Chromium.OnBeforeContextMenu")
 	menuItemClear := func(menuItems cef.ICefMenuModel) {
 		menuItems.Clear()
 	}
@@ -183,9 +184,9 @@ func (m *TBrowser) chromiumOnBeforeContextMenu(sender lcl.IObject, browser cef.I
 
 func (m *TBrowser) chromiumOnContextMenuCommand(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame, params cef.ICefContextMenuParams,
 	commandId int32, eventFlags cefTypes.TCefEventFlags, outResult *bool) {
+	logger.Debug("Chromium.OnContextMenuCommand", "commandId:", commandId, *outResult)
 	if m.onContextMenuCommand != nil {
-		m.onContextMenuCommand(commandId)
-		*outResult = true
+		m.onContextMenuCommand(commandId, outResult)
 	}
 }
 

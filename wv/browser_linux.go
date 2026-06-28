@@ -413,7 +413,8 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnContextMenuCommand(func(sender lcl.IObject, menuID int32) {
 		if m.onContextMenuCommand != nil {
-			m.onContextMenuCommand(menuID)
+			handle := false
+			m.onContextMenuCommand(menuID, &handle)
 		}
 	})
 	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {

@@ -545,14 +545,16 @@ func (m *TWebview) contextMenu(x, y int32) {
 		case CmkCommand:
 			newCtxMenuItem, newCommandId = createMenuItem(text, func(commandId int32) {
 				if m.onContextMenuCommand != nil {
-					m.onContextMenuCommand(commandId)
+					handle := false
+					m.onContextMenuCommand(commandId, &handle)
 				}
 			})
 			menuItems.Add(newCtxMenuItem)
 		case CmkSub:
 			newCtxMenuItem, newCommandId = createMenuItem(text, func(commandId int32) {
 				if m.onContextMenuCommand != nil {
-					m.onContextMenuCommand(commandId)
+					handle := false
+					m.onContextMenuCommand(commandId, &handle)
 				}
 			})
 			menuItems.Add(newCtxMenuItem)
