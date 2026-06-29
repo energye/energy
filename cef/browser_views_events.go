@@ -28,10 +28,7 @@ func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
 	m.chromium.SetOnBeforeClose(m.chromiumOnBeforeClose)
 	m.chromium.SetOnClose(m.chromiumOnClose)
 
-	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame,
-		regionsCount cefTypes.NativeUInt, regions cef.ICefDraggableRegionArray) {
-		m.window.SetDraggableRegions(regionsCount, regions)
-	})
+	m.chromium.SetOnDraggableRegionsChanged(m.chromiumOnDraggableRegionsChanged)
 }
 
 func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
@@ -88,6 +85,15 @@ func (m *TViewsBrowser) chromiumOnClose(sender lcl.IObject, browser cef.ICefBrow
 	logger.Debug("Chromium.OnClose", browser.GetIdentifier())
 	*action = cefTypes.CbaClose
 	m.canClose = true
+}
+
+func (m *TViewsBrowser) chromiumOnDraggableRegionsChanged(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame,
+	regionsCount cefTypes.NativeUInt, regions cef.ICefDraggableRegionArray) {
+	logger.Debug("Chromium.OnDraggableRegionsChanged", regionsCount)
+	//for i := 0; i < int(regionsCount); i++ {
+	//	fmt.Println(regions.Get(i))
+	//}
+	m.window.SetDraggableRegions(regionsCount, regions)
 }
 
 func (m *TViewsBrowser) windowOnWindowClosing(sender lcl.IObject, window cef.ICefWindow) {
