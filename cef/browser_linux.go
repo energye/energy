@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/energy/v3/platform/linux/gtk3"
 	gtk3Types "github.com/energye/energy/v3/platform/linux/types"
-	"github.com/energye/energy/v3/window"
 	"github.com/godbus/dbus/v5"
 )
 
@@ -27,14 +26,24 @@ var (
 	frameCorner = frameWidth + frameHeight
 )
 
-func (m *TBrowser) drag(message ipc.ProcessMessage) {
-	window := m.window.(window.ILinuxWindow)
-	_ = window
+func (m *TBrowser) drag(message ipc.ProcessMessage) bool {
 	// todo 待实现
+	if m.window != nil && m.kind == bkEmbedded {
+
+	} else if m.kind == bkViews {
+
+	}
+	return false
 }
 
-func (m *TBrowser) resize(ht string) {
+func (m *TBrowser) resize(ht string) bool {
 	// todo 待实现
+	if m.window != nil && m.kind == bkEmbedded {
+
+	} else if m.kind == bkViews {
+
+	}
+	return false
 }
 
 func IsCurrentlyDarkMode() bool {

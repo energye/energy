@@ -14,6 +14,7 @@ import (
 	"github.com/energye/cef/cef"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/core"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types/colors"
 )
@@ -91,6 +92,9 @@ func (m *TViewsBrowser) buildViewsBrowser(owner lcl.IComponent, self IViewsBrows
 	m.chromium = cef.NewChromium(m.IComponent)
 	m.window = cef.NewWindowComponent(m.IComponent)
 	m.browserView = cef.NewBrowserViewComponent(m.IComponent)
+
+	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
+
 	m.initBrowserDefaultEvent()
 	m.initViewsWindowDefaultEvent()
 	m.initViewsBrowserDefaultEvent()

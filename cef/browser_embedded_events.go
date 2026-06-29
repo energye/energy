@@ -48,8 +48,10 @@ func (m *TEmbeddedBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser ce
 
 		// ipc
 		ipc.RegisterProcessMessage(m)
+
 		// local load
 		//m.schemeHandlerFactory = createSchemeHandlerFactory(browser)
+		
 		// pre-creates a window
 		if options.AutoPopupWindow {
 			if gPrePopupWindow == nil {

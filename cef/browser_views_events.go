@@ -27,6 +27,11 @@ func (m *TViewsBrowser) initViewsBrowserDefaultEvent() {
 	// close browser
 	m.chromium.SetOnBeforeClose(m.chromiumOnBeforeClose)
 	m.chromium.SetOnClose(m.chromiumOnClose)
+
+	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser cef.ICefBrowser, frame cef.ICefFrame,
+		regionsCount cefTypes.NativeUInt, regions cef.ICefDraggableRegionArray) {
+		m.window.SetDraggableRegions(regionsCount, regions)
+	})
 }
 
 func (m *TViewsBrowser) initViewsWindowDefaultEvent() {
@@ -58,6 +63,7 @@ func (m *TViewsBrowser) chromiumOnAfterCreated(sender lcl.IObject, browser cef.I
 
 		// ipc
 		ipc.RegisterProcessMessage(m)
+
 		// pre-creates a window
 		if m.options != nil && m.options.AutoPopupWindow {
 

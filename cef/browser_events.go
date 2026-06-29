@@ -358,17 +358,11 @@ func (m *TBrowser) doProcessMessagePostMessage(name string, arguments cef.ICefLi
 					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
-					if m.window != nil && m.kind == bkEmbedded {
-						m.drag(pMessage)
-						handle = true
-					}
+					handle = m.drag(pMessage)
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
-					if m.window != nil && m.kind == bkEmbedded {
-						ht := pMessage.Data.(string)
-						m.resize(ht)
-						handle = true
-					}
+					ht := pMessage.Data.(string)
+					handle = m.resize(ht)
 				case ipc.MT_DRAG_BORDER_WMSZ:
 				case ipc.MT_DRAG_DROP_ENTER, ipc.MT_DRAG_DROP_LEAVE, ipc.MT_DRAG_DROP_OVER:
 					m.doDragDrop(pMessage, arguments)
