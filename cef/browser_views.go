@@ -61,6 +61,8 @@ type IViewsBrowser interface {
 	SetTitle(title string)
 	Title() string
 	SetIcon(pngIconData []byte)
+	SetWindowState(value types.TWindowState)
+	WindowState() types.TWindowState
 	SetOnActivate(fn lcl.TNotifyEvent)
 	SetOnResize(fn lcl.TNotifyEvent)
 	SetOnThemeChange(fn core.TOnThemeChange)
@@ -324,6 +326,34 @@ func (m *TViewsBrowser) SetIcon(pngIconData []byte) {
 	cefImage := cef.ImageRef.New()
 	cefImage.AddPng(1, pngData, pngDataSize)
 	m.window.SetWindowAppIcon(cefImage)
+}
+
+func (m *TViewsBrowser) SetWindowState(value types.TWindowState) {
+	switch m.options.DefaultWindowStatus {
+	case types.WsMinimized:
+		m.Minimize()
+	case types.WsMaximized:
+		m.Maximize()
+	case types.WsFullScreen:
+		if m.IsFullScreen() {
+			m.ExitFullScreen()
+		} else {
+			m.FullScreen()
+		}
+	default:
+		m.Restore()
+	}
+}
+
+func (m *TViewsBrowser) WindowState() types.TWindowState {
+	if m.IsMinimize() {
+		return types.WsMinimized
+	} else if m.IsMaximize() {
+		return types.WsMaximized
+	} else if m.IsFullScreen() {
+		return types.WsFullScreen
+	}
+	return types.WsNormal
 }
 
 func (m *TViewsBrowser) AsViews() IViewsBrowser {
