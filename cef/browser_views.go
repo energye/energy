@@ -43,6 +43,7 @@ type IViewsBrowser interface {
 	IsMain() bool
 	Minimize()
 	Maximize()
+	Restore()
 	IsMinimize() bool
 	IsMaximize() bool
 	IsFullScreen() bool
@@ -178,11 +179,15 @@ func (m *TViewsBrowser) IsClose() bool {
 }
 
 func (m *TViewsBrowser) Show() {
-	m.window.Show()
+	cef.RunOnMainThread(func() {
+		m.window.Show()
+	})
 }
 
 func (m *TViewsBrowser) Hide() {
-	m.window.Hide()
+	cef.RunOnMainThread(func() {
+		m.window.Hide()
+	})
 }
 
 func (m *TViewsBrowser) IsMain() bool {
@@ -190,11 +195,21 @@ func (m *TViewsBrowser) IsMain() bool {
 }
 
 func (m *TViewsBrowser) Minimize() {
-	m.window.Minimize()
+	cef.RunOnMainThread(func() {
+		m.window.Minimize()
+	})
 }
 
 func (m *TViewsBrowser) Maximize() {
-	m.window.Maximize()
+	cef.RunOnMainThread(func() {
+		m.window.Maximize()
+	})
+}
+
+func (m *TViewsBrowser) Restore() {
+	cef.RunOnMainThread(func() {
+		m.window.Restore()
+	})
 }
 
 func (m *TViewsBrowser) IsMinimize() bool {
@@ -210,11 +225,15 @@ func (m *TViewsBrowser) IsFullScreen() bool {
 }
 
 func (m *TViewsBrowser) FullScreen() {
-	m.window.SetIsFullscreen(true)
+	cef.RunOnMainThread(func() {
+		m.window.SetIsFullscreen(true)
+	})
 }
 
 func (m *TViewsBrowser) ExitFullScreen() {
-	m.window.SetIsFullscreen(false)
+	cef.RunOnMainThread(func() {
+		m.window.SetIsFullscreen(false)
+	})
 }
 
 func (m *TViewsBrowser) SetIsAlwaysOnTop(value bool) {
