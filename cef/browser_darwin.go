@@ -38,3 +38,7 @@ func (m *TBrowser) drag(message ipc.ProcessMessage) {
 func (m *TBrowser) resize(ht string) {
 
 }
+
+func (m *TViewsBrowser) startThemeObserver() {
+
+}

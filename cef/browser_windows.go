@@ -73,3 +73,7 @@ func (m *TBrowser) resize(ht string) {
 		win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
 	}
 }
+
+func (m *TViewsBrowser) startThemeObserver() {
+	
+}

@@ -175,6 +175,9 @@ func (m *TViewsBrowser) windowOnWindowCreated(sender lcl.IObject, window cef.ICe
 		}
 		m.CenterWindow()
 	}
+
+	m.startThemeObserver()
+
 	m.browserView.RequestFocus()
 }
 

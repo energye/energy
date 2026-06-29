@@ -72,7 +72,7 @@ func IsCurrentlyDarkMode() bool {
 	return colorScheme == gtk3Types.ColorSchemePreferDark
 }
 
-func UpdateTheme() {
+func (m *TViewsBrowser) UpdateTheme() {
 	isDark := false
 	switch GApplication.Options.Linux.Theme {
 	case application.SystemDefault:
@@ -82,19 +82,15 @@ func UpdateTheme() {
 	case application.Light:
 		isDark = false
 	}
-	_ = isDark
-	//for _, wind := range GApplication.windowList {,ok:=
-	//}
-	//m.doThemeChanged(isDark)
+	m.doThemeChanged(isDark)
 }
 
-// TODO 待完成
-func startThemeObserver() {
+func (m *TViewsBrowser) startThemeObserver() {
 	settings := gtk3.SettingsGetDefault()
 	if settings == nil {
 		return
 	}
 	settings.SetOnThemeChanged(func(sender gtk3Types.PGtkWidget, pspec uintptr, userData gtk3Types.GPointer) {
-		UpdateTheme()
+		m.UpdateTheme()
 	})
 }
