@@ -16,7 +16,9 @@ import (
 	"github.com/energye/energy/v3/core"
 	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/colors"
+	"unsafe"
 )
 
 type viewsBrowserType int32
@@ -50,6 +52,15 @@ type IViewsBrowser interface {
 	FullScreen()
 	ExitFullScreen()
 	SetIsAlwaysOnTop(value bool)
+	SetLeft(v int32)
+	SetTop(v int32)
+	SetWidth(v int32)
+	SetHeight(v int32)
+	SetBoundsRect(rect types.TRect)
+	BoundsRect() (rect types.TRect)
+	SetTitle(title string)
+	Title() string
+	SetIcon(pngIconData []byte)
 	SetOnActivate(fn lcl.TNotifyEvent)
 	SetOnResize(fn lcl.TNotifyEvent)
 	SetOnThemeChange(fn core.TOnThemeChange)
@@ -240,6 +251,79 @@ func (m *TViewsBrowser) SetIsAlwaysOnTop(value bool) {
 	cef.RunOnMainThread(func() {
 		m.window.SetIsAlwaysOnTop(value)
 	})
+}
+
+func (m *TViewsBrowser) SetLeft(v int32) {
+	cef.RunOnMainThread(func() {
+		pos := m.window.Position()
+		pos.X = v
+		m.window.SetPosition(pos)
+	})
+}
+
+func (m *TViewsBrowser) SetTop(v int32) {
+	cef.RunOnMainThread(func() {
+		pos := m.window.Position()
+		pos.Y = v
+		m.window.SetPosition(pos)
+	})
+}
+
+func (m *TViewsBrowser) SetWidth(v int32) {
+	cef.RunOnMainThread(func() {
+		bounds := m.window.Bounds()
+		bounds.Width = v
+		m.window.SetBounds(bounds)
+	})
+}
+
+func (m *TViewsBrowser) SetHeight(v int32) {
+	cef.RunOnMainThread(func() {
+		bounds := m.window.Bounds()
+		bounds.Height = v
+		m.window.SetBounds(bounds)
+	})
+}
+
+func (m *TViewsBrowser) SetBoundsRect(rect types.TRect) {
+	cef.RunOnMainThread(func() {
+		bounds := cef.TCefRect{}
+		bounds.X = rect.Left
+		bounds.Y = rect.Top
+		bounds.Width = rect.Width()
+		bounds.Height = rect.Height()
+		m.window.SetBounds(bounds)
+	})
+}
+
+func (m *TViewsBrowser) BoundsRect() (rect types.TRect) {
+	bounds := m.window.Bounds()
+	rect.Left = bounds.X
+	rect.Top = bounds.Y
+	rect.SetWidth(bounds.Width)
+	rect.SetHeight(bounds.Height)
+	return
+}
+
+func (m *TViewsBrowser) SetTitle(title string) {
+	cef.RunOnMainThread(func() {
+		m.window.SetTitle(title)
+	})
+}
+
+func (m *TViewsBrowser) Title() string {
+	return m.window.Title()
+}
+
+func (m *TViewsBrowser) SetIcon(pngIconData []byte) {
+	if !m.created || len(pngIconData) == 0 {
+		return
+	}
+	pngData := uintptr(unsafe.Pointer(&pngIconData[0]))
+	pngDataSize := types.NativeUInt(len(pngIconData))
+	cefImage := cef.ImageRef.New()
+	cefImage.AddPng(1, pngData, pngDataSize)
+	m.window.SetWindowAppIcon(cefImage)
 }
 
 func (m *TViewsBrowser) AsViews() IViewsBrowser {
