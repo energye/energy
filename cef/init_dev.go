@@ -24,8 +24,6 @@ import (
 	"path/filepath"
 )
 
-var ()
-
 func loadLibENERGYRuntime() {
 	api.SetOnLoadLibCallback(func() (lib imports.DLL, err error) {
 		libPath := libname.LibName
