@@ -26,6 +26,8 @@ import (
 	"github.com/energye/lcl/tool/exec"
 	"os"
 	"path/filepath"
+	"runtime"
+	"sync"
 	"sync/atomic"
 )
 
@@ -43,6 +45,7 @@ var (
 		types.PtCrashpad: "Crashpad",
 		types.PtOther:    "Other",
 	}
+	initOnce sync.Once
 )
 
 type Application struct {
@@ -67,6 +70,13 @@ type IAppWindow interface{}
 
 // Init CEF Global initialization, invoked at application startup in main
 func Init() *Application {
+	runtime.LockOSThread()
+	api.SetOnReleaseCallback(func() {
+		runtime.UnlockOSThread()
+	})
+	initOnce.Do(func() {
+		loadLibENERGYRuntime()
+	})
 	lcl.Init()
 	base.Init()
 	return NewApplication()
