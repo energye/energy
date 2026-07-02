@@ -375,3 +375,31 @@ func NewFileChooserDialog(title string, parent types.IWindow, action types.FileC
 func NewComboBoxText() types.IComboBoxText {
 	return cgo.NewComboBoxText()
 }
+
+// Grid + Separator + RadioButton + AboutDialog
+
+func NewGrid() types.IGrid {
+	return cgo.NewGrid()
+}
+
+func NewSeparator(orientation types.Orientation) types.ISeparator {
+	return cgo.NewSeparator(orientation)
+}
+
+func NewRadioButtonWithLabelFromWidget(radioGroupMember *cgo.RadioButton, label string) *cgo.RadioButton {
+	return cgo.NewRadioButtonWithLabelFromWidget(radioGroupMember, label)
+}
+
+func NewAboutDialog() types.IAboutDialog {
+	return cgo.NewAboutDialog()
+}
+
+// ColorChooserDialog + FontChooserDialog
+
+func NewColorChooserDialog(title string, parent types.IWindow) types.IColorChooserDialog {
+	return cgo.NewColorChooserDialog(title, parent)
+}
+
+func NewFontChooserDialog(title string, parent types.IWindow) types.IFontChooserDialog {
+	return cgo.NewFontChooserDialog(title, parent)
+}

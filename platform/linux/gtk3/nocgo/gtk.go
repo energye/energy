@@ -756,6 +756,48 @@ func init() {
 		imports.NewTable("gtk_combo_box_text_remove_all", 0),
 		imports.NewTable("gtk_combo_box_get_active", 0),
 		imports.NewTable("gtk_combo_box_set_active", 0),
+		// Grid
+		imports.NewTable("gtk_grid_new", 0),
+		imports.NewTable("gtk_grid_attach", 0),
+		imports.NewTable("gtk_grid_attach_next_to", 0),
+		imports.NewTable("gtk_grid_set_row_spacing", 0),
+		imports.NewTable("gtk_grid_get_row_spacing", 0),
+		imports.NewTable("gtk_grid_set_column_spacing", 0),
+		imports.NewTable("gtk_grid_get_column_spacing", 0),
+		imports.NewTable("gtk_grid_set_row_homogeneous", 0),
+		imports.NewTable("gtk_grid_get_row_homogeneous", 0),
+		imports.NewTable("gtk_grid_set_column_homogeneous", 0),
+		imports.NewTable("gtk_grid_get_column_homogeneous", 0),
+		// Separator
+		imports.NewTable("gtk_separator_new", 0),
+		// RadioButton
+		imports.NewTable("gtk_radio_button_new_with_label_from_widget", 0),
+		// AboutDialog
+		imports.NewTable("gtk_about_dialog_new", 0),
+		imports.NewTable("gtk_about_dialog_set_program_name", 0),
+		imports.NewTable("gtk_about_dialog_get_program_name", 0),
+		imports.NewTable("gtk_about_dialog_set_version", 0),
+		imports.NewTable("gtk_about_dialog_get_version", 0),
+		imports.NewTable("gtk_about_dialog_set_comments", 0),
+		imports.NewTable("gtk_about_dialog_get_comments", 0),
+		imports.NewTable("gtk_about_dialog_set_website", 0),
+		imports.NewTable("gtk_about_dialog_get_website", 0),
+		imports.NewTable("gtk_about_dialog_set_website_label", 0),
+		imports.NewTable("gtk_about_dialog_get_website_label", 0),
+		imports.NewTable("gtk_about_dialog_set_license", 0),
+		imports.NewTable("gtk_about_dialog_get_license", 0),
+		imports.NewTable("gtk_about_dialog_set_authors", 0),
+		imports.NewTable("gtk_about_dialog_set_translator_credits", 0),
+		// ColorChooserDialog
+		imports.NewTable("gtk_color_chooser_dialog_new", 0),
+		imports.NewTable("gtk_color_chooser_get_use_alpha", 0),
+		imports.NewTable("gtk_color_chooser_set_use_alpha", 0),
+		// FontChooserDialog
+		imports.NewTable("gtk_font_chooser_dialog_new", 0),
+		imports.NewTable("gtk_font_chooser_get_font", 0),
+		imports.NewTable("gtk_font_chooser_set_font", 0),
+		imports.NewTable("gtk_font_chooser_get_preview_text", 0),
+		imports.NewTable("gtk_font_chooser_set_preview_text", 0),
 		// TextIter (size needed for allocation)
 		// GtkTextIter is a stack-allocated struct, sizeof needed
 	}

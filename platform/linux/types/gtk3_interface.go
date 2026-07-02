@@ -869,3 +869,63 @@ type IComboBoxText interface {
 	GetActive() int
 	SetActive(index int)
 }
+
+// IGrid is a representation of GTK's GtkGrid.
+type IGrid interface {
+	IContainer
+	Attach(child IWidget, left, top, width, height int)
+	AttachNextTo(child, sibling IWidget, side PositionType, width, height int)
+	SetRowSpacing(spacing uint)
+	GetRowSpacing() uint
+	SetColumnSpacing(spacing uint)
+	GetColumnSpacing() uint
+	SetRowHomogeneous(homogeneous bool)
+	GetRowHomogeneous() bool
+	SetColumnHomogeneous(homogeneous bool)
+	GetColumnHomogeneous() bool
+}
+
+// ISeparator is a representation of GTK's GtkSeparator.
+type ISeparator interface {
+	IWidget
+}
+
+// IRadioButton is a representation of GTK's GtkRadioButton.
+type IRadioButton interface {
+	IButton
+}
+
+// IAboutDialog is a representation of GTK's GtkAboutDialog.
+type IAboutDialog interface {
+	IDialog
+	SetProgramName(name string)
+	GetProgramName() string
+	SetVersion(version string)
+	GetVersion() string
+	SetComments(comments string)
+	GetComments() string
+	SetWebsite(website string)
+	GetWebsite() string
+	SetWebsiteLabel(label string)
+	GetWebsiteLabel() string
+	SetLicense(license string)
+	GetLicense() string
+	SetAuthors(authors []string)
+	SetTranslatorCredits(credits string)
+}
+
+// IColorChooserDialog is a representation of GTK's GtkColorChooserDialog.
+type IColorChooserDialog interface {
+	IDialog
+	GetUseAlpha() bool
+	SetUseAlpha(useAlpha bool)
+}
+
+// IFontChooserDialog is a representation of GTK's GtkFontChooserDialog.
+type IFontChooserDialog interface {
+	IDialog
+	GetFont() string
+	SetFont(font string)
+	GetPreviewText() string
+	SetPreviewText(text string)
+}

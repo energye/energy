@@ -353,3 +353,31 @@ func NewFileChooserDialog(title string, parent types.IWindow, action types.FileC
 func NewComboBoxText() types.IComboBoxText {
 	return nocgo.NewComboBoxText()
 }
+
+// Grid + Separator + RadioButton + AboutDialog
+
+func NewGrid() types.IGrid {
+	return nocgo.NewGrid()
+}
+
+func NewSeparator(orientation types.Orientation) types.ISeparator {
+	return nocgo.NewSeparator(orientation)
+}
+
+func NewRadioButtonWithLabelFromWidget(radioGroupMember *nocgo.RadioButton, label string) *nocgo.RadioButton {
+	return nocgo.NewRadioButtonWithLabelFromWidget(radioGroupMember, label)
+}
+
+func NewAboutDialog() types.IAboutDialog {
+	return nocgo.NewAboutDialog()
+}
+
+// ColorChooserDialog + FontChooserDialog
+
+func NewColorChooserDialog(title string, parent types.IWindow) types.IColorChooserDialog {
+	return nocgo.NewColorChooserDialog(title, parent)
+}
+
+func NewFontChooserDialog(title string, parent types.IWindow) types.IFontChooserDialog {
+	return nocgo.NewFontChooserDialog(title, parent)
+}
