@@ -638,6 +638,7 @@ func (m *TWebview) initDefaultDragEvent() {
 
 	// 持续触发
 	m.gtkWebview.SetOnDragMotion(func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool {
+		//logger.Debug("Webview.OnDragMotion")
 		//println("SetOnDragMotion:", isContinue)
 		//if isHandle {
 		//	return false
@@ -662,15 +663,14 @@ func (m *TWebview) initDefaultDragEvent() {
 		return false
 	})
 	m.gtkWebview.SetOnDragLeave(func(sender PGtkWidget, context PDragContext, time uint, userData GPointer) {
-		//println("SetOnDragLeave")
-		// leave
+		//logger.Debug("Webview.OnDragLeave")
 		if m.onDragLeave != nil {
 			m.onDragLeave()
 		}
 	})
 	m.gtkWebview.SetOnDragDataReceived(func(sender PGtkWidget, context PDragContext, x, y int, data PSelectionData,
 		info uint, time uint, userData GPointer) {
-		//println("SetOnDragDataReceived:", isContinue)
+		//logger.Debug("Webview.OnDragDataReceived isDragOver:", isDragOver)
 		if isDragOver {
 			ctx := gtk3.AsDragContext(unsafe.Pointer(context))
 			selectionData := gtk3.AsSelectionData(unsafe.Pointer(data))
@@ -700,9 +700,9 @@ func (m *TWebview) initDefaultDragEvent() {
 		}
 	})
 	m.gtkWebview.SetOnDragDrop(func(sender PGtkWidget, context PDragContext, x, y int, time uint, userData GPointer) bool {
+		//logger.Debug("Webview.OnDragDrop")
 		widget := gtk3.AsWidget(unsafe.Pointer(sender))
 		ctx := gtk3.AsDragContext(unsafe.Pointer(context))
-		//println("SetOnDragDrop:", isContinue)
 		//if !isContinue {
 		//	return false
 		//}
