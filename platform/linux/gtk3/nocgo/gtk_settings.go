@@ -19,7 +19,7 @@ import (
 )
 
 type Settings struct {
-	*Object
+	Object
 }
 
 func SettingsGetDefault() *Settings {
@@ -27,14 +27,18 @@ func SettingsGetDefault() *Settings {
 	if r == 0 {
 		return nil
 	}
-	return &Settings{&Object{instance: unsafe.Pointer(r)}}
+	m := new(Settings)
+	m.instance = unsafe.Pointer(r)
+	return m
 }
 
 func AsSettings(ptr unsafe.Pointer) *Settings {
 	if ptr == nil {
 		return nil
 	}
-	return &Settings{&Object{instance: ptr}}
+	m := new(Settings)
+	m.instance = ptr
+	return m
 }
 
 func (v *Settings) SetOnThemeChanged(fn types.TThemeChangedEvent) types.ISignalHandlerID {

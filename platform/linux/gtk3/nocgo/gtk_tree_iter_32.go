@@ -8,20 +8,18 @@
 //
 //----------------------------------------
 
+//go:build 386 || arm
+
 package nocgo
 
-import (
-	"unsafe"
-)
+import "unsafe"
 
 // TreeIter is a representation of GTK's GtkTreeIter.
+// 32-bit layout: stamp(4) + user_data(4) + user_data2(4) + user_data3(4) = 16 bytes.
 type TreeIter struct {
-	Stamp     int32
-	userData  int32
-	userData2 int32
-	userData3 int32
+	data [16]byte
 }
 
 func (m *TreeIter) Instance() uintptr {
-	return uintptr(unsafe.Pointer(m))
+	return uintptr(unsafe.Pointer(&m.data[0]))
 }

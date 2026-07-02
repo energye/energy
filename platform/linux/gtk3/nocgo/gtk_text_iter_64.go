@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+//go:build amd64 || arm64 || loong64
+
 package nocgo
 
 import (
@@ -15,7 +17,8 @@ import (
 	"unsafe"
 )
 
-const textIterSize = 80 // sizeof(GtkTextIter) on x86_64
+// GtkTextIter is 80 bytes on x86_64 (verified via sizeof).
+const textIterSize = 80
 
 // TextIter is a representation of GTK's GtkTextIter.
 // It is a value type (stack-allocated), not a GObject.
