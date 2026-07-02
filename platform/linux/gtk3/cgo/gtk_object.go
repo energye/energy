@@ -13,6 +13,7 @@ import "C"
 import (
 	"errors"
 	"reflect"
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 

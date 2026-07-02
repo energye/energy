@@ -14,19 +14,8 @@ import "C"
 import (
 	"sync"
 	"unsafe"
-)
 
-type SourceHandle uint
-
-// Priority is the enumerated type for GLib priority event sources.
-type Priority int
-
-const (
-	PRIORITY_HIGH         Priority = C.G_PRIORITY_HIGH
-	PRIORITY_DEFAULT      Priority = C.G_PRIORITY_DEFAULT // TimeoutAdd
-	PRIORITY_HIGH_IDLE    Priority = C.G_PRIORITY_HIGH_IDLE
-	PRIORITY_DEFAULT_IDLE Priority = C.G_PRIORITY_DEFAULT_IDLE // IdleAdd
-	PRIORITY_LOW          Priority = C.G_PRIORITY_LOW
+	. "github.com/energye/energy/v3/platform/linux/types"
 )
 
 type idleFunc func() bool

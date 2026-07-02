@@ -5,7 +5,10 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // Scrollbar is a representation of GTK's GtkScrollbar.
 type Scrollbar struct {
@@ -32,6 +35,11 @@ func wrapScrollbar(obj *Object) *Scrollbar {
 		return nil
 	}
 	return &Scrollbar{Range{Widget{InitiallyUnowned{obj}}}}
+}
+
+// AsScrollbar converts an unsafe.Pointer to an IScrollbar.
+func AsScrollbar(p unsafe.Pointer) IScrollbar {
+	return wrapScrollbar(ToGoObject(p))
 }
 
 // NewScrollbar is a wrapper around gtk_scrollbar_new().

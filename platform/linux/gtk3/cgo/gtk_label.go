@@ -40,6 +40,11 @@ func wrapLabel(obj *Object) *Label {
 	return &Label{Widget{InitiallyUnowned{obj}}}
 }
 
+// AsLabel converts an unsafe.Pointer to an ILabel.
+func AsLabel(p unsafe.Pointer) ILabel {
+	return wrapLabel(ToGoObject(p))
+}
+
 // WidgetToLabel is a convience func that casts the given *Widget into a *Label.
 func WidgetToLabel(widget *Widget) *Label {
 	obj := ToGoObject(unsafe.Pointer(widget.GObject))

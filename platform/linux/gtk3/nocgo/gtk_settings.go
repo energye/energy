@@ -38,6 +38,6 @@ func AsSettings(ptr unsafe.Pointer) *Settings {
 }
 
 func (v *Settings) SetOnThemeChanged(fn types.TThemeChangedEvent) types.ISignalHandlerID {
-	signalHandlerID := callback.Connect(v.Instance(), types.EsnNotifyThemeChanged, "", fn, 0)
+	signalHandlerID := callback.Connect(v.Instance(), types.EsnNotifyThemeChanged, callback.C_trampoline_3_void, fn, 0)
 	return signalHandlerID
 }

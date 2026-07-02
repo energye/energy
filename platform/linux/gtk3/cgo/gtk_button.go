@@ -35,6 +35,11 @@ func wrapButton(obj *Object) *Button {
 	return &Button{Bin{Container{Widget{InitiallyUnowned{obj}}}}}
 }
 
+// AsButton converts an unsafe.Pointer to an IButton.
+func AsButton(p unsafe.Pointer) IButton {
+	return wrapButton(ToGoObject(p))
+}
+
 // ButtonNew is a wrapper around gtk_button_new().
 func NewButton() *Button {
 	c := C.gtk_button_new()
@@ -50,6 +55,18 @@ func NewButtonWithLabel(label string) *Button {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_button_new_with_label((*C.gchar)(cstr))
+	if c == nil {
+		return nil
+	}
+	obj := ToGoObject(unsafe.Pointer(c))
+	return wrapButton(obj)
+}
+
+// NewButtonWithMnemonic is a wrapper around gtk_button_new_with_mnemonic().
+func NewButtonWithMnemonic(label string) *Button {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_button_new_with_mnemonic((*C.gchar)(cstr))
 	if c == nil {
 		return nil
 	}

@@ -117,7 +117,7 @@ func (v *MenuButton) native() *C.GtkMenuButton {
 }
 
 // SetPopup is a wrapper around gtk_menu_button_set_popup().
-func (v *MenuButton) SetPopup(menu IMenu) {
+func (v *MenuButton) SetPopup(menu _IMenu) {
 	C.gtk_menu_button_set_popup(v.native(), menu.toWidget())
 }
 
@@ -176,11 +176,8 @@ type MenuItem struct {
 	Bin
 }
 
-// IMenuItem is an interface type implemented by all structs
-// embedding a MenuItem.  It is meant to be used as an argument type
-// for wrapper functions that wrap around a C GTK function taking a
-// GtkMenuItem.
-type IMenuItem interface {
+// _IMenuItem is an internal interface for type assertions.
+type _IMenuItem interface {
 	toMenuItem() *C.GtkMenuItem
 	toWidget() *C.GtkWidget
 }

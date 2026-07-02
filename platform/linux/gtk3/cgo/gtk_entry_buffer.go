@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -29,6 +30,11 @@ func wrapEntryBuffer(obj *Object) *EntryBuffer {
 	}
 
 	return &EntryBuffer{obj}
+}
+
+// AsEntryBuffer converts an unsafe.Pointer to an IEntryBuffer.
+func AsEntryBuffer(p unsafe.Pointer) IEntryBuffer {
+	return wrapEntryBuffer(ToGoObject(p))
 }
 
 // NewEntryBuffer is a wrapper around gtk_entry_buffer_new().

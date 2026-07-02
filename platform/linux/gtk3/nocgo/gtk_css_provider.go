@@ -72,3 +72,16 @@ func (m *CssProvider) ToString() string {
 	r := gtk3.SysCall("gtk_css_provider_to_string", m.Instance())
 	return GoStr(r)
 }
+
+// CssProviderGetNamed is a wrapper around gtk_css_provider_get_named().
+func CssProviderGetNamed(name string, variant string) *CssProvider {
+	cname := CStr(name)
+	cvariant := CStr(variant)
+	r := gtk3.SysCall("gtk_css_provider_get_named", cname, cvariant)
+	if r == 0 {
+		return nil
+	}
+	m := new(CssProvider)
+	m.instance = unsafe.Pointer(r)
+	return m
+}

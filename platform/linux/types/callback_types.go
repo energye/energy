@@ -35,6 +35,8 @@ const (
 	EsnFocusInEvent          EventSignalName = "focus-in-event"
 	EsnFocusOutEvent         EventSignalName = "focus-out-event"
 	EsnNotifyThemeChanged    EventSignalName = "notify::gtk-theme-name"
+	EsnValueChanged          EventSignalName = "value-changed"
+	EsnDestroy               EventSignalName = "destroy"
 )
 
 // 信号事件类型
@@ -61,3 +63,4 @@ type TDragDataDeleteOrBeginOrEndEvent func(sender PGtkWidget, context PDragConte
 type TFocusInEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPointer) bool
 type TFocusOutEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPointer) bool
 type TThemeChangedEvent func(sender PGtkWidget, pspec uintptr, userData GPointer)
+type TValueChangedEvent func(sender PGtkWidget, userData GPointer)

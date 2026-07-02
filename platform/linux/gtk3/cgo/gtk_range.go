@@ -5,7 +5,11 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // Range is a representation of GTK's GtkRange.
 type Range struct {
@@ -32,6 +36,11 @@ func wrapRange(obj *Object) *Range {
 		return nil
 	}
 	return &Range{Widget{InitiallyUnowned{obj}}}
+}
+
+// AsRange converts an unsafe.Pointer to an IRange.
+func AsRange(p unsafe.Pointer) IRange {
+	return wrapRange(ToGoObject(p))
 }
 
 // GetFillLevel is a wrapper around gtk_range_get_fill_level().
@@ -65,8 +74,8 @@ func (v *Range) SetShowFillLevel(show_fill_level bool) {
 }
 
 // GetAdjustment is a wrapper around gtk_range_get_adjustment().
-func (v *Range) GetAdjustment() *Adjustment {
-
+// GetAdjustment is a wrapper around gtk_range_get_adjustment().
+func (v *Range) GetAdjustment() IAdjustment {
 	c := C.gtk_range_get_adjustment(v.native())
 	if c == nil {
 		return nil
@@ -76,8 +85,13 @@ func (v *Range) GetAdjustment() *Adjustment {
 }
 
 // SetAdjustment is a wrapper around gtk_range_set_adjustment().
-func (v *Range) SetAdjustment(adjustment *Adjustment) {
-	C.gtk_range_set_adjustment(v.native(), adjustment.native())
+// SetAdjustment is a wrapper around gtk_range_set_adjustment().
+func (v *Range) SetAdjustment(adjustment IAdjustment) {
+	var adj *Adjustment
+	if adjustment != nil {
+		adj = adjustment.(*Adjustment)
+	}
+	C.gtk_range_set_adjustment(v.native(), adj.native())
 }
 
 // GetValue is a wrapper around gtk_range_get_value().
@@ -180,4 +194,9 @@ func (v *Range) GetSliderFixedSize() bool {
 // SetSliderFixedSize is a wrapper around gtk_range_set_slider_size_fixed().
 func (v *Range) SetSliderFixedSize(size_fixed bool) {
 	C.gtk_range_set_slider_size_fixed(v.native(), CBool(size_fixed))
+}
+
+// SetOnValueChanged is a callback for the "value-changed" signal.
+func (v *Range) SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID {
+	return callback.Connect(v.Instance(), EsnValueChanged, callback.C_trampoline_2_void, fn, 0)
 }

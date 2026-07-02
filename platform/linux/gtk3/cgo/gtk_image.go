@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -75,6 +76,11 @@ func wrapImage(obj *Object) *Image {
 		return nil
 	}
 	return &Image{Widget{InitiallyUnowned{obj}}}
+}
+
+// AsImage converts an unsafe.Pointer to an IImage.
+func AsImage(p unsafe.Pointer) IImage {
+	return wrapImage(ToGoObject(p))
 }
 
 // Clear is a wrapper around gtk_image_clear().

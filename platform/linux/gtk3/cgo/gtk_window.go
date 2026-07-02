@@ -571,7 +571,7 @@ func (v *Window) BeginMoveDrag(button ButtonType, rootX, rootY int, timestamp ui
 }
 
 func (v *Window) SetOnConfigure(fn TConfigureEvent) ISignalHandlerID {
-	signalHandlerID := callback.Connect(v.Instance(), EsnConfigureEvent, callback.C_trampoline_2_void,
+	signalHandlerID := callback.Connect(v.Instance(), EsnConfigureEvent, callback.C_trampoline_3_gboolean,
 		fn, 0)
 	return signalHandlerID
 }
@@ -586,4 +586,24 @@ func (v *Window) SetOnDraw(fn TDrawEvent) ISignalHandlerID {
 	signalHandlerID := callback.Connect(v.Instance(), EsnDrawEvent, callback.C_trampoline_3_gboolean,
 		fn, 0)
 	return signalHandlerID
+}
+
+func (v *Window) SetOnDestroy(fn TNotifyEvent) ISignalHandlerID {
+	signalHandlerID := callback.Connect(v.Instance(), EsnDestroy, callback.C_trampoline_2_void,
+		fn, 0)
+	return signalHandlerID
+}
+
+// SetPosition is a wrapper around gtk_window_set_position().
+func (v *Window) SetPosition(position WindowType) {
+	C.gtk_window_set_position(v.native(), C.GtkWindowPosition(position))
+}
+
+// SetTransientFor is a wrapper around gtk_window_set_transient_for().
+func (v *Window) SetTransientFor(parent IWindow) {
+	if parent == nil {
+		C.gtk_window_set_transient_for(v.native(), nil)
+	} else {
+		C.gtk_window_set_transient_for(v.native(), (*C.GtkWindow)(unsafe.Pointer(parent.Instance())))
+	}
 }

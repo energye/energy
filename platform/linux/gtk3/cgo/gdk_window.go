@@ -5,7 +5,7 @@ package cgo
 // #include "gdk.go.h"
 import "C"
 import (
-	"github.com/energye/energy/v3/platform/linux/types"
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -14,7 +14,7 @@ type GdkWindow struct {
 	*Object
 }
 
-func AsGdkWindow(ptr unsafe.Pointer) types.IGdkWindow {
+func AsGdkWindow(ptr unsafe.Pointer) IGdkWindow {
 	if ptr == nil {
 		return nil
 	}
@@ -79,7 +79,7 @@ func (v *GdkWindow) SetOverrideRedirect(overrideRedirect bool) {
 	C.gdk_window_set_override_redirect(v.native(), CBool(overrideRedirect))
 }
 
-func (v *GdkWindow) SetDecorations(decorations types.TGdkWMDecoration) {
+func (v *GdkWindow) SetDecorations(decorations TGdkWMDecoration) {
 	C.gdk_window_set_decorations(v.native(), C.GdkWMDecoration(decorations))
 }
 

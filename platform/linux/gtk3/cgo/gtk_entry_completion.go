@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -29,6 +30,11 @@ func wrapEntryCompletion(obj *Object) *EntryCompletion {
 	}
 
 	return &EntryCompletion{obj}
+}
+
+// AsEntryCompletion converts an unsafe.Pointer to an IEntryCompletion.
+func AsEntryCompletion(p unsafe.Pointer) IEntryCompletion {
+	return wrapEntryCompletion(ToGoObject(p))
 }
 
 // NewEntryCompletion is a wrapper around gtk_entry_completion_new

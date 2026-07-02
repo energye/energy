@@ -5,7 +5,10 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // ScrolledWindow is a representation of GTK's GtkScrolledWindow.
 type ScrolledWindow struct {

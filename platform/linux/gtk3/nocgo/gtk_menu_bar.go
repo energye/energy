@@ -28,3 +28,12 @@ func AsMenuBar(ptr unsafe.Pointer) IMenuBar {
 	m.instance = ptr
 	return m
 }
+
+// NewMenuBar is a wrapper around gtk_menu_bar_new().
+func NewMenuBar() IMenuBar {
+	r := gtk3.SysCall("gtk_menu_bar_new")
+	if r == 0 {
+		return nil
+	}
+	return AsMenuBar(unsafe.Pointer(r))
+}

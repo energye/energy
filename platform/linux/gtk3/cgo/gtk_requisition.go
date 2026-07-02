@@ -28,6 +28,20 @@ func (v *Requisition) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+func (v *Requisition) GetWidth() int {
+	if v == nil {
+		return 0
+	}
+	return v.Width
+}
+
+func (v *Requisition) GetHeight() int {
+	if v == nil {
+		return 0
+	}
+	return v.Height
+}
+
 func wrapRequisition(requisition *C.GtkRequisition) *Requisition {
 	if requisition == nil {
 		return nil

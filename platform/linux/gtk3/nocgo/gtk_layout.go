@@ -29,6 +29,22 @@ func AsLayout(ptr unsafe.Pointer) ILayout {
 	return m
 }
 
+// NewLayout is a wrapper around gtk_layout_new().
+func NewLayout(hadjustment, vadjustment IAdjustment) ILayout {
+	var hadj, vadj uintptr
+	if hadjustment != nil {
+		hadj = hadjustment.Instance()
+	}
+	if vadjustment != nil {
+		vadj = vadjustment.Instance()
+	}
+	r := gtk3.SysCall("gtk_layout_new", hadj, vadj)
+	if r == 0 {
+		return nil
+	}
+	return &Layout{Container{Widget{Object{instance: unsafe.Pointer(r)}}}}
+}
+
 // Layout.Put is a wrapper around gtk_layout_put().
 func (m *Layout) Put(w IWidget, x, y int) {
 	gtk3.SysCall("gtk_layout_put", m.Instance(), w.Instance(), uintptr(x), uintptr(y))

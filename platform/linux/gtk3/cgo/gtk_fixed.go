@@ -33,6 +33,11 @@ func wrapFixed(obj *Object) *Fixed {
 	return &Fixed{Container{Widget{InitiallyUnowned{obj}}}}
 }
 
+// AsFixed converts an unsafe.Pointer to an IFixed.
+func AsFixed(p unsafe.Pointer) IFixed {
+	return wrapFixed(ToGoObject(p))
+}
+
 // NewFixed is a wrapper around gtk_fixed_new().
 func NewFixed() *Fixed {
 	c := C.gtk_fixed_new()

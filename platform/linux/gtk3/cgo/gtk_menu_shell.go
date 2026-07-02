@@ -33,17 +33,17 @@ func wrapMenuShell(obj *Object) *MenuShell {
 }
 
 // Append is a wrapper around gtk_menu_shell_append().
-func (v *MenuShell) Append(child IMenuItem) {
+func (v *MenuShell) Append(child _IMenuItem) {
 	C.gtk_menu_shell_append(v.native(), child.toWidget())
 }
 
 // Prepend is a wrapper around gtk_menu_shell_prepend().
-func (v *MenuShell) Prepend(child IMenuItem) {
+func (v *MenuShell) Prepend(child _IMenuItem) {
 	C.gtk_menu_shell_prepend(v.native(), child.toWidget())
 }
 
 // Insert is a wrapper around gtk_menu_shell_insert().
-func (v *MenuShell) Insert(child IMenuItem, position int) {
+func (v *MenuShell) Insert(child _IMenuItem, position int) {
 	C.gtk_menu_shell_insert(v.native(), child.toWidget(), C.gint(position))
 }
 
@@ -53,7 +53,7 @@ func (v *MenuShell) Deactivate() {
 }
 
 // SelectItem is a wrapper around gtk_menu_shell_select_item().
-func (v *MenuShell) SelectItem(child IMenuItem) {
+func (v *MenuShell) SelectItem(child _IMenuItem) {
 	C.gtk_menu_shell_select_item(v.native(), child.toWidget())
 }
 
@@ -68,7 +68,7 @@ func (v *MenuShell) Deselect() {
 }
 
 // ActivateItem is a wrapper around gtk_menu_shell_activate_item().
-func (v *MenuShell) ActivateItem(child IMenuItem, forceDeactivate bool) {
+func (v *MenuShell) ActivateItem(child _IMenuItem, forceDeactivate bool) {
 	C.gtk_menu_shell_activate_item(v.native(), child.toWidget(), CBool(forceDeactivate))
 }
 
@@ -88,7 +88,7 @@ func (v *MenuShell) GetTakeFocus() bool {
 }
 
 // GetSelectedItem is a wrapper around gtk_menu_shell_get_selected_item().
-func (v *MenuShell) GetSelectedItem() (IMenuItem, error) {
+func (v *MenuShell) GetSelectedItem() (_IMenuItem, error) {
 	c := C.gtk_menu_shell_get_selected_item(v.native())
 	if c == nil {
 		return nil, nilPtrErr

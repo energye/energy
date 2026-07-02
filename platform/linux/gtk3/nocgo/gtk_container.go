@@ -51,3 +51,70 @@ func (m *Container) GetChildren() IList {
 	}
 	return AsList(unsafe.Pointer(gList))
 }
+
+// GetFocusChild is a wrapper around gtk_container_get_focus_child().
+func (m *Container) GetFocusChild() IWidget {
+	r := gtk3.SysCall("gtk_container_get_focus_child", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsWidget(unsafe.Pointer(r))
+}
+
+// SetFocusChild is a wrapper around gtk_container_set_focus_child().
+func (m *Container) SetFocusChild(child IWidget) {
+	gtk3.SysCall("gtk_container_set_focus_child", m.Instance(), child.Instance())
+}
+
+// GetFocusVAdjustment is a wrapper around gtk_container_get_focus_vadjustment().
+func (m *Container) GetFocusVAdjustment() IAdjustment {
+	r := gtk3.SysCall("gtk_container_get_focus_vadjustment", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsAdjustment(unsafe.Pointer(r))
+}
+
+// SetFocusVAdjustment is a wrapper around gtk_container_set_focus_vadjustment().
+func (m *Container) SetFocusVAdjustment(adjustment *Adjustment) {
+	gtk3.SysCall("gtk_container_set_focus_vadjustment", m.Instance(), adjustment.Instance())
+}
+
+// GetFocusHAdjustment is a wrapper around gtk_container_get_focus_hadjustment().
+func (m *Container) GetFocusHAdjustment() IAdjustment {
+	r := gtk3.SysCall("gtk_container_get_focus_hadjustment", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsAdjustment(unsafe.Pointer(r))
+}
+
+// SetFocusHAdjustment is a wrapper around gtk_container_set_focus_hadjustment().
+func (m *Container) SetFocusHAdjustment(adjustment *Adjustment) {
+	gtk3.SysCall("gtk_container_set_focus_hadjustment", m.Instance(), adjustment.Instance())
+}
+
+// ChildType is a wrapper around gtk_container_child_type().
+func (m *Container) ChildType() uintptr {
+	return gtk3.SysCall("gtk_container_child_type", m.Instance())
+}
+
+// ChildNotify is a wrapper around gtk_container_child_notify().
+func (m *Container) ChildNotify(child IWidget, childProperty string) {
+	gtk3.SysCall("gtk_container_child_notify", m.Instance(), child.Instance(), CStr(childProperty))
+}
+
+// GetBorderWidth is a wrapper around gtk_container_get_border_width().
+func (m *Container) GetBorderWidth() uint {
+	return uint(gtk3.SysCall("gtk_container_get_border_width", m.Instance()))
+}
+
+// SetBorderWidth is a wrapper around gtk_container_set_border_width().
+func (m *Container) SetBorderWidth(borderWidth uint) {
+	gtk3.SysCall("gtk_container_set_border_width", m.Instance(), uintptr(borderWidth))
+}
+
+// PropagateDraw is a wrapper around gtk_container_propagate_draw().
+func (m *Container) PropagateDraw(child IWidget, cr *Context) {
+	gtk3.SysCall("gtk_container_propagate_draw", m.Instance(), child.Instance(), cr.Instance())
+}

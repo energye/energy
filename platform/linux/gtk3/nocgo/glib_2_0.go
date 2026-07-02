@@ -123,9 +123,35 @@ func init() {
 		imports.NewTable("g_list_insert", 0),
 		imports.NewTable("g_list_length", 0),
 		imports.NewTable("g_list_nth_data", 0),
+		imports.NewTable("g_list_nth", 0),
 		imports.NewTable("g_list_first", 0),
 		imports.NewTable("g_list_last", 0),
+		imports.NewTable("g_list_reverse", 0),
 		imports.NewTable("g_list_free", 0),
+		// Icon
+		imports.NewTable("g_icon_equal", 0),
+		imports.NewTable("g_icon_to_string", 0),
+		imports.NewTable("g_icon_new_for_string", 0),
+		// FileIcon
+		imports.NewTable("g_file_icon_new", 0),
+		// File
+		imports.NewTable("g_file_new_for_path", 0),
+		// GMenuModel
+		imports.NewTable("g_menu_model_is_mutable", 0),
+		imports.NewTable("g_menu_model_get_n_items", 0),
+		imports.NewTable("g_menu_model_get_item_link", 0),
+		imports.NewTable("g_menu_model_items_changed", 0),
+		// IdleAdd / Source / MainContext
+		imports.NewTable("g_idle_add_full", 0),
+		imports.NewTable("g_main_current_source", 0),
+		imports.NewTable("g_main_context_default", 0),
+		imports.NewTable("g_main_context_iteration", 0),
+		imports.NewTable("g_main_context_pending", 0),
+		imports.NewTable("g_main_depth", 0),
+		imports.NewTable("g_main_context_find_source_by_id", 0),
+		imports.NewTable("g_main_context_acquire", 0),
+		imports.NewTable("g_main_context_release", 0),
+		imports.NewTable("g_main_context_is_owner", 0),
 	}
 	glib2_0.SetLibClose()
 	glib2_0.MapperIndex()

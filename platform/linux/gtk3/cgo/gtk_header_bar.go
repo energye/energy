@@ -36,6 +36,11 @@ func wrapHeaderBar(obj *Object) *HeaderBar {
 	return &HeaderBar{Container{Widget{InitiallyUnowned{obj}}}}
 }
 
+// AsHeaderBar converts an unsafe.Pointer to an IHeaderBar.
+func AsHeaderBar(p unsafe.Pointer) IHeaderBar {
+	return wrapHeaderBar(ToGoObject(p))
+}
+
 // NewHeaderBar is a wrapper around gtk_header_bar_new().
 func NewHeaderBar() *HeaderBar {
 	c := C.gtk_header_bar_new()

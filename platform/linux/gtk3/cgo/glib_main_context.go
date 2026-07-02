@@ -5,6 +5,9 @@ package cgo
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
+import (
+	. "github.com/energye/energy/v3/platform/linux/types"
+)
 
 type MainContext C.GMainContext
 

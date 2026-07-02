@@ -13,11 +13,8 @@ type Menu struct {
 	MenuShell
 }
 
-// IMenu is an interface type implemented by all structs embedding
-// a Menu.  It is meant to be used as an argument type for wrapper
-// functions that wrap around a C GTK function taking a
-// GtkMenu.
-type IMenu interface {
+// _IMenu is an internal interface for type assertions.
+type _IMenu interface {
 	toMenu() *C.GtkMenu
 	toWidget() *C.GtkWidget
 }
@@ -44,6 +41,11 @@ func wrapMenu(obj *Object) *Menu {
 	}
 
 	return &Menu{MenuShell{Container{Widget{InitiallyUnowned{obj}}}}}
+}
+
+// AsMenu converts an unsafe.Pointer to an IMenu.
+func AsMenu(p unsafe.Pointer) IMenu {
+	return wrapMenu(ToGoObject(p))
 }
 
 // NewMenu is a wrapper around gtk_menu_new().

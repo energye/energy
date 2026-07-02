@@ -398,3 +398,496 @@ const (
 
 // TGdkWMDecoration : TGdkWMDecorationIdx
 type TGdkWMDecoration = types.TSet
+
+// ==================== GTK3 Enums (cgo/nocgo shared) ====================
+// All enum types use int32 to match C's `int` type for 32/64 bit consistency.
+
+// WindowType is a representation of GTK's GtkWindowType.
+type WindowType = int32
+
+const (
+	WINDOW_TOPLEVEL WindowType = 0
+	WINDOW_POPUP    WindowType = 1
+)
+
+// Gravity is a representation of GDK's GdkGravity.
+type Gravity = int32
+
+const (
+	GDK_GRAVITY_NORTH_WEST Gravity = 1
+	GDK_GRAVITY_NORTH      Gravity = 2
+	GDK_GRAVITY_NORTH_EAST Gravity = 3
+	GDK_GRAVITY_WEST       Gravity = 4
+	GDK_GRAVITY_CENTER     Gravity = 5
+	GDK_GRAVITY_EAST       Gravity = 6
+	GDK_GRAVITY_SOUTH_WEST Gravity = 7
+	GDK_GRAVITY_SOUTH      Gravity = 8
+	GDK_GRAVITY_SOUTH_EAST Gravity = 9
+	GDK_GRAVITY_STATIC     Gravity = 10
+)
+
+// WindowTypeHint is a representation of GDK's GdkWindowTypeHint.
+type WindowTypeHint = int32
+
+const (
+	WINDOW_TYPE_HINT_NORMAL        WindowTypeHint = 0
+	WINDOW_TYPE_HINT_DIALOG        WindowTypeHint = 1
+	WINDOW_TYPE_HINT_MENU          WindowTypeHint = 2
+	WINDOW_TYPE_HINT_TOOLBAR       WindowTypeHint = 3
+	WINDOW_TYPE_HINT_SPLASHSCREEN  WindowTypeHint = 4
+	WINDOW_TYPE_HINT_UTILITY       WindowTypeHint = 5
+	WINDOW_TYPE_HINT_DOCK          WindowTypeHint = 6
+	WINDOW_TYPE_HINT_DESKTOP       WindowTypeHint = 7
+	WINDOW_TYPE_HINT_DROPDOWN_MENU WindowTypeHint = 8
+	WINDOW_TYPE_HINT_POPUP_MENU    WindowTypeHint = 9
+	WINDOW_TYPE_HINT_TOOLTIP       WindowTypeHint = 10
+	WINDOW_TYPE_HINT_NOTIFICATION  WindowTypeHint = 11
+	WINDOW_TYPE_HINT_COMBO         WindowTypeHint = 12
+	WINDOW_TYPE_HINT_DND           WindowTypeHint = 13
+)
+
+// ReliefStyle is a representation of GTK's GtkReliefStyle.
+type ReliefStyle = int32
+
+const (
+	RELIEF_NORMAL ReliefStyle = 0
+	RELIEF_HALF   ReliefStyle = 1
+	RELIEF_NONE   ReliefStyle = 2
+)
+
+// PositionType is a representation of GTK's GtkPositionType.
+type PositionType = int32
+
+const (
+	POS_LEFT   PositionType = 0
+	POS_RIGHT  PositionType = 1
+	POS_TOP    PositionType = 2
+	POS_BOTTOM PositionType = 3
+)
+
+// Align is a representation of GTK's GtkAlign.
+type Align = int32
+
+const (
+	ALIGN_FILL   Align = 0
+	ALIGN_START  Align = 1
+	ALIGN_END    Align = 2
+	ALIGN_CENTER Align = 3
+)
+
+// StateFlags is a representation of GTK's GtkStateFlags.
+type StateFlags = int32
+
+const (
+	STATE_FLAG_NORMAL       StateFlags = 0
+	STATE_FLAG_ACTIVE       StateFlags = 1
+	STATE_FLAG_PRELIGHT     StateFlags = 2
+	STATE_FLAG_SELECTED     StateFlags = 4
+	STATE_FLAG_INSENSITIVE  StateFlags = 8
+	STATE_FLAG_INCONSISTENT StateFlags = 16
+	STATE_FLAG_FOCUSED      StateFlags = 32
+	STATE_FLAG_BACKDROP     StateFlags = 64
+)
+
+// IconSize is a representation of GTK's GtkIconSize.
+type IconSize = int32
+
+const (
+	ICON_SIZE_INVALID       IconSize = 0
+	ICON_SIZE_MENU          IconSize = 1
+	ICON_SIZE_SMALL_TOOLBAR IconSize = 2
+	ICON_SIZE_LARGE_TOOLBAR IconSize = 3
+	ICON_SIZE_BUTTON        IconSize = 4
+	ICON_SIZE_DND           IconSize = 5
+	ICON_SIZE_DIALOG        IconSize = 6
+)
+
+// ImageType is a representation of GTK's GtkImageType.
+type ImageType = int32
+
+const (
+	IMAGE_EMPTY     ImageType = 0
+	IMAGE_PIXBUF    ImageType = 1
+	IMAGE_STOCK     ImageType = 2
+	IMAGE_ICON_SET  ImageType = 3
+	IMAGE_ANIMATION ImageType = 4
+	IMAGE_ICON_NAME ImageType = 5
+	IMAGE_GICON     ImageType = 6
+)
+
+// EntryIconPosition is a representation of GTK's GtkEntryIconPosition.
+type EntryIconPosition = int32
+
+const (
+	ENTRY_ICON_PRIMARY   EntryIconPosition = 0
+	ENTRY_ICON_SECONDARY EntryIconPosition = 1
+)
+
+// Orientation is a representation of GTK's GtkOrientation.
+type Orientation = int32
+
+const (
+	ORIENTATION_HORIZONTAL Orientation = 0
+	ORIENTATION_VERTICAL   Orientation = 1
+)
+
+// PackType is a representation of GTK's GtkPackType.
+type PackType = int32
+
+const (
+	PACK_START PackType = 0
+	PACK_END   PackType = 1
+)
+
+// Justification is a representation of GTK's GtkJustification.
+type Justification = int32
+
+const (
+	JUSTIFY_LEFT   Justification = 0
+	JUSTIFY_RIGHT  Justification = 1
+	JUSTIFY_CENTER Justification = 2
+	JUSTIFY_FILL   Justification = 3
+)
+
+// SizeRequestMode is a representation of GTK's GtkSizeRequestMode.
+type SizeRequestMode = int32
+
+const (
+	SIZE_REQUEST_HEIGHT_FOR_WIDTH SizeRequestMode = 0
+	SIZE_REQUEST_WIDTH_FOR_HEIGHT SizeRequestMode = 1
+	SIZE_REQUEST_CONSTANT_SIZE    SizeRequestMode = 2
+)
+
+// PolicyType is a representation of GTK's GtkPolicyType.
+type PolicyType = int32
+
+const (
+	POLICY_ALWAYS    PolicyType = 0
+	POLICY_AUTOMATIC PolicyType = 1
+	POLICY_NEVER     PolicyType = 2
+)
+
+// CornerType is a representation of GTK's GtkCornerType.
+type CornerType = int32
+
+const (
+	CORNER_TOP_LEFT     CornerType = 0
+	CORNER_BOTTOM_LEFT  CornerType = 1
+	CORNER_TOP_RIGHT    CornerType = 2
+	CORNER_BOTTOM_RIGHT CornerType = 3
+)
+
+// ShadowType is a representation of GTK's GtkShadowType.
+type ShadowType = int32
+
+const (
+	SHADOW_NONE       ShadowType = 0
+	SHADOW_IN         ShadowType = 1
+	SHADOW_OUT        ShadowType = 2
+	SHADOW_ETCHED_IN  ShadowType = 3
+	SHADOW_ETCHED_OUT ShadowType = 4
+)
+
+// SensitivityType is a representation of GTK's GtkSensitivityType.
+type SensitivityType = int32
+
+const (
+	SENSITIVITY_AUTO SensitivityType = 0
+	SENSITIVITY_ON   SensitivityType = 1
+	SENSITIVITY_OFF  SensitivityType = 2
+)
+
+// ArrowType is a representation of GTK's GtkArrowType.
+type ArrowType = int32
+
+const (
+	ARROW_UP    ArrowType = 0
+	ARROW_DOWN  ArrowType = 1
+	ARROW_LEFT  ArrowType = 2
+	ARROW_RIGHT ArrowType = 3
+	ARROW_NONE  ArrowType = 4
+)
+
+// DestDefaults is a representation of GTK's GtkDestDefaults.
+type DestDefaults = int32
+
+const (
+	DEST_DEFAULT_MOTION    DestDefaults = 1
+	DEST_DEFAULT_HIGHLIGHT DestDefaults = 2
+	DEST_DEFAULT_DROP      DestDefaults = 4
+	DEST_DEFAULT_ALL       DestDefaults = 7
+)
+
+// TargetFlags is a representation of GTK's GtkTargetFlags.
+type TargetFlags = int32
+
+const (
+	TARGET_SAME_APP     TargetFlags = 1
+	TARGET_SAME_WIDGET  TargetFlags = 2
+	TARGET_OTHER_APP    TargetFlags = 4
+	TARGET_OTHER_WIDGET TargetFlags = 8
+)
+
+// EllipsizeMode is a representation of Pango's PangoEllipsizeMode.
+type EllipsizeMode = int32
+
+const (
+	ELLIPSIZE_NONE   EllipsizeMode = 0
+	ELLIPSIZE_START  EllipsizeMode = 1
+	ELLIPSIZE_MIDDLE EllipsizeMode = 2
+	ELLIPSIZE_END    EllipsizeMode = 3
+)
+
+// EventMask is a representation of GDK's GdkEventMask.
+type EventMask = int32
+
+const (
+	EXPOSURE_MASK            EventMask = 1 << 1
+	POINTER_MOTION_MASK      EventMask = 1 << 2
+	POINTER_MOTION_HINT_MASK EventMask = 1 << 3
+	BUTTON_MOTION_MASK       EventMask = 1 << 4
+	BUTTON1_MOTION_MASK      EventMask = 1 << 5
+	BUTTON2_MOTION_MASK      EventMask = 1 << 6
+	BUTTON3_MOTION_MASK      EventMask = 1 << 7
+	BUTTON_PRESS_MASK        EventMask = 1 << 8
+	BUTTON_RELEASE_MASK      EventMask = 1 << 9
+	KEY_PRESS_MASK           EventMask = 1 << 10
+	KEY_RELEASE_MASK         EventMask = 1 << 11
+	ENTER_NOTIFY_MASK        EventMask = 1 << 12
+	LEAVE_NOTIFY_MASK        EventMask = 1 << 13
+	FOCUS_CHANGE_MASK        EventMask = 1 << 14
+	STRUCTURE_MASK           EventMask = 1 << 15
+	PROPERTY_CHANGE_MASK     EventMask = 1 << 16
+	VISIBILITY_NOTIFY_MASK   EventMask = 1 << 17
+	PROXIMITY_IN_MASK        EventMask = 1 << 18
+	PROXIMITY_OUT_MASK       EventMask = 1 << 19
+	SUBSTRUCTURE_MASK        EventMask = 1 << 20
+	SCROLL_MASK              EventMask = 1 << 21
+	TOUCH_MASK               EventMask = 1 << 22
+	SMOOTH_SCROLL_MASK       EventMask = 1 << 23
+	TOUCHPAD_GESTURE_MASK    EventMask = 1 << 24
+	TABLET_PAD_MASK          EventMask = 1 << 25
+	ALL_EVENTS_MASK          EventMask = 0x3FFFFFE
+)
+
+// ModifierType is a representation of GDK's GdkModifierType.
+type ModifierType uint
+
+const (
+	SHIFT_MASK    ModifierType = 1 << 0
+	LOCK_MASK     ModifierType = 1 << 1
+	CONTROL_MASK  ModifierType = 1 << 2
+	MOD1_MASK     ModifierType = 1 << 3
+	MOD2_MASK     ModifierType = 1 << 4
+	MOD3_MASK     ModifierType = 1 << 5
+	MOD4_MASK     ModifierType = 1 << 6
+	MOD5_MASK     ModifierType = 1 << 7
+	BUTTON1_MASK  ModifierType = 1 << 8
+	BUTTON2_MASK  ModifierType = 1 << 9
+	BUTTON3_MASK  ModifierType = 1 << 10
+	BUTTON4_MASK  ModifierType = 1 << 11
+	BUTTON5_MASK  ModifierType = 1 << 12
+	SUPER_MASK    ModifierType = 1 << 26
+	HYPER_MASK    ModifierType = 1 << 27
+	META_MASK     ModifierType = 1 << 28
+	RELEASE_MASK  ModifierType = 1 << 30
+	MODIFIER_MASK ModifierType = 0x5c001fff
+)
+
+// VisualType is a representation of GDK's GdkVisualType.
+type VisualType int
+
+const (
+	VISUAL_STATIC_GRAY  VisualType = 0
+	VISUAL_GRAYSCALE    VisualType = 1
+	VISUAL_STATIC_COLOR VisualType = 2
+	VISUAL_PSEUDO_COLOR VisualType = 3
+	VISUAL_TRUE_COLOR   VisualType = 4
+	VISUAL_DIRECT_COLOR VisualType = 5
+)
+
+// ISUAL_PSEUDO_COLOR is a deprecated alias for VISUAL_PSEUDO_COLOR (typo in original cgo code).
+const ISUAL_PSEUDO_COLOR = VISUAL_PSEUDO_COLOR
+
+// CURRENT_TIME is the GDK_CURRENT_TIME constant.
+const CURRENT_TIME = 0
+
+// FillRule is a representation of Cairo's cairo_fill_rule_t.
+type FillRule int
+
+const (
+	FILL_RULE_WINDING  FillRule = 0
+	FILL_RULE_EVEN_ODD FillRule = 1
+)
+
+// LineCap is a representation of Cairo's cairo_line_cap_t.
+type LineCap int
+
+const (
+	LINE_CAP_BUTT   LineCap = 0
+	LINE_CAP_ROUND  LineCap = 1
+	LINE_CAP_SQUARE LineCap = 2
+)
+
+// LineJoin is a representation of Cairo's cairo_line_join_t.
+type LineJoin int
+
+const (
+	LINE_JOIN_MITER LineJoin = 0
+	LINE_JOIN_ROUND LineJoin = 1
+	LINE_JOIN_BEVEL LineJoin = 2
+)
+
+// Operator is a representation of Cairo's cairo_operator_t.
+type Operator int
+
+const (
+	OPERATOR_CLEAR          Operator = 0
+	OPERATOR_SOURCE         Operator = 1
+	OPERATOR_OVER           Operator = 2
+	OPERATOR_IN             Operator = 3
+	OPERATOR_OUT            Operator = 4
+	OPERATOR_ATOP           Operator = 5
+	OPERATOR_DEST           Operator = 6
+	OPERATOR_DEST_OVER      Operator = 7
+	OPERATOR_DEST_IN        Operator = 8
+	OPERATOR_DEST_OUT       Operator = 9
+	OPERATOR_DEST_ATOP      Operator = 10
+	OPERATOR_XOR            Operator = 11
+	OPERATOR_ADD            Operator = 12
+	OPERATOR_SATURATE       Operator = 13
+	OPERATOR_MULTIPLY       Operator = 14
+	OPERATOR_SCREEN         Operator = 15
+	OPERATOR_OVERLAY        Operator = 16
+	OPERATOR_DARKEN         Operator = 17
+	OPERATOR_LIGHTEN        Operator = 18
+	OPERATOR_COLOR_DODGE    Operator = 19
+	OPERATOR_COLOR_BURN     Operator = 20
+	OPERATOR_HARD_LIGHT     Operator = 21
+	OPERATOR_SOFT_LIGHT     Operator = 22
+	OPERATOR_DIFFERENCE     Operator = 23
+	OPERATOR_EXCLUSION      Operator = 24
+	OPERATOR_HSL_HUE        Operator = 25
+	OPERATOR_HSL_SATURATION Operator = 26
+	OPERATOR_HSL_COLOR      Operator = 27
+	OPERATOR_HSL_LUMINOSITY Operator = 28
+)
+
+// Priority is the enumerated type for GLib priority event sources.
+type Priority int
+
+const (
+	PRIORITY_HIGH         Priority = -100
+	PRIORITY_DEFAULT      Priority = 0
+	PRIORITY_HIGH_IDLE    Priority = 100
+	PRIORITY_DEFAULT_IDLE Priority = 200
+	PRIORITY_LOW          Priority = 300
+)
+
+// SourceHandle is a handle returned by IdleAdd/IdleAddPriority.
+type SourceHandle uint
+
+// CompareDataFunc is a representation of GCompareDataFunc.
+type CompareDataFunc func(a, b uintptr) int
+
+// Type is a representation of GLib's GType.
+type Type uint
+
+const (
+	TYPE_INVALID   Type = 0
+	TYPE_NONE      Type = 4
+	TYPE_INTERFACE Type = 8
+	TYPE_CHAR      Type = 12
+	TYPE_UCHAR     Type = 16
+	TYPE_BOOLEAN   Type = 20
+	TYPE_INT       Type = 24
+	TYPE_UINT      Type = 28
+	TYPE_LONG      Type = 32
+	TYPE_ULONG     Type = 36
+	TYPE_INT64     Type = 40
+	TYPE_UINT64    Type = 44
+	TYPE_ENUM      Type = 48
+	TYPE_FLAGS     Type = 52
+	TYPE_FLOAT     Type = 56
+	TYPE_DOUBLE    Type = 60
+	TYPE_STRING    Type = 64
+	TYPE_POINTER   Type = 68
+	TYPE_BOXED     Type = 72
+	TYPE_PARAM     Type = 76
+	TYPE_OBJECT    Type = 80
+	TYPE_VARIANT   Type = 84
+)
+
+// DialogFlags is a representation of GTK's GtkDialogFlags.
+type DialogFlags int
+
+const (
+	DIALOG_MODAL               DialogFlags = 1
+	DIALOG_DESTROY_WITH_PARENT DialogFlags = 2
+)
+
+// MessageType is a representation of GTK's GtkMessageType.
+type MessageType int
+
+const (
+	MESSAGE_INFO     MessageType = 0
+	MESSAGE_WARNING  MessageType = 1
+	MESSAGE_QUESTION MessageType = 2
+	MESSAGE_ERROR    MessageType = 3
+	MESSAGE_OTHER    MessageType = 4
+)
+
+// ButtonsType is a representation of GTK's GtkButtonsType.
+type ButtonsType int
+
+const (
+	BUTTONS_NONE      ButtonsType = 0
+	BUTTONS_OK        ButtonsType = 1
+	BUTTONS_CLOSE     ButtonsType = 2
+	BUTTONS_CANCEL    ButtonsType = 3
+	BUTTONS_YES_NO    ButtonsType = 4
+	BUTTONS_OK_CANCEL ButtonsType = 5
+)
+
+// WrapMode is a representation of GTK's GtkWrapMode.
+type WrapMode int32
+
+const (
+	WRAP_NONE      WrapMode = 0
+	WRAP_CHAR      WrapMode = 1
+	WRAP_WORD      WrapMode = 2
+	WRAP_WORD_CHAR WrapMode = 3
+)
+
+// TextWindowType is a representation of GTK's GtkTextWindowType.
+type TextWindowType int32
+
+const (
+	TEXT_WINDOW_PRIVATE TextWindowType = 0
+	TEXT_WINDOW_WIDGET  TextWindowType = 1
+	TEXT_WINDOW_TEXT    TextWindowType = 2
+	TEXT_WINDOW_LEFT    TextWindowType = 3
+	TEXT_WINDOW_RIGHT   TextWindowType = 4
+	TEXT_WINDOW_TOP     TextWindowType = 5
+	TEXT_WINDOW_BOTTOM  TextWindowType = 6
+)
+
+// SelectionMode is a representation of GTK's GtkSelectionMode.
+type SelectionMode int32
+
+const (
+	SELECTION_NONE     SelectionMode = 0
+	SELECTION_SINGLE   SelectionMode = 1
+	SELECTION_BROWSE   SelectionMode = 2
+	SELECTION_MULTIPLE SelectionMode = 3
+)
+
+// FileChooserAction is a representation of GTK's GtkFileChooserAction.
+type FileChooserAction int32
+
+const (
+	FILE_CHOOSER_ACTION_OPEN          FileChooserAction = 0
+	FILE_CHOOSER_ACTION_SAVE          FileChooserAction = 1
+	FILE_CHOOSER_ACTION_SELECT_FOLDER FileChooserAction = 2
+	FILE_CHOOSER_ACTION_CREATE_FOLDER FileChooserAction = 3
+)

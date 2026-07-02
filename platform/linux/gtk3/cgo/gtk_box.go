@@ -126,6 +126,20 @@ func (v *Box) SetChildPacking(child IWidget, expand, fill bool, padding uint, pa
 		CBool(fill), C.guint(padding), C.GtkPackType(packType))
 }
 
+// SetCenterWidget is a wrapper around gtk_box_set_center_widget().
+func (v *Box) SetCenterWidget(child IWidget) {
+	C.gtk_box_set_center_widget(v.native(), GtkWidget(child))
+}
+
+// GetCenterWidget is a wrapper around gtk_box_get_center_widget().
+func (v *Box) GetCenterWidget() IWidget {
+	c := C.gtk_box_get_center_widget(v.native())
+	if c == nil {
+		return nil
+	}
+	return castWidget(c)
+}
+
 // Orientable is a representation of GTK's GtkOrientable GInterface.
 type Orientable struct {
 	*Object

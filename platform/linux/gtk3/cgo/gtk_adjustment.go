@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -35,6 +36,11 @@ func wrapAdjustment(obj *Object) *Adjustment {
 	}
 
 	return &Adjustment{InitiallyUnowned{obj}}
+}
+
+// AsAdjustment converts an unsafe.Pointer to an IAdjustment.
+func AsAdjustment(p unsafe.Pointer) IAdjustment {
+	return wrapAdjustment(ToGoObject(p))
 }
 
 // NewAdjustment is a wrapper around gtk_adjustment_new().

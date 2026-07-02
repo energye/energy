@@ -172,6 +172,3 @@ func (v *List) FreeFull(fn func(item any)) {
 	v.Foreach(fn)
 	v.Free()
 }
-
-// CompareDataFunc is a representation of GCompareDataFunc
-type CompareDataFunc func(a, b uintptr) int

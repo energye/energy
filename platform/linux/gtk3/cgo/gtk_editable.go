@@ -14,11 +14,8 @@ type Editable struct {
 	*Object
 }
 
-// IEditable is an interface type implemented by all structs
-// embedding an Editable.  It is meant to be used as an argument type
-// for wrapper functions that wrap around a C GTK function taking a
-// GtkEditable.
-type IEditable interface {
+// _IEditable is an internal interface for type assertions.
+type _IEditable interface {
 	toEditable() *C.GtkEditable
 }
 
@@ -131,11 +128,8 @@ type CellEditable struct {
 	InitiallyUnowned
 }
 
-// ICellEditable is an interface type implemented by all structs
-// embedding an CellEditable. It is meant to be used as an argument type
-// for wrapper functions that wrap around a C GTK function taking a
-// GtkCellEditable.
-type ICellEditable interface {
+// _ICellEditable is an internal interface for type assertions.
+type _ICellEditable interface {
 	toCellEditable() *C.GtkCellEditable
 	ToEntry() *Entry
 }

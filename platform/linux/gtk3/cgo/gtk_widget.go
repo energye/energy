@@ -3,6 +3,7 @@ package cgo
 // #cgo pkg-config: gdk-3.0 gio-2.0 glib-2.0 gobject-2.0 gtk+-3.0
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
+// static GdkAtom toGdkAtom(void *p) { return ((GdkAtom)p); }
 import "C"
 import (
 	"errors"
@@ -303,13 +304,13 @@ func (v *Widget) GetAllocatedHeight() int {
 }
 
 // SetEvents is a wrapper around gtk_widget_set_events().
-func (v *Widget) SetEvents(events int) {
+func (v *Widget) SetEvents(events EventMask) {
 	C.gtk_widget_set_events(v.native(), C.gint(events))
 }
 
 // GetEvents is a wrapper around gtk_widget_get_events().
-func (v *Widget) GetEvents() int {
-	return int(C.gtk_widget_get_events(v.native()))
+func (v *Widget) GetEvents() EventMask {
+	return EventMask(C.gtk_widget_get_events(v.native()))
 }
 
 // AddEvents is a wrapper around gtk_widget_add_events().
@@ -658,12 +659,22 @@ func (v *Widget) DragSourceSet(startButtonMask ModifierType, targets []TargetEnt
 }
 
 func (v *Widget) DragGetData(context IDragContext, target IAtom, time uint) {
-	C.gtk_drag_get_data(v.native(), context.(*DragContext).native(), Atom(target.Atom()).native(), C.uint(time))
+	C.gtk_drag_get_data(v.native(), context.(*DragContext).native(), C.toGdkAtom(unsafe.Pointer(uintptr(target.Atom()))), C.uint(time))
 }
 
 func (m *Widget) IsContainer() bool {
 	containerGType := TypeFromName("GtkContainer")
 	return m.TypeFromInstance().IsA(containerGType)
+}
+
+// Destroy is a wrapper around gtk_widget_destroy().
+func (v *Widget) Destroy() {
+	C.gtk_widget_destroy(v.native())
+}
+
+// QueueDrawArea is a wrapper around gtk_widget_queue_draw_area().
+func (v *Widget) QueueDrawArea(x, y, width, height int) {
+	C.gtk_widget_queue_draw_area(v.native(), C.gint(x), C.gint(y), C.gint(width), C.gint(height))
 }
 
 // Allocation is a representation of GTK's GtkAllocation type.

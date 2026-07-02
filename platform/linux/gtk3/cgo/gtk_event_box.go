@@ -41,6 +41,11 @@ func wrapEventBox(obj *Object) *EventBox {
 	return &EventBox{Bin{Container{Widget{InitiallyUnowned{obj}}}}}
 }
 
+// AsEventBox converts an unsafe.Pointer to an IEventBox.
+func AsEventBox(p unsafe.Pointer) IEventBox {
+	return wrapEventBox(ToGoObject(p))
+}
+
 // NewEventBox is a wrapper around gtk_event_box_new().
 func NewEventBox() *EventBox {
 	c := C.gtk_event_box_new()

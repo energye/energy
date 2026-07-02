@@ -32,6 +32,11 @@ func wrapOverlay(obj *Object) *Overlay {
 	return &Overlay{Bin{Container{Widget{InitiallyUnowned{obj}}}}}
 }
 
+// AsOverlay converts an unsafe.Pointer to an IOverlay.
+func AsOverlay(p unsafe.Pointer) IOverlay {
+	return wrapOverlay(ToGoObject(p))
+}
+
 // NewOverlay is a wrapper around gtk_overlay_new().
 func NewOverlay() *Overlay {
 	c := C.gtk_overlay_new()
