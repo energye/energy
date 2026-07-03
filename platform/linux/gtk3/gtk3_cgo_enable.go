@@ -204,8 +204,36 @@ func NewOverlay() types.IOverlay {
 	return cgo.NewOverlay()
 }
 
-func AsMenu(ptr unsafe.Pointer) types.IMenu {
-	return cgo.AsMenu(ptr)
+func NewStack() types.IStack {
+	return cgo.NewStack()
+}
+
+func NewStackSwitcher() types.IStackSwitcher {
+	return cgo.NewStackSwitcher()
+}
+
+func AsStack(ptr unsafe.Pointer) types.IStack {
+	return cgo.AsStack(ptr)
+}
+
+func AsStackSwitcher(ptr unsafe.Pointer) types.IStackSwitcher {
+	return cgo.AsStackSwitcher(ptr)
+}
+
+func NewSwitch() types.ISwitch {
+	return cgo.NewSwitch()
+}
+
+func AsSwitch(ptr unsafe.Pointer) types.ISwitch {
+	return cgo.AsSwitch(ptr)
+}
+
+func NewInfoBar() types.IInfoBar {
+	return cgo.NewInfoBar()
+}
+
+func AsInfoBar(ptr unsafe.Pointer) types.IInfoBar {
+	return cgo.AsInfoBar(ptr)
 }
 
 func NewMenu() types.IMenu {

@@ -604,6 +604,68 @@ type IEventBox interface {
 	SetOnLeave(fn TLeaveEnterNotifyEvent) ISignalHandlerID
 }
 
+// IStack is a representation of GTK's GtkStack.
+type IStack interface {
+	IContainer
+	AddNamed(child IWidget, name string)
+	AddTitled(child IWidget, name, title string)
+	SetVisibleChild(child IWidget)
+	GetVisibleChild() IWidget
+	SetVisibleChildName(name string)
+	GetVisibleChildName() string
+	SetVisibleChildFull(name string, transition StackTransitionType)
+	SetHomogeneous(homogeneous bool)
+	GetHomogeneous() bool
+	SetTransitionDuration(duration uint)
+	GetTransitionDuration() uint
+	SetTransitionType(transition StackTransitionType)
+	GetTransitionType() StackTransitionType
+}
+
+// IStackSwitcher is a representation of GTK's GtkStackSwitcher.
+type IStackSwitcher interface {
+	IBox
+	SetStack(stack IStack)
+	GetStack() IStack
+}
+
+// ISwitch is a representation of GTK's GtkSwitch.
+type ISwitch interface {
+	IWidget
+	GetActive() bool
+	SetActive(isActive bool)
+	GetState() bool
+	SetState(state bool)
+}
+
+// IInfoBar is a representation of GTK's GtkInfoBar.
+type IInfoBar interface {
+	IBox
+	AddActionWidget(child IWidget, responseId int)
+	AddButton(buttonText string, responseId int)
+	SetResponseSensitive(responseId int, setting bool)
+	SetDefaultResponse(responseId int)
+	SetMessageType(messageType MessageType)
+	GetMessageType() MessageType
+	GetActionArea() IWidget
+	GetContentArea() IBox
+	SetShowCloseButton(setting bool)
+	GetShowCloseButton() bool
+}
+
+// ILevelBar is a representation of GTK's GtkLevelBar.
+type ILevelBar interface {
+	IWidget
+	SetValue(value float64)
+	GetValue() float64
+	SetMinValue(value float64)
+	GetMinValue() float64
+	SetMaxValue(value float64)
+	GetMaxValue() float64
+	SetMode(mode int32)
+	GetMode() int32
+}
+
 // IFixed is a representation of GTK's GtkFixed.
 type IFixed interface {
 	IContainer

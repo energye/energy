@@ -269,6 +269,8 @@ static GtkCellAreaBox *toGtkCellAreaBox(void *p) {
 
 static GtkOrientable *toGtkOrientable(void *p) { return (GTK_ORIENTABLE(p)); }
 
+static GtkInfoBar *toGtkInfoBar(void *p) { return (GTK_INFO_BAR(p)); }
+
 static GtkTreeStore *toGtkTreeStore(void *p) { return (GTK_TREE_STORE(p)); }
 
 static GtkTreeStore *_gtk_tree_store_new(int n_columns, GType type1) {
@@ -439,8 +441,6 @@ static GtkStyleContext *toGtkStyleContext(void *p) {
 static GtkStyleProvider *toGtkStyleProvider(void *p) {
   return (GTK_STYLE_PROVIDER(p));
 }
-
-static GtkInfoBar *toGtkInfoBar(void *p) { return (GTK_INFO_BAR(p)); }
 
 static GMenuModel *toGMenuModel(void *p) { return (G_MENU_MODEL(p)); }
 

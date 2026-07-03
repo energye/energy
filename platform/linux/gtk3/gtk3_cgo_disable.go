@@ -190,6 +190,38 @@ func NewOverlay() types.IOverlay {
 	return nocgo.NewOverlay()
 }
 
+func NewStack() types.IStack {
+	return nocgo.NewStack()
+}
+
+func NewStackSwitcher() types.IStackSwitcher {
+	return nocgo.NewStackSwitcher()
+}
+
+func AsStack(ptr unsafe.Pointer) types.IStack {
+	return nocgo.AsStack(ptr)
+}
+
+func AsStackSwitcher(ptr unsafe.Pointer) types.IStackSwitcher {
+	return nocgo.AsStackSwitcher(ptr)
+}
+
+func NewSwitch() types.ISwitch {
+	return nocgo.NewSwitch()
+}
+
+func AsSwitch(ptr unsafe.Pointer) types.ISwitch {
+	return nocgo.AsSwitch(ptr)
+}
+
+func NewInfoBar() types.IInfoBar {
+	return nocgo.NewInfoBar()
+}
+
+func AsInfoBar(ptr unsafe.Pointer) types.IInfoBar {
+	return nocgo.AsInfoBar(ptr)
+}
+
 func AsMenu(ptr unsafe.Pointer) types.IMenu {
 	return nocgo.AsMenu(ptr)
 }

@@ -597,6 +597,33 @@ const (
 	SENSITIVITY_OFF  SensitivityType = 2
 )
 
+// StackTransitionType is a representation of GTK's GtkStackTransitionType.
+type StackTransitionType = int32
+
+const (
+	STACK_TRANSITION_TYPE_NONE            StackTransitionType = 0
+	STACK_TRANSITION_TYPE_CROSSFADE       StackTransitionType = 1
+	STACK_TRANSITION_TYPE_SLIDE_RIGHT     StackTransitionType = 2
+	STACK_TRANSITION_TYPE_SLIDE_LEFT      StackTransitionType = 3
+	STACK_TRANSITION_TYPE_SLIDE_UP        StackTransitionType = 4
+	STACK_TRANSITION_TYPE_SLIDE_DOWN      StackTransitionType = 5
+	STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT StackTransitionType = 6
+	STACK_TRANSITION_TYPE_SLIDE_UP_DOWN   StackTransitionType = 7
+	STACK_TRANSITION_TYPE_OVER_UP         StackTransitionType = 8
+	STACK_TRANSITION_TYPE_OVER_DOWN       StackTransitionType = 9
+	STACK_TRANSITION_TYPE_OVER_LEFT       StackTransitionType = 10
+	STACK_TRANSITION_TYPE_OVER_RIGHT      StackTransitionType = 11
+	STACK_TRANSITION_TYPE_UNDER_UP        StackTransitionType = 12
+	STACK_TRANSITION_TYPE_UNDER_DOWN      StackTransitionType = 13
+	STACK_TRANSITION_TYPE_UNDER_LEFT      StackTransitionType = 14
+	STACK_TRANSITION_TYPE_UNDER_RIGHT     StackTransitionType = 15
+	STACK_TRANSITION_TYPE_OVER_UP_DOWN    StackTransitionType = 16
+	STACK_TRANSITION_TYPE_OVER_DOWN_UP    StackTransitionType = 17
+	STACK_TRANSITION_TYPE_ROTATE_LEFT     StackTransitionType = 18
+	STACK_TRANSITION_TYPE_ROTATE_RIGHT    StackTransitionType = 19
+	STACK_TRANSITION_TYPE_ROTATE_LEFT_RIGHT StackTransitionType = 20
+)
+
 // ArrowType is a representation of GTK's GtkArrowType.
 type ArrowType = int32
 
