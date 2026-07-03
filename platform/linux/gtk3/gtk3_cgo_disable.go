@@ -332,6 +332,26 @@ func NewLevelBar() types.ILevelBar {
 	return nocgo.NewLevelBar()
 }
 
+func NewPaned(orientation types.Orientation) types.IPaned {
+	return nocgo.NewPaned(orientation)
+}
+
+func NewListBox() types.IListBox {
+	return nocgo.NewListBox()
+}
+
+func NewPopover() types.IPopover {
+	return nocgo.NewPopover()
+}
+
+func NewSearchEntry() types.ISearchEntry {
+	return nocgo.NewSearchEntry()
+}
+
+func NewRevealer() types.IRevealer {
+	return nocgo.NewRevealer()
+}
+
 func NewNotebook() types.INotebook {
 	return nocgo.NewNotebook()
 }

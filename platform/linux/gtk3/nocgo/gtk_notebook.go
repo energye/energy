@@ -84,3 +84,12 @@ func (m *Notebook) SetShowBorder(showBorder bool) {
 func (m *Notebook) SetTabPos(pos PositionType) {
 	gtk3.SysCall("gtk_notebook_set_tab_pos", m.Instance(), uintptr(pos))
 }
+
+func (m *Notebook) SetScrollable(scrollable bool) {
+	gtk3.SysCall("gtk_notebook_set_scrollable", m.Instance(), ToCBool(scrollable))
+}
+
+func (m *Notebook) GetScrollable() bool {
+	r := gtk3.SysCall("gtk_notebook_get_scrollable", m.Instance())
+	return ToGoBool(r)
+}

@@ -350,6 +350,26 @@ func NewLevelBar() types.ILevelBar {
 	return cgo.NewLevelBar()
 }
 
+func NewPaned(orientation types.Orientation) types.IPaned {
+	return cgo.NewPaned(orientation)
+}
+
+func NewListBox() types.IListBox {
+	return cgo.NewListBox()
+}
+
+func NewPopover() types.IPopover {
+	return cgo.NewPopover()
+}
+
+func NewSearchEntry() types.ISearchEntry {
+	return cgo.NewSearchEntry()
+}
+
+func NewRevealer() types.IRevealer {
+	return cgo.NewRevealer()
+}
+
 func NewNotebook() types.INotebook {
 	return cgo.NewNotebook()
 }

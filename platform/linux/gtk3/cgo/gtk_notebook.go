@@ -77,3 +77,11 @@ func (v *Notebook) SetShowBorder(showBorder bool) {
 func (v *Notebook) SetTabPos(pos PositionType) {
 	C.gtk_notebook_set_tab_pos(v.native(), C.GtkPositionType(pos))
 }
+
+func (v *Notebook) SetScrollable(scrollable bool) {
+	C.gtk_notebook_set_scrollable(v.native(), CBool(scrollable))
+}
+
+func (v *Notebook) GetScrollable() bool {
+	return GoBool(C.gtk_notebook_get_scrollable(v.native()))
+}

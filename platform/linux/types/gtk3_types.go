@@ -635,6 +635,18 @@ const (
 // PositionType is a representation of GTK's GtkPositionType (for Scale value-pos).
 type ScaleValuePos = PositionType
 
+// RevealerTransitionType is a representation of GTK's GtkRevealerTransitionType.
+type RevealerTransitionType = int32
+
+const (
+	REVEALER_TRANSITION_TYPE_NONE     RevealerTransitionType = 0
+	REVEALER_TRANSITION_TYPE_CROSSFADE RevealerTransitionType = 1
+	REVEALER_TRANSITION_TYPE_SLIDE_RIGHT RevealerTransitionType = 2
+	REVEALER_TRANSITION_TYPE_SLIDE_LEFT RevealerTransitionType = 3
+	REVEALER_TRANSITION_TYPE_SLIDE_UP RevealerTransitionType = 4
+	REVEALER_TRANSITION_TYPE_SLIDE_DOWN RevealerTransitionType = 5
+)
+
 // ArrowType is a representation of GTK's GtkArrowType.
 type ArrowType = int32
 

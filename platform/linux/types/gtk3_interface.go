@@ -723,6 +723,8 @@ type INotebook interface {
 	SetShowTabs(showTabs bool)
 	SetShowBorder(showBorder bool)
 	SetTabPos(pos PositionType)
+	SetScrollable(scrollable bool)
+	GetScrollable() bool
 }
 
 // IStatusbar is a representation of GTK's GtkStatusbar.
@@ -1051,4 +1053,55 @@ type ILevelBar interface {
 	GetMaxValue() float64
 	SetMode(mode LevelBarMode)
 	GetMode() LevelBarMode
+}
+
+// IPaned is a representation of GTK's GtkPaned.
+type IPaned interface {
+	IContainer
+	Add1(child IWidget)
+	Add2(child IWidget)
+	SetPosition(position int)
+	GetPosition() int
+	SetWideHandle(wide bool)
+	GetWideHandle() bool
+}
+
+// IListBox is a representation of GTK's GtkListBox.
+type IListBox interface {
+	IContainer
+	Prepend(child IWidget)
+	Insert(child IWidget, position int)
+	SelectRow(row IWidget)
+	GetSelectedRow() IWidget
+	SetSelectionMode(mode SelectionMode)
+	GetSelectionMode() SelectionMode
+}
+
+// IPopover is a representation of GTK's GtkPopover.
+type IPopover interface {
+	IBin
+	SetRelativeTo(widget IWidget)
+	GetRelativeTo() IWidget
+	SetPosition(position PositionType)
+	GetPosition() PositionType
+	SetModal(modal bool)
+	GetModal() bool
+	Popdown()
+	Popup()
+}
+
+// ISearchEntry is a representation of GTK's GtkSearchEntry.
+type ISearchEntry interface {
+	IEntry
+}
+
+// IRevealer is a representation of GTK's GtkRevealer.
+type IRevealer interface {
+	IBin
+	SetRevealChild(reveal bool)
+	GetRevealChild() bool
+	SetTransitionDuration(duration uint)
+	GetTransitionDuration() uint
+	SetTransitionType(t RevealerTransitionType)
+	GetTransitionType() RevealerTransitionType
 }
