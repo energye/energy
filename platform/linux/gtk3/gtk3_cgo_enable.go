@@ -403,3 +403,22 @@ func NewColorChooserDialog(title string, parent types.IWindow) types.IColorChoos
 func NewFontChooserDialog(title string, parent types.IWindow) types.IFontChooserDialog {
 	return cgo.NewFontChooserDialog(title, parent)
 }
+
+// MenuItem
+
+func NewMenuItem() types.IMenuItem {
+	item, _ := cgo.NewMenuItem()
+	return item
+}
+
+func MenuItemNewWithLabel(label string) types.IMenuItem {
+	item, _ := cgo.MenuItemNewWithLabel(label)
+	if item == nil {
+		return nil
+	}
+	return item
+}
+
+func SeparatorMenuItemNew() types.IMenuItem {
+	return cgo.SeparatorMenuItemNew()
+}

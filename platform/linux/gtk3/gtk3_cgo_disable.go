@@ -381,3 +381,17 @@ func NewColorChooserDialog(title string, parent types.IWindow) types.IColorChoos
 func NewFontChooserDialog(title string, parent types.IWindow) types.IFontChooserDialog {
 	return nocgo.NewFontChooserDialog(title, parent)
 }
+
+// MenuItem
+
+func NewMenuItem() types.IMenuItem {
+	return nocgo.NewMenuItem()
+}
+
+func MenuItemNewWithLabel(label string) types.IMenuItem {
+	return nocgo.MenuItemNewWithLabel(label)
+}
+
+func SeparatorMenuItemNew() types.IMenuItem {
+	return nocgo.SeparatorMenuItemNew()
+}

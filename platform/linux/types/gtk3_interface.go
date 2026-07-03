@@ -263,10 +263,26 @@ type IWindow interface {
 
 type IMenuShell interface {
 	IContainer
+	Append(child IWidget)
+	Prepend(child IWidget)
+	Insert(child IWidget, position int)
+	Deactivate()
+	SelectItem(child IWidget)
+	SelectFirst(searchSensitive bool)
+	Deselect()
+	ActivateItem(child IWidget, forceDeactivate bool)
+	Cancel()
+	SetTakeFocus(takeFocus bool)
+	GetTakeFocus() bool
+	GetSelectedItem() (IWidget, error)
+	GetParentShell() (IMenuShell, error)
 }
 
 type IMenuItem interface {
 	IWidget
+	SetSubmenu(submenu IWidget)
+	GetSubmenu() IMenu
+	SetOnActivate(fn TNotifyEvent) ISignalHandlerID
 }
 
 type IScrolledWindow interface {

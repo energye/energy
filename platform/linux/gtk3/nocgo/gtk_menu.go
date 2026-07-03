@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -113,4 +114,64 @@ func (m *Menu) GetAttachWidget() IWidget {
 		return nil
 	}
 	return AsWidget(unsafe.Pointer(r))
+}
+
+// MenuItem is a representation of GTK's GtkMenuItem.
+type MenuItem struct {
+	Bin
+}
+
+func AsMenuItem(ptr unsafe.Pointer) *MenuItem {
+	if ptr == nil {
+		return nil
+	}
+	m := new(MenuItem)
+	m.instance = ptr
+	return m
+}
+
+// NewMenuItem is a wrapper around gtk_menu_item_new().
+func NewMenuItem() *MenuItem {
+	r := gtk3.SysCall("gtk_menu_item_new")
+	if r == 0 {
+		return nil
+	}
+	return AsMenuItem(unsafe.Pointer(r))
+}
+
+// MenuItemNewWithLabel is a wrapper around gtk_menu_item_new_with_label().
+func MenuItemNewWithLabel(label string) *MenuItem {
+	r := gtk3.SysCall("gtk_menu_item_new_with_label", CStr(label))
+	if r == 0 {
+		return nil
+	}
+	return AsMenuItem(unsafe.Pointer(r))
+}
+
+// SetSubmenu is a wrapper around gtk_menu_item_set_submenu().
+func (m *MenuItem) SetSubmenu(submenu IWidget) {
+	gtk3.SysCall("gtk_menu_item_set_submenu", m.Instance(), submenu.Instance())
+}
+
+// GetSubmenu is a wrapper around gtk_menu_item_get_submenu().
+func (m *MenuItem) GetSubmenu() IMenu {
+	r := gtk3.SysCall("gtk_menu_item_get_submenu", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsMenu(unsafe.Pointer(r))
+}
+
+// SeparatorMenuItemNew is a wrapper around gtk_separator_menu_item_new().
+func SeparatorMenuItemNew() *MenuItem {
+	r := gtk3.SysCall("gtk_separator_menu_item_new")
+	if r == 0 {
+		return nil
+	}
+	return AsMenuItem(unsafe.Pointer(r))
+}
+
+// SetOnActivate is a callback for the "activate" signal on a MenuItem.
+func (m *MenuItem) SetOnActivate(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnActivate, callback.C_trampoline_2_void, fn, 0)
 }

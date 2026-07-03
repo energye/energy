@@ -29,6 +29,7 @@ func init() {
 		imports.NewTable("gtk_init", 0),
 		imports.NewTable("gtk_main", 0),
 		imports.NewTable("gtk_main_quit", 0),
+		imports.NewTable("gtk_main_iteration", 0),
 		// window
 		imports.NewTable("gtk_window_new", 0),
 		imports.NewTable("gtk_window_set_titlebar", 0),
@@ -289,6 +290,11 @@ func init() {
 		imports.NewTable("gtk_menu_shell_bind_model", 0),
 		// MenuBar
 		imports.NewTable("gtk_menu_bar_new", 0),
+		// MenuItem
+		imports.NewTable("gtk_menu_item_new", 0),
+		imports.NewTable("gtk_menu_item_new_with_label", 0),
+		imports.NewTable("gtk_menu_item_set_submenu", 0),
+		imports.NewTable("gtk_separator_menu_item_new", 0),
 		// CssProvider
 		imports.NewTable("gtk_css_provider_new", 0),
 		imports.NewTable("gtk_css_provider_load_from_path", 0),

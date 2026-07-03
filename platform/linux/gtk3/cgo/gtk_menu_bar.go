@@ -8,6 +8,7 @@ package cgo
 */
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -246,13 +247,13 @@ func (v *MenuItem) SetSubmenu(submenu IWidget) {
 }
 
 // GetSubmenu is a wrapper around gtk_menu_item_get_submenu().
-func (v *MenuItem) GetSubmenu() (IMenu, error) {
+func (v *MenuItem) GetSubmenu() IMenu {
 	c := C.gtk_menu_item_get_submenu(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil
 	}
 	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapMenu(obj), nil
+	return wrapMenu(obj)
 }
 
 // SetLabel is a wrapper around gtk_menu_item_set_label().
@@ -290,8 +291,9 @@ func (v *MenuItem) Deselect() {
 }
 
 // Activate is a wrapper around gtk_menu_item_activate()
-func (v *MenuItem) Activate() {
+func (v *MenuItem) Activate() bool {
 	C.gtk_menu_item_activate(v.native())
+	return false
 }
 
 // ToggleSizeRequest is a wrapper around gtk_menu_item_toggle_size_request()
@@ -315,4 +317,18 @@ func (v *MenuItem) GetReserveIndicator() bool {
 // SetReserveIndicator is a wrapper around gtk_menu_item_set_reserve_indicator().
 func (v *MenuItem) SetReserveIndicator(reserve bool) {
 	C.gtk_menu_item_set_reserve_indicator(v.native(), CBool(reserve))
+}
+
+// SeparatorMenuItemNew is a wrapper around gtk_separator_menu_item_new().
+func SeparatorMenuItemNew() *MenuItem {
+	c := C.gtk_separator_menu_item_new()
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(ToGoObject(unsafe.Pointer(c)))
+}
+
+// SetOnActivate is a callback for the "activate" signal on a MenuItem.
+func (v *MenuItem) SetOnActivate(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(v.Instance(), EsnActivate, callback.C_trampoline_2_void, fn, 0)
 }

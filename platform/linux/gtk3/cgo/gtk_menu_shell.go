@@ -1,12 +1,10 @@
-// Same copyright and license as the rest of the files in this project
-// This file contains accelerator related functions and structures
-
 package cgo
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
 import (
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -15,36 +13,30 @@ type MenuShell struct {
 	Container
 }
 
-// native returns a pointer to the underlying GtkMenuShell.
 func (v *MenuShell) native() *C.GtkMenuShell {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkMenuShell(p)
+	return C.toGtkMenuShell(unsafe.Pointer(v.GObject))
 }
 
 func wrapMenuShell(obj *Object) *MenuShell {
-	if obj == nil {
-		return nil
-	}
-
 	return &MenuShell{Container{Widget{InitiallyUnowned{obj}}}}
 }
 
 // Append is a wrapper around gtk_menu_shell_append().
-func (v *MenuShell) Append(child _IMenuItem) {
-	C.gtk_menu_shell_append(v.native(), child.toWidget())
+func (v *MenuShell) Append(child IWidget) {
+	C.gtk_menu_shell_append(v.native(), GtkWidget(child))
 }
 
 // Prepend is a wrapper around gtk_menu_shell_prepend().
-func (v *MenuShell) Prepend(child _IMenuItem) {
-	C.gtk_menu_shell_prepend(v.native(), child.toWidget())
+func (v *MenuShell) Prepend(child IWidget) {
+	C.gtk_menu_shell_prepend(v.native(), GtkWidget(child))
 }
 
 // Insert is a wrapper around gtk_menu_shell_insert().
-func (v *MenuShell) Insert(child _IMenuItem, position int) {
-	C.gtk_menu_shell_insert(v.native(), child.toWidget(), C.gint(position))
+func (v *MenuShell) Insert(child IWidget, position int) {
+	C.gtk_menu_shell_insert(v.native(), GtkWidget(child), C.gint(position))
 }
 
 // Deactivate is a wrapper around gtk_menu_shell_deactivate().
@@ -53,8 +45,8 @@ func (v *MenuShell) Deactivate() {
 }
 
 // SelectItem is a wrapper around gtk_menu_shell_select_item().
-func (v *MenuShell) SelectItem(child _IMenuItem) {
-	C.gtk_menu_shell_select_item(v.native(), child.toWidget())
+func (v *MenuShell) SelectItem(child IWidget) {
+	C.gtk_menu_shell_select_item(v.native(), GtkWidget(child))
 }
 
 // SelectFirst is a wrapper around gtk_menu_shell_select_first().
@@ -68,8 +60,8 @@ func (v *MenuShell) Deselect() {
 }
 
 // ActivateItem is a wrapper around gtk_menu_shell_activate_item().
-func (v *MenuShell) ActivateItem(child _IMenuItem, forceDeactivate bool) {
-	C.gtk_menu_shell_activate_item(v.native(), child.toWidget(), CBool(forceDeactivate))
+func (v *MenuShell) ActivateItem(child IWidget, forceDeactivate bool) {
+	C.gtk_menu_shell_activate_item(v.native(), GtkWidget(child), CBool(forceDeactivate))
 }
 
 // Cancel is a wrapper around gtk_menu_shell_cancel().
@@ -88,17 +80,16 @@ func (v *MenuShell) GetTakeFocus() bool {
 }
 
 // GetSelectedItem is a wrapper around gtk_menu_shell_get_selected_item().
-func (v *MenuShell) GetSelectedItem() (_IMenuItem, error) {
+func (v *MenuShell) GetSelectedItem() (IWidget, error) {
 	c := C.gtk_menu_shell_get_selected_item(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := ToGoObject(unsafe.Pointer(c))
-	return wrapMenuItem(obj), nil
+	return castWidget(c), nil
 }
 
 // GetParentShell is a wrapper around gtk_menu_shell_get_parent_shell().
-func (v *MenuShell) GetParentShell() (*MenuShell, error) {
+func (v *MenuShell) GetParentShell() (IMenuShell, error) {
 	c := C.gtk_menu_shell_get_parent_shell(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -108,8 +99,12 @@ func (v *MenuShell) GetParentShell() (*MenuShell, error) {
 }
 
 // BindModel is a wrapper around gtk_menu_shell_bind_model().
-func (v *MenuShell) BindModel(model *GMenuModel, action_namespace string, with_separators bool) {
-	cstr := C.CString(action_namespace)
+func (v *MenuShell) BindModel(model *GMenuModel, actionNamespace string, withSeparators bool) {
+	cstr := C.CString(actionNamespace)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_menu_shell_bind_model(v.native(), (*C.GMenuModel)(unsafe.Pointer(model.Native())), cstr, CBool(with_separators))
+	var mptr unsafe.Pointer
+	if model != nil {
+		mptr = unsafe.Pointer(model.Native())
+	}
+	C.gtk_menu_shell_bind_model(v.native(), (*C.GMenuModel)(mptr), cstr, CBool(withSeparators))
 }
