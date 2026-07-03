@@ -753,6 +753,17 @@ func init() {
 		imports.NewTable("gtk_file_chooser_get_action", 0),
 		imports.NewTable("gtk_file_chooser_set_select_multiple", 0),
 		imports.NewTable("gtk_file_chooser_get_select_multiple", 0),
+		imports.NewTable("gtk_file_chooser_set_current_name", 0),
+		imports.NewTable("gtk_file_chooser_get_current_folder", 0),
+		imports.NewTable("gtk_file_chooser_set_filter", 0),
+		imports.NewTable("gtk_file_chooser_get_filter", 0),
+		imports.NewTable("gtk_file_chooser_add_filter", 0),
+		// FileFilter
+		imports.NewTable("gtk_file_filter_new", 0),
+		imports.NewTable("gtk_file_filter_set_name", 0),
+		imports.NewTable("gtk_file_filter_get_name", 0),
+		imports.NewTable("gtk_file_filter_add_pattern", 0),
+		imports.NewTable("gtk_file_filter_add_mime_type", 0),
 		// ComboBox
 		imports.NewTable("gtk_combo_box_text_new", 0),
 		imports.NewTable("gtk_combo_box_text_new_with_entry", 0),

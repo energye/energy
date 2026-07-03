@@ -891,3 +891,19 @@ const (
 	FILE_CHOOSER_ACTION_SELECT_FOLDER FileChooserAction = 2
 	FILE_CHOOSER_ACTION_CREATE_FOLDER FileChooserAction = 3
 )
+
+// ResponseType is a representation of GTK's GtkResponseType.
+type ResponseType int32
+
+const (
+	RESPONSE_NONE         ResponseType = -1
+	RESPONSE_REJECT       ResponseType = -2
+	RESPONSE_ACCEPT       ResponseType = -3
+	RESPONSE_DELETE_EVENT ResponseType = -4
+	RESPONSE_OK           ResponseType = -5
+	RESPONSE_CANCEL       ResponseType = -6
+	RESPONSE_YES          ResponseType = -7
+	RESPONSE_NO           ResponseType = -8
+	RESPONSE_CLOSE        ResponseType = -9
+	RESPONSE_HELP         ResponseType = -11
+)

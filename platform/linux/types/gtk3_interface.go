@@ -871,10 +871,24 @@ type IFileChooserDialog interface {
 	GetFilename() string
 	SetFilename(filename string) bool
 	SetCurrentFolder(folder string) bool
+	SetCurrentName(name string)
+	GetCurrentFolder() string
 	SetAction(action FileChooserAction)
 	GetAction() FileChooserAction
 	SetSelectMultiple(selectMultiple bool)
 	GetSelectMultiple() bool
+	SetFilter(filter IFileFilter)
+	GetFilter() IFileFilter
+	AddFilter(filter IFileFilter)
+}
+
+// IFileFilter is a representation of GTK's GtkFileFilter.
+type IFileFilter interface {
+	IObject
+	SetName(name string)
+	GetName() string
+	AddPattern(pattern string)
+	AddMimeType(mimeType string)
 }
 
 // IComboBoxText is a representation of GTK's GtkComboBoxText.

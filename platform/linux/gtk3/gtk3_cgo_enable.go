@@ -422,3 +422,9 @@ func MenuItemNewWithLabel(label string) types.IMenuItem {
 func SeparatorMenuItemNew() types.IMenuItem {
 	return cgo.SeparatorMenuItemNew()
 }
+
+// FileFilter
+
+func NewFileFilter() types.IFileFilter {
+	return cgo.NewFileFilter()
+}

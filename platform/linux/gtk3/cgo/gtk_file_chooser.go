@@ -8,6 +8,7 @@ package cgo
 import "C"
 import (
 	. "github.com/energye/energy/v3/platform/linux/types"
+	"runtime"
 	"unsafe"
 )
 
@@ -39,7 +40,14 @@ func NewFileChooserDialog(title string, parent IWindow, action FileChooserAction
 	if c == nil {
 		return nil
 	}
-	return wrapFileChooserDialog(ToGoObject(unsafe.Pointer(c)))
+	dlg := wrapFileChooserDialog(ToGoObject(unsafe.Pointer(c)))
+	dlg.AddButton("取消", int(RESPONSE_CANCEL))
+	if action == FILE_CHOOSER_ACTION_SAVE {
+		dlg.AddButton("保存", int(RESPONSE_ACCEPT))
+	} else {
+		dlg.AddButton("打开", int(RESPONSE_ACCEPT))
+	}
+	return dlg
 }
 
 // GetFilename is a wrapper around gtk_file_chooser_get_filename().
@@ -85,4 +93,53 @@ func (v *FileChooserDialog) SetSelectMultiple(selectMultiple bool) {
 // GetSelectMultiple is a wrapper around gtk_file_chooser_get_select_multiple().
 func (v *FileChooserDialog) GetSelectMultiple() bool {
 	return GoBool(C.gtk_file_chooser_get_select_multiple(C.toGtkFileChooser(unsafe.Pointer(v.GObject))))
+}
+
+// SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
+func (v *FileChooserDialog) SetCurrentName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_set_current_name(C.toGtkFileChooser(unsafe.Pointer(v.GObject)), (*C.gchar)(cstr))
+}
+
+// GetCurrentFolder is a wrapper around gtk_file_chooser_get_current_folder().
+func (v *FileChooserDialog) GetCurrentFolder() string {
+	c := C.gtk_file_chooser_get_current_folder(C.toGtkFileChooser(unsafe.Pointer(v.GObject)))
+	if c == nil {
+		return ""
+	}
+	s := C.GoString((*C.char)(c))
+	C.g_free(C.gpointer(c))
+	return s
+}
+
+// SetFilter is a wrapper around gtk_file_chooser_set_filter().
+func (v *FileChooserDialog) SetFilter(filter IFileFilter) {
+	f := filter.(*FileFilter)
+	if f == nil || f.Object == nil || f.GObject == nil {
+		return
+	}
+	C.gtk_file_chooser_set_filter(C.toGtkFileChooser(unsafe.Pointer(v.GObject)),
+		C.toGtkFileFilter(unsafe.Pointer(f.GObject)))
+	runtime.KeepAlive(f)
+}
+
+// AddFilter is a wrapper around gtk_file_chooser_add_filter().
+func (v *FileChooserDialog) AddFilter(filter IFileFilter) {
+	f := filter.(*FileFilter)
+	if f == nil || f.Object == nil || f.GObject == nil {
+		return
+	}
+	C.gtk_file_chooser_add_filter(C.toGtkFileChooser(unsafe.Pointer(v.GObject)),
+		C.toGtkFileFilter(unsafe.Pointer(f.GObject)))
+	runtime.KeepAlive(f)
+}
+
+// GetFilter is a wrapper around gtk_file_chooser_get_filter().
+func (v *FileChooserDialog) GetFilter() IFileFilter {
+	c := C.gtk_file_chooser_get_filter(C.toGtkFileChooser(unsafe.Pointer(v.GObject)))
+	if c == nil {
+		return nil
+	}
+	return wrapFileFilter(ToGoObject(unsafe.Pointer(c)))
 }

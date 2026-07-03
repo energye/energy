@@ -41,7 +41,14 @@ func NewFileChooserDialog(title string, parent IWindow, action FileChooserAction
 	if r == 0 {
 		return nil
 	}
-	return AsFileChooserDialog(unsafe.Pointer(r))
+	dlg := AsFileChooserDialog(unsafe.Pointer(r))
+	dlg.AddButton("取消", int(RESPONSE_CANCEL))
+	if action == FILE_CHOOSER_ACTION_SAVE {
+		dlg.AddButton("保存", int(RESPONSE_ACCEPT))
+	} else {
+		dlg.AddButton("打开", int(RESPONSE_ACCEPT))
+	}
+	return dlg
 }
 
 // GetFilename is a wrapper around gtk_file_chooser_get_filename().
@@ -87,4 +94,37 @@ func (m *FileChooserDialog) SetSelectMultiple(selectMultiple bool) {
 func (m *FileChooserDialog) GetSelectMultiple() bool {
 	r := gtk3.SysCall("gtk_file_chooser_get_select_multiple", m.Instance())
 	return ToGoBool(r)
+}
+
+// SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
+func (m *FileChooserDialog) SetCurrentName(name string) {
+	gtk3.SysCall("gtk_file_chooser_set_current_name", m.Instance(), CStr(name))
+}
+
+// GetCurrentFolder is a wrapper around gtk_file_chooser_get_current_folder().
+func (m *FileChooserDialog) GetCurrentFolder() string {
+	r := gtk3.SysCall("gtk_file_chooser_get_current_folder", m.Instance())
+	if r == 0 {
+		return ""
+	}
+	return GoStr(r)
+}
+
+// SetFilter is a wrapper around gtk_file_chooser_set_filter().
+func (m *FileChooserDialog) SetFilter(filter IFileFilter) {
+	gtk3.SysCall("gtk_file_chooser_set_filter", m.Instance(), filter.Instance())
+}
+
+// AddFilter is a wrapper around gtk_file_chooser_add_filter().
+func (m *FileChooserDialog) AddFilter(filter IFileFilter) {
+	gtk3.SysCall("gtk_file_chooser_add_filter", m.Instance(), filter.Instance())
+}
+
+// GetFilter is a wrapper around gtk_file_chooser_get_filter().
+func (m *FileChooserDialog) GetFilter() IFileFilter {
+	r := gtk3.SysCall("gtk_file_chooser_get_filter", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsFileFilter(unsafe.Pointer(r))
 }

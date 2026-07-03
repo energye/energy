@@ -395,3 +395,9 @@ func MenuItemNewWithLabel(label string) types.IMenuItem {
 func SeparatorMenuItemNew() types.IMenuItem {
 	return nocgo.SeparatorMenuItemNew()
 }
+
+// FileFilter
+
+func NewFileFilter() types.IFileFilter {
+	return nocgo.NewFileFilter()
+}
