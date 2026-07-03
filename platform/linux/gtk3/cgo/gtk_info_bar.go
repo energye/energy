@@ -4,6 +4,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -83,4 +84,8 @@ func (v *InfoBar) SetShowCloseButton(setting bool) {
 
 func (v *InfoBar) GetShowCloseButton() bool {
 	return GoBool(C.gtk_info_bar_get_show_close_button(v.native()))
+}
+
+func (v *InfoBar) SetOnResponse(fn TResponseEvent) ISignalHandlerID {
+	return callback.Connect(v.Instance(), EsnResponse, callback.C_trampoline_3_void, fn, 0)
 }

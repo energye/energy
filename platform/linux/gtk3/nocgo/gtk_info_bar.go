@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -84,4 +85,8 @@ func (m *InfoBar) SetShowCloseButton(setting bool) {
 func (m *InfoBar) GetShowCloseButton() bool {
 	r := gtk3.SysCall("gtk_info_bar_get_show_close_button", m.Instance())
 	return ToGoBool(r)
+}
+
+func (m *InfoBar) SetOnResponse(fn TResponseEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnResponse, callback.C_trampoline_3_void, fn, 0)
 }

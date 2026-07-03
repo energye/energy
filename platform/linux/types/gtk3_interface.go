@@ -651,6 +651,7 @@ type IInfoBar interface {
 	GetContentArea() IBox
 	SetShowCloseButton(setting bool)
 	GetShowCloseButton() bool
+	SetOnResponse(fn TResponseEvent) ISignalHandlerID
 }
 
 // IFixed is a representation of GTK's GtkFixed.
