@@ -52,18 +52,25 @@ var (
 	gtkRangeGetFillLevel  func(uintptr) float64
 	gtkRangeSetFillLevel  func(uintptr, float64)
 
-	gtkEntrySetAlignment        func(uintptr, float32)
-	gtkEntryGetAlignment        func(uintptr) float32
-	gtkEntrySetProgressFraction func(uintptr, float64)
-	gtkEntryGetProgressFraction func(uintptr) float64
+	gtkEntrySetAlignment         func(uintptr, float32)
+	gtkEntryGetAlignment         func(uintptr) float32
+	gtkEntrySetProgressFraction  func(uintptr, float64)
+	gtkEntryGetProgressFraction  func(uintptr) float64
 	gtkEntrySetProgressPulseStep func(uintptr, float64)
 	gtkEntryGetProgressPulseStep func(uintptr) float64
 
-	gtkSpinButtonGetValue       func(uintptr) float64
-	gtkSpinButtonSetValue       func(uintptr, float64)
-	gtkSpinButtonSetRange       func(uintptr, float64, float64)
-	gtkSpinButtonSetIncrements  func(uintptr, float64, float64)
-	gtkSpinButtonNew            func(uintptr, float64, uintptr) uintptr
+	gtkSpinButtonGetValue      func(uintptr) float64
+	gtkSpinButtonSetValue      func(uintptr, float64)
+	gtkSpinButtonSetRange      func(uintptr, float64, float64)
+	gtkSpinButtonSetIncrements func(uintptr, float64, float64)
+	gtkSpinButtonNew           func(uintptr, float64, uintptr) uintptr
+
+	gtkLevelBarSetValue    func(uintptr, float64)
+	gtkLevelBarGetValue    func(uintptr) float64
+	gtkLevelBarSetMinValue func(uintptr, float64)
+	gtkLevelBarGetMinValue func(uintptr) float64
+	gtkLevelBarSetMaxValue func(uintptr, float64)
+	gtkLevelBarGetMaxValue func(uintptr) float64
 )
 
 func registerGtkFloatFuncs() {
@@ -118,5 +125,12 @@ func registerGtkFloatFuncs() {
 		purego.RegisterLibFunc(&gtkSpinButtonSetRange, lib, "gtk_spin_button_set_range")
 		purego.RegisterLibFunc(&gtkSpinButtonSetIncrements, lib, "gtk_spin_button_set_increments")
 		purego.RegisterLibFunc(&gtkSpinButtonNew, lib, "gtk_spin_button_new")
+
+		purego.RegisterLibFunc(&gtkLevelBarSetValue, lib, "gtk_level_bar_set_value")
+		purego.RegisterLibFunc(&gtkLevelBarGetValue, lib, "gtk_level_bar_get_value")
+		purego.RegisterLibFunc(&gtkLevelBarSetMinValue, lib, "gtk_level_bar_set_min_value")
+		purego.RegisterLibFunc(&gtkLevelBarGetMinValue, lib, "gtk_level_bar_get_min_value")
+		purego.RegisterLibFunc(&gtkLevelBarSetMaxValue, lib, "gtk_level_bar_set_max_value")
+		purego.RegisterLibFunc(&gtkLevelBarGetMaxValue, lib, "gtk_level_bar_get_max_value")
 	})
 }

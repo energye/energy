@@ -624,6 +624,17 @@ const (
 	STACK_TRANSITION_TYPE_ROTATE_LEFT_RIGHT StackTransitionType = 20
 )
 
+// LevelBarMode is a representation of GTK's GtkLevelBarMode.
+type LevelBarMode = int32
+
+const (
+	LEVEL_BAR_MODE_CONTINUOUS LevelBarMode = 0
+	LEVEL_BAR_MODE_DISCRETE   LevelBarMode = 1
+)
+
+// PositionType is a representation of GTK's GtkPositionType (for Scale value-pos).
+type ScaleValuePos = PositionType
+
 // ArrowType is a representation of GTK's GtkArrowType.
 type ArrowType = int32
 

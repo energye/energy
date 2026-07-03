@@ -330,6 +330,26 @@ func NewProgressBar() types.IProgressBar {
 	return cgo.NewProgressBar()
 }
 
+func NewScale(adjustment types.IAdjustment) types.IScale {
+	return cgo.NewHScale(adjustment)
+}
+
+func NewHScale(adjustment types.IAdjustment) types.IScale {
+	return cgo.NewHScale(adjustment)
+}
+
+func NewVScale(adjustment types.IAdjustment) types.IScale {
+	return cgo.NewVScale(adjustment)
+}
+
+func NewSpinner() types.ISpinner {
+	return cgo.NewSpinner()
+}
+
+func NewLevelBar() types.ILevelBar {
+	return cgo.NewLevelBar()
+}
+
 func NewNotebook() types.INotebook {
 	return cgo.NewNotebook()
 }

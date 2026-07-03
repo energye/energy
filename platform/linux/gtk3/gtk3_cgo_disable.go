@@ -316,6 +316,22 @@ func NewProgressBar() types.IProgressBar {
 	return nocgo.NewProgressBar()
 }
 
+func NewHScale(adjustment types.IAdjustment) types.IScale {
+	return nocgo.NewHScale(adjustment)
+}
+
+func NewVScale(adjustment types.IAdjustment) types.IScale {
+	return nocgo.NewVScale(adjustment)
+}
+
+func NewSpinner() types.ISpinner {
+	return nocgo.NewSpinner()
+}
+
+func NewLevelBar() types.ILevelBar {
+	return nocgo.NewLevelBar()
+}
+
 func NewNotebook() types.INotebook {
 	return nocgo.NewNotebook()
 }

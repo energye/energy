@@ -653,19 +653,6 @@ type IInfoBar interface {
 	GetShowCloseButton() bool
 }
 
-// ILevelBar is a representation of GTK's GtkLevelBar.
-type ILevelBar interface {
-	IWidget
-	SetValue(value float64)
-	GetValue() float64
-	SetMinValue(value float64)
-	GetMinValue() float64
-	SetMaxValue(value float64)
-	GetMaxValue() float64
-	SetMode(mode int32)
-	GetMode() int32
-}
-
 // IFixed is a representation of GTK's GtkFixed.
 type IFixed interface {
 	IContainer
@@ -1033,4 +1020,35 @@ type IFontChooserDialog interface {
 	SetFont(font string)
 	GetPreviewText() string
 	SetPreviewText(text string)
+}
+
+// IScale is a representation of GTK's GtkScale (HScale/VScale base).
+type IScale interface {
+	IRange
+	SetDigits(digits int)
+	GetDigits() int
+	SetDrawValue(drawValue bool)
+	GetDrawValue() bool
+	SetValuePos(pos PositionType)
+	GetValuePos() PositionType
+}
+
+// ISpinner is a representation of GTK's GtkSpinner.
+type ISpinner interface {
+	IWidget
+	Start()
+	Stop()
+}
+
+// ILevelBar is a representation of GTK's GtkLevelBar.
+type ILevelBar interface {
+	IWidget
+	SetValue(value float64)
+	GetValue() float64
+	SetMinValue(value float64)
+	GetMinValue() float64
+	SetMaxValue(value float64)
+	GetMaxValue() float64
+	SetMode(mode LevelBarMode)
+	GetMode() LevelBarMode
 }

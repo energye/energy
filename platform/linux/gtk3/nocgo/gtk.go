@@ -641,6 +641,22 @@ func init() {
 		imports.NewTable("gtk_progress_bar_set_text", 0),
 		imports.NewTable("gtk_progress_bar_set_show_text", 0),
 		imports.NewTable("gtk_progress_bar_set_pulse_step", 0),
+		// Scale
+		imports.NewTable("gtk_scale_new", 0),
+		imports.NewTable("gtk_scale_set_digits", 0),
+		imports.NewTable("gtk_scale_get_digits", 0),
+		imports.NewTable("gtk_scale_set_draw_value", 0),
+		imports.NewTable("gtk_scale_get_draw_value", 0),
+		imports.NewTable("gtk_scale_set_value_pos", 0),
+		imports.NewTable("gtk_scale_get_value_pos", 0),
+		// Spinner
+		imports.NewTable("gtk_spinner_new", 0),
+		imports.NewTable("gtk_spinner_start", 0),
+		imports.NewTable("gtk_spinner_stop", 0),
+		// LevelBar
+		imports.NewTable("gtk_level_bar_new", 0),
+		imports.NewTable("gtk_level_bar_set_mode", 0),
+		imports.NewTable("gtk_level_bar_get_mode", 0),
 		// Notebook
 		imports.NewTable("gtk_notebook_new", 0),
 		imports.NewTable("gtk_notebook_append_page", 0),
