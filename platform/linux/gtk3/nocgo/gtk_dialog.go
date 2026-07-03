@@ -11,7 +11,6 @@
 package nocgo
 
 import (
-	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
