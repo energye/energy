@@ -58,6 +58,12 @@ var (
 	gtkEntryGetProgressFraction func(uintptr) float64
 	gtkEntrySetProgressPulseStep func(uintptr, float64)
 	gtkEntryGetProgressPulseStep func(uintptr) float64
+
+	gtkSpinButtonGetValue       func(uintptr) float64
+	gtkSpinButtonSetValue       func(uintptr, float64)
+	gtkSpinButtonSetRange       func(uintptr, float64, float64)
+	gtkSpinButtonSetIncrements  func(uintptr, float64, float64)
+	gtkSpinButtonNew            func(uintptr, float64, uintptr) uintptr
 )
 
 func registerGtkFloatFuncs() {
@@ -106,5 +112,11 @@ func registerGtkFloatFuncs() {
 		purego.RegisterLibFunc(&gtkEntryGetProgressFraction, lib, "gtk_entry_get_progress_fraction")
 		purego.RegisterLibFunc(&gtkEntrySetProgressPulseStep, lib, "gtk_entry_set_progress_pulse_step")
 		purego.RegisterLibFunc(&gtkEntryGetProgressPulseStep, lib, "gtk_entry_get_progress_pulse_step")
+
+		purego.RegisterLibFunc(&gtkSpinButtonGetValue, lib, "gtk_spin_button_get_value")
+		purego.RegisterLibFunc(&gtkSpinButtonSetValue, lib, "gtk_spin_button_set_value")
+		purego.RegisterLibFunc(&gtkSpinButtonSetRange, lib, "gtk_spin_button_set_range")
+		purego.RegisterLibFunc(&gtkSpinButtonSetIncrements, lib, "gtk_spin_button_set_increments")
+		purego.RegisterLibFunc(&gtkSpinButtonNew, lib, "gtk_spin_button_new")
 	})
 }
