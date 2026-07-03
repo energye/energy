@@ -718,6 +718,15 @@ type ITreeModel interface {
 	IObject
 }
 
+// ITreeStore is a representation of GTK's GtkTreeStore (hierarchical tree data).
+type ITreeStore interface {
+	IObject
+	Append(parent ITreeIter) ITreeIter
+	SetValue(iter ITreeIter, column int, value string)
+	Remove(iter ITreeIter) bool
+	Clear()
+}
+
 // ITextIter is a representation of GTK's GtkTextIter.
 type ITextIter interface {
 	GetOffset() int
@@ -857,6 +866,8 @@ type ITreeView interface {
 	IContainer
 	GetModel() IListStore
 	SetModel(model IListStore)
+	SetTreeModel(model ITreeModel)
+	GetTreeModel() ITreeModel
 	GetSelection() ITreeSelection
 	AppendColumn(column ITreeViewColumn) int
 	SetHeadersVisible(show bool)

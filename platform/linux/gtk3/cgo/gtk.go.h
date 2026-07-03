@@ -271,6 +271,21 @@ static GtkOrientable *toGtkOrientable(void *p) { return (GTK_ORIENTABLE(p)); }
 
 static GtkTreeStore *toGtkTreeStore(void *p) { return (GTK_TREE_STORE(p)); }
 
+static GtkTreeStore *_gtk_tree_store_new(int n_columns, GType type1) {
+  return gtk_tree_store_new(n_columns, type1);
+}
+static GtkTreeStore *_gtk_tree_store_new2(int n_columns, GType type1, GType type2) {
+  return gtk_tree_store_new(n_columns, type1, type2);
+}
+static GtkTreeStore *_gtk_tree_store_new3(int n_columns, GType type1, GType type2, GType type3) {
+  return gtk_tree_store_new(n_columns, type1, type2, type3);
+}
+
+static void _gtk_tree_store_set(GtkTreeStore *store, GtkTreeIter *iter,
+                                gint column, void *value) {
+  gtk_tree_store_set(store, iter, column, value, -1);
+}
+
 static GtkTreeView *toGtkTreeView(void *p) { return (GTK_TREE_VIEW(p)); }
 
 static GtkTreeViewColumn *toGtkTreeViewColumn(void *p) {
@@ -461,11 +476,6 @@ static GtkTreeViewColumn *_gtk_tree_view_column_new_with_attributes_one(
 static void _gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter,
                                 gint column, void *value) {
   gtk_list_store_set(list_store, iter, column, value, -1);
-}
-
-static void _gtk_tree_store_set(GtkTreeStore *store, GtkTreeIter *iter,
-                                gint column, void *value) {
-  gtk_tree_store_set(store, iter, column, value, -1);
 }
 
 extern gboolean substring_match_equal_func(GtkTreeModel *model, gint column,

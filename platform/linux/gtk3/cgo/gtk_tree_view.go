@@ -63,6 +63,25 @@ func (v *TreeView) SetModel(model IListStore) {
 	C.gtk_tree_view_set_model(v.native(), mptr)
 }
 
+// GetTreeModel returns the model as ITreeModel (works for both ListStore and TreeStore).
+func (v *TreeView) GetTreeModel() ITreeModel {
+	c := C.gtk_tree_view_get_model(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := ToGoObject(unsafe.Pointer(c))
+	return &TreeStore{Object: obj}
+}
+
+// SetTreeModel sets the model from an ITreeModel (works for both ListStore and TreeStore).
+func (v *TreeView) SetTreeModel(model ITreeModel) {
+	var mptr *C.GtkTreeModel
+	if model != nil {
+		mptr = C.toGtkTreeModel(unsafe.Pointer(model.Instance()))
+	}
+	C.gtk_tree_view_set_model(v.native(), mptr)
+}
+
 // GetSelection is a wrapper around gtk_tree_view_get_selection().
 func (v *TreeView) GetSelection() ITreeSelection {
 	c := C.gtk_tree_view_get_selection(v.native())

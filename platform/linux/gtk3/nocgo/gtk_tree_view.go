@@ -65,6 +65,24 @@ func (m *TreeView) SetModel(model IListStore) {
 	gtk3.SysCall("gtk_tree_view_set_model", m.Instance(), modelPtr)
 }
 
+// GetTreeModel returns the model as ITreeModel.
+func (m *TreeView) GetTreeModel() ITreeModel {
+	r := gtk3.SysCall("gtk_tree_view_get_model", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsTreeStore(unsafe.Pointer(r))
+}
+
+// SetTreeModel sets the model from an ITreeModel.
+func (m *TreeView) SetTreeModel(model ITreeModel) {
+	var modelPtr uintptr
+	if model != nil {
+		modelPtr = model.Instance()
+	}
+	gtk3.SysCall("gtk_tree_view_set_model", m.Instance(), modelPtr)
+}
+
 // GetSelection is a wrapper around gtk_tree_view_get_selection().
 func (m *TreeView) GetSelection() ITreeSelection {
 	r := gtk3.SysCall("gtk_tree_view_get_selection", m.Instance())

@@ -718,6 +718,12 @@ func init() {
 		imports.NewTable("gtk_list_store_set_value", 0),
 		imports.NewTable("gtk_list_store_remove", 0),
 		imports.NewTable("gtk_list_store_clear", 0),
+		// TreeStore
+		imports.NewTable("gtk_tree_store_new", 0),
+		imports.NewTable("gtk_tree_store_append", 0),
+		imports.NewTable("gtk_tree_store_set_value", 0),
+		imports.NewTable("gtk_tree_store_remove", 0),
+		imports.NewTable("gtk_tree_store_clear", 0),
 		// TreeView
 		imports.NewTable("gtk_tree_view_new", 0),
 		imports.NewTable("gtk_tree_view_new_with_model", 0),

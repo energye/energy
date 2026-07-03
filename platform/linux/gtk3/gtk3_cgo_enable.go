@@ -358,6 +358,10 @@ func NewListStore(columnTypes ...types.Type) types.IListStore {
 	return cgo.NewListStore(columnTypes...)
 }
 
+func NewTreeStore(columnTypes ...types.Type) types.ITreeStore {
+	return cgo.NewTreeStore(columnTypes...)
+}
+
 func NewTreeViewColumn() types.ITreeViewColumn {
 	return cgo.NewTreeViewColumn()
 }

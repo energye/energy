@@ -336,6 +336,10 @@ func NewListStore(columnTypes ...types.Type) types.IListStore {
 	return nocgo.NewListStore(columnTypes...)
 }
 
+func NewTreeStore(columnTypes ...types.Type) types.ITreeStore {
+	return nocgo.NewTreeStore(columnTypes...)
+}
+
 func NewTreeViewColumn() types.ITreeViewColumn {
 	return nocgo.NewTreeViewColumn()
 }
