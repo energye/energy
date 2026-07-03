@@ -37,6 +37,7 @@ const (
 	EsnNotifyThemeChanged    EventSignalName = "notify::gtk-theme-name"
 	EsnValueChanged          EventSignalName = "value-changed"
 	EsnDestroy               EventSignalName = "destroy"
+	EsnResponse              EventSignalName = "response"
 )
 
 // 信号事件类型
@@ -64,3 +65,4 @@ type TFocusInEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPoint
 type TFocusOutEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPointer) bool
 type TThemeChangedEvent func(sender PGtkWidget, pspec uintptr, userData GPointer)
 type TValueChangedEvent func(sender PGtkWidget, userData GPointer)
+type TResponseEvent func(sender PGtkWidget, responseId int, userData GPointer)

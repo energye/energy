@@ -131,6 +131,7 @@ type IWidget interface {
 	GetStateFlags() StateFlags
 	ResetStyle()
 	InDestruction() bool
+	Destroy()
 }
 
 type IContainer interface {
@@ -648,6 +649,7 @@ type IDialog interface {
 	AddButton(buttonText string, responseId int) IButton
 	SetDefaultResponse(responseId int)
 	GetContentArea() IBox
+	SetOnResponse(fn TResponseEvent) ISignalHandlerID
 }
 
 // IProgressBar is a representation of GTK's GtkProgressBar.

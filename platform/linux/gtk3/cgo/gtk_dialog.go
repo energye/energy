@@ -4,6 +4,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -67,4 +68,9 @@ func (v *Dialog) GetContentArea() IBox {
 		return nil
 	}
 	return wrapBox(ToGoObject(unsafe.Pointer(c)))
+}
+
+// SetOnResponse is a callback for the "response" signal.
+func (v *Dialog) SetOnResponse(fn TResponseEvent) ISignalHandlerID {
+	return callback.Connect(v.Instance(), EsnResponse, callback.C_trampoline_3_void, fn, 0)
 }

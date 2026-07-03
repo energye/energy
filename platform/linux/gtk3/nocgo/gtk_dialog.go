@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -72,4 +73,9 @@ func (m *Dialog) GetContentArea() IBox {
 	box := new(Box)
 	box.instance = unsafe.Pointer(r)
 	return box
+}
+
+// SetOnResponse is a callback for the "response" signal.
+func (m *Dialog) SetOnResponse(fn TResponseEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnResponse, callback.C_trampoline_3_void, fn, 0)
 }
