@@ -330,6 +330,7 @@ func init() {
 		imports.NewTable("gtk_menu_item_new", 0),
 		imports.NewTable("gtk_menu_item_new_with_label", 0),
 		imports.NewTable("gtk_menu_item_set_submenu", 0),
+		imports.NewTable("gtk_menu_item_get_submenu", 0),
 		imports.NewTable("gtk_separator_menu_item_new", 0),
 		// InfoBar
 		imports.NewTable("gtk_info_bar_new", 0),
@@ -801,6 +802,8 @@ func init() {
 		imports.NewTable("gtk_text_mark_set_visible", 0),
 		imports.NewTable("gtk_text_mark_get_visible", 0),
 		imports.NewTable("gtk_text_mark_get_name", 0),
+		imports.NewTable("gtk_text_mark_get_deleted", 0),
+		imports.NewTable("gtk_text_mark_get_buffer", 0),
 		// TextTag
 		imports.NewTable("gtk_text_tag_new", 0),
 		imports.NewTable("gtk_text_tag_get_priority", 0),
@@ -810,6 +813,16 @@ func init() {
 		imports.NewTable("gtk_text_tag_table_add", 0),
 		imports.NewTable("gtk_text_tag_table_lookup", 0),
 		imports.NewTable("gtk_text_tag_table_remove", 0),
+		// TextIter
+		imports.NewTable("gtk_text_iter_get_offset", 0),
+		imports.NewTable("gtk_text_iter_get_line", 0),
+		imports.NewTable("gtk_text_iter_get_line_offset", 0),
+		imports.NewTable("gtk_text_iter_forward_char", 0),
+		imports.NewTable("gtk_text_iter_backward_char", 0),
+		imports.NewTable("gtk_text_iter_forward_line", 0),
+		imports.NewTable("gtk_text_iter_backward_line", 0),
+		imports.NewTable("gtk_text_iter_is_end", 0),
+		imports.NewTable("gtk_text_iter_equal", 0),
 		// ListStore
 		imports.NewTable("gtk_list_store_new", 0),
 		imports.NewTable("gtk_list_store_append", 0),

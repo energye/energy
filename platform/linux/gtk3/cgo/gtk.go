@@ -19,6 +19,7 @@ func Init(args *[]string) {
 		for i, arg := range *args {
 			cstr := C.CString(arg)
 			C.set_string(argv, C.int(i), (*C.gchar)(cstr))
+			defer C.free(unsafe.Pointer(cstr))
 		}
 
 		C.gtk_init((*C.int)(unsafe.Pointer(&argc)),
