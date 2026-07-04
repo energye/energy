@@ -731,6 +731,13 @@ func init() {
 		imports.NewTable("gtk_spin_button_set_range", 0),
 		imports.NewTable("gtk_spin_button_set_increments", 0),
 		imports.NewTable("gtk_spin_button_set_digits", 0),
+		imports.NewTable("gtk_spin_button_get_adjustment", 0),
+		imports.NewTable("gtk_spin_button_set_numeric", 0),
+		imports.NewTable("gtk_spin_button_get_numeric", 0),
+		imports.NewTable("gtk_spin_button_set_snap_to_ticks", 0),
+		imports.NewTable("gtk_spin_button_get_snap_to_ticks", 0),
+		imports.NewTable("gtk_spin_button_set_wrap", 0),
+		imports.NewTable("gtk_spin_button_get_wrap", 0),
 		// TextView
 		imports.NewTable("gtk_text_view_new", 0),
 		imports.NewTable("gtk_text_view_new_with_buffer", 0),
@@ -935,6 +942,9 @@ func init() {
 		imports.NewTable("gtk_separator_new", 0),
 		// RadioButton
 		imports.NewTable("gtk_radio_button_new_with_label_from_widget", 0),
+		imports.NewTable("gtk_radio_button_new", 0),
+		imports.NewTable("gtk_radio_button_new_from_widget", 0),
+		imports.NewTable("gtk_radio_button_new_with_label", 0),
 		// AboutDialog
 		imports.NewTable("gtk_about_dialog_new", 0),
 		imports.NewTable("gtk_about_dialog_set_program_name", 0),

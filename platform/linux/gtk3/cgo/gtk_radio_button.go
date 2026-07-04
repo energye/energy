@@ -35,3 +35,36 @@ func NewRadioButtonWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 	}
 	return wrapRadioButton(ToGoObject(unsafe.Pointer(c)))
 }
+
+// NewRadioButton is a wrapper around gtk_radio_button_new(NULL) — creates the first button in a new group.
+func NewRadioButton() *RadioButton {
+	c := C.gtk_radio_button_new(nil)
+	if c == nil {
+		return nil
+	}
+	return wrapRadioButton(ToGoObject(unsafe.Pointer(c)))
+}
+
+// NewRadioButtonFromWidget is a wrapper around gtk_radio_button_new_from_widget().
+func NewRadioButtonFromWidget(radioGroupMember *RadioButton) *RadioButton {
+	var member *C.GtkRadioButton
+	if radioGroupMember != nil {
+		member = radioGroupMember.native()
+	}
+	c := C.gtk_radio_button_new_from_widget(member)
+	if c == nil {
+		return nil
+	}
+	return wrapRadioButton(ToGoObject(unsafe.Pointer(c)))
+}
+
+// NewRadioButtonWithLabel is a wrapper around gtk_radio_button_new_with_label(NULL, label).
+func NewRadioButtonWithLabel(label string) *RadioButton {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_button_new_with_label(nil, (*C.gchar)(cstr))
+	if c == nil {
+		return nil
+	}
+	return wrapRadioButton(ToGoObject(unsafe.Pointer(c)))
+}

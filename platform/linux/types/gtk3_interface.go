@@ -761,6 +761,14 @@ type ISpinButton interface {
 	SetIncrements(step, page float64)
 	SetDigits(digits uint)
 	SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID
+	GetAdjustment() IAdjustment
+	SetNumeric(numeric bool)
+	GetNumeric() bool
+	SetSnapToTicks(snap bool)
+	GetSnapToTicks() bool
+	SetWrap(wrap bool)
+	GetWrap() bool
+	Spin(direction SpinDirection, increment float64)
 }
 
 // ICheckButton is a representation of GTK's GtkCheckButton.

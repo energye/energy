@@ -76,3 +76,48 @@ func (m *SpinButton) SetDigits(digits uint) {
 func (m *SpinButton) SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID {
 	return callback.Connect(m.Instance(), EsnValueChanged, callback.C_trampoline_2_void, fn, 0)
 }
+
+// GetAdjustment is a wrapper around gtk_spin_button_get_adjustment().
+func (m *SpinButton) GetAdjustment() IAdjustment {
+	r := gtk3.SysCall("gtk_spin_button_get_adjustment", m.Instance())
+	if r == 0 {
+		return nil
+	}
+	return AsAdjustment(unsafe.Pointer(r))
+}
+
+// SetNumeric is a wrapper around gtk_spin_button_set_numeric().
+func (m *SpinButton) SetNumeric(numeric bool) {
+	gtk3.SysCall("gtk_spin_button_set_numeric", m.Instance(), ToCBool(numeric))
+}
+
+// GetNumeric is a wrapper around gtk_spin_button_get_numeric().
+func (m *SpinButton) GetNumeric() bool {
+	return ToGoBool(gtk3.SysCall("gtk_spin_button_get_numeric", m.Instance()))
+}
+
+// SetSnapToTicks is a wrapper around gtk_spin_button_set_snap_to_ticks().
+func (m *SpinButton) SetSnapToTicks(snap bool) {
+	gtk3.SysCall("gtk_spin_button_set_snap_to_ticks", m.Instance(), ToCBool(snap))
+}
+
+// GetSnapToTicks is a wrapper around gtk_spin_button_get_snap_to_ticks().
+func (m *SpinButton) GetSnapToTicks() bool {
+	return ToGoBool(gtk3.SysCall("gtk_spin_button_get_snap_to_ticks", m.Instance()))
+}
+
+// SetWrap is a wrapper around gtk_spin_button_set_wrap().
+func (m *SpinButton) SetWrap(wrap bool) {
+	gtk3.SysCall("gtk_spin_button_set_wrap", m.Instance(), ToCBool(wrap))
+}
+
+// GetWrap is a wrapper around gtk_spin_button_get_wrap().
+func (m *SpinButton) GetWrap() bool {
+	return ToGoBool(gtk3.SysCall("gtk_spin_button_get_wrap", m.Instance()))
+}
+
+// Spin is a wrapper around gtk_spin_button_spin().
+func (m *SpinButton) Spin(direction SpinDirection, increment float64) {
+	registerGtkFloatFuncs()
+	gtkSpinButtonSpin(m.Instance(), uintptr(direction), increment)
+}

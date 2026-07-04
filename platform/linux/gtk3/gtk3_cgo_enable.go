@@ -466,6 +466,22 @@ func NewRadioButtonWithLabelFromWidget(radioGroupMember types.IRadioButton, labe
 	return cgo.NewRadioButtonWithLabelFromWidget(r, label)
 }
 
+func NewRadioButton() types.IRadioButton {
+	return cgo.NewRadioButton()
+}
+
+func NewRadioButtonFromWidget(radioGroupMember types.IRadioButton) types.IRadioButton {
+	var r *cgo.RadioButton
+	if radioGroupMember != nil {
+		r = radioGroupMember.(*cgo.RadioButton)
+	}
+	return cgo.NewRadioButtonFromWidget(r)
+}
+
+func NewRadioButtonWithLabel(label string) types.IRadioButton {
+	return cgo.NewRadioButtonWithLabel(label)
+}
+
 func NewAboutDialog() types.IAboutDialog {
 	return cgo.NewAboutDialog()
 }

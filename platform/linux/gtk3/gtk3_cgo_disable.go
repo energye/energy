@@ -444,6 +444,22 @@ func NewRadioButtonWithLabelFromWidget(radioGroupMember types.IRadioButton, labe
 	return nocgo.NewRadioButtonWithLabelFromWidget(r, label)
 }
 
+func NewRadioButton() types.IRadioButton {
+	return nocgo.NewRadioButton()
+}
+
+func NewRadioButtonFromWidget(radioGroupMember types.IRadioButton) types.IRadioButton {
+	var r *nocgo.RadioButton
+	if radioGroupMember != nil {
+		r = radioGroupMember.(*nocgo.RadioButton)
+	}
+	return nocgo.NewRadioButtonFromWidget(r)
+}
+
+func NewRadioButtonWithLabel(label string) types.IRadioButton {
+	return nocgo.NewRadioButtonWithLabel(label)
+}
+
 func NewAboutDialog() types.IAboutDialog {
 	return nocgo.NewAboutDialog()
 }

@@ -64,6 +64,7 @@ var (
 	gtkSpinButtonSetRange      func(uintptr, float64, float64)
 	gtkSpinButtonSetIncrements func(uintptr, float64, float64)
 	gtkSpinButtonNew           func(uintptr, float64, uintptr) uintptr
+	gtkSpinButtonSpin          func(uintptr, uintptr, float64)
 
 	gtkLevelBarSetValue    func(uintptr, float64)
 	gtkLevelBarGetValue    func(uintptr) float64
@@ -140,9 +141,11 @@ func registerGtkFloatFuncs() {
 		 purego.RegisterLibFunc(&gtkProgressBarGetFraction, lib, "gtk_progress_bar_get_fraction")
 		 purego.RegisterLibFunc(&gtkProgressBarSetPulseStep, lib, "gtk_progress_bar_set_pulse_step")
 
-		 purego.RegisterLibFunc(&gtkTreeViewColumnSetAlignment, lib, "gtk_tree_view_column_set_alignment")
-		 purego.RegisterLibFunc(&gtkTreeViewColumnGetAlignment, lib, "gtk_tree_view_column_get_alignment")
-		})
+		  purego.RegisterLibFunc(&gtkTreeViewColumnSetAlignment, lib, "gtk_tree_view_column_set_alignment")
+		  purego.RegisterLibFunc(&gtkTreeViewColumnGetAlignment, lib, "gtk_tree_view_column_get_alignment")
+
+		  purego.RegisterLibFunc(&gtkSpinButtonSpin, lib, "gtk_spin_button_spin")
+		 })
 }
 
 var (

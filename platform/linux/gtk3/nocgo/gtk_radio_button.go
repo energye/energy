@@ -34,3 +34,34 @@ func NewRadioButtonWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 	}
 	return AsRadioButton(unsafe.Pointer(r))
 }
+
+// NewRadioButton is a wrapper around gtk_radio_button_new(NULL).
+func NewRadioButton() *RadioButton {
+	r := gtk3.SysCall("gtk_radio_button_new", 0)
+	if r == 0 {
+		return nil
+	}
+	return AsRadioButton(unsafe.Pointer(r))
+}
+
+// NewRadioButtonFromWidget is a wrapper around gtk_radio_button_new_from_widget().
+func NewRadioButtonFromWidget(radioGroupMember *RadioButton) *RadioButton {
+	var member uintptr
+	if radioGroupMember != nil {
+		member = radioGroupMember.Instance()
+	}
+	r := gtk3.SysCall("gtk_radio_button_new_from_widget", member)
+	if r == 0 {
+		return nil
+	}
+	return AsRadioButton(unsafe.Pointer(r))
+}
+
+// NewRadioButtonWithLabel is a wrapper around gtk_radio_button_new_with_label(NULL, label).
+func NewRadioButtonWithLabel(label string) *RadioButton {
+	r := gtk3.SysCall("gtk_radio_button_new_with_label", 0, CStr(label))
+	if r == 0 {
+		return nil
+	}
+	return AsRadioButton(unsafe.Pointer(r))
+}

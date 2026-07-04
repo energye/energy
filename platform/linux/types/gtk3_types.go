@@ -966,3 +966,16 @@ const (
 	TREE_VIEW_COLUMN_AUTOSIZE  TreeViewColumnSizing = 1
 	TREE_VIEW_COLUMN_FIXED     TreeViewColumnSizing = 2
 )
+
+// SpinDirection is a representation of GTK's GtkSpinType.
+type SpinDirection = int32
+
+const (
+	SPIN_STEP_FORWARD  SpinDirection = 0
+	SPIN_STEP_BACKWARD SpinDirection = 1
+	SPIN_PAGE_FORWARD  SpinDirection = 2
+	SPIN_PAGE_BACKWARD SpinDirection = 3
+	SPIN_HOME          SpinDirection = 4
+	SPIN_END           SpinDirection = 5
+	SPIN_USER_DEFINED  SpinDirection = 6
+)
