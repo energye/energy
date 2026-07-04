@@ -6,6 +6,7 @@ import "C"
 import (
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
+	"github.com/energye/energy/v3/platform/linux/callback"
 )
 
 // MenuShell is a representation of GTK's GtkMenuShell.
@@ -107,4 +108,12 @@ func (v *MenuShell) BindModel(model *GMenuModel, actionNamespace string, withSep
 		mptr = unsafe.Pointer(model.Native())
 	}
 	C.gtk_menu_shell_bind_model(v.native(), (*C.GMenuModel)(mptr), cstr, CBool(withSeparators))
+}
+
+func (m *MenuShell) SetOnDeactivate(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnDeactivate, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *MenuShell) SetOnSelectionDone(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnSelectionDone, callback.C_trampoline_2_void, fn, 0)
 }

@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -58,4 +59,8 @@ func (m *TreeViewColumn) PackStart(cell ICellRenderer, expand bool) {
 func (m *TreeViewColumn) AddAttribute(renderer ICellRenderer, attribute string, column int) {
 	gtk3.SysCall("gtk_tree_view_column_add_attribute", m.Instance(),
 		renderer.Instance(), CStr(attribute), uintptr(column))
+}
+
+func (m *TreeViewColumn) SetOnClicked(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnClicked, callback.C_trampoline_2_void, fn, 0)
 }

@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -111,4 +112,12 @@ func (m *MenuShell) BindModel(model *GMenuModel, actionNamespace string, withSep
 	}
 	cstr := CStr(actionNamespace)
 	gtk3.SysCall("gtk_menu_shell_bind_model", m.Instance(), modelPtr, cstr, ToCBool(withSeparators))
+}
+
+func (m *MenuShell) SetOnDeactivate(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnDeactivate, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *MenuShell) SetOnSelectionDone(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnSelectionDone, callback.C_trampoline_2_void, fn, 0)
 }

@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -91,4 +92,12 @@ func (m *EntryCompletion) SetPopupSetWidth(popupSetWidth bool) {
 func (m *EntryCompletion) GetPopupSetWidth() bool {
 	r := gtk3.SysCall("gtk_entry_completion_get_popup_set_width", m.Instance())
 	return ToGoBool(r)
+}
+
+func (m *EntryCompletion) SetOnMatchSelected(fn TMatchSelectedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnMatchSelected, callback.C_trampoline_4_gboolean, fn, 0)
+}
+
+func (m *EntryCompletion) SetOnActionActivated(fn TActionActivatedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnActionActivated, callback.C_trampoline_3_void, fn, 0)
 }

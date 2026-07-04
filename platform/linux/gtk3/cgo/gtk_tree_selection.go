@@ -38,3 +38,32 @@ func (v *TreeSelection) GetMode() SelectionMode {
 func (m *TreeSelection) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
 	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }
+
+// GetSelected is a wrapper around gtk_tree_selection_get_selected().
+// Returns the TreeModel and TreeIter for the currently selected row (SINGLE/BROWSE mode).
+// If nothing is selected, returns nil, nil.
+func (v *TreeSelection) GetSelected() (ITreeModel, ITreeIter) {
+	var model *C.GtkTreeModel
+	var iter C.GtkTreeIter
+	ok := C.gtk_tree_selection_get_selected(v.native(), &model, &iter)
+	if ok == 0 || model == nil {
+		return nil, nil
+	}
+	obj := ToGoObject(unsafe.Pointer(model))
+	return &TreeStore{Object: obj}, &TreeIter{GtkTreeIter: iter}
+}
+
+// CountSelectedRows is a wrapper around gtk_tree_selection_count_selected_rows().
+func (v *TreeSelection) CountSelectedRows() int {
+	return int(C.gtk_tree_selection_count_selected_rows(v.native()))
+}
+
+// SelectAll is a wrapper around gtk_tree_selection_select_all().
+func (v *TreeSelection) SelectAll() {
+	C.gtk_tree_selection_select_all(v.native())
+}
+
+// UnselectAll is a wrapper around gtk_tree_selection_unselect_all().
+func (v *TreeSelection) UnselectAll() {
+	C.gtk_tree_selection_unselect_all(v.native())
+}

@@ -6,6 +6,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -100,4 +101,12 @@ func (v *EntryCompletion) SetPopupSetWidth(popupSetWidth bool) {
 func (v *EntryCompletion) GetPopupSetWidth() bool {
 	c := C.gtk_entry_completion_get_popup_set_width(v.native())
 	return GoBool(c)
+}
+
+func (m *EntryCompletion) SetOnMatchSelected(fn TMatchSelectedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnMatchSelected, callback.C_trampoline_4_gboolean, fn, 0)
+}
+
+func (m *EntryCompletion) SetOnActionActivated(fn TActionActivatedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnActionActivated, callback.C_trampoline_3_void, fn, 0)
 }

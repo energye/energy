@@ -277,6 +277,8 @@ type IMenuShell interface {
 	GetTakeFocus() bool
 	GetSelectedItem() (IWidget, error)
 	GetParentShell() (IMenuShell, error)
+	SetOnDeactivate(fn TNotifyEvent) ISignalHandlerID
+	SetOnSelectionDone(fn TNotifyEvent) ISignalHandlerID
 }
 
 type IMenuItem interface {
@@ -669,6 +671,7 @@ type IEntryBuffer interface {
 	SetText(text string)
 	GetBytes() uint
 	GetLength() uint
+	SetOnDeletedText(fn TDeletedTextEvent) ISignalHandlerID
 }
 
 // IEntryCompletion is a representation of GTK's GtkEntryCompletion.
@@ -678,6 +681,8 @@ type IEntryCompletion interface {
 	GetTextColumn() int
 	SetMinimumKeyLength(length int)
 	GetMinimumKeyLength() int
+	SetOnMatchSelected(fn TMatchSelectedEvent) ISignalHandlerID
+	SetOnActionActivated(fn TActionActivatedEvent) ISignalHandlerID
 }
 
 // IScrollbar is a representation of GTK's GtkScrollbar.
@@ -727,6 +732,9 @@ type INotebook interface {
 	SetTabPos(pos PositionType)
 	SetScrollable(scrollable bool)
 	GetScrollable() bool
+	SetOnSwitchPage(fn TSwitchPageEvent) ISignalHandlerID
+	SetOnPageAdded(fn TPageEvent) ISignalHandlerID
+	SetOnPageRemoved(fn TPageEvent) ISignalHandlerID
 }
 
 // IStatusbar is a representation of GTK's GtkStatusbar.
@@ -908,6 +916,7 @@ type ITreeViewColumn interface {
 	GetTitle() string
 	PackStart(cell ICellRenderer, expand bool)
 	AddAttribute(renderer ICellRenderer, attribute string, column int)
+	SetOnClicked(fn TNotifyEvent) ISignalHandlerID
 }
 
 // ITreeSelection is a representation of GTK's GtkTreeSelection.
@@ -916,6 +925,10 @@ type ITreeSelection interface {
 	SetMode(mode SelectionMode)
 	GetMode() SelectionMode
 	SetOnChanged(fn TNotifyEvent) ISignalHandlerID
+	GetSelected() (ITreeModel, ITreeIter)
+	CountSelectedRows() int
+	SelectAll()
+	UnselectAll()
 }
 
 // ITreeView is a representation of GTK's GtkTreeView.
@@ -959,6 +972,8 @@ type IFileChooserDialog interface {
 	SetFilter(filter IFileFilter)
 	GetFilter() IFileFilter
 	AddFilter(filter IFileFilter)
+	SetOnSelectionChanged(fn TNotifyEvent) ISignalHandlerID
+	SetOnFileActivated(fn TNotifyEvent) ISignalHandlerID
 }
 
 // IFileFilter is a representation of GTK's GtkFileFilter.

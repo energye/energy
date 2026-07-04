@@ -44,3 +44,30 @@ func (m *TreeSelection) GetMode() SelectionMode {
 func (m *TreeSelection) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
 	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }
+
+// GetSelected is a wrapper around gtk_tree_selection_get_selected().
+func (m *TreeSelection) GetSelected() (ITreeModel, ITreeIter) {
+	var model uintptr
+	var iter TreeIter
+	r := gtk3.SysCall("gtk_tree_selection_get_selected", m.Instance(), uintptr(unsafe.Pointer(&model)), uintptr(unsafe.Pointer(&iter)))
+	if r == 0 || model == 0 {
+		return nil, nil
+	}
+	treeModel := &TreeStore{Object: Object{instance: unsafe.Pointer(model)}}
+	return treeModel, &iter
+}
+
+// CountSelectedRows is a wrapper around gtk_tree_selection_count_selected_rows().
+func (m *TreeSelection) CountSelectedRows() int {
+	return int(gtk3.SysCall("gtk_tree_selection_count_selected_rows", m.Instance()))
+}
+
+// SelectAll is a wrapper around gtk_tree_selection_select_all().
+func (m *TreeSelection) SelectAll() {
+	gtk3.SysCall("gtk_tree_selection_select_all", m.Instance())
+}
+
+// UnselectAll is a wrapper around gtk_tree_selection_unselect_all().
+func (m *TreeSelection) UnselectAll() {
+	gtk3.SysCall("gtk_tree_selection_unselect_all", m.Instance())
+}

@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -99,4 +100,8 @@ func (m *EntryBuffer) EmitDeletedText(pos, nChars uint) {
 // EmitInsertedText is a wrapper around gtk_entry_buffer_emit_inserted_text().
 func (m *EntryBuffer) EmitInsertedText(pos uint, text string) {
 	gtk3.SysCall("gtk_entry_buffer_emit_inserted_text", m.Instance(), uintptr(pos), CStr(text), uintptr(len(text)))
+}
+
+func (m *EntryBuffer) SetOnDeletedText(fn TDeletedTextEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnDeletedText, callback.C_trampoline_4_void, fn, 0)
 }

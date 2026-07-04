@@ -8,6 +8,7 @@ import "C"
 import (
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
+	"github.com/energye/energy/v3/platform/linux/callback"
 )
 
 // EntryBuffer is a representation of GTK's GtkEntryBuffer.
@@ -119,4 +120,8 @@ func (v *EntryBuffer) EmitInsertedText(pos uint, text string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_entry_buffer_emit_inserted_text(v.native(), C.guint(pos),
 		(*C.gchar)(cstr), C.guint(len(text)))
+}
+
+func (m *EntryBuffer) SetOnDeletedText(fn TDeletedTextEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnDeletedText, callback.C_trampoline_4_void, fn, 0)
 }

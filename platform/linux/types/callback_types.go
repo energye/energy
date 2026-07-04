@@ -56,6 +56,17 @@ const (
 	EsnToggleCursorRow       EventSignalName = "toggle-cursor-row"
 	EsnStartInteractiveSearch EventSignalName = "start-interactive-search"
 	EsnMoveCursor            EventSignalName = "move-cursor"
+	EsnSwitchPage            EventSignalName = "switch-page"
+	EsnPageAdded             EventSignalName = "page-added"
+	EsnPageRemoved           EventSignalName = "page-removed"
+	EsnMatchSelected         EventSignalName = "match-selected"
+	EsnActionActivated       EventSignalName = "action-activated"
+	EsnDeletedText           EventSignalName = "deleted-text"
+	EsnSelectionChanged      EventSignalName = "selection-changed"
+	EsnFileActivated         EventSignalName = "file-activated"
+	EsnDeactivate            EventSignalName = "deactivate"
+	EsnSelectionDone         EventSignalName = "selection-done"
+	EsnActivateItem          EventSignalName = "activate-item"
 )
 
 // 信号事件类型
@@ -96,3 +107,9 @@ type TOffsetChangedEvent func(sender PGtkWidget, name uintptr, userData GPointer
 
 type TTreeRowExpandCollapseEvent func(sender PGtkWidget, iter uintptr, path uintptr, userData GPointer)
 type TTestExpandRowEvent func(sender PGtkWidget, iter uintptr, path uintptr, userData GPointer) bool
+
+type TSwitchPageEvent func(sender PGtkWidget, page uintptr, pageNum int32, userData GPointer)
+type TPageEvent func(sender PGtkWidget, page uintptr, userData GPointer)
+type TMatchSelectedEvent func(sender PGtkWidget, model uintptr, iter uintptr, userData GPointer) bool
+type TActionActivatedEvent func(sender PGtkWidget, actionIndex int32, userData GPointer)
+type TDeletedTextEvent func(sender PGtkWidget, position uintptr, nChars uintptr, userData GPointer)

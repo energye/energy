@@ -10,6 +10,7 @@ import (
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"runtime"
 	"unsafe"
+	"github.com/energye/energy/v3/platform/linux/callback"
 )
 
 // FileChooserDialog is a representation of GTK's GtkFileChooserDialog.
@@ -142,4 +143,12 @@ func (v *FileChooserDialog) GetFilter() IFileFilter {
 		return nil
 	}
 	return wrapFileFilter(ToGoObject(unsafe.Pointer(c)))
+}
+
+func (m *FileChooserDialog) SetOnSelectionChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnSelectionChanged, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *FileChooserDialog) SetOnFileActivated(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnFileActivated, callback.C_trampoline_3_void, fn, 0)
 }

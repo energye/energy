@@ -837,6 +837,10 @@ func init() {
 		// TreeSelection
 		imports.NewTable("gtk_tree_selection_set_mode", 0),
 		imports.NewTable("gtk_tree_selection_get_mode", 0),
+		imports.NewTable("gtk_tree_selection_get_selected", 0),
+		imports.NewTable("gtk_tree_selection_count_selected_rows", 0),
+		imports.NewTable("gtk_tree_selection_select_all", 0),
+		imports.NewTable("gtk_tree_selection_unselect_all", 0),
 		// TreePath
 		imports.NewTable("gtk_tree_path_new_from_string", 0),
 		imports.NewTable("gtk_tree_path_to_string", 0),

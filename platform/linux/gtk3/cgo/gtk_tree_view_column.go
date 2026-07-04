@@ -4,6 +4,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -58,4 +59,8 @@ func (v *TreeViewColumn) AddAttribute(renderer ICellRenderer, attribute string, 
 	defer C.free(unsafe.Pointer(cstr))
 	cr := renderer.(cellRenderer)
 	C.gtk_tree_view_column_add_attribute(v.native(), cr.toCellRenderer(), (*C.gchar)(cstr), C.gint(column))
+}
+
+func (m *TreeViewColumn) SetOnClicked(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnClicked, callback.C_trampoline_2_void, fn, 0)
 }

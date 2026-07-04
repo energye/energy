@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -92,4 +93,16 @@ func (m *Notebook) SetScrollable(scrollable bool) {
 func (m *Notebook) GetScrollable() bool {
 	r := gtk3.SysCall("gtk_notebook_get_scrollable", m.Instance())
 	return ToGoBool(r)
+}
+
+func (m *Notebook) SetOnSwitchPage(fn TSwitchPageEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnSwitchPage, callback.C_trampoline_4_void, fn, 0)
+}
+
+func (m *Notebook) SetOnPageAdded(fn TPageEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnPageAdded, callback.C_trampoline_3_void, fn, 0)
+}
+
+func (m *Notebook) SetOnPageRemoved(fn TPageEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnPageRemoved, callback.C_trampoline_3_void, fn, 0)
 }
