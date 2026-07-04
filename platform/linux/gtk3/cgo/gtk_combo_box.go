@@ -88,3 +88,40 @@ func (v *ComboBoxText) SetActive(index int) {
 func (m *ComboBoxText) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
 	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }
+
+// Insert is a wrapper around gtk_combo_box_text_insert().
+func (v *ComboBoxText) Insert(position int, id string, text string) {
+	cid := C.CString(id)
+	ctext := C.CString(text)
+	defer C.free(unsafe.Pointer(cid))
+	defer C.free(unsafe.Pointer(ctext))
+	C.gtk_combo_box_text_insert(v.native(), C.gint(position), (*C.gchar)(cid), (*C.gchar)(ctext))
+}
+
+// InsertText is a wrapper around gtk_combo_box_text_insert_text().
+func (v *ComboBoxText) InsertText(position int, text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_combo_box_text_insert_text(v.native(), C.gint(position), (*C.gchar)(cstr))
+}
+
+// Prepend is a wrapper around gtk_combo_box_text_prepend().
+func (v *ComboBoxText) Prepend(id string, text string) {
+	cid := C.CString(id)
+	ctext := C.CString(text)
+	defer C.free(unsafe.Pointer(cid))
+	defer C.free(unsafe.Pointer(ctext))
+	C.gtk_combo_box_text_prepend(v.native(), (*C.gchar)(cid), (*C.gchar)(ctext))
+}
+
+// PrependText is a wrapper around gtk_combo_box_text_prepend_text().
+func (v *ComboBoxText) PrependText(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_combo_box_text_prepend_text(v.native(), (*C.gchar)(cstr))
+}
+
+// Remove is a wrapper around gtk_combo_box_text_remove().
+func (v *ComboBoxText) Remove(position int) {
+	C.gtk_combo_box_text_remove(v.native(), C.gint(position))
+}

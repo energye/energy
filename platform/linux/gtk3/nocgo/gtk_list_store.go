@@ -72,3 +72,53 @@ func (m *ListStore) Remove(iter ITreeIter) bool {
 func (m *ListStore) Clear() {
 	gtk3.SysCall("gtk_list_store_clear", m.Instance())
 }
+
+// Insert is a wrapper around gtk_list_store_insert().
+func (m *ListStore) Insert(position int) ITreeIter {
+	var iter TreeIter
+	gtk3.SysCall("gtk_list_store_insert", m.Instance(), uintptr(unsafe.Pointer(&iter)), uintptr(position))
+	return &iter
+}
+
+// InsertBefore is a wrapper around gtk_list_store_insert_before().
+func (m *ListStore) InsertBefore(sibling ITreeIter) ITreeIter {
+	var iter TreeIter
+	sibPtr := uintptr(0)
+	if sibling != nil {
+		sibPtr = sibling.Instance()
+	}
+	gtk3.SysCall("gtk_list_store_insert_before", m.Instance(), uintptr(unsafe.Pointer(&iter)), sibPtr)
+	return &iter
+}
+
+// InsertAfter is a wrapper around gtk_list_store_insert_after().
+func (m *ListStore) InsertAfter(sibling ITreeIter) ITreeIter {
+	var iter TreeIter
+	sibPtr := uintptr(0)
+	if sibling != nil {
+		sibPtr = sibling.Instance()
+	}
+	gtk3.SysCall("gtk_list_store_insert_after", m.Instance(), uintptr(unsafe.Pointer(&iter)), sibPtr)
+	return &iter
+}
+
+// MoveBefore is a wrapper around gtk_list_store_move_before().
+func (m *ListStore) MoveBefore(iter, position ITreeIter) {
+	gtk3.SysCall("gtk_list_store_move_before", m.Instance(), iter.Instance(), position.Instance())
+}
+
+// MoveAfter is a wrapper around gtk_list_store_move_after().
+func (m *ListStore) MoveAfter(iter, position ITreeIter) {
+	gtk3.SysCall("gtk_list_store_move_after", m.Instance(), iter.Instance(), position.Instance())
+}
+
+// Swap is a wrapper around gtk_list_store_swap().
+func (m *ListStore) Swap(a, b ITreeIter) {
+	gtk3.SysCall("gtk_list_store_swap", m.Instance(), a.Instance(), b.Instance())
+}
+
+// IterIsValid is a wrapper around gtk_list_store_iter_is_valid().
+func (m *ListStore) IterIsValid(iter ITreeIter) bool {
+	r := gtk3.SysCall("gtk_list_store_iter_is_valid", m.Instance(), iter.Instance())
+	return ToGoBool(r)
+}

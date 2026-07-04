@@ -82,3 +82,59 @@ func (v *ListStore) Remove(iter types.ITreeIter) bool {
 func (v *ListStore) Clear() {
 	C.gtk_list_store_clear(v.native())
 }
+
+// Insert is a wrapper around gtk_list_store_insert().
+func (v *ListStore) Insert(position int) types.ITreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_insert(v.native(), &ti, C.gint(position))
+	return &TreeIter{ti}
+}
+
+// InsertBefore is a wrapper around gtk_list_store_insert_before().
+func (v *ListStore) InsertBefore(sibling types.ITreeIter) types.ITreeIter {
+	var ti C.GtkTreeIter
+	var s *C.GtkTreeIter
+	if sibling != nil {
+		s = sibling.(*TreeIter).native()
+	}
+	C.gtk_list_store_insert_before(v.native(), &ti, s)
+	return &TreeIter{ti}
+}
+
+// InsertAfter is a wrapper around gtk_list_store_insert_after().
+func (v *ListStore) InsertAfter(sibling types.ITreeIter) types.ITreeIter {
+	var ti C.GtkTreeIter
+	var s *C.GtkTreeIter
+	if sibling != nil {
+		s = sibling.(*TreeIter).native()
+	}
+	C.gtk_list_store_insert_after(v.native(), &ti, s)
+	return &TreeIter{ti}
+}
+
+// MoveBefore is a wrapper around gtk_list_store_move_before().
+func (v *ListStore) MoveBefore(iter, position types.ITreeIter) {
+	i := iter.(*TreeIter)
+	p := position.(*TreeIter)
+	C.gtk_list_store_move_before(v.native(), i.native(), p.native())
+}
+
+// MoveAfter is a wrapper around gtk_list_store_move_after().
+func (v *ListStore) MoveAfter(iter, position types.ITreeIter) {
+	i := iter.(*TreeIter)
+	p := position.(*TreeIter)
+	C.gtk_list_store_move_after(v.native(), i.native(), p.native())
+}
+
+// Swap is a wrapper around gtk_list_store_swap().
+func (v *ListStore) Swap(a, b types.ITreeIter) {
+	ia := a.(*TreeIter)
+	ib := b.(*TreeIter)
+	C.gtk_list_store_swap(v.native(), ia.native(), ib.native())
+}
+
+// IterIsValid is a wrapper around gtk_list_store_iter_is_valid().
+func (v *ListStore) IterIsValid(iter types.ITreeIter) bool {
+	i := iter.(*TreeIter)
+	return GoBool(C.gtk_list_store_iter_is_valid(v.native(), i.native()))
+}

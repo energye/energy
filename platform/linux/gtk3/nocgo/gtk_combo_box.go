@@ -88,3 +88,28 @@ func (m *ComboBoxText) SetActive(index int) {
 func (m *ComboBoxText) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
 	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }
+
+// Insert is a wrapper around gtk_combo_box_text_insert().
+func (m *ComboBoxText) Insert(position int, id string, text string) {
+	gtk3.SysCall("gtk_combo_box_text_insert", m.Instance(), uintptr(position), CStr(id), CStr(text))
+}
+
+// InsertText is a wrapper around gtk_combo_box_text_insert_text().
+func (m *ComboBoxText) InsertText(position int, text string) {
+	gtk3.SysCall("gtk_combo_box_text_insert_text", m.Instance(), uintptr(position), CStr(text))
+}
+
+// Prepend is a wrapper around gtk_combo_box_text_prepend().
+func (m *ComboBoxText) Prepend(id string, text string) {
+	gtk3.SysCall("gtk_combo_box_text_prepend", m.Instance(), CStr(id), CStr(text))
+}
+
+// PrependText is a wrapper around gtk_combo_box_text_prepend_text().
+func (m *ComboBoxText) PrependText(text string) {
+	gtk3.SysCall("gtk_combo_box_text_prepend_text", m.Instance(), CStr(text))
+}
+
+// Remove is a wrapper around gtk_combo_box_text_remove().
+func (m *ComboBoxText) Remove(position int) {
+	gtk3.SysCall("gtk_combo_box_text_remove", m.Instance(), uintptr(position))
+}

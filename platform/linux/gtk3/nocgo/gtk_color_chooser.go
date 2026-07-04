@@ -55,3 +55,17 @@ func (m *ColorChooserDialog) GetRGBA() GdkRGBA {
 	gtk3.SysCall("gtk_color_chooser_get_rgba", m.Instance(), uintptr(unsafe.Pointer(&rgba)))
 	return rgba
 }
+
+// SetRGBA is a wrapper around gtk_color_chooser_set_rgba().
+func (m *ColorChooserDialog) SetRGBA(rgba GdkRGBA) {
+	gtk3.SysCall("gtk_color_chooser_set_rgba", m.Instance(), uintptr(unsafe.Pointer(&rgba)))
+}
+
+// AddPalette is a wrapper around gtk_color_chooser_add_palette().
+func (m *ColorChooserDialog) AddPalette(orientation Orientation, colorsPerLine int, colors []GdkRGBA) {
+	n := len(colors)
+	if n == 0 {
+		return
+	}
+	gtk3.SysCall("gtk_color_chooser_add_palette", m.Instance(), uintptr(orientation), uintptr(colorsPerLine), uintptr(n), uintptr(unsafe.Pointer(&colors[0])))
+}

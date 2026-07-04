@@ -683,3 +683,29 @@ static inline gboolean _g_object_get_boolean_property(GObject *object, const gch
   g_value_unset(&value);
   return b;
 }
+
+// ---------- CellRendererText property setters (via g_object_set) ----------
+static inline void _cell_renderer_text_set_text(GtkCellRendererText *cr, const char *val) {
+  g_object_set(cr, "text", val, NULL);
+}
+static inline void _cell_renderer_text_set_markup(GtkCellRendererText *cr, const char *val) {
+  g_object_set(cr, "markup", val, NULL);
+}
+static inline void _cell_renderer_text_set_font(GtkCellRendererText *cr, const char *val) {
+  g_object_set(cr, "font", val, NULL);
+}
+static inline void _cell_renderer_text_set_foreground(GtkCellRendererText *cr, const char *val) {
+  g_object_set(cr, "foreground", val, NULL);
+}
+static inline void _cell_renderer_text_set_background(GtkCellRendererText *cr, const char *val) {
+  g_object_set(cr, "background", val, NULL);
+}
+static inline void _cell_renderer_text_set_alignment(GtkCellRendererText *cr, float val) {
+  g_object_set(cr, "alignment", val, NULL);
+}
+static inline void _cell_renderer_text_set_ellipsize(GtkCellRendererText *cr, int val) {
+  g_object_set(cr, "ellipsize", val, NULL);
+}
+static inline void _cell_renderer_text_set_width_chars(GtkCellRendererText *cr, int val) {
+  g_object_set(cr, "width-chars", val, NULL);
+}

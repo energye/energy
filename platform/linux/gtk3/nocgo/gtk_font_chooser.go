@@ -70,3 +70,37 @@ func (m *FontChooserDialog) GetPreviewText() string {
 func (m *FontChooserDialog) SetPreviewText(text string) {
 	gtk3.SysCall("gtk_font_chooser_set_preview_text", m.Instance(), CStr(text))
 }
+
+// GetFontFamily is a wrapper around gtk_font_chooser_get_font_family().
+func (m *FontChooserDialog) GetFontFamily() string {
+	r := gtk3.SysCall("gtk_font_chooser_get_font_family", m.Instance())
+	if r == 0 {
+		return ""
+	}
+	return GoStr(r)
+}
+
+// GetFontFace is a wrapper around gtk_font_chooser_get_font_face().
+func (m *FontChooserDialog) GetFontFace() string {
+	r := gtk3.SysCall("gtk_font_chooser_get_font_face", m.Instance())
+	if r == 0 {
+		return ""
+	}
+	return GoStr(r)
+}
+
+// GetFontSize is a wrapper around gtk_font_chooser_get_font_size().
+func (m *FontChooserDialog) GetFontSize() int {
+	return int(gtk3.SysCall("gtk_font_chooser_get_font_size", m.Instance()))
+}
+
+// SetShowPreviewEntry is a wrapper around gtk_font_chooser_set_show_preview_entry().
+func (m *FontChooserDialog) SetShowPreviewEntry(show bool) {
+	gtk3.SysCall("gtk_font_chooser_set_show_preview_entry", m.Instance(), ToCBool(show))
+}
+
+// GetShowPreviewEntry is a wrapper around gtk_font_chooser_get_show_preview_entry().
+func (m *FontChooserDialog) GetShowPreviewEntry() bool {
+	r := gtk3.SysCall("gtk_font_chooser_get_show_preview_entry", m.Instance())
+	return ToGoBool(r)
+}

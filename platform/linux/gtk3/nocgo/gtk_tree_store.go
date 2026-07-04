@@ -75,3 +75,76 @@ func (m *TreeStore) Remove(iter ITreeIter) bool {
 func (m *TreeStore) Clear() {
 	gtk3.SysCall("gtk_tree_store_clear", m.Instance())
 }
+
+// Insert is a wrapper around gtk_tree_store_insert().
+func (m *TreeStore) Insert(parent ITreeIter, position int) ITreeIter {
+	var iter TreeIter
+	parentPtr := uintptr(0)
+	if parent != nil {
+		parentPtr = parent.Instance()
+	}
+	gtk3.SysCall("gtk_tree_store_insert", m.Instance(), uintptr(unsafe.Pointer(&iter)), parentPtr, uintptr(position))
+	return &iter
+}
+
+// InsertBefore is a wrapper around gtk_tree_store_insert_before().
+func (m *TreeStore) InsertBefore(parent, sibling ITreeIter) ITreeIter {
+	var iter TreeIter
+	parentPtr := uintptr(0)
+	sibPtr := uintptr(0)
+	if parent != nil {
+		parentPtr = parent.Instance()
+	}
+	if sibling != nil {
+		sibPtr = sibling.Instance()
+	}
+	gtk3.SysCall("gtk_tree_store_insert_before", m.Instance(), uintptr(unsafe.Pointer(&iter)), parentPtr, sibPtr)
+	return &iter
+}
+
+// InsertAfter is a wrapper around gtk_tree_store_insert_after().
+func (m *TreeStore) InsertAfter(parent, sibling ITreeIter) ITreeIter {
+	var iter TreeIter
+	parentPtr := uintptr(0)
+	sibPtr := uintptr(0)
+	if parent != nil {
+		parentPtr = parent.Instance()
+	}
+	if sibling != nil {
+		sibPtr = sibling.Instance()
+	}
+	gtk3.SysCall("gtk_tree_store_insert_after", m.Instance(), uintptr(unsafe.Pointer(&iter)), parentPtr, sibPtr)
+	return &iter
+}
+
+// MoveBefore is a wrapper around gtk_tree_store_move_before().
+func (m *TreeStore) MoveBefore(iter, position ITreeIter) {
+	gtk3.SysCall("gtk_tree_store_move_before", m.Instance(), iter.Instance(), position.Instance())
+}
+
+// MoveAfter is a wrapper around gtk_tree_store_move_after().
+func (m *TreeStore) MoveAfter(iter, position ITreeIter) {
+	gtk3.SysCall("gtk_tree_store_move_after", m.Instance(), iter.Instance(), position.Instance())
+}
+
+// Swap is a wrapper around gtk_tree_store_swap().
+func (m *TreeStore) Swap(a, b ITreeIter) {
+	gtk3.SysCall("gtk_tree_store_swap", m.Instance(), a.Instance(), b.Instance())
+}
+
+// IterIsValid is a wrapper around gtk_tree_store_iter_is_valid().
+func (m *TreeStore) IterIsValid(iter ITreeIter) bool {
+	r := gtk3.SysCall("gtk_tree_store_iter_is_valid", m.Instance(), iter.Instance())
+	return ToGoBool(r)
+}
+
+// IsAncestor is a wrapper around gtk_tree_store_is_ancestor().
+func (m *TreeStore) IsAncestor(iter, descendant ITreeIter) bool {
+	r := gtk3.SysCall("gtk_tree_store_is_ancestor", m.Instance(), iter.Instance(), descendant.Instance())
+	return ToGoBool(r)
+}
+
+// GetDepth is a wrapper around gtk_tree_store_iter_depth().
+func (m *TreeStore) GetDepth(iter ITreeIter) int {
+	return int(gtk3.SysCall("gtk_tree_store_iter_depth", m.Instance(), iter.Instance()))
+}
