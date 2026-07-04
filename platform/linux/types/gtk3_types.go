@@ -957,3 +957,12 @@ const (
 	RESPONSE_CLOSE        ResponseType = -9
 	RESPONSE_HELP         ResponseType = -11
 )
+
+// TreeViewColumnSizing is a representation of GTK's GtkTreeViewColumnSizing.
+type TreeViewColumnSizing = int32
+
+const (
+	TREE_VIEW_COLUMN_GROW_ONLY TreeViewColumnSizing = 0
+	TREE_VIEW_COLUMN_AUTOSIZE  TreeViewColumnSizing = 1
+	TREE_VIEW_COLUMN_FIXED     TreeViewColumnSizing = 2
+)

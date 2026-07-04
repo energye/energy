@@ -915,8 +915,32 @@ type ITreeViewColumn interface {
 	SetTitle(title string)
 	GetTitle() string
 	PackStart(cell ICellRenderer, expand bool)
+	PackEnd(cell ICellRenderer, expand bool)
 	AddAttribute(renderer ICellRenderer, attribute string, column int)
 	SetOnClicked(fn TNotifyEvent) ISignalHandlerID
+	SetResizable(resizable bool)
+	GetResizable() bool
+	SetSizing(sizing TreeViewColumnSizing)
+	GetSizing() TreeViewColumnSizing
+	SetFixedWidth(fixedWidth int)
+	GetFixedWidth() int
+	SetMinWidth(minWidth int)
+	GetMinWidth() int
+	SetMaxWidth(maxWidth int)
+	GetMaxWidth() int
+	SetExpand(expand bool)
+	GetExpand() bool
+	SetSortColumnId(sortColumnId int)
+	GetSortColumnId() int
+	SetSortIndicator(setting bool)
+	GetSortIndicator() bool
+	SetReorderable(reorderable bool)
+	GetReorderable() bool
+	SetAlignment(xalign float32)
+	GetAlignment() float32
+	GetWidth() int
+	SetSpacing(spacing int)
+	GetSpacing() int
 }
 
 // ITreeSelection is a representation of GTK's GtkTreeSelection.

@@ -71,6 +71,9 @@ var (
 	gtkLevelBarGetMinValue func(uintptr) float64
 	gtkLevelBarSetMaxValue func(uintptr, float64)
 	gtkLevelBarGetMaxValue func(uintptr) float64
+
+	gtkTreeViewColumnSetAlignment func(uintptr, float32)
+	gtkTreeViewColumnGetAlignment func(uintptr) float32
 )
 
 func registerGtkFloatFuncs() {
@@ -134,9 +137,12 @@ func registerGtkFloatFuncs() {
 		purego.RegisterLibFunc(&gtkLevelBarGetMaxValue, lib, "gtk_level_bar_get_max_value")
 
 		purego.RegisterLibFunc(&gtkProgressBarSetFraction, lib, "gtk_progress_bar_set_fraction")
-		purego.RegisterLibFunc(&gtkProgressBarGetFraction, lib, "gtk_progress_bar_get_fraction")
-		purego.RegisterLibFunc(&gtkProgressBarSetPulseStep, lib, "gtk_progress_bar_set_pulse_step")
-	})
+		 purego.RegisterLibFunc(&gtkProgressBarGetFraction, lib, "gtk_progress_bar_get_fraction")
+		 purego.RegisterLibFunc(&gtkProgressBarSetPulseStep, lib, "gtk_progress_bar_set_pulse_step")
+
+		 purego.RegisterLibFunc(&gtkTreeViewColumnSetAlignment, lib, "gtk_tree_view_column_set_alignment")
+		 purego.RegisterLibFunc(&gtkTreeViewColumnGetAlignment, lib, "gtk_tree_view_column_get_alignment")
+		})
 }
 
 var (
