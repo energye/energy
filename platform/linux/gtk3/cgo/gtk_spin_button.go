@@ -3,7 +3,11 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // SpinButton is a representation of GTK's GtkSpinButton.
 type SpinButton struct {
@@ -57,4 +61,8 @@ func (v *SpinButton) SetIncrements(step, page float64) {
 // SetDigits is a wrapper around gtk_spin_button_set_digits().
 func (v *SpinButton) SetDigits(digits uint) {
 	C.gtk_spin_button_set_digits(v.native(), C.guint(digits))
+}
+
+func (m *SpinButton) SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnValueChanged, callback.C_trampoline_2_void, fn, 0)
 }

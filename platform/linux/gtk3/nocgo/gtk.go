@@ -906,6 +906,7 @@ func init() {
 		imports.NewTable("gtk_color_chooser_dialog_new", 0),
 		imports.NewTable("gtk_color_chooser_get_use_alpha", 0),
 		imports.NewTable("gtk_color_chooser_set_use_alpha", 0),
+		imports.NewTable("gtk_color_chooser_get_rgba", 0),
 		// FontChooserDialog
 		imports.NewTable("gtk_font_chooser_dialog_new", 0),
 		imports.NewTable("gtk_font_chooser_get_font", 0),

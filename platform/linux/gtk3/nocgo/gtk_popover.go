@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -72,4 +73,8 @@ func (m *Popover) Popdown() {
 
 func (m *Popover) Popup() {
 	gtk3.SysCall("gtk_popover_popup", m.Instance())
+}
+
+func (m *Popover) SetOnClosed(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnClosed, callback.C_trampoline_2_void, fn, 0)
 }

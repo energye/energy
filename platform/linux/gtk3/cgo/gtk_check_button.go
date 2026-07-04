@@ -3,7 +3,11 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // CheckButton is a representation of GTK's GtkCheckButton.
 type CheckButton struct {
@@ -38,4 +42,8 @@ func (v *CheckButton) GetActive() bool {
 // SetActive is a wrapper around gtk_toggle_button_set_active().
 func (v *CheckButton) SetActive(isActive bool) {
 	C.gtk_toggle_button_set_active(C.toGtkToggleButton(unsafe.Pointer(v.GObject)), CBool(isActive))
+}
+
+func (m *CheckButton) SetOnToggled(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnToggled, callback.C_trampoline_2_void, fn, 0)
 }

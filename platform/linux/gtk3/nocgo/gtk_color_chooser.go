@@ -49,3 +49,9 @@ func (m *ColorChooserDialog) GetUseAlpha() bool {
 func (m *ColorChooserDialog) SetUseAlpha(useAlpha bool) {
 	gtk3.SysCall("gtk_color_chooser_set_use_alpha", m.Instance(), ToCBool(useAlpha))
 }
+
+func (m *ColorChooserDialog) GetRGBA() GdkRGBA {
+	var rgba GdkRGBA
+	gtk3.SysCall("gtk_color_chooser_get_rgba", m.Instance(), uintptr(unsafe.Pointer(&rgba)))
+	return rgba
+}

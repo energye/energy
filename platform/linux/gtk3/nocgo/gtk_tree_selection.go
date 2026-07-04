@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -38,4 +39,8 @@ func (m *TreeSelection) SetMode(mode SelectionMode) {
 func (m *TreeSelection) GetMode() SelectionMode {
 	r := gtk3.SysCall("gtk_tree_selection_get_mode", m.Instance())
 	return SelectionMode(r)
+}
+
+func (m *TreeSelection) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

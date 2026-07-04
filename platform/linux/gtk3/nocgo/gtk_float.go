@@ -132,5 +132,15 @@ func registerGtkFloatFuncs() {
 		purego.RegisterLibFunc(&gtkLevelBarGetMinValue, lib, "gtk_level_bar_get_min_value")
 		purego.RegisterLibFunc(&gtkLevelBarSetMaxValue, lib, "gtk_level_bar_set_max_value")
 		purego.RegisterLibFunc(&gtkLevelBarGetMaxValue, lib, "gtk_level_bar_get_max_value")
+
+		purego.RegisterLibFunc(&gtkProgressBarSetFraction, lib, "gtk_progress_bar_set_fraction")
+		purego.RegisterLibFunc(&gtkProgressBarGetFraction, lib, "gtk_progress_bar_get_fraction")
+		purego.RegisterLibFunc(&gtkProgressBarSetPulseStep, lib, "gtk_progress_bar_set_pulse_step")
 	})
 }
+
+var (
+ gtkProgressBarSetFraction  func(uintptr, float64)
+ gtkProgressBarGetFraction  func(uintptr) float64
+ gtkProgressBarSetPulseStep func(uintptr, float64)
+)

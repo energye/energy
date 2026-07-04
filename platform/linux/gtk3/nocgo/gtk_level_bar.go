@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -73,4 +74,8 @@ func (m *LevelBar) SetMode(mode LevelBarMode) {
 func (m *LevelBar) GetMode() LevelBarMode {
 	r := gtk3.SysCall("gtk_level_bar_get_mode", m.Instance())
 	return LevelBarMode(r)
+}
+
+func (m *LevelBar) SetOnOffsetChanged(fn TOffsetChangedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnOffsetChanged, callback.C_trampoline_3_void, fn, 0)
 }

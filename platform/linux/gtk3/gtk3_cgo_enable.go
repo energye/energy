@@ -458,8 +458,12 @@ func NewSeparator(orientation types.Orientation) types.ISeparator {
 	return cgo.NewSeparator(orientation)
 }
 
-func NewRadioButtonWithLabelFromWidget(radioGroupMember *cgo.RadioButton, label string) *cgo.RadioButton {
-	return cgo.NewRadioButtonWithLabelFromWidget(radioGroupMember, label)
+func NewRadioButtonWithLabelFromWidget(radioGroupMember types.IRadioButton, label string) types.IRadioButton {
+	var r *cgo.RadioButton
+	if radioGroupMember != nil {
+		r = radioGroupMember.(*cgo.RadioButton)
+	}
+	return cgo.NewRadioButtonWithLabelFromWidget(r, label)
 }
 
 func NewAboutDialog() types.IAboutDialog {

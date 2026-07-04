@@ -5,6 +5,7 @@ package cgo
 import "C"
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -211,4 +212,8 @@ func (v *TextBuffer) RemoveTagByName(name string, start, end ITextIter) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_text_buffer_remove_tag_by_name(v.native(), (*C.gchar)(cstr), &s.nativeIter, &e.nativeIter)
+}
+
+func (m *TextBuffer) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

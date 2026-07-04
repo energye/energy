@@ -3,6 +3,7 @@ package cgo
 // #include <gtk/gtk.h>
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -64,4 +65,8 @@ func (v *Popover) Popdown() {
 
 func (v *Popover) Popup() {
 	C.gtk_popover_popup(v.native())
+}
+
+func (m *Popover) SetOnClosed(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnClosed, callback.C_trampoline_2_void, fn, 0)
 }

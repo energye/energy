@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -70,4 +71,8 @@ func (m *SpinButton) SetIncrements(step, page float64) {
 // SetDigits is a wrapper around gtk_spin_button_set_digits().
 func (m *SpinButton) SetDigits(digits uint) {
 	gtk3.SysCall("gtk_spin_button_set_digits", m.Instance(), uintptr(digits))
+}
+
+func (m *SpinButton) SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnValueChanged, callback.C_trampoline_2_void, fn, 0)
 }

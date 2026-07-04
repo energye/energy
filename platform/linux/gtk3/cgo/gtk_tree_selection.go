@@ -4,6 +4,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -32,4 +33,8 @@ func (v *TreeSelection) SetMode(mode SelectionMode) {
 // GetMode is a wrapper around gtk_tree_selection_get_mode().
 func (v *TreeSelection) GetMode() SelectionMode {
 	return SelectionMode(C.gtk_tree_selection_get_mode(v.native()))
+}
+
+func (m *TreeSelection) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

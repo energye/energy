@@ -38,6 +38,24 @@ const (
 	EsnValueChanged          EventSignalName = "value-changed"
 	EsnDestroy               EventSignalName = "destroy"
 	EsnResponse              EventSignalName = "response"
+	EsnToggled               EventSignalName = "toggled"
+	EsnClosed                EventSignalName = "closed"
+	EsnNotifyActive          EventSignalName = "notify::active"
+	EsnRowSelected           EventSignalName = "row-selected"
+	EsnRowActivated          EventSignalName = "row-activated"
+	EsnOffsetChanged         EventSignalName = "offset-changed"
+	EsnCursorChanged         EventSignalName = "cursor-changed"
+	EsnRowExpanded           EventSignalName = "row-expanded"
+	EsnRowCollapsed          EventSignalName = "row-collapsed"
+	EsnColumnsChanged        EventSignalName = "columns-changed"
+	EsnTestExpandRow         EventSignalName = "test-expand-row"
+	EsnTestCollapseRow       EventSignalName = "test-collapse-row"
+	EsnSelectAll             EventSignalName = "select-all"
+	EsnUnselectAll           EventSignalName = "unselect-all"
+	EsnSelectCursorRow       EventSignalName = "select-cursor-row"
+	EsnToggleCursorRow       EventSignalName = "toggle-cursor-row"
+	EsnStartInteractiveSearch EventSignalName = "start-interactive-search"
+	EsnMoveCursor            EventSignalName = "move-cursor"
 )
 
 // 信号事件类型
@@ -66,3 +84,15 @@ type TFocusOutEvent func(sender PGtkWidget, event PGdkEventFocus, userData GPoin
 type TThemeChangedEvent func(sender PGtkWidget, pspec uintptr, userData GPointer)
 type TValueChangedEvent func(sender PGtkWidget, userData GPointer)
 type TResponseEvent func(sender PGtkWidget, responseId int32, userData GPointer)
+
+// TNotifyActiveEvent 用于 notify::* 属性变化通知
+type TNotifyActiveEvent func(sender PGtkWidget, pspec uintptr, userData GPointer)
+
+// TRowActivatedEvent 用于 TreeView row-activated
+type TRowActivatedEvent func(sender PGtkWidget, path uintptr, column uintptr, userData GPointer)
+
+// TOffsetChangedEvent 用于 LevelBar offset-changed
+type TOffsetChangedEvent func(sender PGtkWidget, name uintptr, userData GPointer)
+
+type TTreeRowExpandCollapseEvent func(sender PGtkWidget, iter uintptr, path uintptr, userData GPointer)
+type TTestExpandRowEvent func(sender PGtkWidget, iter uintptr, path uintptr, userData GPointer) bool

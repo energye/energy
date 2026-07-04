@@ -4,6 +4,7 @@ package cgo
 // #include "gtk_header_bar.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -57,4 +58,8 @@ func (v *ListBox) SetSelectionMode(mode SelectionMode) {
 
 func (v *ListBox) GetSelectionMode() SelectionMode {
 	return SelectionMode(C.gtk_list_box_get_selection_mode(v.native()))
+}
+
+func (m *ListBox) SetOnRowSelected(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnRowSelected, callback.C_trampoline_3_void, fn, 0)
 }

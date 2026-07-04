@@ -10,7 +10,11 @@
 
 package nocgo
 
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // ComboBoxText is a representation of GTK's GtkComboBoxText.
 type ComboBoxText struct {
@@ -79,4 +83,8 @@ func (m *ComboBoxText) GetActive() int {
 // SetActive is a wrapper around gtk_combo_box_set_active().
 func (m *ComboBoxText) SetActive(index int) {
 	gtk3.SysCall("gtk_combo_box_set_active", m.Instance(), uintptr(index))
+}
+
+func (m *ComboBoxText) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

@@ -3,7 +3,11 @@ package cgo
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
+	"unsafe"
+)
 
 // ComboBoxText is a representation of GTK's GtkComboBoxText.
 type ComboBoxText struct {
@@ -79,4 +83,8 @@ func (v *ComboBoxText) GetActive() int {
 // SetActive is a wrapper around gtk_combo_box_set_active().
 func (v *ComboBoxText) SetActive(index int) {
 	C.gtk_combo_box_set_active(C.toGtkComboBox(unsafe.Pointer(v.GObject)), C.gint(index))
+}
+
+func (m *ComboBoxText) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

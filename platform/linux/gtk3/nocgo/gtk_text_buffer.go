@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -215,4 +216,8 @@ func (m *TextBuffer) RemoveTagByName(name string, start, end ITextIter) {
 	s := start.(*TextIter)
 	e := end.(*TextIter)
 	gtk3.SysCall("gtk_text_buffer_remove_tag_by_name", m.Instance(), CStr(name), s.native(), e.native())
+}
+
+func (m *TextBuffer) SetOnChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnChanged, callback.C_trampoline_2_void, fn, 0)
 }

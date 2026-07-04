@@ -37,15 +37,14 @@ func NewProgressBar() *ProgressBar {
 
 // SetFraction is a wrapper around gtk_progress_bar_set_fraction().
 func (m *ProgressBar) SetFraction(fraction float64) {
-	gtk3.SysCall("gtk_progress_bar_set_fraction", m.Instance(), uintptr(uint64(fraction*4294967295)))
+	registerGtkFloatFuncs()
+	gtkProgressBarSetFraction(m.Instance(), fraction)
 }
 
 // GetFraction is a wrapper around gtk_progress_bar_get_fraction().
-// Note: purego SysCall returns uintptr, gdouble is returned via FFI float convention.
-// For accurate float64 return, a purego.RegisterLibFunc-based approach would be needed.
 func (m *ProgressBar) GetFraction() float64 {
-	r := gtk3.SysCall("gtk_progress_bar_get_fraction", m.Instance())
-	return float64(r)
+	registerGtkFloatFuncs()
+	return gtkProgressBarGetFraction(m.Instance())
 }
 
 // Pulse is a wrapper around gtk_progress_bar_pulse().
@@ -65,5 +64,6 @@ func (m *ProgressBar) SetShowText(showText bool) {
 
 // SetPulseStep is a wrapper around gtk_progress_bar_set_pulse_step().
 func (m *ProgressBar) SetPulseStep(fraction float64) {
-	gtk3.SysCall("gtk_progress_bar_set_pulse_step", m.Instance(), uintptr(uint64(fraction*4294967295)))
+	registerGtkFloatFuncs()
+	gtkProgressBarSetPulseStep(m.Instance(), fraction)
 }

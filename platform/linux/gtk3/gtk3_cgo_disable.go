@@ -436,8 +436,12 @@ func NewSeparator(orientation types.Orientation) types.ISeparator {
 	return nocgo.NewSeparator(orientation)
 }
 
-func NewRadioButtonWithLabelFromWidget(radioGroupMember *nocgo.RadioButton, label string) *nocgo.RadioButton {
-	return nocgo.NewRadioButtonWithLabelFromWidget(radioGroupMember, label)
+func NewRadioButtonWithLabelFromWidget(radioGroupMember types.IRadioButton, label string) types.IRadioButton {
+	var r *nocgo.RadioButton
+	if radioGroupMember != nil {
+		r = radioGroupMember.(*nocgo.RadioButton)
+	}
+	return nocgo.NewRadioButtonWithLabelFromWidget(r, label)
 }
 
 func NewAboutDialog() types.IAboutDialog {

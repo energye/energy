@@ -11,6 +11,8 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
+	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
 
@@ -52,4 +54,8 @@ func (m *Switch) GetState() bool {
 
 func (m *Switch) SetState(state bool) {
 	gtk3.SysCall("gtk_switch_set_state", m.Instance(), ToCBool(state))
+}
+
+func (m *Switch) SetOnActiveNotify(fn TNotifyActiveEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnNotifyActive, callback.C_trampoline_3_void, fn, 0)
 }

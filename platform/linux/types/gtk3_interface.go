@@ -636,6 +636,7 @@ type ISwitch interface {
 	SetActive(isActive bool)
 	GetState() bool
 	SetState(state bool)
+	SetOnActiveNotify(fn TNotifyActiveEvent) ISignalHandlerID
 }
 
 // IInfoBar is a representation of GTK's GtkInfoBar.
@@ -751,6 +752,7 @@ type ISpinButton interface {
 	SetRange(min, max float64)
 	SetIncrements(step, page float64)
 	SetDigits(digits uint)
+	SetOnValueChanged(fn TValueChangedEvent) ISignalHandlerID
 }
 
 // ICheckButton is a representation of GTK's GtkCheckButton.
@@ -758,6 +760,7 @@ type ICheckButton interface {
 	IButton
 	GetActive() bool
 	SetActive(isActive bool)
+	SetOnToggled(fn TNotifyEvent) ISignalHandlerID
 }
 
 // ICellRenderer is a representation of GTK's GtkCellRenderer.
@@ -822,6 +825,7 @@ type ITextBuffer interface {
 	GetIterAtMark(mark ITextMark) ITextIter
 	ApplyTagByName(name string, start, end ITextIter)
 	RemoveTagByName(name string, start, end ITextIter)
+	SetOnChanged(fn TNotifyEvent) ISignalHandlerID
 }
 
 // ITextMark is a representation of GTK's GtkTextMark.
@@ -911,6 +915,7 @@ type ITreeSelection interface {
 	IObject
 	SetMode(mode SelectionMode)
 	GetMode() SelectionMode
+	SetOnChanged(fn TNotifyEvent) ISignalHandlerID
 }
 
 // ITreeView is a representation of GTK's GtkTreeView.
@@ -926,6 +931,17 @@ type ITreeView interface {
 	GetHeadersVisible() bool
 	ExpandAll()
 	CollapseAll()
+	SetOnRowActivated(fn TRowActivatedEvent) ISignalHandlerID
+	SetOnCursorChanged(fn TNotifyEvent) ISignalHandlerID
+	SetOnRowExpanded(fn TTreeRowExpandCollapseEvent) ISignalHandlerID
+	SetOnRowCollapsed(fn TTreeRowExpandCollapseEvent) ISignalHandlerID
+	SetOnTestExpandRow(fn TTestExpandRowEvent) ISignalHandlerID
+	SetOnTestCollapseRow(fn TTestExpandRowEvent) ISignalHandlerID
+	SetOnColumnsChanged(fn TNotifyEvent) ISignalHandlerID
+	SetOnSelectAll(fn TNotifyEvent) ISignalHandlerID
+	SetOnUnselectAll(fn TNotifyEvent) ISignalHandlerID
+	SetOnToggleCursorRow(fn TNotifyEvent) ISignalHandlerID
+	SetOnStartInteractiveSearch(fn TNotifyEvent) ISignalHandlerID
 }
 
 // IFileChooserDialog is a representation of GTK's GtkFileChooserDialog.
@@ -963,6 +979,7 @@ type IComboBoxText interface {
 	RemoveAll()
 	GetActive() int
 	SetActive(index int)
+	SetOnChanged(fn TNotifyEvent) ISignalHandlerID
 }
 
 // IGrid is a representation of GTK's GtkGrid.
@@ -987,7 +1004,7 @@ type ISeparator interface {
 
 // IRadioButton is a representation of GTK's GtkRadioButton.
 type IRadioButton interface {
-	IButton
+	ICheckButton
 }
 
 // IAboutDialog is a representation of GTK's GtkAboutDialog.
@@ -1014,6 +1031,7 @@ type IColorChooserDialog interface {
 	IDialog
 	GetUseAlpha() bool
 	SetUseAlpha(useAlpha bool)
+	GetRGBA() GdkRGBA
 }
 
 // IFontChooserDialog is a representation of GTK's GtkFontChooserDialog.
@@ -1054,6 +1072,7 @@ type ILevelBar interface {
 	GetMaxValue() float64
 	SetMode(mode LevelBarMode)
 	GetMode() LevelBarMode
+	SetOnOffsetChanged(fn TOffsetChangedEvent) ISignalHandlerID
 }
 
 // IPaned is a representation of GTK's GtkPaned.
@@ -1076,6 +1095,7 @@ type IListBox interface {
 	GetSelectedRow() IWidget
 	SetSelectionMode(mode SelectionMode)
 	GetSelectionMode() SelectionMode
+	SetOnRowSelected(fn TNotifyEvent) ISignalHandlerID
 }
 
 // IPopover is a representation of GTK's GtkPopover.
@@ -1089,6 +1109,7 @@ type IPopover interface {
 	GetModal() bool
 	Popdown()
 	Popup()
+	SetOnClosed(fn TNotifyEvent) ISignalHandlerID
 }
 
 // ISearchEntry is a representation of GTK's GtkSearchEntry.

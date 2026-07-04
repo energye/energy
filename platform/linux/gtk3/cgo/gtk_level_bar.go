@@ -4,6 +4,7 @@ package cgo
 // #include "gtk.go.h"
 import "C"
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -61,4 +62,8 @@ func (v *LevelBar) SetMode(mode LevelBarMode) {
 
 func (v *LevelBar) GetMode() LevelBarMode {
 	return LevelBarMode(C.gtk_level_bar_get_mode(v.native()))
+}
+
+func (m *LevelBar) SetOnOffsetChanged(fn TOffsetChangedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnOffsetChanged, callback.C_trampoline_3_void, fn, 0)
 }

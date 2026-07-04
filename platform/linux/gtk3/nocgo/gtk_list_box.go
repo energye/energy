@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -63,4 +64,8 @@ func (m *ListBox) SetSelectionMode(mode SelectionMode) {
 func (m *ListBox) GetSelectionMode() SelectionMode {
 	r := gtk3.SysCall("gtk_list_box_get_selection_mode", m.Instance())
 	return SelectionMode(r)
+}
+
+func (m *ListBox) SetOnRowSelected(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnRowSelected, callback.C_trampoline_3_void, fn, 0)
 }

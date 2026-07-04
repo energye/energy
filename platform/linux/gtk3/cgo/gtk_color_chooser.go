@@ -48,3 +48,9 @@ func (v *ColorChooserDialog) GetUseAlpha() bool {
 func (v *ColorChooserDialog) SetUseAlpha(useAlpha bool) {
 	C.gtk_color_chooser_set_use_alpha(C.toGtkColorChooser(unsafe.Pointer(v.GObject)), CBool(useAlpha))
 }
+
+func (v *ColorChooserDialog) GetRGBA() GdkRGBA {
+	var c C.GdkRGBA
+	C.gtk_color_chooser_get_rgba(C.toGtkColorChooser(unsafe.Pointer(v.GObject)), &c)
+	return GdkRGBA{Red: float64(c.red), Green: float64(c.green), Blue: float64(c.blue), Alpha: float64(c.alpha)}
+}

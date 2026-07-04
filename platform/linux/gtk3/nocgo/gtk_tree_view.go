@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -107,6 +108,50 @@ func (m *TreeView) SetHeadersVisible(show bool) {
 func (m *TreeView) GetHeadersVisible() bool {
 	r := gtk3.SysCall("gtk_tree_view_get_headers_visible", m.Instance())
 	return ToGoBool(r)
+}
+
+func (m *TreeView) SetOnRowActivated(fn TRowActivatedEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnRowActivated, callback.C_trampoline_4_void, fn, 0)
+}
+
+func (m *TreeView) SetOnCursorChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnCursorChanged, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *TreeView) SetOnRowExpanded(fn TTreeRowExpandCollapseEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnRowExpanded, callback.C_trampoline_4_void, fn, 0)
+}
+
+func (m *TreeView) SetOnRowCollapsed(fn TTreeRowExpandCollapseEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnRowCollapsed, callback.C_trampoline_4_void, fn, 0)
+}
+
+func (m *TreeView) SetOnTestExpandRow(fn TTestExpandRowEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnTestExpandRow, callback.C_trampoline_4_gboolean, fn, 0)
+}
+
+func (m *TreeView) SetOnTestCollapseRow(fn TTestExpandRowEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnTestCollapseRow, callback.C_trampoline_4_gboolean, fn, 0)
+}
+
+func (m *TreeView) SetOnColumnsChanged(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnColumnsChanged, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *TreeView) SetOnSelectAll(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnSelectAll, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *TreeView) SetOnUnselectAll(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnUnselectAll, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *TreeView) SetOnToggleCursorRow(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnToggleCursorRow, callback.C_trampoline_2_void, fn, 0)
+}
+
+func (m *TreeView) SetOnStartInteractiveSearch(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnStartInteractiveSearch, callback.C_trampoline_2_void, fn, 0)
 }
 
 // ExpandAll is a wrapper around gtk_tree_view_expand_all().

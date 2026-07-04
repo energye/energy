@@ -11,6 +11,7 @@
 package nocgo
 
 import (
+	"github.com/energye/energy/v3/platform/linux/callback"
 	. "github.com/energye/energy/v3/platform/linux/types"
 	"unsafe"
 )
@@ -47,4 +48,8 @@ func (m *CheckButton) GetActive() bool {
 // SetActive is a wrapper around gtk_toggle_button_set_active().
 func (m *CheckButton) SetActive(isActive bool) {
 	gtk3.SysCall("gtk_toggle_button_set_active", m.Instance(), ToCBool(isActive))
+}
+
+func (m *CheckButton) SetOnToggled(fn TNotifyEvent) ISignalHandlerID {
+	return callback.Connect(m.Instance(), EsnToggled, callback.C_trampoline_2_void, fn, 0)
 }
