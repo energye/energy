@@ -186,8 +186,8 @@ var (
 )
 
 func init() {
-	//tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
-	tmpLibs := []string{linux.Libwebkit2gtk4_1_0, linux.Libwebkit2gtk4_0_37}
+	tmpLibs := []string{linux.Libwebkit2gtk4_0_37, linux.Libwebkit2gtk4_0}
+	//tmpLibs := []string{linux.Libwebkit2gtk4_1_0, linux.Libwebkit2gtk4_0_37}
 	for _, lib := range tmpLibs {
 		webkit2gtk4_x = linux.LibLoad(lib)
 		if webkit2gtk4_x != nil {
