@@ -520,3 +520,25 @@ func SeparatorMenuItemNew() types.IMenuItem {
 func NewFileFilter() types.IFileFilter {
 	return cgo.NewFileFilter()
 }
+
+// SetX11ErrorHandlers registers X11 error handler callbacks and installs them.
+func SetX11ErrorHandlers(onError, onIOError func() bool) {
+	cgo.SetX11ErrorHandlers(onError, onIOError)
+}
+
+// WindowX11ID returns the X11 Window XID for a realized GTK window.
+// CEF on Linux requires the native XID, not a GtkWidget pointer.
+func WindowX11ID(win types.IWindow) uintptr {
+	return cgo.WindowX11ID(win)
+}
+
+// UseDefaultX11VisualForGtk overrides the GTK window's visual with the default
+// X11 visual. Call before the window is shown/realized.
+func UseDefaultX11VisualForGtk(win types.IWindow) {
+	cgo.UseDefaultX11VisualForGtk(win)
+}
+
+// FlushDisplay flushes the X11 display for a realized GTK window.
+func FlushDisplay(win types.IWindow) {
+	cgo.FlushDisplay(win)
+}

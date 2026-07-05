@@ -493,3 +493,25 @@ func SeparatorMenuItemNew() types.IMenuItem {
 func NewFileFilter() types.IFileFilter {
 	return nocgo.NewFileFilter()
 }
+
+// SetX11ErrorHandlers registers X11 error handler callbacks and installs them.
+func SetX11ErrorHandlers(onError, onIOError func() bool) {
+	nocgo.SetX11ErrorHandlers(onError, onIOError)
+}
+
+// WindowX11ID returns the X11 Window XID for a realized GTK window.
+// In nocgo mode returns 0 (requires CGo to call gdk_x11_window_get_xid).
+func WindowX11ID(win types.IWindow) uintptr {
+	return nocgo.WindowX11ID(win)
+}
+
+// UseDefaultX11VisualForGtk overrides the GTK window's visual with the default
+// X11 visual. Call before the window is shown/realized.
+func UseDefaultX11VisualForGtk(win types.IWindow) {
+	nocgo.UseDefaultX11VisualForGtk(win)
+}
+
+// FlushDisplay flushes the X11 display for a realized GTK window.
+func FlushDisplay(win types.IWindow) {
+	nocgo.FlushDisplay(win)
+}
