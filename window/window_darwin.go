@@ -143,7 +143,7 @@ func (m *TWindow) maximize() {
 }
 
 func (m *TWindow) FullScreen() {
-	if m.IsFullScreen() {
+	if m.isFullScreen() {
 		return
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
@@ -153,7 +153,7 @@ func (m *TWindow) FullScreen() {
 }
 
 func (m *TWindow) ExitFullScreen() {
-	if m.IsFullScreen() {
+	if m.isFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			m.SetWindowState(types.WsNormal)
 			m.nsWindow.ExitFullScreen()
