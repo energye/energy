@@ -528,17 +528,17 @@ func SetX11ErrorHandlers(onError, onIOError func() bool) {
 
 // WindowX11ID returns the X11 Window XID for a realized GTK window.
 // CEF on Linux requires the native XID, not a GtkWidget pointer.
-func WindowX11ID(win types.IWindow) uintptr {
-	return cgo.WindowX11ID(win)
+func WindowX11ID(widget types.IWidget) uintptr {
+	return cgo.WindowX11ID(widget)
 }
 
 // UseDefaultX11VisualForGtk overrides the GTK window's visual with the default
 // X11 visual. Call before the window is shown/realized.
-func UseDefaultX11VisualForGtk(win types.IWindow) {
-	cgo.UseDefaultX11VisualForGtk(win)
+func UseDefaultX11VisualForGtk(widget types.IWidget) {
+	cgo.UseDefaultX11VisualForGtk(widget)
 }
 
 // FlushDisplay flushes the X11 display for a realized GTK window.
-func FlushDisplay(win types.IWindow) {
-	cgo.FlushDisplay(win)
+func FlushDisplay(widget types.IWidget) {
+	cgo.FlushDisplay(widget)
 }

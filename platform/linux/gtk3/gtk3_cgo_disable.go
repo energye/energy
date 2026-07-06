@@ -501,17 +501,17 @@ func SetX11ErrorHandlers(onError, onIOError func() bool) {
 
 // WindowX11ID returns the X11 Window XID for a realized GTK window.
 // In nocgo mode returns 0 (requires CGo to call gdk_x11_window_get_xid).
-func WindowX11ID(win types.IWindow) uintptr {
-	return nocgo.WindowX11ID(win)
+func WindowX11ID(widget types.IWidget) uintptr {
+	return nocgo.WindowX11ID(widget)
 }
 
 // UseDefaultX11VisualForGtk overrides the GTK window's visual with the default
 // X11 visual. Call before the window is shown/realized.
-func UseDefaultX11VisualForGtk(win types.IWindow) {
-	nocgo.UseDefaultX11VisualForGtk(win)
+func UseDefaultX11VisualForGtk(widget types.IWidget) {
+	nocgo.UseDefaultX11VisualForGtk(widget)
 }
 
 // FlushDisplay flushes the X11 display for a realized GTK window.
-func FlushDisplay(win types.IWindow) {
-	nocgo.FlushDisplay(win)
+func FlushDisplay(widget types.IWidget) {
+	nocgo.FlushDisplay(widget)
 }

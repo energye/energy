@@ -87,8 +87,8 @@ var (
 
 // WindowX11ID returns the X11 Window XID for a realized GTK window.
 // CEF on Linux requires the native XID, not a GtkWidget pointer.
-func WindowX11ID(win IWindow) uintptr {
-	w := (*C.GtkWidget)(unsafe.Pointer(win.Instance()))
+func WindowX11ID(widget IWidget) uintptr {
+	w := (*C.GtkWidget)(unsafe.Pointer(widget.Instance()))
 	if C.gtk_widget_get_realized(w) == 0 {
 		C.gtk_widget_realize(w)
 	}
@@ -134,13 +134,13 @@ func SetX11ErrorHandlers(onError, onIOError func() bool) {
 // X11 visual. Must be called after the window is created but before it is
 // shown/realized. GTK+ > 3.15.1 uses an OpenGL-optimized visual that breaks CEF.
 // See: https://github.com/cztomczak/cefcapi
-func UseDefaultX11VisualForGtk(win IWindow) {
-	C.useDefaultX11Visual((*C.GtkWidget)(unsafe.Pointer(win.Instance())))
+func UseDefaultX11VisualForGtk(widget IWidget) {
+	C.useDefaultX11Visual((*C.GtkWidget)(unsafe.Pointer(widget.Instance())))
 }
 
 // FlushDisplay synchronizes the X11 display for a realized GTK window.
 // Uses gdk_display_sync to wait for all pending X11 requests to be processed,
 // ensuring correct ordering of window creation and focus management.
-func FlushDisplay(win IWindow) {
-	C.flushDisplay((*C.GtkWidget)(unsafe.Pointer(win.Instance())))
+func FlushDisplay(widget IWidget) {
+	C.flushDisplay((*C.GtkWidget)(unsafe.Pointer(widget.Instance())))
 }

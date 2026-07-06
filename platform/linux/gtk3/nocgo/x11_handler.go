@@ -63,14 +63,14 @@ func init() {
 
 	// Additional GDK functions needed by FlushDisplay / UseDefaultX11VisualForGtk / WindowX11ID.
 	gdk3.Table = append(gdk3.Table,
-	 imports.NewTable("gdk_window_get_display", 0),
-	 imports.NewTable("gdk_screen_list_visuals", 0),
-	 imports.NewTable("gdk_x11_display_get_xdisplay", 0),
-	 imports.NewTable("gdk_x11_screen_get_screen_number", 0),
-	 imports.NewTable("gdk_x11_screen_get_xscreen", 0),
-	 imports.NewTable("gdk_x11_visual_get_xvisual", 0),
-	 imports.NewTable("gdk_x11_window_get_xid", 0),
-	 imports.NewTable("g_list_free", 0),
+		imports.NewTable("gdk_window_get_display", 0),
+		imports.NewTable("gdk_screen_list_visuals", 0),
+		imports.NewTable("gdk_x11_display_get_xdisplay", 0),
+		imports.NewTable("gdk_x11_screen_get_screen_number", 0),
+		imports.NewTable("gdk_x11_screen_get_xscreen", 0),
+		imports.NewTable("gdk_x11_visual_get_xvisual", 0),
+		imports.NewTable("gdk_x11_window_get_xid", 0),
+		imports.NewTable("g_list_free", 0),
 	)
 	gdk3.MapperIndex()
 
@@ -81,12 +81,12 @@ func init() {
 }
 
 // WindowX11ID returns the X11 Window XID for a realized GTK window.
-func WindowX11ID(win IWindow) uintptr {
-	gdkWindow := gtk3.SysCall("gtk_widget_get_window", win.Instance())
+func WindowX11ID(widget IWidget) uintptr {
+	gdkWindow := gtk3.SysCall("gtk_widget_get_window", widget.Instance())
 	if gdkWindow == 0 {
 		// Try realizing first
-		gtk3.SysCall("gtk_widget_realize", win.Instance())
-		gdkWindow = gtk3.SysCall("gtk_widget_get_window", win.Instance())
+		gtk3.SysCall("gtk_widget_realize", widget.Instance())
+		gdkWindow = gtk3.SysCall("gtk_widget_get_window", widget.Instance())
 		if gdkWindow == 0 {
 			return 0
 		}
@@ -95,9 +95,8 @@ func WindowX11ID(win IWindow) uintptr {
 	return gdk3.SysCall("gdk_x11_window_get_xid", gdkWindow)
 }
 
-// UseDefaultX11VisualForGtk — 和 cgo 的 C 实现完全一致：
-//   gdk_x11_display_get_xdisplay → DefaultVisual → 遍历 GList 匹配 visualid
-func UseDefaultX11VisualForGtk(win IWindow) {
+// UseDefaultX11VisualForGtk
+func UseDefaultX11VisualForGtk(widget IWidget) {
 	screen := gdk3.SysCall("gdk_screen_get_default")
 	if screen == 0 {
 		return
@@ -149,7 +148,7 @@ func UseDefaultX11VisualForGtk(win IWindow) {
 			if xvisual != 0 {
 				xvID := *(*uintptr)(unsafe.Pointer(xvisual + ptrSize))
 				if xvID == defaultVisualID {
-					gtk3.SysCall("gtk_widget_set_visual", win.Instance(), gdkVisual)
+					gtk3.SysCall("gtk_widget_set_visual", widget.Instance(), gdkVisual)
 					break
 				}
 			}
@@ -159,8 +158,8 @@ func UseDefaultX11VisualForGtk(win IWindow) {
 }
 
 // FlushDisplay flushes the X11 display for a realized GTK window.
-func FlushDisplay(win IWindow) {
-	gdkWindow := gtk3.SysCall("gtk_widget_get_window", win.Instance())
+func FlushDisplay(widget IWidget) {
+	gdkWindow := gtk3.SysCall("gtk_widget_get_window", widget.Instance())
 	if gdkWindow == 0 {
 		return
 	}
