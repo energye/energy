@@ -66,3 +66,8 @@ func (m *GdkWindow) GetDevicePosition(device uintptr) (*GdkWindow, int, int, uin
 func (m *GdkWindow) SetOverrideRedirect(overrideRedirect bool) {
 	gdk3.SysCall("gdk_window_set_override_redirect", m.Instance(), ToCBool(overrideRedirect))
 }
+
+func (m *GdkWindow) GetState() int32 {
+	state := gdk3.SysCall("gdk_window_get_state", m.Instance())
+	return int32(state)
+}

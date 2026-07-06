@@ -47,6 +47,7 @@ func init() {
 		imports.NewTable("gdk_window_get_origin", 0),
 		imports.NewTable("gdk_window_get_device_position", 0),
 		imports.NewTable("gdk_window_set_override_redirect", 0),
+		imports.NewTable("gdk_window_get_state", 0),
 		// rectangle
 		imports.NewTable("gdk_rectangle_intersect", 0),
 		imports.NewTable("gdk_rectangle_union", 0),

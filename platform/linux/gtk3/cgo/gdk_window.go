@@ -83,6 +83,11 @@ func (v *GdkWindow) SetDecorations(decorations TGdkWMDecoration) {
 	C.gdk_window_set_decorations(v.native(), C.GdkWMDecoration(decorations))
 }
 
+func (v *GdkWindow) GetState() int32 {
+	state := C.gdk_window_get_state(v.native())
+	return int32(state)
+}
+
 func toGdkWindow(s *C.GdkWindow) *GdkWindow {
 	if s == nil {
 		return nil

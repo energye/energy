@@ -43,6 +43,7 @@ type IGdkWindow interface {
 	GetRootOrigin() (x, y int)
 	GetOrigin() (x, y int)
 	SetOverrideRedirect(setting bool)
+	GetState() int32
 }
 
 type IWidget interface {
@@ -204,6 +205,9 @@ type IWindow interface {
 	Unmaximize()
 	Fullscreen()
 	Unfullscreen()
+	IsMaximized() bool
+	IsFullScreen() bool
+	IsMinimized() bool
 	Iconify()
 	Deiconify()
 	Stick()
@@ -225,6 +229,7 @@ type IWindow interface {
 	HasToplevelFocus() bool
 	Present()
 	PresentWithTime(ts uint32)
+	GdkWindow() IGdkWindow
 	SetKeepAbove(setting bool)
 	SetKeepBelow(setting bool)
 	SetTypeHint(typeHint WindowTypeHint)

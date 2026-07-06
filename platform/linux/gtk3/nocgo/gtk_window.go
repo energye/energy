@@ -251,6 +251,39 @@ func (m *Window) Unfullscreen() {
 	gtk3.SysCall("gtk_window_unfullscreen", m.Instance())
 }
 
+// IsMaximized is a wrapper around gtk_window_is_maximized().
+func (m *Window) IsMaximized() bool {
+	r := gtk3.SysCall("gtk_window_is_maximized", m.Instance())
+	return ToGoBool(r)
+}
+
+// IsFullScreen returns whether the window is fullscreen.
+// Uses gdk_window_get_state() with GDK_WINDOW_STATE_FULLSCREEN flag (1 << 4 = 16).
+func (m *Window) IsFullScreen() bool {
+	gdkWindow := m.GdkWindow()
+	if gdkWindow == nil || gdkWindow.Instance() == 0 {
+		return false
+	}
+	state := gdkWindow.GetState()
+	return (state & 16) != 0 // GDK_WINDOW_STATE_FULLSCREEN = 1 << 4
+}
+
+// IsMinimized returns whether the window is iconified (minimized).
+// Uses gdk_window_get_state() with GDK_WINDOW_STATE_ICONIFIED flag (1 << 1 = 2).
+func (m *Window) IsMinimized() bool {
+	gdkWindow := m.GdkWindow()
+	if gdkWindow == nil || gdkWindow.Instance() == 0 {
+		return false
+	}
+	state := gdkWindow.GetState()
+	return (state & 2) != 0 // GDK_WINDOW_STATE_ICONIFIED = 1 << 1
+}
+
+func (m *Window) GdkWindow() IGdkWindow {
+	gdkWindow := gtk3.SysCall("gtk_widget_get_window", m.Instance())
+	return AsGdkWindow(unsafe.Pointer(gdkWindow))
+}
+
 // SetKeepAbove is a wrapper around gtk_window_set_keep_above().
 func (m *Window) SetKeepAbove(setting bool) {
 	gtk3.SysCall("gtk_window_set_keep_above", m.Instance(), ToCBool(setting))

@@ -67,6 +67,7 @@ func init() {
 		imports.NewTable("gtk_window_unmaximize", 0),
 		imports.NewTable("gtk_window_fullscreen", 0),
 		imports.NewTable("gtk_window_unfullscreen", 0),
+		imports.NewTable("gtk_window_is_maximized", 0),
 		imports.NewTable("gtk_window_set_keep_above", 0),
 		imports.NewTable("gtk_window_set_keep_below", 0),
 		imports.NewTable("gtk_window_set_decorated", 0),
