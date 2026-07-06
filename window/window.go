@@ -157,47 +157,33 @@ func (m *TEnergyWindow) IsMain() bool {
 }
 
 func (m *TWindow) Minimize() {
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		m.SetWindowState(types.WsMinimized)
-	})
+	m.minimize()
 }
 
 func (m *TWindow) Maximize() {
 	if m.IsFullScreen() || (m.options != nil && m.options.DisableMaximize) {
 		return
 	}
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.WindowState() == types.WsNormal {
-			m.SetWindowState(types.WsMaximized)
-		} else {
-			m.SetWindowState(types.WsNormal)
-		}
-	})
+	m.maximize()
 }
 
 func (m *TWindow) Restore() {
 	// In the case of a title bar
 	// If the current state is full screen and the extracted state is Ws Maximized,
 	// So let's first perform IsFullScreen() judgment here
-	if m.IsFullScreen() {
-		m.ExitFullScreen()
-	} else if m.IsMinimize() || m.IsMaximize() {
-		lcl.RunOnMainThreadAsync(func(id uint32) {
-			m.SetWindowState(types.WsNormal)
-		})
-	}
+	m.restore()
 }
 
 func (m *TWindow) IsFullScreen() bool {
-	return m.windowsState == types.WsFullScreen
+	return m.isFullScreen()
 }
 
 func (m *TWindow) IsMinimize() bool {
-	return m.WindowState() == types.WsMinimized
+	return m.isMinimize()
 }
 
 func (m *TWindow) IsMaximize() bool {
-	return m.WindowState() == types.WsMaximized
+	return m.isMaximize()
 }
 
 func (m *TWindow) SetOptions(options application.Options) {

@@ -214,13 +214,55 @@ func (m *TWindow) startThemeObserver() {
 	})
 }
 
+func (m *TWindow) isFullScreen() bool {
+	return m.gtkWindow.IsFullScreen()
+}
+
+func (m *TWindow) isMinimize() bool {
+	return m.gtkWindow.IsMinimized()
+}
+
+func (m *TWindow) isMaximize() bool {
+	return m.gtkWindow.IsMaximized()
+}
+
+func (m *TWindow) restore() {
+	if m.isFullScreen() {
+		m.ExitFullScreen()
+	} else {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			if m.gtkWindow.IsMinimized() {
+				m.gtkWindow.Deiconify()
+			} else if m.gtkWindow.IsMaximized() {
+				m.gtkWindow.Unmaximize()
+			}
+		})
+	}
+}
+
+func (m *TWindow) minimize() {
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.SetWindowState(types.WsMinimized)
+		m.gtkWindow.Iconify()
+	})
+}
+
+func (m *TWindow) maximize() {
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.SetWindowState(types.WsMaximized)
+		m.gtkWindow.Maximize()
+	})
+}
+
 func (m *TWindow) FullScreen() {
-	if m.IsFullScreen() {
+	if m.gtkWindow.IsFullScreen() {
 		return
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.IsMinimize() || m.IsMaximize() {
-			m.Restore()
+		if m.gtkWindow.IsMinimized() {
+			m.gtkWindow.Deiconify()
+		} else if m.gtkWindow.IsMaximized() {
+			m.gtkWindow.Unmaximize()
 		}
 		m.windowsState = types.WsFullScreen
 		// save current window rect, use ExitFullScreen
@@ -231,7 +273,7 @@ func (m *TWindow) FullScreen() {
 }
 
 func (m *TWindow) ExitFullScreen() {
-	if m.IsFullScreen() {
+	if m.gtkWindow.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)

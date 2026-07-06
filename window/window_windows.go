@@ -91,6 +91,40 @@ func (m *TWindow) UpdateWindowOption() {
 	}
 }
 
+func (m *TWindow) isFullScreen() bool {
+	return m.windowsState == types.WsFullScreen || m.WindowState() == types.WsFullScreen
+}
+
+func (m *TWindow) isMinimize() bool {
+	return m.WindowState() == types.WsMinimized
+}
+
+func (m *TWindow) isMaximize() bool {
+	return m.WindowState() == types.WsMaximized
+}
+
+func (m *TWindow) restore() {
+	if m.isFullScreen() {
+		m.ExitFullScreen()
+	} else if m.isMinimize() || m.isMaximize() {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			m.SetWindowState(types.WsNormal)
+		})
+	}
+}
+
+func (m *TWindow) minimize() {
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.SetWindowState(types.WsMinimized)
+	})
+}
+
+func (m *TWindow) maximize() {
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.SetWindowState(types.WsMaximized)
+	})
+}
+
 func (m *TWindow) FullScreen() {
 	if m.IsFullScreen() {
 		return
