@@ -3,6 +3,7 @@ package cgo
 /*
 #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0
 #include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 #include "gdk.go.h"
 
 static GdkSeat *toGdkSeat(void *p) { return ((GdkSeat *)p); }
@@ -273,6 +274,12 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 	cstr := C.CString(startupID)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
+}
+
+// GetXDisplay is a wrapper around gdk_x11_display_get_xdisplay().
+func (v *Display) GetXDisplay() uintptr {
+	c := C.gdk_x11_display_get_xdisplay(v.native())
+	return uintptr(unsafe.Pointer(c))
 }
 
 // GetDeviceManager is a wrapper around gdk_display_get_device_manager().

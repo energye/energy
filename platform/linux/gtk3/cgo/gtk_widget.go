@@ -487,7 +487,7 @@ func (v *Widget) GetStateFlags() StateFlags {
 }
 
 // GetDisplay is a wrapper around gtk_widget_get_display().
-func (v *Widget) GetDisplay() *Display {
+func (v *Widget) GetDisplay() IDisplay {
 	c := C.gtk_widget_get_display(v.native())
 	if c == nil {
 		return nil

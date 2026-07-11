@@ -133,6 +133,7 @@ type IWidget interface {
 	ResetStyle()
 	InDestruction() bool
 	Destroy()
+	GetDisplay() IDisplay
 }
 
 type IContainer interface {
@@ -1178,4 +1179,9 @@ type IRevealer interface {
 	GetTransitionDuration() uint
 	SetTransitionType(t RevealerTransitionType)
 	GetTransitionType() RevealerTransitionType
+}
+
+type IDisplay interface {
+	IObject
+	GetXDisplay() uintptr
 }

@@ -80,6 +80,7 @@ func init() {
 		imports.NewTable("gdk_display_supports_input_shapes", 0),
 		imports.NewTable("gdk_display_notify_startup_complete", 0),
 		imports.NewTable("gdk_display_get_default_seat", 0),
+		imports.NewTable("gdk_x11_display_get_xdisplay", 0),
 		// DeviceManager
 		imports.NewTable("gdk_device_manager_get_display", 0),
 		// DisplayManager

@@ -459,7 +459,7 @@ func (m *Widget) GetStateFlags() StateFlags {
 }
 
 // GetDisplay is a wrapper around gtk_widget_get_display().
-func (m *Widget) GetDisplay() *Display {
+func (m *Widget) GetDisplay() IDisplay {
 	r := gtk3.SysCall("gtk_widget_get_display", m.Instance())
 	if r == 0 {
 		return nil

@@ -260,6 +260,14 @@ func (m *Display) GetDefaultSeat() *Seat {
 	return AsSeat(unsafe.Pointer(r))
 }
 
+func (m *Display) GetXDisplay() uintptr {
+	r := gdk3.SysCall("gdk_x11_display_get_xdisplay", m.Instance())
+	if r == 0 {
+		return 0
+	}
+	return r
+}
+
 // DisplayManager is a representation of GDK's GdkDisplayManager.
 type DisplayManager struct {
 	Object
