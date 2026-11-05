@@ -23,7 +23,7 @@ var (
 	frameCorner = frameWidth + frameHeight
 )
 
-func (m *TBrowser) drag(message ipc.ProcessMessage) {
+func (m *TBrowser) drag(message ipc.ProcessMessage) bool {
 	getWindow := func() window.IDarwinWindow {
 		if m.window == nil {
 			return nil
@@ -33,10 +33,11 @@ func (m *TBrowser) drag(message ipc.ProcessMessage) {
 	if currentWindow := getWindow(); currentWindow != nil {
 		currentWindow.NSWindow().Drag()
 	}
+	return false
 }
 
-func (m *TBrowser) resize(ht string) {
-
+func (m *TBrowser) resize(ht string) bool {
+	return false
 }
 
 func (m *TViewsBrowser) startThemeObserver() {

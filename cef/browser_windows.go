@@ -24,14 +24,14 @@ var (
 	frameCorner = frameWidth + frameHeight
 )
 
-func (m *TBrowser) drag(message ipc.ProcessMessage) {
+func (m *TBrowser) drag(message ipc.ProcessMessage) bool {
 	if m.window == nil || m.window.IsFullScreen() {
-		return
+		return false
 	}
 	switch message.Type {
 	case ipc.MT_DRAG_MOVE:
 		if m.window.IsFullScreen() {
-			return
+			return false
 		}
 		if win.ReleaseCapture() {
 			win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
@@ -41,14 +41,15 @@ func (m *TBrowser) drag(message ipc.ProcessMessage) {
 	case ipc.MT_DRAG_DBLCLICK:
 		m.window.Maximize()
 	}
+	return false
 }
 
-func (m *TBrowser) resize(ht string) {
+func (m *TBrowser) resize(ht string) bool {
 	if m.window == nil {
-		return
+		return false
 	}
 	if m.window.IsFullScreen() || m.window.Options().DisableResize {
-		return
+		return false
 	}
 	if win.ReleaseCapture() {
 		var borderHT uintptr
@@ -72,8 +73,9 @@ func (m *TBrowser) resize(ht string) {
 		}
 		win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
 	}
+	return false
 }
 
 func (m *TViewsBrowser) startThemeObserver() {
-	
+
 }
