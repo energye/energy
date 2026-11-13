@@ -288,25 +288,29 @@ func (m *TWindow) UpdateConfigProperty() {
 			constr.SetMinWidth(m.options.MinWidth)
 			constr.SetMinHeight(m.options.MinHeight)
 		}
-		windowBr := m.BoundsRect()
-		if m.options.Width <= 0 {
-			m.options.Width = windowBr.Width()
-		}
-		if m.options.Height <= 0 {
-			m.options.Height = windowBr.Height()
-		}
 		if m.options.X != 0 {
-			windowBr.Left = m.options.X
+			m.SetLeft(m.options.X)
 		}
 		if m.options.Y != 0 {
-			windowBr.Top = m.options.Y
+			m.SetTop(m.options.Y)
 		}
-		if m.options.Width > 0 {
-			windowBr.SetWidth(m.options.Width)
+		// 只有显式配置宽高时才重设外框。未配置时 BoundsRect 是客户区尺寸，
+		// 再走 SetBoundsRect 会被边框/标题栏挤小，导致运行窗体比设计尺寸小。
+		if m.options.Width > 0 || m.options.Height > 0 {
+			windowBr := m.BoundsRect()
+			if m.options.X != 0 {
+				windowBr.Left = m.options.X
+			}
+			if m.options.Y != 0 {
+				windowBr.Top = m.options.Y
+			}
+			if m.options.Width > 0 {
+				windowBr.SetWidth(m.options.Width)
+			}
+			if m.options.Height > 0 {
+				windowBr.SetHeight(m.options.Height)
+			}
+			m.SetBoundsRect(windowBr)
 		}
-		if m.options.Height > 0 {
-			windowBr.SetHeight(m.options.Height)
-		}
-		m.SetBoundsRect(windowBr)
 	}
 }

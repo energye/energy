@@ -94,8 +94,10 @@ func (m *TWindow) _HookWndProcMessage() {
 		m.oldWndPrc = win.SetWindowLongPtr(hWnd, win.GWL_WNDPROC, wndProcCallback)
 		// trigger WM_NCCALCSIZE
 		// https://learn.microsoft.com/en-us/windows/win32/dwm/customframe#removing-the-standard-frame
-		clientRect := m.BoundsRect()
-		win.SetWindowPos(hWnd, 0, clientRect.Left, clientRect.Top, clientRect.Right-clientRect.Left, clientRect.Bottom-clientRect.Top, win.SWP_FRAMECHANGED)
+		// 只触发非客户区重算，不能传 BoundsRect：SetWindowPos 的宽高是外框尺寸，
+		// 而这里 BoundsRect 是客户区尺寸，会把窗口缩小边框/标题栏的量。
+		win.SetWindowPos(hWnd, 0, 0, 0, 0, 0,
+			win.SWP_FRAMECHANGED|win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_NOZORDER|win.SWP_NOACTIVATE)
 	}
 }
 
